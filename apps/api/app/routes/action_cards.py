@@ -245,3 +245,20 @@ async def retry_card_real(request: Request, card_id: UUID, **_: Any) -> CardOut:
             user_role=m.role,
             card_id=card_id,
         )
+
+
+@real("revert_card")
+async def revert_card_real(request: Request, card_id: UUID, **_: Any) -> CardOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        from app.executor.revert import revert_card
+        return await revert_card(
+            s,
+            org_id=m.org_id,
+            user_id=m.user_id,
+            user_role=m.role,
+            card_id=card_id,
+            ctx=None,  # No live connector in template/test mode
+        )
+

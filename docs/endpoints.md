@@ -26,7 +26,7 @@
 | POST | `/api/v1/action-cards/{card_id}/approve` | C4 Action Card | Vedansh | P2 | real | approve:own |
 | POST | `/api/v1/action-cards/{card_id}/reject` | C4 Action Card | Vedansh | P2 | real | approve:own |
 | POST | `/api/v1/action-cards/{card_id}/assign` | C4 Action Card | Vedansh | P2 | real | approve:own |
-| POST | `/api/v1/action-cards/{card_id}/revert` | C4 Action Card | Vedansh | P3 | mock | revert |
+| POST | `/api/v1/action-cards/{card_id}/revert` | C4 Action Card | Vedansh | P3 | real | revert |
 | POST | `/api/v1/action-cards/{card_id}/retry` | C4 Action Card | Vedansh | P3 | real | approve:any |
 | GET | `/api/v1/admin/orgs` | E Admin Console | Vedansh | P5 | mock | superadmin |
 | GET | `/api/v1/admin/orgs/{org_id}` | E Admin Console | Vedansh | P5 | mock | superadmin |
@@ -95,7 +95,7 @@
 | POST | `/api/v1/slack/events` | F Slack | Vedansh | P4 | mock | public |
 | POST | `/api/v1/slack/interactions` | F Slack | Vedansh | P4 | mock | public |
 | GET | `/api/v1/slack/oauth/callback` | B6 Slack | Vedansh | P4 | mock | public |
-| GET | `/api/v1/stream` | Realtime (SSE) | Vedansh | P3 | mock | any |
+| GET | `/api/v1/stream` | Realtime (SSE) | Vedansh | P3 | real | any |
 
 ## Internal AI API (`/internal`, own OpenAPI at `/internal/openapi.json`, header `X-Internal-Key`)
 

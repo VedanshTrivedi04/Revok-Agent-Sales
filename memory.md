@@ -135,6 +135,17 @@ apps/api/
 | V2-07 | Hourly card expiry job (`app/workers/tasks_maintenance.py`): `maintenance.expire_cards` task expiring pending cards where `expires_at < now()` |
 | V2-08 | Router switch: `REAL_ROUTERS=me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log` in staging compose; 16 comprehensive tests in `tests/test_cards_and_audit.py` with 100% transition coverage, concurrent double-approve, Tier 3 rejection, allowlist violations, hash chain verify; total 446 tests passing |
 
+### 4.3 Phase 3 task ledger (all 6 done)
+
+| Task | Result |
+|---|---|
+| V3-01 | Executor core (`app/executor/core.py`): `run_execute_card` with lock `exec:{card_id}`, `begin_execution` approved→executing (idempotent no-op otherwise), `Execution` tracking per attempt with status/pre_image/response/error, allowlists re-validation, Tier 3 block, provider idempotency via `find_existing`, `finish_execution` / `fail_execution`, Celery retry via `TransientError` / fatal on `FatalError`, SSE publish `card.updated` |
+| V3-02 | HubSpot write handlers (`app/connectors/hubspot/writes.py`): `HubSpotTaskHandler` (tasks + associations), `HubSpotNoteHandler` (notes + associations), `HubSpotFieldUpdateHandler` (properties update with **stale-preview check** comparing before value against HubSpot current, pre-image persistence for revert, provider idempotency via `revops_card_id`) |
+| V3-03 | Revert service (`app/executor/revert.py`) per `algorithm.md §12`: `POST /action-cards/{id}/revert` (checks executed status, revertable type allowlist, 7-day window; detects concurrent edits in CRM and raises 409 `revert_conflict` with `{field, current, ours}`; applies reverse write and transitions card to `reverted` with `decision_log` and SSE publish) |
+| V3-04 | `TemplateActionPlanner` (`app/ports/template.py`): deterministic mapping per `backend-plan.md §2.3` (high risk → crm_task, crm_field_update, slack_internal, email_draft; expansion → crm_task + email_draft; placeholders `{contact_first_name}`, `{owner_name}` without internal metrics); integration via `cards.create_from_proposals()` |
+| V3-05 | SSE stream service (`app/services/stream.py`, `app/routes/stream.py`): `GET /stream` subscribing to Redis pub/sub channel `org:{org_id}`, event streaming with `id:`, `event:`, `data:`, 20s heartbeat `: heartbeat\n\n`, JWT membership auth |
+| V3-06 | Router switch & wiring: `execute_card_task` wired in `app/workers/tasks_maintenance.py`, handler registration on import in `app/executor/__init__.py`, `docker-compose.staging.yml` includes `stream`, `revert_card` and `stream` switched to `real` in `docs/endpoints.md`, comprehensive tests in `tests/test_executor.py` |
+
 ## 5. Architecture as built (details a new session needs)
 
 ### 5.1 Database and tenancy
