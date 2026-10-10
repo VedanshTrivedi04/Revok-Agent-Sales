@@ -120,6 +120,12 @@ class Finding(Base, IdMixin, TimestampMixin):
         enum_ck("dismissed_reason", ("not_relevant", "already_handled", "wrong_data", "other")),
         Index("ix_findings_org_id_account_id_status", "org_id", "account_id", "status"),
         Index("ix_findings_org_id_priority_score", "org_id", text("priority_score DESC")),
+        Index(
+            "ix_findings_org_id_status_priority_score",
+            "org_id",
+            "status",
+            text("priority_score DESC"),
+        ),
     )
 
     org_id: Mapped[UUID] = tenant_fk()

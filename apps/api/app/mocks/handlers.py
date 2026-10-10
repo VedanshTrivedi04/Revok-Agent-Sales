@@ -904,6 +904,11 @@ def m_preview_rule(request: Request, key: str, body: Any, **_: Any) -> Any:
     }
 
 
+@mock("rerun_rules")
+def m_rerun_rules(request: Request, body: Any = None, **_: Any) -> Any:
+    return {"ok": True}
+
+
 @mock("list_autonomy")
 def m_autonomy(request: Request, **_: Any) -> Any:
     return store().d["ops"]["autonomy"]

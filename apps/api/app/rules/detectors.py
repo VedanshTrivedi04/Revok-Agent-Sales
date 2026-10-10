@@ -29,8 +29,11 @@ def detect_contradictions(
     # 2. Positive sentiment signal (conf >= 0.7) in 21d while R01 or R08 fired
     if "R01_usage_drop" in hit_keys or "R08_seat_underuse" in hit_keys:
         positive_signals = [
-            s for s in ctx.signals_21d
-            if s.get("kind") == "sentiment" and s.get("polarity") == "positive" and float(s.get("confidence", 0.0)) >= 0.7
+            s
+            for s in ctx.signals_21d
+            if s.get("kind") == "sentiment"
+            and s.get("polarity") == "positive"
+            and float(s.get("confidence", 0.0)) >= 0.7
         ]
         if positive_signals:
             contradictions.append(
@@ -43,7 +46,9 @@ def detect_contradictions(
     # 3. Renewal deal stage looks committed while R03 or R05 fired
     if "R03_no_reply" in hit_keys or "R05_champion_risk" in hit_keys:
         committed_stages = ("committed", "contract sent", "negotiation", "verbal", "closing")
-        if ctx.open_renewal_deal and any(k in str(ctx.open_renewal_deal.get("stage", "")).lower() for k in committed_stages):
+        if ctx.open_renewal_deal and any(
+            k in str(ctx.open_renewal_deal.get("stage", "")).lower() for k in committed_stages
+        ):
             contradictions.append(
                 {
                     "text": "Deal looks committed but champion is silent or uncommunicative.",
@@ -52,7 +57,9 @@ def detect_contradictions(
             )
 
     # 4. Expansion X01 fired and R06 or R07 fired
-    if "X01_seat_saturation" in hit_keys and ("R06_negative_sentiment" in hit_keys or "R07_competitor_mention" in hit_keys):
+    if "X01_seat_saturation" in hit_keys and (
+        "R06_negative_sentiment" in hit_keys or "R07_competitor_mention" in hit_keys
+    ):
         contradictions.append(
             {
                 "text": "Seats are saturated but negative sentiment or competitor mentions were detected.",
@@ -86,8 +93,10 @@ def detect_unknowns(
     # 4. R01 fired without an explaining signal
     if "R01_usage_drop" in hit_keys:
         explaining_signals = [
-            s for s in ctx.signals_30d
-            if s.get("kind") in ("budget_cut", "champion_leaving", "pricing_concern", "competitor_mention")
+            s
+            for s in ctx.signals_30d
+            if s.get("kind")
+            in ("budget_cut", "champion_leaving", "pricing_concern", "competitor_mention")
         ]
         if not explaining_signals:
             unknowns.append("Reason for usage drop is not confirmed.")
@@ -95,7 +104,9 @@ def detect_unknowns(
     # 5. R05 champion risk flagged as silent without confirmed leaving signal
     if "R05_champion_risk" in hit_keys:
         leaving_signals = [s for s in ctx.signals_60d if s.get("kind") == "champion_leaving"]
-        if not leaving_signals and (ctx.champion_contact and ctx.champion_contact.get("is_active", True)):
+        if not leaving_signals and (
+            ctx.champion_contact and ctx.champion_contact.get("is_active", True)
+        ):
             unknowns.append("Not confirmed whether the champion has left the organization.")
 
     return unknowns

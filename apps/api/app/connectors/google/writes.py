@@ -240,9 +240,7 @@ class CalendarMeetingHandler:
             "attendees": [{"email": e} for e in payload.attendees],
             "start": {"dateTime": start_dt.isoformat()},
             "end": {"dateTime": end_dt.isoformat()},
-            "extendedProperties": {
-                "private": {"revops_card_id": idem_key}
-            },
+            "extendedProperties": {"private": {"revops_card_id": idem_key}},
         }
 
         resp = await _gcal_post(ctx, "/calendars/primary/events", event_body)

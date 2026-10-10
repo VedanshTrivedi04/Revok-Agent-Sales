@@ -77,7 +77,9 @@ async def get_run_service(
 
     acc_name: str | None = None
     if run.account_id:
-        acc_stmt = select(Account.name).where(Account.id == run.account_id, Account.org_id == org_id)
+        acc_stmt = select(Account.name).where(
+            Account.id == run.account_id, Account.org_id == org_id
+        )
         acc_name = (await session.execute(acc_stmt)).scalar()
 
     stats = run.stats or {}

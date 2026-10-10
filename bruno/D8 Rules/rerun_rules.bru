@@ -1,0 +1,20 @@
+meta {
+  name: rerun_rules
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/rules/rerun
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Trigger/enqueue rule detection across active accounts.
+  Page: D8 Rules | Owner: R | Phase: P4 | Access: rules:edit
+}

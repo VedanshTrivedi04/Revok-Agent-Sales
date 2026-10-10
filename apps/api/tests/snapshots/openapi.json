@@ -4781,6 +4781,20 @@
     "title": "RulePutIn",
     "type": "object"
    },
+   "RulesRerunIn": {
+    "properties": {
+     "rule_keys": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Rule Keys",
+      "type": "array"
+     }
+    },
+    "title": "RulesRerunIn",
+    "type": "object"
+   },
    "RunDetail": {
     "properties": {
      "account_id": {
@@ -9749,6 +9763,55 @@
     ]
    }
   },
+  "/api/v1/rules/rerun": {
+   "post": {
+    "description": "Trigger/enqueue rule detection across active accounts.",
+    "operationId": "rerun_rules",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "anyOf": [
+         {
+          "$ref": "#/components/schemas/RulesRerunIn"
+         },
+         {
+          "type": "null"
+         }
+        ],
+        "title": "Body"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Trigger/enqueue rule detection across active accounts.",
+    "tags": [
+     "D8 Rules"
+    ]
+   }
+  },
   "/api/v1/rules/{key}": {
    "put": {
     "description": "Enable/disable a rule or change its params (validated against the rule schema).",
@@ -10176,10 +10239,55 @@
       "name": "owner",
       "required": false,
       "schema": {
-       "default": "me",
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
        "description": "me | all | <user_id>",
-       "title": "Owner",
-       "type": "string"
+       "title": "Owner"
+      }
+     },
+     {
+      "in": "query",
+      "name": "severity",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "high",
+          "medium",
+          "low"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Severity"
+      }
+     },
+     {
+      "in": "query",
+      "name": "renewal_within",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "maximum": 365,
+         "minimum": 1,
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Renewal Within"
       }
      }
     ],

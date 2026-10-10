@@ -33,7 +33,9 @@ def format_rule_text(rule_key: str, metrics: dict[str, Any]) -> str:
 
     if rule_key == "R06_negative_sentiment":
         count = metrics.get("count", 1)
-        return f"Detected {count} negative sentiment signals or customer escalation in communications."
+        return (
+            f"Detected {count} negative sentiment signals or customer escalation in communications."
+        )
 
     if rule_key == "R07_competitor_mention":
         competitor = metrics.get("competitor") or "Competitor"

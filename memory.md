@@ -647,6 +647,41 @@ uv run python scripts/check_openapi.py --update                   # after any co
 **Proposal for Vedansh (Database Migration)**
 - Propose adding `score_breakdown = Column(JSONB, nullable=False, server_default='{}')` to the `findings` table in the next additive migration. In Phase 3, `score_breakdown` is safely stored in `previous_snapshot["score_breakdown"]` and returned in API responses to maintain backward schema compatibility without blocking.
 
+---------------------------------------------------------------------------------------------------
+
+## 13. Phase 4, Rajwardhan: Today, Findings, Rules, and Diff Engine (R4-01..R4-05)
+
+### Summary of Implementation
+- **R4-01 (Today Page & Findings Lifecycle):**
+  - `GET /today`: ranked open findings by `priority_score DESC` with account summaries, pending action cards count, flags (`is_new`, `changed_since_yesterday`), `top_reasons` (first 2 claims), unknown/contradiction counts. Excludes snoozed, dismissed, resolved findings. Low severity hidden unless renewal <= 30 days. Member role defaults to own accounts (`owner=me`), Manager+ defaults to all (`owner=all`). Summary counts for `risk`, `expansion`, `pending_cards`. Single joined query + single grouped aggregation for pending cards (zero per-row / N+1 queries).
+  - `GET /findings`: Keyset cursor-paginated list with filters (`status`, `type`, `severity`, `account_id`) and account name.
+  - `GET /findings/{id}`: Full finding detail bundle with claims, evidence items, rule hits, action cards, and decision log history.
+  - `POST /findings/{id}/dismiss`: Dismiss finding with reason and note; checks permission (member on own accounts, manager+ on any, viewer none); logs `finding.dismissed` in decision log; publishes SSE event.
+  - `POST /findings/{id}/snooze`: Snooze finding until timestamp; checks permission; logs `finding.snoozed`; publishes SSE event.
+  - `POST /findings/{id}/reopen`: Reopen dismissed/snoozed/resolved finding; checks permission; logs `finding.reopened`; publishes SSE event.
+  - `POST /findings/{id}/feedback`: Record feedback (`useful`, `note`); allowed for all active members; logs `finding.feedback`.
+- **R4-02 (Rules Management & Catalog):**
+  - `GET /rules`: Returns all 16 rules (R01..R11, X01..X05) merged with per-org database overrides from `rules` table.
+  - `PUT /rules/{key}`: Parameter validation against allowed schema keys and parameter ranges; upserts per-org override; logs `rule.updated` in `decision_log`.
+  - `POST /rules/{key}/preview`: Calculates `would_fire` count, `currently_firing` count, and returns sample 10 matching account IDs.
+  - `POST /rules/rerun`: Triggers rules rerun and logs in decision log.
+- **R4-03 (What Changed Diff Engine):**
+  - Pure function `compute_finding_diff(finding)` comparing finding state with `previous_snapshot` (severity delta, score delta, new/removed claims, new rule keys).
+- **R4-04 (Today Performance & Composite Index):**
+  - Migration `0003_findings_status_priority_idx.py`: Created composite index `ix_findings_org_id_status_priority_score` on `findings (org_id, status, priority_score DESC)`.
+  - Updated `Finding.__table_args__` in `apps/api/app/models/brain.py`.
+  - Performance test verifying bounded constant query counts (no per-row N+1 queries) for Today endpoint.
+- **R4-05 (Router Switch):**
+  - Enabled `@real` router switch for `today`, `findings`, `rules` in `app/routes/accounts.py`, `app/routes/findings.py`, `app/routes/rules.py`.
+  - Updated `infra/docker-compose.staging.yml` with `today`, `findings`, `rules` in `REAL_ROUTERS`.
+  - Regenerated Bruno collection (91 `.bru` files) and `docs/endpoints.md`.
+
+### Verification
+- `uv run pytest tests/test_phase4_findings_and_rules.py`: 14 passed (100%).
+- `uv run pytest tests/test_golden_cases.py tests/test_phase4_findings_and_rules.py`: 78 passed (100%).
+- `uv run pytest tests/test_contract.py tests/test_cross_cutting.py`: 129 passed (100%).
+
+
 
 
 

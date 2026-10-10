@@ -52,6 +52,7 @@ INTERACTION_DEDUPE_TTL = 3600  # 1 hour
 # V4-01: Signature Verification & Deduplication
 # ---------------------------------------------------------------------------
 
+
 def verify_slack_signature(
     signing_secret: str,
     timestamp: str,
@@ -81,9 +82,7 @@ def verify_slack_signature(
         return False
 
     sig_basestring = b"v0:" + str(req_ts).encode() + b":" + raw_body
-    computed_hash = hmac.new(
-        signing_secret.encode(), sig_basestring, hashlib.sha256
-    ).hexdigest()
+    computed_hash = hmac.new(signing_secret.encode(), sig_basestring, hashlib.sha256).hexdigest()
     expected_sig = f"v0={computed_hash}"
 
     return hmac.compare_digest(expected_sig, signature)
@@ -104,6 +103,7 @@ async def is_duplicate_interaction(action_ts: str, user_id: str) -> bool:
 # ---------------------------------------------------------------------------
 # V4-01: OAuth Install & Callback
 # ---------------------------------------------------------------------------
+
 
 async def handle_slack_oauth_callback(code: str, state: str) -> RedirectResponse:
     """Exchanges Slack authorization code for bot token, encrypts token, stores Integration."""
@@ -143,7 +143,13 @@ async def handle_slack_oauth_callback(code: str, state: str) -> RedirectResponse
                 status="connected",
                 external_account_id=team_id,
                 external_account_label=team_name,
-                scopes=["chat:write", "im:write", "users:read", "users:read.email", "channels:read"],
+                scopes=[
+                    "chat:write",
+                    "im:write",
+                    "users:read",
+                    "users:read.email",
+                    "channels:read",
+                ],
                 last_sync_at=utcnow(),
                 last_success_at=utcnow(),
             )
@@ -225,6 +231,7 @@ async def get_slack_bot_token(org_id: UUID) -> str | None:
 # V4-01: User Mapping & Matching
 # ---------------------------------------------------------------------------
 
+
 async def list_slack_users_service(org_id: UUID) -> list[SlackUserOut]:
     """Fetch Slack workspace users and auto-match with organization members by email."""
     bot_token = await get_slack_bot_token(org_id)
@@ -270,11 +277,15 @@ async def resolve_org_from_slack_payload(payload: dict[str, Any]) -> UUID | None
     # 1. Look up by connected Slack integration external_account_id
     if team_id:
         async with admin_session() as s:
-            stmt = select(Integration.org_id).where(
-                Integration.provider == "slack",
-                Integration.external_account_id == team_id,
-                Integration.status == "connected",
-            ).limit(1)
+            stmt = (
+                select(Integration.org_id)
+                .where(
+                    Integration.provider == "slack",
+                    Integration.external_account_id == team_id,
+                    Integration.status == "connected",
+                )
+                .limit(1)
+            )
             found_org = (await s.execute(stmt)).scalar_one_or_none()
             if found_org:
                 return found_org
@@ -296,16 +307,21 @@ async def resolve_org_from_slack_payload(payload: dict[str, Any]) -> UUID | None
 
     # 3. Fallback: single active connected Slack integration across orgs
     async with admin_session() as s:
-        fallback_stmt = select(Integration.org_id).where(
-            Integration.provider == "slack",
-            Integration.status == "connected",
-        ).limit(1)
+        fallback_stmt = (
+            select(Integration.org_id)
+            .where(
+                Integration.provider == "slack",
+                Integration.status == "connected",
+            )
+            .limit(1)
+        )
         return (await s.execute(fallback_stmt)).scalar_one_or_none()
 
 
 # ---------------------------------------------------------------------------
 # V4-02: Slack Interactions (Approvals & Rejections)
 # ---------------------------------------------------------------------------
+
 
 async def handle_slack_interaction(org_id: UUID, payload: dict[str, Any]) -> None:
     """
@@ -476,6 +492,7 @@ async def handle_slack_interaction(org_id: UUID, payload: dict[str, Any]) -> Non
 # V4-03: Daily Digest Selection & Dispatch (algorithm.md §15)
 # ---------------------------------------------------------------------------
 
+
 async def select_digest_items(
     s: AsyncSession,
     org_id: UUID,
@@ -508,10 +525,8 @@ async def select_digest_items(
         # Accounts owned by user, or renewal within 30 days
         stmt = stmt.where(
             or_(
-                (Account.crm_owner_id == crm_owner_id)
-                & (Finding.severity.in_(["high", "medium"])),
-                (Account.renewal_date.isnot(None))
-                & (Account.renewal_date <= renewal_threshold),
+                (Account.crm_owner_id == crm_owner_id) & (Finding.severity.in_(["high", "medium"])),
+                (Account.renewal_date.isnot(None)) & (Account.renewal_date <= renewal_threshold),
             )
         )
     else:
@@ -570,9 +585,7 @@ async def send_user_daily_digest(org_id: UUID, user_id: UUID) -> bool:
             # User has no linked Slack user ID
             return False
 
-        findings, pending_cards = await select_digest_items(
-            s, org_id, user_id, member.crm_owner_id
-        )
+        findings, pending_cards = await select_digest_items(s, org_id, user_id, member.crm_owner_id)
 
         # algorithm.md §15: send ONLY if items non-empty OR pending cards > 0
         if not findings and pending_cards == 0:

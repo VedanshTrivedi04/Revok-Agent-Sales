@@ -146,38 +146,28 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
             outbound_emails.append(ev)
 
     last_meeting_at = (
-        max((m["occurred_at"] for m in past_meetings), default=None)
-        if past_meetings
-        else None
+        max((m["occurred_at"] for m in past_meetings), default=None) if past_meetings else None
     )
     if isinstance(last_meeting_at, str):
         last_meeting_at = datetime.fromisoformat(last_meeting_at)
 
     next_meeting_at = (
-        min((m["occurred_at"] for m in future_meetings), default=None)
-        if future_meetings
-        else None
+        min((m["occurred_at"] for m in future_meetings), default=None) if future_meetings else None
     )
     if isinstance(next_meeting_at, str):
         next_meeting_at = datetime.fromisoformat(next_meeting_at)
 
     days_since_meeting = (now - last_meeting_at).days if last_meeting_at else None
-    had_meeting_last_180d = (
-        last_meeting_at is not None and last_meeting_at >= cutoff_180d
-    )
+    had_meeting_last_180d = last_meeting_at is not None and last_meeting_at >= cutoff_180d
 
     last_inbound_at = (
-        max((e["occurred_at"] for e in inbound_emails), default=None)
-        if inbound_emails
-        else None
+        max((e["occurred_at"] for e in inbound_emails), default=None) if inbound_emails else None
     )
     if isinstance(last_inbound_at, str):
         last_inbound_at = datetime.fromisoformat(last_inbound_at)
 
     last_outbound_at = (
-        max((e["occurred_at"] for e in outbound_emails), default=None)
-        if outbound_emails
-        else None
+        max((e["occurred_at"] for e in outbound_emails), default=None) if outbound_emails else None
     )
     if isinstance(last_outbound_at, str):
         last_outbound_at = datetime.fromisoformat(last_outbound_at)
@@ -247,9 +237,7 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
     # Calculate weekly active users
     # W0 = last complete week, W1..W4 = preceding 4 weeks for baseline
     weekly_aus: list[float] = [
-        float(u["active_users"])
-        for u in sorted_usage
-        if u.get("active_users") is not None
+        float(u["active_users"]) for u in sorted_usage if u.get("active_users") is not None
     ]
 
     usage_current: float | None = weekly_aus[0] if len(weekly_aus) >= 1 else None
@@ -262,9 +250,7 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
         if baseline_weeks:
             usage_baseline = sum(baseline_weeks) / len(baseline_weeks)
             if usage_baseline >= 3.0 and usage_current is not None:
-                usage_change_pct = (
-                    (usage_current - usage_baseline) / usage_baseline
-                ) * 100.0
+                usage_change_pct = ((usage_current - usage_baseline) / usage_baseline) * 100.0
 
     # Seats calculation
     seats_used: int | None = None
@@ -281,9 +267,7 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
     if seats_purchased > 0:
         for u in sorted_usage[:4]:
             u_used = (
-                u.get("seats_used")
-                if u.get("seats_used") is not None
-                else u.get("active_users")
+                u.get("seats_used") if u.get("seats_used") is not None else u.get("active_users")
             )
             if u_used is not None:
                 weekly_seat_utils.append(float(u_used) / float(seats_purchased))
@@ -342,9 +326,7 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
     open_deals = [d for d in deals_list if not d.get("is_closed", False)]
 
     # Open renewal deal closest to renewal
-    open_renewal_deals = [
-        d for d in open_deals if d.get("deal_type") == "renewal"
-    ]
+    open_renewal_deals = [d for d in open_deals if d.get("deal_type") == "renewal"]
     open_renewal_deal = (
         sorted(
             open_renewal_deals,
@@ -463,10 +445,9 @@ async def fetch_rows(
     signals = list((await session.execute(sig_stmt)).scalars().all())
 
     # Org median ARR
-    med_stmt = (
-        select(func.coalesce(func.percentile_cont(0.5).within_group(Account.arr), 0.0))
-        .where(Account.org_id == org_id, Account.status == "active")
-    )
+    med_stmt = select(
+        func.coalesce(func.percentile_cont(0.5).within_group(Account.arr), 0.0)
+    ).where(Account.org_id == org_id, Account.status == "active")
     median_arr = (await session.execute(med_stmt)).scalar() or 0.0
 
     return {

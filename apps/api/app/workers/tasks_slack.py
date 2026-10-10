@@ -78,6 +78,7 @@ async def run_daily_digest_fanout() -> dict[str, int]:
                 # Calculate local hour
                 try:
                     import zoneinfo
+
                     user_tz = zoneinfo.ZoneInfo(tz_name)
                     local_now = now_utc.astimezone(user_tz)
                     local_hour = local_now.hour

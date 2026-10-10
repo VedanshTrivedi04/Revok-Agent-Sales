@@ -217,7 +217,6 @@ async def fail_execution(
     return card
 
 
-
 async def _next_attempt_number(s: AsyncSession, org_id: UUID, card_id: UUID) -> int:
     from sqlalchemy import func, select
 

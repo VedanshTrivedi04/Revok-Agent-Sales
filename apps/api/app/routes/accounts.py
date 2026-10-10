@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 from uuid import UUID
 
-from fastapi import Depends, Query
+from fastapi import Depends, Query, Request
 
-from app.auth.deps import CurrentMembership
+from app.auth.deps import CurrentMembership, current_membership, get_claims
 from app.contract import endpoint, real
 from app.db.session import org_session
 from app.permissions import Action
@@ -29,6 +29,7 @@ from app.services.accounts import (
     patch_account_service,
     run_account_service,
 )
+from app.services.findings import get_today_service
 from app.utils.pagination import Page, PageParams, page_params
 
 Paging = Annotated[PageParams, Depends(page_params)]
@@ -37,10 +38,36 @@ Paging = Annotated[PageParams, Depends(page_params)]
 @endpoint("GET", "/today", group="today", page="C1 Today", owner="R", phase=3)
 async def get_today(
     type: Annotated[Literal["risk", "expansion", "all"], Query()] = "all",
-    owner: Annotated[str, Query(description="me | all | <user_id>")] = "me",
+    owner: Annotated[str | None, Query(description="me | all | <user_id>")] = None,
+    severity: Annotated[Literal["high", "medium", "low"] | None, Query()] = None,
+    renewal_within: Annotated[int | None, Query(ge=1, le=365)] = None,
 ) -> TodayResponse:
     """Ranked open findings with account summary and pending card counts."""
     raise NotImplementedError
+
+
+@real("get_today")
+async def get_today_real(
+    request: Request,
+    type: Literal["risk", "expansion", "all"] = "all",
+    owner: str | None = None,
+    severity: Literal["high", "medium", "low"] | None = None,
+    renewal_within: int | None = None,
+    **_: Any,
+) -> TodayResponse:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await get_today_service(
+            session,
+            org_id=m.org_id,
+            current_user_id=m.user_id,
+            current_user_role=m.role.value,
+            type=type,
+            owner=owner,
+            severity=severity,
+            renewal_within=renewal_within,
+        )
 
 
 @endpoint("GET", "/accounts", group="accounts", page="C5 Accounts", owner="R", phase=2)

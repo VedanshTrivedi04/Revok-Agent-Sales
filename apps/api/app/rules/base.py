@@ -45,7 +45,10 @@ def rule(
     finding_type: str,
     params_cls: type[BaseModel],
     requires_signals: bool = False,
-) -> Callable[[Callable[[AccountContext, Any], RuleHit | None]], Callable[[AccountContext, Any], RuleHit | None]]:
+) -> Callable[
+    [Callable[[AccountContext, Any], RuleHit | None]],
+    Callable[[AccountContext, Any], RuleHit | None],
+]:
     """Register a rule function."""
 
     def decorator(

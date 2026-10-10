@@ -11,7 +11,7 @@
 |---|---|---|---|---|---|---|
 | GET | `/health` | Health | Vedansh | P0 | real | public |
 | GET | `/health/ready` | Health | Vedansh | P0 | real | public |
-| GET | `/api/v1/today` | C1 Today | Rajwardhan | P3 | mock | any |
+| GET | `/api/v1/today` | C1 Today | Rajwardhan | P3 | real | any |
 | GET | `/api/v1/accounts` | C5 Accounts | Rajwardhan | P2 | real | any |
 | GET | `/api/v1/accounts/{account_id}` | C6 Account Detail | Rajwardhan | P2 | real | any |
 | GET | `/api/v1/accounts/{account_id}/timeline` | C6 Account Detail | Rajwardhan | P2 | real | any |
@@ -47,12 +47,12 @@
 | PUT | `/api/v1/autonomy/{action_type}` | D9 Autonomy | Vedansh | P2 | real | autonomy:edit |
 | GET | `/api/v1/entity-reviews` | C9 Entity Review | Rajwardhan | P2 | real | review:view |
 | POST | `/api/v1/entity-reviews/{review_id}/resolve` | C9 Entity Review | Rajwardhan | P2 | real | review:view |
-| GET | `/api/v1/findings` | C2 Finding Detail | Rajwardhan | P3 | mock | any |
-| GET | `/api/v1/findings/{finding_id}` | C2 Finding Detail | Rajwardhan | P3 | mock | any |
-| POST | `/api/v1/findings/{finding_id}/dismiss` | C2 Finding Detail | Rajwardhan | P3 | mock | approve:own |
-| POST | `/api/v1/findings/{finding_id}/snooze` | C2 Finding Detail | Rajwardhan | P3 | mock | approve:own |
-| POST | `/api/v1/findings/{finding_id}/reopen` | C2 Finding Detail | Rajwardhan | P3 | mock | approve:own |
-| POST | `/api/v1/findings/{finding_id}/feedback` | C2 Finding Detail | Rajwardhan | P3 | mock | any |
+| GET | `/api/v1/findings` | C2 Finding Detail | Rajwardhan | P3 | real | any |
+| GET | `/api/v1/findings/{finding_id}` | C2 Finding Detail | Rajwardhan | P3 | real | any |
+| POST | `/api/v1/findings/{finding_id}/dismiss` | C2 Finding Detail | Rajwardhan | P3 | real | approve:own |
+| POST | `/api/v1/findings/{finding_id}/snooze` | C2 Finding Detail | Rajwardhan | P3 | real | approve:own |
+| POST | `/api/v1/findings/{finding_id}/reopen` | C2 Finding Detail | Rajwardhan | P3 | real | approve:own |
+| POST | `/api/v1/findings/{finding_id}/feedback` | C2 Finding Detail | Rajwardhan | P3 | real | any |
 | POST | `/api/v1/ingest/usage` | B5 Usage Data | Rajwardhan | P1 | real | api_key |
 | POST | `/api/v1/ingest/usage/csv` | B5 Usage Data | Rajwardhan | P1 | real | integrations:manage |
 | GET | `/api/v1/ingest/usage/csv/{job_id}` | B5 Usage Data | Rajwardhan | P1 | real | integrations:manage |
@@ -89,11 +89,12 @@
 | PATCH | `/api/v1/orgs/current` | D4 General Settings | Vedansh | P1 | real | members:manage |
 | DELETE | `/api/v1/orgs/current` | D11 Data & Deletion | Vedansh | P6 | real | org:delete |
 | GET | `/api/v1/orgs/current/onboarding` | B8 First Sync | Vedansh | P3 | real | any |
-| GET | `/api/v1/rules` | D8 Rules | Rajwardhan | P4 | mock | rules:edit |
-| PUT | `/api/v1/rules/{key}` | D8 Rules | Rajwardhan | P4 | mock | rules:edit |
-| POST | `/api/v1/rules/{key}/preview` | D8 Rules | Rajwardhan | P4 | mock | rules:edit |
-| GET | `/api/v1/runs` | C10 Agent Runs | Rajwardhan | P3 | mock | runs:view |
-| GET | `/api/v1/runs/{run_id}` | C10 Agent Runs | Rajwardhan | P3 | mock | runs:view |
+| GET | `/api/v1/rules` | D8 Rules | Rajwardhan | P4 | real | rules:edit |
+| PUT | `/api/v1/rules/{key}` | D8 Rules | Rajwardhan | P4 | real | rules:edit |
+| POST | `/api/v1/rules/{key}/preview` | D8 Rules | Rajwardhan | P4 | real | rules:edit |
+| POST | `/api/v1/rules/rerun` | D8 Rules | Rajwardhan | P4 | real | rules:edit |
+| GET | `/api/v1/runs` | C10 Agent Runs | Rajwardhan | P3 | real | runs:view |
+| GET | `/api/v1/runs/{run_id}` | C10 Agent Runs | Rajwardhan | P3 | real | runs:view |
 | POST | `/api/v1/slack/events` | F Slack | Vedansh | P4 | real | public |
 | POST | `/api/v1/slack/interactions` | F Slack | Vedansh | P4 | real | public |
 | GET | `/api/v1/slack/oauth/callback` | B6 Slack | Vedansh | P4 | real | public |

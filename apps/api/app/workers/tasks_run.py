@@ -154,9 +154,7 @@ async def _execute_account_run_inner(
 
         # Evidence confidence & priority
         evidence_sources = {e.source for e in evidence_items if e.source}
-        has_high_signal = any(
-            float(s.get("confidence", 0.0)) >= 0.85 for s in ctx.signals_30d
-        )
+        has_high_signal = any(float(s.get("confidence", 0.0)) >= 0.85 for s in ctx.signals_30d)
         conf_val, _ = compute_evidence_confidence(
             sources=evidence_sources,
             has_high_signal=has_high_signal,

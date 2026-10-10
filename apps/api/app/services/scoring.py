@@ -113,12 +113,7 @@ def compute_priority_score(
 
     # Priority formula:
     # priority = 100 * (0.30*severity_s + 0.30*urgency + 0.25*value + 0.15*confidence) * freshness
-    base_priority = (
-        0.30 * severity_s
-        + 0.30 * urgency
-        + 0.25 * value
-        + 0.15 * confidence
-    )
+    base_priority = 0.30 * severity_s + 0.30 * urgency + 0.25 * value + 0.15 * confidence
     priority = 100.0 * base_priority * freshness
     priority_clamped = round(min(100.0, max(0.0, priority)), 2)
 

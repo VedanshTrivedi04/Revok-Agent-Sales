@@ -73,7 +73,11 @@ def build_evidence(
                         "ref_id": rid,
                         "label": f"Supporting {ref.kind} record",
                         "detail": f"Reference ID: {rid}",
-                        "source": "hubspot" if ref.kind in ("deal", "contact") else "usage" if ref.kind == "usage" else "revops",
+                        "source": "hubspot"
+                        if ref.kind in ("deal", "contact")
+                        else "usage"
+                        if ref.kind == "usage"
+                        else "revops",
                         "occurred_at": ctx.now,
                     }
                 )

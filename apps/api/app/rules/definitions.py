@@ -90,9 +90,7 @@ def r03_no_reply(ctx: AccountContext, p: R03NoReplyParams) -> RuleHit | None:
     if oldest_days < p.wait_days:
         return None
 
-    unanswered_ids = [
-        UUID(str(u["id"])) for u in ctx.unanswered_outbound if u.get("id")
-    ]
+    unanswered_ids = [UUID(str(u["id"])) for u in ctx.unanswered_outbound if u.get("id")]
 
     return RuleHit(
         rule_key="R03_no_reply",
@@ -108,7 +106,12 @@ def r03_no_reply(ctx: AccountContext, p: R03NoReplyParams) -> RuleHit | None:
     )
 
 
-@rule("R04_renewal_near_no_plan", category="renewal", finding_type="risk", params_cls=R04RenewalNearNoPlanParams)
+@rule(
+    "R04_renewal_near_no_plan",
+    category="renewal",
+    finding_type="risk",
+    params_cls=R04RenewalNearNoPlanParams,
+)
 def r04_renewal_near_no_plan(ctx: AccountContext, p: R04RenewalNearNoPlanParams) -> RuleHit | None:
     if ctx.renewal_in_days is None:
         return None
@@ -146,7 +149,12 @@ def r04_renewal_near_no_plan(ctx: AccountContext, p: R04RenewalNearNoPlanParams)
     )
 
 
-@rule("R05_champion_risk", category="stakeholder", finding_type="risk", params_cls=R05ChampionRiskParams)
+@rule(
+    "R05_champion_risk",
+    category="stakeholder",
+    finding_type="risk",
+    params_cls=R05ChampionRiskParams,
+)
 def r05_champion_risk(ctx: AccountContext, p: R05ChampionRiskParams) -> RuleHit | None:
     # 1. Champion explicitly left or marked inactive
     if ctx.champion_contact:
@@ -166,7 +174,8 @@ def r05_champion_risk(ctx: AccountContext, p: R05ChampionRiskParams) -> RuleHit 
 
     # 2. Champion leaving signal in 60d
     leaving_signals = [
-        s for s in ctx.signals_60d
+        s
+        for s in ctx.signals_60d
         if s.get("kind") == "champion_leaving" and float(s.get("confidence", 0.0)) >= p.min_conf
     ]
     if leaving_signals:
@@ -238,10 +247,17 @@ def r05_champion_risk(ctx: AccountContext, p: R05ChampionRiskParams) -> RuleHit 
     return None
 
 
-@rule("R06_negative_sentiment", category="sentiment", finding_type="risk", params_cls=R06NegativeSentimentParams, requires_signals=True)
+@rule(
+    "R06_negative_sentiment",
+    category="sentiment",
+    finding_type="risk",
+    params_cls=R06NegativeSentimentParams,
+    requires_signals=True,
+)
 def r06_negative_sentiment(ctx: AccountContext, p: R06NegativeSentimentParams) -> RuleHit | None:
     escalation_signals = [
-        s for s in ctx.signals_21d
+        s
+        for s in ctx.signals_21d
         if s.get("kind") == "escalation" and float(s.get("confidence", 0.0)) >= p.escalation_conf
     ]
     if escalation_signals:
@@ -256,8 +272,11 @@ def r06_negative_sentiment(ctx: AccountContext, p: R06NegativeSentimentParams) -
         )
 
     negative_signals = [
-        s for s in ctx.signals_21d
-        if s.get("kind") == "sentiment" and s.get("polarity") == "negative" and float(s.get("confidence", 0.0)) >= 0.5
+        s
+        for s in ctx.signals_21d
+        if s.get("kind") == "sentiment"
+        and s.get("polarity") == "negative"
+        and float(s.get("confidence", 0.0)) >= 0.5
     ]
     if len(negative_signals) >= p.min_signals:
         sig_ids = [UUID(str(s["id"])) for s in negative_signals if s.get("id")]
@@ -273,10 +292,17 @@ def r06_negative_sentiment(ctx: AccountContext, p: R06NegativeSentimentParams) -
     return None
 
 
-@rule("R07_competitor_mention", category="sentiment", finding_type="risk", params_cls=R07CompetitorMentionParams, requires_signals=True)
+@rule(
+    "R07_competitor_mention",
+    category="sentiment",
+    finding_type="risk",
+    params_cls=R07CompetitorMentionParams,
+    requires_signals=True,
+)
 def r07_competitor_mention(ctx: AccountContext, p: R07CompetitorMentionParams) -> RuleHit | None:
     comp_signals = [
-        s for s in ctx.signals_45d
+        s
+        for s in ctx.signals_45d
         if s.get("kind") == "competitor_mention" and float(s.get("confidence", 0.0)) >= p.min_conf
     ]
     if not comp_signals:
@@ -318,7 +344,12 @@ def r08_seat_underuse(ctx: AccountContext, p: R08SeatUnderuseParams) -> RuleHit 
     )
 
 
-@rule("R09_single_threaded", category="stakeholder", finding_type="risk", params_cls=R09SingleThreadedParams)
+@rule(
+    "R09_single_threaded",
+    category="stakeholder",
+    finding_type="risk",
+    params_cls=R09SingleThreadedParams,
+)
 def r09_single_threaded(ctx: AccountContext, p: R09SingleThreadedParams) -> RuleHit | None:
     if ctx.active_contacts_90d > p.max_contacts:
         return None
@@ -335,7 +366,9 @@ def r09_single_threaded(ctx: AccountContext, p: R09SingleThreadedParams) -> Rule
     )
 
 
-@rule("R10_no_next_step", category="engagement", finding_type="risk", params_cls=R10NoNextStepParams)
+@rule(
+    "R10_no_next_step", category="engagement", finding_type="risk", params_cls=R10NoNextStepParams
+)
 def r10_no_next_step(ctx: AccountContext, p: R10NoNextStepParams) -> RuleHit | None:
     for deal in ctx.open_deals:
         if deal.get("deal_type") in ("renewal", "expansion"):
@@ -353,10 +386,17 @@ def r10_no_next_step(ctx: AccountContext, p: R10NoNextStepParams) -> RuleHit | N
     return None
 
 
-@rule("R11_pricing_budget", category="sentiment", finding_type="risk", params_cls=R11PricingBudgetParams, requires_signals=True)
+@rule(
+    "R11_pricing_budget",
+    category="sentiment",
+    finding_type="risk",
+    params_cls=R11PricingBudgetParams,
+    requires_signals=True,
+)
 def r11_pricing_budget(ctx: AccountContext, p: R11PricingBudgetParams) -> RuleHit | None:
     pricing_signals = [
-        s for s in ctx.signals_45d
+        s
+        for s in ctx.signals_45d
         if s.get("kind") in ("pricing_concern", "budget_cut")
         and float(s.get("confidence", 0.0)) >= p.min_conf
     ]
@@ -379,7 +419,12 @@ def r11_pricing_budget(ctx: AccountContext, p: R11PricingBudgetParams) -> RuleHi
 # ==============================================================================
 
 
-@rule("X01_seat_saturation", category="expansion", finding_type="expansion", params_cls=X01SeatSaturationParams)
+@rule(
+    "X01_seat_saturation",
+    category="expansion",
+    finding_type="expansion",
+    params_cls=X01SeatSaturationParams,
+)
 def x01_seat_saturation(ctx: AccountContext, p: X01SeatSaturationParams) -> RuleHit | None:
     if len(ctx.weekly_seat_utils) < 2:
         return None
@@ -401,7 +446,12 @@ def x01_seat_saturation(ctx: AccountContext, p: X01SeatSaturationParams) -> Rule
     )
 
 
-@rule("X02_usage_growth", category="expansion", finding_type="expansion", params_cls=X02UsageGrowthParams)
+@rule(
+    "X02_usage_growth",
+    category="expansion",
+    finding_type="expansion",
+    params_cls=X02UsageGrowthParams,
+)
 def x02_usage_growth(ctx: AccountContext, p: X02UsageGrowthParams) -> RuleHit | None:
     if ctx.usage_change_pct is None or ctx.usage_current is None:
         return None
@@ -422,10 +472,17 @@ def x02_usage_growth(ctx: AccountContext, p: X02UsageGrowthParams) -> RuleHit | 
     )
 
 
-@rule("X03_upgrade_intent", category="expansion", finding_type="expansion", params_cls=X03UpgradeIntentParams, requires_signals=True)
+@rule(
+    "X03_upgrade_intent",
+    category="expansion",
+    finding_type="expansion",
+    params_cls=X03UpgradeIntentParams,
+    requires_signals=True,
+)
 def x03_upgrade_intent(ctx: AccountContext, p: X03UpgradeIntentParams) -> RuleHit | None:
     intent_signals = [
-        s for s in ctx.signals_45d
+        s
+        for s in ctx.signals_45d
         if s.get("kind") in ("upgrade_intent", "feature_request")
         and float(s.get("confidence", 0.0)) >= p.min_conf
     ]
@@ -450,11 +507,14 @@ def x03_upgrade_intent(ctx: AccountContext, p: X03UpgradeIntentParams) -> RuleHi
     )
 
 
-@rule("X04_new_stakeholders", category="expansion", finding_type="expansion", params_cls=X04NewStakeholdersParams)
+@rule(
+    "X04_new_stakeholders",
+    category="expansion",
+    finding_type="expansion",
+    params_cls=X04NewStakeholdersParams,
+)
 def x04_new_stakeholders(ctx: AccountContext, p: X04NewStakeholdersParams) -> RuleHit | None:
-    has_stakeholder_signal = any(
-        s.get("kind") == "new_stakeholder" for s in ctx.signals_30d
-    )
+    has_stakeholder_signal = any(s.get("kind") == "new_stakeholder" for s in ctx.signals_30d)
     if len(ctx.new_contacts_30d) < p.min_new_contacts and not has_stakeholder_signal:
         return None
 
@@ -468,8 +528,15 @@ def x04_new_stakeholders(ctx: AccountContext, p: X04NewStakeholdersParams) -> Ru
     )
 
 
-@rule("X05_renewal_strong_health", category="expansion", finding_type="expansion", params_cls=X05RenewalStrongHealthParams)
-def x05_renewal_strong_health(ctx: AccountContext, p: X05RenewalStrongHealthParams) -> RuleHit | None:
+@rule(
+    "X05_renewal_strong_health",
+    category="expansion",
+    finding_type="expansion",
+    params_cls=X05RenewalStrongHealthParams,
+)
+def x05_renewal_strong_health(
+    ctx: AccountContext, p: X05RenewalStrongHealthParams
+) -> RuleHit | None:
     if ctx.renewal_in_days is None or not (0 <= ctx.renewal_in_days <= p.renewal_window):
         return None
     if ctx.usage_change_pct is None or ctx.usage_change_pct < 0:

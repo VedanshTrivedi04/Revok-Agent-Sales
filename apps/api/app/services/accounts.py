@@ -529,7 +529,10 @@ async def run_account_service(
 
     try:
         from app.workers.tasks_run import run_account_task
-        run_account_task.delay(str(org_id), str(account_id), "manual", str(user_id), str(agent_run.id))
+
+        run_account_task.delay(
+            str(org_id), str(account_id), "manual", str(user_id), str(agent_run.id)
+        )
     except Exception:
         pass
 

@@ -61,16 +61,12 @@ async def _build_admin_org_out(s: AsyncSession, org: Organization) -> AdminOrgOu
     """Compute aggregate counts and health status for an organization."""
     members_count = (
         await s.scalar(
-            select(func.count()).where(
-                Membership.org_id == org.id, Membership.status == "active"
-            )
+            select(func.count()).where(Membership.org_id == org.id, Membership.status == "active")
         )
         or 0
     )
 
-    accounts_count = (
-        await s.scalar(select(func.count()).where(Account.org_id == org.id)) or 0
-    )
+    accounts_count = await s.scalar(select(func.count()).where(Account.org_id == org.id)) or 0
 
     last_sync = await s.scalar(
         select(func.max(Integration.last_sync_at)).where(Integration.org_id == org.id)
@@ -78,9 +74,7 @@ async def _build_admin_org_out(s: AsyncSession, org: Organization) -> AdminOrgOu
 
     open_findings = (
         await s.scalar(
-            select(func.count()).where(
-                Finding.org_id == org.id, Finding.status == "open"
-            )
+            select(func.count()).where(Finding.org_id == org.id, Finding.status == "open")
         )
         or 0
     )
@@ -133,18 +127,16 @@ async def get_admin_org(org_id: UUID) -> AdminOrgDetail:
         base = await _build_admin_org_out(s, org)
 
         integs = (
-            await s.execute(
-                select(Integration).where(Integration.org_id == org_id)
-            )
-        ).scalars().all()
+            (await s.execute(select(Integration).where(Integration.org_id == org_id)))
+            .scalars()
+            .all()
+        )
 
         integrations_out: list[dict[str, Any]] = [
             {
                 "provider": integ.provider,
                 "status": integ.status,
-                "last_sync_at": integ.last_sync_at.isoformat()
-                if integ.last_sync_at
-                else None,
+                "last_sync_at": integ.last_sync_at.isoformat() if integ.last_sync_at else None,
             }
             for integ in integs
         ]
