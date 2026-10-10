@@ -46,5 +46,5 @@ markers = ["golden: golden dataset tests"]
 
 [tool.ruff.lint.per-file-ignores]
 "app/models/*" = ["E501"]
-"tests/*" = ["E501"]
+"tests/*" = ["E501", "B008"]
 "migrations/*" = ["E501", "I001"]

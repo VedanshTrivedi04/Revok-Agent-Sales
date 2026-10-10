@@ -8,7 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.config import get_settings
-from app.routes import health
+from app.routes import health, me
 from app.utils.errors import AppError
 
 
@@ -37,6 +37,7 @@ def create_app() -> FastAPI:
 
     app = FastAPI(title="RevOps Agent API", version="0.1.0")
     app.include_router(health.router)
+    app.include_router(me.router)
 
     @app.exception_handler(AppError)
     async def _app_error(_: Request, exc: AppError) -> JSONResponse:
