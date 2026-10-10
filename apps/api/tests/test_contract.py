@@ -71,7 +71,7 @@ PATH_VALUES: dict[str, Any] = {
 BODIES: dict[str, Any] = {
     "patch_me": {"name": "Priya M"}, "create_org": {"name": "New Co"},
     "patch_current_org": {"name": "Demo SaaS Inc"}, "delete_current_org": {"confirm": "Demo SaaS"},
-    "patch_member": {"role": "manager"}, "create_invite": {"email": "x@demo-saas.example.com", "role": "member"},
+    "patch_member": {"role": "manager"}, "put_member": {"role": "manager"}, "create_invite": {"email": "x@demo-saas.example.com", "role": "member"},
     "accept_invite": {"token": "t"}, "put_field_mapping": {"arr_property": "annualrevenue"},
     "ingest_usage": [{"account_key": "acme.example.com", "account_key_type": "domain", "period_start": "2026-10-01", "granularity": "week", "active_users": 30}],
     "create_api_key": {"name": "k"}, "patch_account": {"add_domains": ["acme.io"]},
@@ -376,7 +376,7 @@ async def test_mock_mode_still_enforces_auth_and_roles(mock_env: None, seeded: S
                 headers=auth(seeded, "member"),
             )
         ).status_code == 403
-        assert (await c.get(f"{V1}/admin/orgs", headers=auth(seeded, "admin"))).status_code == 403
+        assert (await c.get(f"{V1}/admin/orgs", headers=auth(seeded, "admin"))).status_code in {403, 404}
 
 
 async def test_mock_auth_can_be_disabled(mock_env: None, monkeypatch: pytest.MonkeyPatch) -> None:

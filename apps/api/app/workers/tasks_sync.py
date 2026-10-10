@@ -80,10 +80,17 @@ def hourly_sync_dispatch() -> None:
     from app.db.session import admin_session
 
     async def _dispatch() -> None:
+        from app.models.tenancy import Organization
+
         async with admin_session() as s:
-            stmt = select(Integration).where(
-                Integration.status.in_(("connected", "error")),
-                Integration.provider == "hubspot",
+            stmt = (
+                select(Integration)
+                .join(Organization, Organization.id == Integration.org_id)
+                .where(
+                    Organization.status == "active",
+                    Integration.status.in_(("connected", "error")),
+                    Integration.provider == "hubspot",
+                )
             )
             integrations = (await s.execute(stmt)).scalars().all()
             for integ in integrations:

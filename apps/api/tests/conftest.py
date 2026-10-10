@@ -109,6 +109,7 @@ class FakeAsyncRedis:
 @pytest_asyncio.fixture(autouse=True)
 async def _fresh_engine(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[None]:
     """Each test gets its own engine and Redis client (bound to the test's event loop)."""
+    get_settings.cache_clear()
     db_session.get_engine.cache_clear()
     db_session._sessionmaker.cache_clear()
     db_session.get_admin_engine.cache_clear()
@@ -124,6 +125,7 @@ async def _fresh_engine(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[None]:
         await db_session.get_engine().dispose()
         await db_session.get_admin_engine().dispose()
 
+    get_settings.cache_clear()
     db_session.get_engine.cache_clear()
     db_session._sessionmaker.cache_clear()
     db_session.get_admin_engine.cache_clear()

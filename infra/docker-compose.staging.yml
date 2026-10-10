@@ -35,7 +35,7 @@ services:
     environment:
       APP_ENV: staging
       MOCK_API: "true"
-      REAL_ROUTERS: ${REAL_ROUTERS:-me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log,stream,integrations,oauth,field_mapping,ingest,accounts,entity_reviews,slack}
+      REAL_ROUTERS: ${REAL_ROUTERS:-me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log,stream,integrations,oauth,field_mapping,ingest,accounts,entity_reviews,slack,admin}
       SEED_ON_START: "true"
       DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/revops
       DATABASE_ADMIN_URL: postgresql+asyncpg://admin:admin@postgres:5432/revops

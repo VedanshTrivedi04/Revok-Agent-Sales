@@ -480,6 +480,56 @@ uv run python scripts/check_openapi.py --update                   # after any co
 
 ---------------------------------------------------------------------------------------------------
 
+## Phase 5 Completion Ledger (Vedansh — V5-01..V5-04)
+
+**Status:** COMPLETE & VERIFIED
+
+**Tasks Completed:**
+- **V5-01 (Gmail Draft Handler):**
+  - UTF-8 MIME RFC 822 draft construction in `app.connectors.google.writes.GmailDraftHandler`.
+  - Headers: `Subject`, `To`, `Cc`, `X-RevOps-Card` (card ID), `In-Reply-To`, `References`, and `threadId` for replies. Urlsafe base64 encoded.
+  - `find_existing`: looks up stored draft id from `external_ref` or queries Gmail API (`q=rfc822msgid:...` or headers search).
+  - Draft safety: strictly creates drafts via `/gmail/v1/users/me/drafts`, NEVER sends (`mode == 'send'` raises `FatalError("drafts_only_never_send")`).
+  - Idempotency & Revert: revert deletes draft via `DELETE /gmail/v1/users/me/drafts/{draft_id}`.
+  - Recipient allowlist re-check: re-validates all recipient emails at execution time against account contacts and internal company domains.
+- **V5-02 (Calendar Meeting Handler):**
+  - Implemented in `app.connectors.google.writes.CalendarMeetingHandler`.
+  - Feature flag check: respects `meeting_request` flag; raises `FatalError("feature_flag_disabled:meeting_request")` when disabled.
+  - Only creates calendar event after human approval; sets attendees, summary, description, and `revops_card_id` in extended properties.
+  - Revert deletes event via `DELETE /calendars/primary/events/{event_id}`.
+- **V5-03 (Superadmin APIs & Privacy Guard):**
+  - Superadmin authentication: `require_superadmin` verifies `User.is_superadmin` using `admin_session()`; raises HTTP 404 `not_found` for non-superadmins so admin routes cannot be discovered.
+  - All admin operations (`services/admin.py`) strictly execute inside `admin_session()`.
+  - Endpoints: `GET /admin/orgs`, `GET /admin/orgs/{id}`, `POST /admin/orgs/{id}/suspend`, `POST /admin/orgs/{id}/unsuspend`, `GET /admin/jobs` with retry (`POST /admin/jobs/{id}/retry`) and discard (`DELETE /admin/jobs/{id}`), `GET /admin/llm/health`, `GET /admin/evals`, `POST /admin/evals/run`.
+  - Zero customer content: responses contain only counts, statuses, and error text. Never leaks customer PII, customer domain names, finding titles, or payload content.
+  - Keyset pagination with `paginate()` and `OrderKey` from `app.utils.pagination`.
+  - Suspended org handling: `get_api_key_org` and `current_membership` return 403 `org_suspended` across all non-admin routes. Invalidation of Redis membership cache on suspend/unsuspend.
+  - Celery Beat fan-out guards: `hourly_sync_dispatch` and `expire_cards_fanout_task` skip suspended orgs (`Organization.status == "active"`).
+- **V5-04 (Feature Flags):**
+  - Database table `feature_flags` (org_id, key, enabled, updated_at).
+  - Admin endpoints: `GET /admin/flags`, `PUT /admin/flags` to manage default flags and per-org overrides.
+  - Default flags (`email_send: False`, `meeting_request: False`, `slack_approvals: True`, `prompt_variant: False`) reflected in `/me.flags` merged with org-level overrides.
+
+**Files Created / Modified:**
+- `apps/api/app/connectors/google/writes.py` (New: GmailDraftHandler, CalendarMeetingHandler)
+- `apps/api/app/services/admin.py` (New: Superadmin service layer using admin_session)
+- `apps/api/app/routes/admin.py` (Wired real endpoints for /admin/*)
+- `apps/api/app/auth/deps.py` (require_superadmin with 404, org suspended check with 403)
+- `apps/api/app/executor/__init__.py` (Registered google handlers)
+- `apps/api/app/executor/revert.py` (Added google revert operations)
+- `apps/api/app/services/identity.py` (Feature flags reflection in /me.flags)
+- `apps/api/app/workers/tasks_sync.py` (Skip suspended orgs in Beat sync fanout)
+- `apps/api/app/workers/tasks_maintenance.py` (Skip suspended orgs in card expiration fanout)
+- `apps/api/tests/test_phase5_admin_and_google.py` (New: 28 tests for V5-01..V5-04)
+- `docs/endpoints.md` (Updated /admin/* from mock to real)
+- `infra/docker-compose.staging.yml` (Added admin to REAL_ROUTERS)
+
+**Verification:**
+- `uv run pytest tests/test_contract.py tests/test_executor.py tests/test_phase5_admin_and_google.py -v`: 148 passed in 43.54s.
+
+
+---------------------------------------------------------------------------------------------------
+
 ## Phase 4 Completion Ledger (Vedansh — V4-01..V4-04)
 
 **Status:** COMPLETE & VERIFIED

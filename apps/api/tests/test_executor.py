@@ -434,15 +434,15 @@ async def test_revert_card_rejects_non_revertable_type(
             id=card_id,
             org_id=org_id,
             account_id=acc_id,
-            type="email_draft",
+            type="slack_internal",
             tier=2,
             status="executed",
-            title="Send email",
+            title="Send notification",
             rationale="Test",
             evidence_keys=[],
             payload={},
             executed_at=utcnow(),
-            idempotency_key="key-revert-email",
+            idempotency_key="key-revert-slack",
         )
         s.add(card)
         await s.commit()

@@ -1,9 +1,9 @@
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import Depends
+from fastapi import Depends, Request
 
-from app.contract import endpoint
+from app.contract import endpoint, real
 from app.schemas.identity import Ack
 from app.schemas.ops import (
     AdminJobOut,
@@ -15,6 +15,7 @@ from app.schemas.ops import (
     FlagPutIn,
     LlmHealthOut,
 )
+from app.services import admin as admin_service
 from app.utils.pagination import Page, PageParams, page_params
 
 PAGE = "E Admin Console"
@@ -136,3 +137,68 @@ async def list_flags() -> list[FlagOut]:
 async def put_flag(body: FlagPutIn) -> FlagOut:
     """Create or update a feature flag (default and per-org overrides)."""
     raise NotImplementedError
+
+
+# ---------------------------------------------------------------------------
+# Real Handlers
+# ---------------------------------------------------------------------------
+
+
+@real("list_admin_orgs")
+async def list_admin_orgs_real(request: Request, page: PageParams, **_: Any) -> Page[AdminOrgOut]:
+    return await admin_service.list_admin_orgs(page)
+
+
+@real("get_admin_org")
+async def get_admin_org_real(request: Request, org_id: UUID, **_: Any) -> AdminOrgDetail:
+    return await admin_service.get_admin_org(org_id)
+
+
+@real("suspend_org")
+async def suspend_org_real(request: Request, org_id: UUID, **_: Any) -> AdminOrgOut:
+    return await admin_service.suspend_org(org_id)
+
+
+@real("unsuspend_org")
+async def unsuspend_org_real(request: Request, org_id: UUID, **_: Any) -> AdminOrgOut:
+    return await admin_service.unsuspend_org(org_id)
+
+
+@real("list_admin_jobs")
+async def list_admin_jobs_real(request: Request, page: PageParams, **_: Any) -> Page[AdminJobOut]:
+    return await admin_service.list_admin_jobs(page)
+
+
+@real("retry_admin_job")
+async def retry_admin_job_real(request: Request, job_id: UUID, **_: Any) -> Ack:
+    return await admin_service.retry_admin_job(job_id)
+
+
+@real("discard_admin_job")
+async def discard_admin_job_real(request: Request, job_id: UUID, **_: Any) -> Ack:
+    return await admin_service.discard_admin_job(job_id)
+
+
+@real("llm_health")
+async def llm_health_real(request: Request, **_: Any) -> LlmHealthOut:
+    return await admin_service.llm_health()
+
+
+@real("list_evals")
+async def list_evals_real(request: Request, **_: Any) -> list[EvalSummary]:
+    return await admin_service.list_evals()
+
+
+@real("run_evals")
+async def run_evals_real(request: Request, body: EvalRunIn, **_: Any) -> Ack:
+    return await admin_service.run_evals(body)
+
+
+@real("list_flags")
+async def list_flags_real(request: Request, **_: Any) -> list[FlagOut]:
+    return await admin_service.list_flags()
+
+
+@real("put_flag")
+async def put_flag_real(request: Request, body: FlagPutIn, **_: Any) -> FlagOut:
+    return await admin_service.put_flag(body)

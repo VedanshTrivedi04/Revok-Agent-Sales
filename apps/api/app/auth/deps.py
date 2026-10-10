@@ -130,14 +130,15 @@ def require_permission(action: Action | str) -> Callable[..., Awaitable[CurrentM
 
 async def require_superadmin(claims: Annotated[Claims, Depends(get_claims)]) -> CurrentUser:
     """Platform operators only (users.is_superadmin). Used by /admin routers."""
+    from app.db.session import admin_session
     from app.models.tenancy import User
 
-    async with org_session(claims.org_id) as s:
+    async with admin_session() as s:
         flag = (
             await s.execute(select(User.is_superadmin).where(User.id == claims.user_id))
         ).scalar_one_or_none()
     if not flag:
-        raise AppError("forbidden", "Superadmin only", 403)
+        raise AppError("not_found", "Not found", 404)
     return CurrentUser(id=claims.user_id, email=claims.email)
 
 
@@ -191,20 +192,32 @@ async def get_api_key_org(request: Request) -> UUID:
     if token.startswith("rk_"):
         token_hash = hashlib.sha256(token.encode()).hexdigest()
         async with admin_session() as s:
-            stmt = select(ApiKey).where(ApiKey.key_hash == token_hash, ApiKey.revoked_at.is_(None))
-            key_row = (await s.execute(stmt)).scalar_one_or_none()
-            if key_row is None:
+            stmt = (
+                select(ApiKey, Organization.status)
+                .join(Organization, Organization.id == ApiKey.org_id)
+                .where(ApiKey.key_hash == token_hash, ApiKey.revoked_at.is_(None))
+            )
+            row = (await s.execute(stmt)).first()
+            if row is None:
                 # Support demo key in seed
                 demo_hash = hashlib.sha256(f"demo-{token}".encode()).hexdigest()
-                stmt = select(ApiKey).where(
-                    ApiKey.key_hash == demo_hash, ApiKey.revoked_at.is_(None)
+                stmt = (
+                    select(ApiKey, Organization.status)
+                    .join(Organization, Organization.id == ApiKey.org_id)
+                    .where(ApiKey.key_hash == demo_hash, ApiKey.revoked_at.is_(None))
                 )
-                key_row = (await s.execute(stmt)).scalar_one_or_none()
-            if key_row is None:
+                row = (await s.execute(stmt)).first()
+            if row is None:
                 raise AppError("unauthenticated", "Invalid or revoked API key", 401)
+            key_row, org_status = row
+            if org_status == "suspended":
+                raise AppError("org_suspended", "This organization is suspended", 403)
             key_row.last_used_at = utcnow()
             return key_row.org_id
 
     # Fallback to JWT
     claims = verify_service_jwt(token)
+    m = await _load_membership(claims.user_id, claims.org_id)
+    if m and m.get("org_status") == "suspended":
+        raise AppError("org_suspended", "This organization is suspended", 403)
     return claims.org_id

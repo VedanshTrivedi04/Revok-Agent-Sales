@@ -61,9 +61,17 @@ async def get_user_memberships(user_id: UUID) -> list[MeMembership]:
         return [MeMembership(org_id=r[0], org_name=r[1], role=r[2]) for r in rows]
 
 
+DEFAULT_FEATURE_FLAGS: dict[str, bool] = {
+    "email_send": False,
+    "meeting_request": False,
+    "slack_approvals": True,
+    "prompt_variant": False,
+}
+
+
 async def get_feature_flags(s: AsyncSession, org_id: UUID) -> dict[str, bool]:
+    flags: dict[str, bool] = dict(DEFAULT_FEATURE_FLAGS)
     rows = (await s.execute(select(FeatureFlag))).scalars().all()
-    flags: dict[str, bool] = {}
     for r in rows:
         per_org = r.per_org or {}
         val = per_org.get(str(org_id), r.default)

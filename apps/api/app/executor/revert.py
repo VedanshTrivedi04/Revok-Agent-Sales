@@ -52,7 +52,13 @@ from app.utils.time import utcnow
 
 log = structlog.get_logger()
 
-REVERTABLE_TYPES = {"crm_field_update", "crm_task", "crm_note"}
+REVERTABLE_TYPES = {
+    "crm_field_update",
+    "crm_task",
+    "crm_note",
+    "email_draft",
+    "meeting_request",
+}
 REVERT_WINDOW_DAYS = 7
 
 
@@ -220,3 +226,19 @@ async def _apply_revert(
             await _hs_delete(ctx, f"/crm/v3/objects/tasks/{task_id}")
         if note_id := ext.get("hubspot_note_id"):
             await _hs_delete(ctx, f"/crm/v3/objects/notes/{note_id}")
+
+    elif card.type == "email_draft":
+        from app.connectors.google.writes import _gmail_delete
+
+        ext = card.external_ref or {}
+        if draft_id := ext.get("gmail_draft_id"):
+            await _gmail_delete(ctx, f"/gmail/v1/users/me/drafts/{draft_id}")
+            log.info("gmail_draft_deleted", draft_id=draft_id)
+
+    elif card.type == "meeting_request":
+        from app.connectors.google.writes import _gcal_delete
+
+        ext = card.external_ref or {}
+        if event_id := ext.get("gcal_event_id"):
+            await _gcal_delete(ctx, f"/calendars/primary/events/{event_id}")
+            log.info("gcal_event_deleted", event_id=event_id)

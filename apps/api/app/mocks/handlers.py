@@ -220,6 +220,7 @@ def m_list_members(request: Request, page: PageParams, **_: Any) -> Any:
     return page_of(store().d["members"]["members"], page)
 
 
+@mock("put_member")
 @mock("patch_member")
 def m_patch_member(request: Request, member_id: Any, body: Any, **_: Any) -> Any:
     m = next((x for x in store().d["members"]["members"] if x["id"] == str(member_id)), None)
