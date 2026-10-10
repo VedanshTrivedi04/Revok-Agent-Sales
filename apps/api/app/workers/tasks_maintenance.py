@@ -66,3 +66,79 @@ def purge_deleted_org_task(org_id: str, force: bool = False) -> dict[str, int]:
             return await purge_organization(s, UUID(org_id), force=force)
 
     return asyncio.run(_purge())
+
+
+async def find_stale_approved_cards(min_age_seconds: int = 90) -> list[tuple[UUID, UUID]]:
+    """(org_id, card_id) of `approved` cards nobody started executing (active orgs only)."""
+    from datetime import timedelta
+
+    from sqlalchemy import select
+
+    from app.db.session import admin_session
+    from app.models.actions import ActionCard
+    from app.models.tenancy import Organization
+    from app.utils.time import utcnow
+
+    cutoff = utcnow() - timedelta(seconds=min_age_seconds)
+    async with admin_session() as s:
+        rows = (
+            await s.execute(
+                select(ActionCard.org_id, ActionCard.id)
+                .join(Organization, Organization.id == ActionCard.org_id)
+                .where(
+                    ActionCard.status == "approved",
+                    ActionCard.updated_at < cutoff,
+                    Organization.status == "active",
+                )
+                .limit(500)
+            )
+        ).all()
+    return [(r[0], r[1]) for r in rows]
+
+
+@celery_app.task(name="maintenance.sweep_approved_cards", queue="default")
+def sweep_approved_cards_task() -> dict[str, int]:
+    """Safety net: re-enqueue `approved` cards no worker picked up (lost enqueue, worker crash).
+
+    execute_card is idempotent (approved -> executing is a no-op otherwise), so re-queuing is safe.
+    """
+    import asyncio
+
+    stale = asyncio.run(find_stale_approved_cards())
+    for org_id, card_id in stale:
+        execute_card_task.delay(str(org_id), str(card_id))
+    return {"requeued": len(stale)}
+
+
+@celery_app.task(name="maintenance.purge_deleted_orgs_fanout", queue="default")
+def purge_deleted_orgs_fanout_task() -> dict[str, int]:
+    """Daily: purge organizations soft-deleted more than 30 days ago (retention period)."""
+    import asyncio
+    from datetime import timedelta
+
+    from sqlalchemy import select
+
+    from app.db.session import admin_session
+    from app.models.tenancy import Organization
+    from app.utils.time import utcnow
+
+    async def _due() -> list[str]:
+        cutoff = utcnow() - timedelta(days=30)
+        async with admin_session() as s:
+            ids = (
+                (
+                    await s.execute(
+                        select(Organization.id).where(
+                            Organization.status == "deleted", Organization.deleted_at < cutoff
+                        )
+                    )
+                )
+                .scalars()
+                .all()
+            )
+        return [str(i) for i in ids]
+
+    due = asyncio.run(_due())
+    for org_id in due:
+        purge_deleted_org_task.delay(org_id)
+    return {"purged": len(due)}

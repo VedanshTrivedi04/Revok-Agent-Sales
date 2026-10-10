@@ -121,7 +121,10 @@ class GCalSyncEngine:
                 )
                 if status_code == 410:
                     # Sync token expired / 410 Gone -> fallback to last 30 days
-                    log.info("gcal_sync_token_expired_falling_back_to_30d", integration_id=str(self.integration_id))
+                    log.info(
+                        "gcal_sync_token_expired_falling_back_to_30d",
+                        integration_id=str(self.integration_id),
+                    )
                     time_min = (now_dt - timedelta(days=30)).isoformat()
                     items, next_token, _ = await self._fetch_calendar_events(ctx, time_min=time_min)
                 items_to_process = items
@@ -129,6 +132,7 @@ class GCalSyncEngine:
             else:
                 # Initial backfill: default 180 days (or org.settings.backfill_days)
                 from app.models.tenancy import Organization
+
                 org_stmt = select(Organization).where(Organization.id == self.org_id)
                 org_obj = (await self.session.execute(org_stmt)).scalar_one_or_none()
                 raw_days = (
@@ -166,37 +170,43 @@ class GCalSyncEngine:
                 if organizer_email:
                     norm_org = organizer_email.strip().lower()
                     dom = _extract_domain(norm_org)
-                    participants.append({
-                        "role": "organizer",
-                        "name": (item.get("organizer") or {}).get("displayName"),
-                        "email": norm_org,
-                        "is_internal": bool(dom and dom in org_domains),
-                    })
+                    participants.append(
+                        {
+                            "role": "organizer",
+                            "name": (item.get("organizer") or {}).get("displayName"),
+                            "email": norm_org,
+                            "is_internal": bool(dom and dom in org_domains),
+                        }
+                    )
                     seen_emails.add(norm_org)
 
                 if creator_email:
                     norm_creator = creator_email.strip().lower()
                     if norm_creator not in seen_emails:
                         dom = _extract_domain(norm_creator)
-                        participants.append({
-                            "role": "creator",
-                            "name": (item.get("creator") or {}).get("displayName"),
-                            "email": norm_creator,
-                            "is_internal": bool(dom and dom in org_domains),
-                        })
+                        participants.append(
+                            {
+                                "role": "creator",
+                                "name": (item.get("creator") or {}).get("displayName"),
+                                "email": norm_creator,
+                                "is_internal": bool(dom and dom in org_domains),
+                            }
+                        )
                         seen_emails.add(norm_creator)
 
                 for att in raw_attendees:
                     email_addr = (att.get("email") or "").strip().lower()
                     if email_addr and email_addr not in seen_emails:
                         dom = _extract_domain(email_addr)
-                        participants.append({
-                            "role": "attendee",
-                            "name": att.get("displayName"),
-                            "email": email_addr,
-                            "response_status": att.get("responseStatus"),
-                            "is_internal": bool(dom and dom in org_domains),
-                        })
+                        participants.append(
+                            {
+                                "role": "attendee",
+                                "name": att.get("displayName"),
+                                "email": email_addr,
+                                "response_status": att.get("responseStatus"),
+                                "is_internal": bool(dom and dom in org_domains),
+                            }
+                        )
                         seen_emails.add(email_addr)
 
                 # Filter: must have >= 1 external attendee

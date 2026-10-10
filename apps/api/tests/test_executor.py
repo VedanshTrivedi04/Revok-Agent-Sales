@@ -38,6 +38,19 @@ from app.utils.events import publish
 from app.utils.time import utcnow
 from tests.helpers import SeededOrg
 
+
+@pytest.fixture(autouse=True)
+def _fake_provider_ctx(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests exercise the executor with fake handlers; provider connection loading is
+    covered by tests/test_remediation_execution.py."""
+
+    async def _none(org_id: UUID, card: Any) -> None:
+        return None
+
+    monkeypatch.setattr("app.executor.core.load_card_ctx", _none)
+    monkeypatch.setattr("app.executor.revert.load_card_ctx", _none)
+
+
 @pytest.fixture
 def engine(owner_engine: AsyncEngine) -> AsyncEngine:
     return owner_engine
@@ -589,7 +602,13 @@ async def test_template_action_planner_high_risk_proposals(
         finding_id=uuid4(),
         finding_type="risk",
         severity="high",
-        account={"id": str(uuid4()), "name": "Big Corp", "crm_id": "c1", "owner_name": "Bob"},
+        account={
+            "id": str(uuid4()),
+            "name": "Big Corp",
+            "crm_id": "c1",
+            "owner_name": "Bob",
+            "owner_slack_id": "U0BOB",
+        },
         contacts=[{"name": "Alice Lead", "email": "alice@bigcorp.com"}],
         evidence_keys=["signal_drop_usage", "signal_no_login"],
         rule_keys=["rule_risk_drop"],
@@ -620,7 +639,7 @@ async def test_template_action_planner_expansion_proposals(
         finding_id=uuid4(),
         finding_type="expansion",
         severity="medium",
-        account={"id": str(uuid4()), "name": "Grow Corp", "owner_name": "Sarah"},
+        account={"id": str(uuid4()), "name": "Grow Corp", "owner_name": "Sarah", "crm_id": "c2"},
         contacts=[{"name": "David VP", "email": "david@growcorp.com"}],
         evidence_keys=["signal_seat_cap"],
         rule_keys=["rule_seat_cap"],

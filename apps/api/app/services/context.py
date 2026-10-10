@@ -15,6 +15,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.brain import Signal
+from app.models.tenancy import Membership, User
 from app.models.timeline import Account, Contact, Deal, Event, UsageSnapshot
 from app.utils.errors import AppError
 from app.utils.time import utcnow
@@ -34,6 +35,8 @@ class AccountContext:
     owner_user_id: UUID | None = None
     crm_owner_id: str | None = None
     owner_slack_id: str | None = None
+    hubspot_id: str | None = None  # HubSpot company id (accounts.external_ids['hubspot'])
+    owner_name: str | None = None
 
     # Meetings & engagement
     last_meeting_at: datetime | None = None
@@ -102,6 +105,8 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
     owner_user_id = acc.get("owner_user_id")
     crm_owner_id = acc.get("crm_owner_id")
     owner_slack_id = acc.get("owner_slack_id")
+    hubspot_id = acc.get("hubspot_id")
+    owner_name = acc.get("owner_name")
 
     # Renewal in days
     renewal_in_days: int | None = None
@@ -366,6 +371,8 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
         owner_user_id=owner_user_id,
         crm_owner_id=crm_owner_id,
         owner_slack_id=owner_slack_id,
+        hubspot_id=hubspot_id,
+        owner_name=owner_name,
         last_meeting_at=last_meeting_at,
         next_meeting_at=next_meeting_at,
         days_since_meeting=days_since_meeting,
@@ -496,6 +503,20 @@ async def fetch_rows(
                     }
                 )
 
+    owner_slack_id = (acc.external_ids or {}).get("owner_slack_id")
+    owner_name: str | None = None
+    if acc.owner_user_id is not None:
+        owner_row = (
+            await session.execute(
+                select(Membership.slack_user_id, User.name)
+                .join(User, User.id == Membership.user_id)
+                .where(Membership.org_id == org_id, Membership.user_id == acc.owner_user_id)
+            )
+        ).first()
+        if owner_row is not None:
+            owner_slack_id = owner_row[0] or owner_slack_id
+            owner_name = owner_row[1]
+
     return {
         "account": {
             "id": acc.id,
@@ -508,7 +529,10 @@ async def fetch_rows(
             "crm_health": acc.crm_health,
             "owner_user_id": acc.owner_user_id,
             "crm_owner_id": acc.crm_owner_id,
-            "owner_slack_id": (acc.external_ids or {}).get("owner_slack_id"),
+            "owner_slack_id": owner_slack_id,
+            "owner_name": owner_name,
+            "hubspot_id": (acc.external_ids or {}).get("hubspot")
+            or (acc.external_ids or {}).get("hs_object_id"),
         },
         "contacts": [
             {

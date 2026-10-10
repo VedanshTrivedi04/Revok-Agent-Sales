@@ -290,8 +290,10 @@ async def upsert_finding(
         account={
             "id": ctx.account_id,
             "name": ctx.account_name,
-            "crm_id": str(ctx.account_id),
+            "crm_id": ctx.hubspot_id,  # None for accounts not synced from HubSpot
             "crm_owner_id": ctx.crm_owner_id,
+            "owner_slack_id": ctx.owner_slack_id,
+            "owner_name": ctx.owner_name or "your account manager",
             "revops_risk_level": severity,
         },
         severity=severity,
@@ -443,9 +445,7 @@ async def get_today_service(
 
     for row_f, row_acc, row_u in qualifying_rows:
         acc_owner = OwnerRef(id=row_u.id, name=row_u.name) if row_u else None
-        renewal_in_days = (
-            (row_acc.renewal_date - today).days if row_acc.renewal_date else None
-        )
+        renewal_in_days = (row_acc.renewal_date - today).days if row_acc.renewal_date else None
 
         acc_summary = AccountSummary(
             id=row_acc.id,

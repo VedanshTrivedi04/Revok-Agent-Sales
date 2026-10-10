@@ -150,7 +150,7 @@ class TemplateActionPlanner:
                                     "object": "company",
                                     "id": account.get("crm_id", ""),
                                     "field": "revops_risk_level",
-                                    "before": account.get("revops_risk_level"),
+                                    "before": None,  # unasserted: current CRM value is read as pre-image
                                     "after": "high",
                                 }
                             ]
@@ -249,6 +249,15 @@ class TemplateActionPlanner:
                         )
                     )
 
+        # CRM writes must target the real HubSpot company id; skip them for accounts that are
+        # not synced from HubSpot (never fall back to an internal id).
+        if not account.get("crm_id"):
+            proposals = [
+                p for p in proposals if p.type not in ("crm_task", "crm_field_update", "crm_note")
+            ]
+        # A Slack DM needs the owner's linked Slack user id.
+        if not account.get("owner_slack_id"):
+            proposals = [p for p in proposals if p.type != "slack_internal"]
         return proposals
 
 

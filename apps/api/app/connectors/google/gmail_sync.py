@@ -159,7 +159,10 @@ class GmailSyncEngine:
 
                 if getattr(resp, "status_code", 200) == 404:
                     # History ID expired/invalid -> fallback to last 30 days
-                    log.info("gmail_history_expired_falling_back_to_30d", integration_id=str(self.integration_id))
+                    log.info(
+                        "gmail_history_expired_falling_back_to_30d",
+                        integration_id=str(self.integration_id),
+                    )
                     fallback_epoch = int((now_dt - timedelta(days=30)).timestamp())
                     q = f"after:{fallback_epoch} -in:chats"
                     message_ids_to_fetch = await self._list_all_message_ids(ctx, q)
@@ -178,6 +181,7 @@ class GmailSyncEngine:
             else:
                 # Initial backfill: default 180 days (or org.settings.backfill_days)
                 from app.models.tenancy import Organization
+
                 org_stmt = select(Organization).where(Organization.id == self.org_id)
                 org_obj = (await self.session.execute(org_stmt)).scalar_one_or_none()
                 raw_days = (
@@ -227,42 +231,50 @@ class GmailSyncEngine:
                 for name, email_addr in email.utils.getaddresses([raw_from]):
                     if email_addr:
                         dom = _extract_domain(email_addr)
-                        participants.append({
-                            "role": "from",
-                            "name": name or None,
-                            "email": email_addr.lower(),
-                            "is_internal": bool(dom and dom in org_domains),
-                        })
+                        participants.append(
+                            {
+                                "role": "from",
+                                "name": name or None,
+                                "email": email_addr.lower(),
+                                "is_internal": bool(dom and dom in org_domains),
+                            }
+                        )
 
                 for name, email_addr in email.utils.getaddresses([raw_to]):
                     if email_addr:
                         dom = _extract_domain(email_addr)
-                        participants.append({
-                            "role": "to",
-                            "name": name or None,
-                            "email": email_addr.lower(),
-                            "is_internal": bool(dom and dom in org_domains),
-                        })
+                        participants.append(
+                            {
+                                "role": "to",
+                                "name": name or None,
+                                "email": email_addr.lower(),
+                                "is_internal": bool(dom and dom in org_domains),
+                            }
+                        )
 
                 for name, email_addr in email.utils.getaddresses([raw_cc]):
                     if email_addr:
                         dom = _extract_domain(email_addr)
-                        participants.append({
-                            "role": "cc",
-                            "name": name or None,
-                            "email": email_addr.lower(),
-                            "is_internal": bool(dom and dom in org_domains),
-                        })
+                        participants.append(
+                            {
+                                "role": "cc",
+                                "name": name or None,
+                                "email": email_addr.lower(),
+                                "is_internal": bool(dom and dom in org_domains),
+                            }
+                        )
 
                 for name, email_addr in email.utils.getaddresses([raw_bcc]):
                     if email_addr:
                         dom = _extract_domain(email_addr)
-                        participants.append({
-                            "role": "bcc",
-                            "name": name or None,
-                            "email": email_addr.lower(),
-                            "is_internal": bool(dom and dom in org_domains),
-                        })
+                        participants.append(
+                            {
+                                "role": "bcc",
+                                "name": name or None,
+                                "email": email_addr.lower(),
+                                "is_internal": bool(dom and dom in org_domains),
+                            }
+                        )
 
                 # Filter 1: Check for at least one external participant
                 has_external = any(not p["is_internal"] for p in participants)
@@ -277,7 +289,9 @@ class GmailSyncEngine:
                     or headers.get("x-auto-response-suppress")
                 )
                 if has_bulk_header:
-                    sender_email = next((p["email"] for p in participants if p["role"] == "from"), "")
+                    sender_email = next(
+                        (p["email"] for p in participants if p["role"] == "from"), ""
+                    )
                     # Skip bulk email unless sender is a known contact
                     if sender_email not in entity_index.contacts_by_email:
                         stats["skipped_bulk"] += 1
@@ -287,10 +301,14 @@ class GmailSyncEngine:
                 clean_body = clean_email_body(payload)
 
                 # Determine direction
-                sender_is_internal = any(p["is_internal"] for p in participants if p["role"] == "from")
+                sender_is_internal = any(
+                    p["is_internal"] for p in participants if p["role"] == "from"
+                )
                 event_type = "email_out" if sender_is_internal else "email_in"
 
-                occurred_at = _parse_internal_date(msg_data.get("internalDate"), headers.get("date"))
+                occurred_at = _parse_internal_date(
+                    msg_data.get("internalDate"), headers.get("date")
+                )
                 thread_id = msg_data.get("threadId") or mid
                 source_url = f"https://mail.google.com/mail/u/0/#inbox/{thread_id}"
                 title = headers.get("subject") or "(No Subject)"
@@ -299,7 +317,8 @@ class GmailSyncEngine:
                     "threadId": thread_id,
                     "messageId": mid,
                     "headers": {
-                        k: v for k, v in headers.items()
+                        k: v
+                        for k, v in headers.items()
                         if k in ("message-id", "in-reply-to", "references", "subject", "date")
                     },
                     "source_url": source_url,
@@ -422,7 +441,10 @@ class GmailSyncEngine:
                                 if not c_obj.last_inbound_at or occurred_at > c_obj.last_inbound_at:
                                     c_obj.last_inbound_at = occurred_at
                             elif event_type == "email_out":
-                                if not c_obj.last_outbound_at or occurred_at > c_obj.last_outbound_at:
+                                if (
+                                    not c_obj.last_outbound_at
+                                    or occurred_at > c_obj.last_outbound_at
+                                ):
                                     c_obj.last_outbound_at = occurred_at
 
             # Finalize integration cursor and status

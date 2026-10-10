@@ -293,7 +293,17 @@ async def export_decision_log(
         out = io.StringIO()
         writer = csv.writer(out)
         writer.writerow(
-            ["id", "ts", "actor_type", "actor_id", "event", "entity_type", "entity_id", "prev_hash", "hash"]
+            [
+                "id",
+                "ts",
+                "actor_type",
+                "actor_id",
+                "event",
+                "entity_type",
+                "entity_id",
+                "prev_hash",
+                "hash",
+            ]
         )
         for r in rows:
             writer.writerow(

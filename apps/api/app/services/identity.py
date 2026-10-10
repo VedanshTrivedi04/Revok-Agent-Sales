@@ -379,7 +379,7 @@ async def delete_current_org(
     # V6-01: Stop active/pending jobs for the deleted organization
     runs_stmt = select(AgentRun).where(
         AgentRun.org_id == org_id,
-        AgentRun.status.in_(["pending", "running"]),
+        AgentRun.status.in_(["queued", "running", "waiting_approval"]),
     )
     for run in (await s.execute(runs_stmt)).scalars().all():
         run.status = "failed"

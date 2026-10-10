@@ -260,5 +260,5 @@ async def revert_card_real(request: Request, card_id: UUID, **_: Any) -> CardOut
             user_id=m.user_id,
             user_role=m.role,
             card_id=card_id,
-            ctx=None,  # No live connector in template/test mode
+            ctx=None,  # loaded from the card's integration inside revert_card
         )

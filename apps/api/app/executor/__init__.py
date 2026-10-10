@@ -12,6 +12,7 @@ def _register_handlers() -> None:
         hubspot_note_handler,
         hubspot_task_handler,
     )
+    from app.connectors.slack.writes import slack_internal_handler
     from app.executor.core import register_handler
 
     register_handler("crm_task", hubspot_task_handler)  # type: ignore[arg-type]
@@ -19,6 +20,7 @@ def _register_handlers() -> None:
     register_handler("crm_field_update", hubspot_field_update_handler)  # type: ignore[arg-type]
     register_handler("email_draft", gmail_draft_handler)  # type: ignore[arg-type]
     register_handler("meeting_request", calendar_meeting_handler)  # type: ignore[arg-type]
+    register_handler("slack_internal", slack_internal_handler)  # type: ignore[arg-type]
 
 
 _register_handlers()

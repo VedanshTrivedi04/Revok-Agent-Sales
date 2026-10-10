@@ -66,6 +66,18 @@ celery_app.conf.update(
             "task": "run.nightly_dispatch",
             "schedule": 900.0,
         },
+        "expire-cards-hourly": {
+            "task": "maintenance.expire_cards_fanout",
+            "schedule": 3600.0,
+        },
+        "sweep-approved-cards": {
+            "task": "maintenance.sweep_approved_cards",
+            "schedule": 300.0,
+        },
+        "purge-deleted-orgs-daily": {
+            "task": "maintenance.purge_deleted_orgs_fanout",
+            "schedule": 86400.0,
+        },
     },
 )
 

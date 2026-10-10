@@ -9,15 +9,17 @@ Hard rules (vedanshhandover.md section 4):
 - Concurrent double-approve: one succeeds, one gets 409 card_not_pending.
 """
 
+from datetime import timedelta
 from typing import Any
 from uuid import UUID
 
 import structlog
+from sqlalchemy import event as sa_event
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.actions import ActionCard
-from app.models.tenancy import Membership
+from app.models.tenancy import Membership, Organization
 from app.models.timeline import Account
 from app.permissions import Action, can
 from app.schemas.cards import (
@@ -106,8 +108,8 @@ async def _get_account_name(s: AsyncSession, org_id: UUID, account_id: UUID) -> 
 def _check_card_ownership(card: ActionCard, user_id: UUID, user_role: str) -> bool:
     if user_role in {"owner", "admin", "manager"}:
         return True
-    # For regular members: allowed if unassigned or assigned to self
-    return card.assignee_user_id is None or card.assignee_user_id == user_id
+    # Members: only cards assigned to them. Unassigned cards fall to managers (never to everyone).
+    return card.assignee_user_id is not None and card.assignee_user_id == user_id
 
 
 async def list_cards(
@@ -344,8 +346,7 @@ async def approve_card(
         {"id": str(card.id), "status": card.status, "type": card.type},
     )
 
-    # Enqueue execution stub
-    _enqueue_execution_stub(org_id, card.id)
+    enqueue_execution(s, org_id, card.id)
 
     return card_out
 
@@ -544,7 +545,7 @@ async def retry_card(
         {"id": str(card.id), "status": card.status, "type": card.type},
     )
 
-    _enqueue_execution_stub(org_id, card.id)
+    enqueue_execution(s, org_id, card.id)
     return card_out
 
 
@@ -605,6 +606,40 @@ async def expire_pending_cards(s: AsyncSession, org_id: UUID) -> int:
     return expired_count
 
 
+OPEN_CARD_STATUSES = ("proposed", "pending_approval", "approved", "executing")
+REPROPOSE_WINDOW = timedelta(days=14)
+# a card of this type for the same finding blocks new proposals unless it expired or failed
+RETRYABLE_STATUSES = ("expired", "failed")
+
+
+def _title_for(card_type: str, payload: dict[str, Any]) -> str:
+    if card_type == "crm_task":
+        return str(payload.get("title") or "Create CRM task")
+    if card_type == "email_draft":
+        return f"Draft email: {payload.get('subject', 'follow-up')}"
+    if card_type == "crm_field_update":
+        fields = ", ".join(c.get("field", "?") for c in payload.get("changes", []))
+        return f"Update CRM field(s): {fields}"
+    if card_type == "crm_note":
+        return "Add CRM note"
+    if card_type == "slack_internal":
+        return "Notify account owner in Slack"
+    if card_type == "meeting_request":
+        return f"Request meeting: {payload.get('title', 'follow-up')}"
+    return f"Action: {card_type}"
+
+
+def enqueue_execution(s: AsyncSession, org_id: UUID, card_id: UUID) -> None:
+    """Enqueue execute_card only AFTER the surrounding transaction commits (a worker that runs
+    earlier would still see the card as not approved and silently no-op)."""
+    sa_event.listen(
+        s.sync_session,
+        "after_commit",
+        lambda _session: _enqueue_execution_stub(org_id, card_id),
+        once=True,
+    )
+
+
 async def create_from_proposals(
     s: AsyncSession,
     *,
@@ -613,38 +648,47 @@ async def create_from_proposals(
     finding_id: UUID | None,
     proposals: list[dict[str, Any]],
 ) -> list[ActionCard]:
-    """Create action cards from planner proposals with deduplication and tier resolution."""
+    """Create action cards from planner proposals.
+
+    Policy decides the tier: Tier 1 is auto-approved (logged `card.auto_approved`) and queued for
+    execution, Tier 2 waits for a human, Tier 3 is blocked. Assignee defaults to the account owner,
+    expiry to org.settings.card_expiry_days (7). A proposal is skipped while a card of the same
+    type exists for the finding (open, or created in the last 14 days unless it expired/failed).
+    """
     created_cards: list[ActionCard] = []
+    account = await s.get(Account, account_id)
+    org = await s.get(Organization, org_id)
+    expiry_days = int(str((org.settings or {}).get("card_expiry_days", 7))) if org else 7
+    default_assignee = account.owner_user_id if account else None
+    now = utcnow()
 
     for prop in proposals:
         card_type = prop.get("type", "crm_task")
         payload = prop.get("payload", {})
-        title = prop.get("title", f"Action: {card_type}")
-        rationale = prop.get("rationale")
-        evidence_keys = prop.get("evidence_keys", [])
-        assignee_id = prop.get("assignee_user_id")
 
-        # Compute tier from policy
-        tier = await tier_for(s, org_id=org_id, card_type=card_type, payload=payload)
-
-        # Build idempotency key
-        idem_key = card_idempotency_key(org_id, account_id, card_type, finding_id, payload)
-
-        # Check existing card by idempotency_key
-        existing_stmt = select(ActionCard).where(ActionCard.idempotency_key == idem_key)
-        existing = (await s.execute(existing_stmt)).scalar_one_or_none()
-        if existing:
+        dup_stmt = select(ActionCard.id).where(
+            ActionCard.org_id == org_id,
+            ActionCard.account_id == account_id,
+            ActionCard.type == card_type,
+            ActionCard.status.not_in(RETRYABLE_STATUSES),
+            (ActionCard.status.in_(OPEN_CARD_STATUSES))
+            | (ActionCard.created_at >= now - REPROPOSE_WINDOW),
+        )
+        if finding_id is not None:
+            dup_stmt = dup_stmt.where(ActionCard.finding_id == finding_id)
+        if (await s.execute(dup_stmt.limit(1))).first() is not None:
             continue
 
-        # Initial status based on tier
-        if tier == 1:
-            status = "approved"
-        elif tier == 3:
-            status = "blocked"
-        else:
-            status = "pending_approval"
+        idem_key = card_idempotency_key(org_id, account_id, card_type, finding_id, payload)
+        if (
+            await s.execute(select(ActionCard.id).where(ActionCard.idempotency_key == idem_key))
+        ).first() is not None:
+            continue
 
-        now = utcnow()
+        tier = await tier_for(s, org_id=org_id, card_type=card_type, payload=payload)
+        status = {1: "approved", 3: "blocked"}.get(tier, "pending_approval")
+        assignee_id = prop.get("assignee_user_id") or default_assignee
+
         card = ActionCard(
             org_id=org_id,
             account_id=account_id,
@@ -652,31 +696,55 @@ async def create_from_proposals(
             type=card_type,
             tier=tier,
             status=status,
-            title=title,
-            rationale=rationale,
-            evidence_keys=evidence_keys,
+            title=prop.get("title") or _title_for(card_type, payload),
+            rationale=prop.get("rationale"),
+            evidence_keys=prop.get("evidence_keys", []),
             payload=payload,
             preview=prop.get("preview", []),
             assignee_user_id=assignee_id,
             idempotency_key=idem_key,
-            expires_at=prop.get("expires_at"),
+            expires_at=prop.get("expires_at") or now + timedelta(days=expiry_days),
+            decided_at=now if status == "approved" else None,
+            decision_channel="auto" if status == "approved" else None,
             created_at=now,
         )
         s.add(card)
         await s.flush()
 
-        event_name = "card.blocked" if status == "blocked" else "card.proposed"
         await decision_log.log(
             s,
             org_id=org_id,
             actor_type="system",
             actor_id=None,
-            event=event_name,
+            event="card.blocked" if status == "blocked" else "card.proposed",
             entity_type="action_card",
             entity_id=card.id,
             account_id=account_id,
             data={"type": card_type, "tier": tier, "status": status},
         )
+        if status == "approved":
+            await decision_log.log(
+                s,
+                org_id=org_id,
+                actor_type="system",
+                actor_id=None,
+                event="card.auto_approved",
+                entity_type="action_card",
+                entity_id=card.id,
+                account_id=account_id,
+                data={"type": card_type, "tier": tier, "policy": "tier_1_auto"},
+            )
+            enqueue_execution(s, org_id, card.id)
+        elif status == "pending_approval" and assignee_id is not None:
+            await notify(
+                s,
+                org_id=org_id,
+                user_id=assignee_id,
+                kind="card_assigned",
+                title="Action card needs your approval",
+                body=card.title,
+                link=f"/action-cards/{card.id}",
+            )
 
         await publish(
             org_id,
@@ -694,8 +762,4 @@ def _enqueue_execution_stub(org_id: UUID, card_id: UUID) -> None:
 
         execute_card_task.delay(str(org_id), str(card_id))
     except Exception as e:
-        logger.debug(
-            "Execution task enqueue stub (async/test safe)",
-            error=str(e),
-            card_id=str(card_id),
-        )
+        logger.warning("execute_card_enqueue_failed", error=str(e), card_id=str(card_id))

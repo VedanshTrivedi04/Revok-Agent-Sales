@@ -23,7 +23,9 @@ RE_QUOTE_HEADERS = [
     re.compile(r"(?im)^On\s+.+?at\s+.+?wrote:\s*$", re.MULTILINE),
     re.compile(r"(?im)^-----\s*Original Message\s*-----.*$", re.MULTILINE | re.DOTALL),
     re.compile(r"(?im)^_{10,}.*$", re.MULTILINE | re.DOTALL),
-    re.compile(r"(?im)^From:\s*.+?\n(?:Sent|Date):\s*.+?\n(?:To|Subject):.*$", re.MULTILINE | re.DOTALL),
+    re.compile(
+        r"(?im)^From:\s*.+?\n(?:Sent|Date):\s*.+?\n(?:To|Subject):.*$", re.MULTILINE | re.DOTALL
+    ),
 ]
 
 # Signature markers
@@ -170,7 +172,7 @@ def extract_plain_text(payload: dict[str, Any]) -> str:
 
 def clean_email_body(content: dict[str, Any] | str) -> str:
     """Extract and clean email text from payload dict or raw string.
-    
+
     Prefers text/plain, converts HTML to text, strips quoted replies and signatures,
     and trims to 20 KB.
     """

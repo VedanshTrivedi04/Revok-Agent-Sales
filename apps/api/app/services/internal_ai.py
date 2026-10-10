@@ -160,7 +160,9 @@ async def get_account_context(s: AsyncSession, org_id: UUID, account_id: UUID) -
             "crm_health": account.crm_health,
             "status": account.status,
             "risk_level": account.risk_level,
-            "priority_score": float(account.priority_score) if account.priority_score is not None else None,
+            "priority_score": float(account.priority_score)
+            if account.priority_score is not None
+            else None,
             "crm_url": account.crm_url,
         },
         contacts=[
@@ -325,7 +327,9 @@ async def save_finding_explanation(
     for contra in body.contradictions:
         for eid in contra.evidence_ids:
             if eid not in valid_keys:
-                errors.append(f"Contradiction evidence ID '{eid}' does not exist for finding {finding_id}")
+                errors.append(
+                    f"Contradiction evidence ID '{eid}' does not exist for finding {finding_id}"
+                )
 
     if errors:
         return ExplanationSavedOut(finding_id=finding_id, accepted=False, errors=errors)
@@ -346,7 +350,11 @@ async def save_finding_explanation(
         entity_type="finding",
         entity_id=finding_id,
         account_id=finding.account_id,
-        data={"model": body.model, "prompt_version": body.prompt_version, "claims_count": len(body.claims)},
+        data={
+            "model": body.model,
+            "prompt_version": body.prompt_version,
+            "claims_count": len(body.claims),
+        },
     )
     await s.flush()
     return ExplanationSavedOut(finding_id=finding_id, accepted=True, errors=[])
@@ -409,7 +417,9 @@ async def save_action_proposals(
                 domain = r_lower.split("@")[-1] if "@" in r_lower else ""
                 is_internal_domain = domain in internal_domains
                 if not is_contact_email and not is_internal_domain:
-                    rejected.append({"type": prop.type, "reason": f"recipient {r} not in allowlist"})
+                    rejected.append(
+                        {"type": prop.type, "reason": f"recipient {r} not in allowlist"}
+                    )
                     recipient_rejected = True
                     break
 

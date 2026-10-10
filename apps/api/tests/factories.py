@@ -135,6 +135,8 @@ class CardFactory(factory.Factory):
         model = ActionCard
 
     id = factory.LazyFunction(uuid4)
+    account_id = None  # pass explicitly
+    finding_id = None
     type = "crm_task"
     tier = 1
     status = "pending_approval"

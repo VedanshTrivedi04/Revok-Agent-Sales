@@ -4,7 +4,6 @@ Invoked when AI_MODE=external. In production, work is conducted through the
 /internal/v1 service-to-service endpoints with X-Internal-Key.
 """
 
-
 from app.ports.template import ExternalPending
 from app.ports.types import (
     ActionProposal,

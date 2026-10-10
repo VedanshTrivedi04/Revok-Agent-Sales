@@ -41,11 +41,13 @@ from app.connectors.hubspot.writes import (
     _hs_delete,
     _hs_patch,
 )
+from app.executor.ctx import load_card_ctx, needs_provider
 from app.models.actions import ActionCard, Execution
+from app.permissions import Action, can
 from app.schemas.action_payloads import CrmRef
 from app.schemas.cards import CardOut
 from app.services import decision_log
-from app.services.cards import _get_account_name, _to_card_out
+from app.services.cards import _check_card_ownership, _get_account_name, _to_card_out
 from app.utils.errors import AppError
 from app.utils.events import publish
 from app.utils.time import utcnow
@@ -107,6 +109,15 @@ async def revert_card(
             "card_invalid_state",
             f"Revert window ({REVERT_WINDOW_DAYS} days) has passed.",
         )
+
+    # Authorization: manager+ may revert any card; a member only cards they own (spec section 8).
+    is_own = _check_card_ownership(card, user_id, user_role)
+    if not can(user_role, Action.REVERT, is_own=is_own):
+        raise AppError("forbidden", "You can only revert cards assigned to you")
+
+    # Reverse writes need the provider connection; never mark `reverted` without performing them.
+    if ctx is None and needs_provider(card.type) and card.external_ref:
+        ctx = await load_card_ctx(org_id, card)
 
     # Load the latest Execution row for pre_image
     exec_stmt = (

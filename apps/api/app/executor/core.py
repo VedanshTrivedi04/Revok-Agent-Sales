@@ -28,6 +28,8 @@ Retry policy (Celery TenantTask):
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+from typing import Any
 from uuid import UUID
 
 import structlog
@@ -35,13 +37,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.connectors.base import ExecResult, WritableConnector
 from app.db.session import org_session
+from app.executor.ctx import load_card_ctx
 from app.models.actions import ActionCard, Execution
 from app.schemas.action_payloads import ACTION_PAYLOADS
 from app.services import decision_log
 from app.services.payload_validator import validate_card_payload
 from app.utils.errors import AppError, FatalError, TransientError
 from app.utils.events import publish
-from app.utils.idempotency import provider_idempotency_key
+from app.utils.idempotency import card_idempotency_key, provider_idempotency_key
 from app.utils.locks import LockNotAcquired, lock
 from app.utils.time import utcnow
 
@@ -305,19 +308,27 @@ async def _execute_inner(org_id: UUID, card_id: UUID) -> None:
         await _fail(org_id, card_id, f"No write handler registered for card type '{card.type}'")
         return
 
-    idem_key = provider_idempotency_key(card.idempotency_key, attempt_scope="v1")
+    # Provider-side key derives from the FINAL (possibly edited) payload (algorithm.md section 10).
+    idem_key = provider_idempotency_key(
+        card_idempotency_key(org_id, card.account_id, card.type, card.finding_id, payload_dict),
+        attempt_scope=str(card.id),
+    )
 
-    # We need a ConnCtx to call provider handlers. In test/template mode there is no integration.
-    # handlers that don't need a real ConnCtx can accept None; real HubSpot handlers load one.
-    # For now the FakeConnector (used in tests) does not need a ctx.
-    ctx = None  # real handler implementations build their own ConnCtx
+    # Connection for this card's provider (HubSpot org integration / approver's Google account).
+    try:
+        ctx: Any = await load_card_ctx(org_id, card)
+    except AppError as e:
+        await _fail(org_id, card_id, e.message)
+        return
+    if ctx is None:  # provider-less types (slack_internal) only need the org
+        ctx = SimpleNamespace(org_id=org_id)
 
     try:
-        existing = await handler.find_existing(ctx, idem_key)  # type: ignore[arg-type]
+        existing = await handler.find_existing(ctx, idem_key)
         if existing:
             result = existing
         else:
-            result = await handler.apply(ctx, card.type, payload_obj, idem_key)  # type: ignore[arg-type]
+            result = await handler.apply(ctx, card.type, payload_obj, idem_key)
     except TransientError:
         # Celery will retry via autoretry_for
         raise

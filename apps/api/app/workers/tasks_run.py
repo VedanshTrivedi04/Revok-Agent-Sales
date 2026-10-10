@@ -8,9 +8,10 @@ Implements:
 import asyncio
 import random
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -252,6 +253,19 @@ async def run_account_task(
         return {"status": "busy", "reason": "run lock busy"}
 
 
+def is_nightly_tick(
+    tz_name: str | None, nightly_hour: Any, now_utc: datetime | None = None
+) -> bool:
+    """True during the single 15-minute beat tick in which the org's local clock enters
+    `nightly_hour`. Invalid timezones fall back to UTC."""
+    try:
+        zone = ZoneInfo(tz_name or "UTC")
+    except Exception:
+        zone = ZoneInfo("UTC")
+    local = (now_utc or datetime.now(ZoneInfo("UTC"))).astimezone(zone)
+    return local.hour == int(nightly_hour) and local.minute < 15
+
+
 @celery_app.task(name="run.nightly_dispatch")
 def nightly_dispatch() -> dict[str, int]:
     """Beat task scheduled every 15 min to fan out nightly runs for active accounts."""
@@ -263,7 +277,11 @@ def nightly_dispatch() -> dict[str, int]:
             orgs = list((await s.execute(orgs_stmt)).scalars().all())
 
             for o in orgs:
-                # Get active accounts for this organization
+                # Only the 15-minute tick in which the org's local clock enters `nightly_hour`
+                # (default 02:00 in the org timezone) fans out: exactly one run per night.
+                if not is_nightly_tick(o.timezone, (o.settings or {}).get("nightly_hour", 2)):
+                    continue
+
                 accs_stmt = select(Account.id).where(
                     Account.org_id == o.id,
                     Account.status == "active",
