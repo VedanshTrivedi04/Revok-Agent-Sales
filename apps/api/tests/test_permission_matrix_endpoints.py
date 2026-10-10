@@ -63,6 +63,7 @@ async def test_permission_guard_matches_the_matrix(
             continue
         if allowed:
             assert status not in (401, 403), f"{d.spec.operation_id} refused {role} ({status})"
+            assert status < 500, f"{d.spec.operation_id} crashed for {role} ({status})"
         else:
             assert status == 403, f"{d.spec.operation_id} let {role} through ({status})"
 
@@ -72,7 +73,9 @@ async def test_any_member_endpoints_accept_every_role_and_reject_outsiders(
     api: AsyncClient, org_a: SeededOrg, org_b: SeededOrg, d: Any
 ) -> None:
     for role in ROLES:
-        assert await _call(api, d, org_a, role) not in (401, 403), (d.spec.operation_id, role)
+        status = await _call(api, d, org_a, role)
+        assert status not in (401, 403), (d.spec.operation_id, role)
+        assert status < 500, f"{d.spec.operation_id} crashed for {role} ({status})"
     # a valid user of ANOTHER org presenting a token for org_a is not a member there
     foreign = bearer(mint_jwt(org_b.users["owner"], org_a.org_id))
     r = await api.request(

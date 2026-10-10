@@ -119,6 +119,19 @@ def _access_dependencies(access: Access, enforce: bool) -> list[Any]:
     return [Depends(require_permission(access))]
 
 
+async def _call_real(opid: str, request: Request, kwargs: dict[str, Any]) -> Any:
+    """Call a real handler. Handlers take `request` (and optionally `membership`, resolved here
+    from the JWT) plus the endpoint's path/query/body arguments, all by keyword."""
+    fn = REAL_HANDLERS[opid]
+    params = inspect.signature(fn).parameters
+    call_kwargs = dict(kwargs)
+    if "request" in params:
+        call_kwargs["request"] = request
+    if "membership" in params:
+        call_kwargs["membership"] = await current_membership(get_claims(request))
+    return await fn(**call_kwargs)
+
+
 async def dispatch(opid: str, group: str, request: Request, kwargs: dict[str, Any]) -> Any:
     from app.config import get_settings
     from app.mocks.handlers import serve_mock
@@ -126,7 +139,7 @@ async def dispatch(opid: str, group: str, request: Request, kwargs: dict[str, An
     settings = get_settings()
     mode = resolve_mode(group, opid, settings)
     if mode == "real":
-        return await REAL_HANDLERS[opid](request, **kwargs)
+        return await _call_real(opid, request, kwargs)
     if mode == "mock":
         return await serve_mock(opid, request, kwargs)
     raise AppError("not_implemented", f"{opid} is not implemented yet")

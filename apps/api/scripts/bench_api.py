@@ -105,8 +105,7 @@ async def main(accounts: int, requests: int, concurrency: int) -> None:
 
         t0 = time.perf_counter()
         with psycopg.connect(f"postgresql://owner:owner@{HOST_PORT}/{db}", autocommit=True) as conn:
-            for stmt in filter(str.strip, SEED_SQL.split(";
-")):
+            for stmt in filter(str.strip, SEED_SQL.split(";" + chr(10))):
                 conn.execute(stmt, {"org": org, "user": user, "n": accounts})
             conn.execute("ANALYZE")
             counts = {
