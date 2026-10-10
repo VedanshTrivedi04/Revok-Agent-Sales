@@ -1,6 +1,7 @@
 """Redis token-bucket rate limiter (atomic via Lua)."""
 
 from collections.abc import Awaitable, Callable
+from typing import Any, cast
 
 from fastapi import Request
 
@@ -39,7 +40,9 @@ async def take(
 ) -> tuple[bool, int]:
     """Consume `cost` tokens. Returns (allowed, retry_after_seconds)."""
     rate = capacity / per_seconds
-    allowed, retry_ms = await get_redis().eval(_LUA, 1, f"rl:{key}", capacity, rate, cost)
+    allowed, retry_ms = await cast(Any, get_redis()).eval(
+        _LUA, 1, f"rl:{key}", capacity, rate, cost
+    )
     return bool(allowed), (int(retry_ms) + 999) // 1000
 
 

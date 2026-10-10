@@ -69,3 +69,11 @@ class AppError(Exception):
         self.details = details or {}
         self.headers = headers or {}
         super().__init__(self.message)
+
+
+class TransientError(Exception):
+    """Retryable failure (network, 429/5xx, lock contention). Celery retries with backoff."""
+
+
+class FatalError(Exception):
+    """Non-retryable failure (validation, stale preview, tier blocked)."""
