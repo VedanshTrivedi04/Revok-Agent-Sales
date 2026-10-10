@@ -30,6 +30,8 @@ dev = [
   "ruff>=0.6",
   "mypy>=1.11",
   "respx>=0.23.1",
+  "testcontainers[postgres,redis]>=4.13.3",
+  "factory-boy>=3.3.3",
 ]
 
 [tool.ruff]

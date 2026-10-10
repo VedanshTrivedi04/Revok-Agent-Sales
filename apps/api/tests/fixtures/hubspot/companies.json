@@ -1,0 +1,16 @@
+{
+  "results": [
+    {
+      "id": "501",
+      "properties": {
+        "name": "Acme Corp",
+        "domain": "acme.example.com",
+        "renewal_date": "2026-11-22",
+        "annualrevenue": "84000",
+        "health_status": "Green",
+        "hs_lastmodifieddate": "2026-10-09T10:00:00Z"
+      }
+    }
+  ],
+  "paging": null
+}
