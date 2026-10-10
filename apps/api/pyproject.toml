@@ -42,3 +42,7 @@ plugins = ["pydantic.mypy"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 markers = ["golden: golden dataset tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"app/models/*" = ["E501"]
+"migrations/*" = ["E501", "I001"]
