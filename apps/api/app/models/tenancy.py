@@ -69,7 +69,7 @@ class Membership(Base, IdMixin, TimestampMixin):
     digest_hour: Mapped[int | None] = mapped_column(SmallInteger)
     notification_prefs: Mapped[dict[str, object]] = mapped_column(
         JSONB,
-        server_default=text("'" + DEFAULT_NOTIFICATION_PREFS.replace(":", "\:") + "'::jsonb"),
+        server_default=text("'" + DEFAULT_NOTIFICATION_PREFS.replace(":", r"\:") + "'::jsonb"),
         nullable=False,
     )
 
