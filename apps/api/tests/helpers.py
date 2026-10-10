@@ -75,3 +75,20 @@ def mint_jwt(
 
 def bearer(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+async def assert_logged(
+    org_id: UUID, event: str, *, entity_id: UUID | None = None, times: int = 1
+) -> None:
+    """Assert a decision_log entry for `event` was written exactly `times` times (default once)."""
+    from sqlalchemy import func, select
+
+    from app.db.session import org_session
+    from app.models.audit import DecisionLog
+
+    q = select(func.count()).select_from(DecisionLog).where(DecisionLog.event == event)
+    if entity_id is not None:
+        q = q.where(DecisionLog.entity_id == entity_id)
+    async with org_session(org_id) as s:
+        n = (await s.execute(q)).scalar_one()
+    assert n == times, f"expected {times} decision_log entries for {event!r}, found {n}"
