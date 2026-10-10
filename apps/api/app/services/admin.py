@@ -19,7 +19,6 @@ from sqlalchemy import String, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import admin_session
-from app.models.actions import ActionCard
 from app.models.audit import FailedJob, FeatureFlag
 from app.models.brain import Finding
 from app.models.integrations import Integration
@@ -96,7 +95,7 @@ async def _build_admin_org_out(s: AsyncSession, org: Organization) -> AdminOrgOu
     return AdminOrgOut(
         id=org.id,
         name=org.name,
-        status=org.status,  # type: ignore[arg-type]
+        status=org.status,
         plan=org.plan,
         members=members_count,
         accounts=accounts_count,

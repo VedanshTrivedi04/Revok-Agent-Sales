@@ -1,0 +1,32 @@
+{
+  "id": "11111111-1111-1111-1111-111111111130",
+  "name": "Micro Account LLC",
+  "arr": 1200.0,
+  "renewal_date": "2027-09-15",
+  "crm_health": "green",
+  "seats_purchased": 2,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "68bf70a4-d429-494b-a811-44945cf3d7f1",
+      "email": "tina@micro.com",
+      "name": "Tina M"
+    },
+    {
+      "id": "a0abd9d1-f7ed-49b6-80ba-9349cd159f45",
+      "email": "tim@micro.com",
+      "name": "Tim M"
+    }
+  ],
+  "deals": [
+    {
+      "id": "7ddf8715-c7cb-45ac-aa2b-aa95909288de",
+      "deal_type": "renewal",
+      "dealstage": "stage1",
+      "next_step": "",
+      "days_idle": 20,
+      "last_activity_at": "2026-09-15T10:00:00Z"
+    }
+  ],
+  "signals": []
+}

@@ -1,0 +1,23 @@
+{
+  "id": "11111111-1111-1111-1111-111111111114",
+  "name": "Renewal Approaching Co",
+  "arr": 65000.0,
+  "renewal_date": "2026-11-15",
+  "crm_health": "yellow",
+  "seats_purchased": 50,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "5c57c6be-aec1-457f-a6ab-4ff3833ff138",
+      "email": "dan@gapcorp.com",
+      "name": "Dan G"
+    },
+    {
+      "id": "e567dc53-fa5f-4db2-a02c-a58110dba2bc",
+      "email": "erin@gapcorp.com",
+      "name": "Erin G"
+    }
+  ],
+  "deals": [],
+  "signals": []
+}

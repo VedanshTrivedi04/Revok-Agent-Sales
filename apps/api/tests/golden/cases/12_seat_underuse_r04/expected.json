@@ -1,0 +1,11 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R08_seat_underuse"
+  ],
+  "severity": "low",
+  "priority_min": 45.0,
+  "priority_max": 80.0,
+  "unknowns": [],
+  "contradictions": []
+}

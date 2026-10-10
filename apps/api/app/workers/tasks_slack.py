@@ -5,7 +5,7 @@ Mounted on the `notify` queue.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
@@ -13,7 +13,7 @@ import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.session import admin_session, org_session
+from app.db.session import admin_session
 from app.models.tenancy import Membership, Organization
 from app.services.slack import handle_slack_interaction, send_user_daily_digest
 from app.workers.celery_app import celery_app, tenant_task
@@ -54,7 +54,7 @@ async def run_daily_digest_fanout() -> dict[str, int]:
     enqueues send_user_digest_task in the `notify` queue.
     """
     enqueued_count = 0
-    now_utc = datetime.now(timezone.utc)
+    now_utc = datetime.now(UTC)
 
     # Use admin session to iterate across tenants
     async with admin_session() as s:

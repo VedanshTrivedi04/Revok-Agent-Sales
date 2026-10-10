@@ -1,0 +1,38 @@
+{
+  "id": "11111111-1111-1111-1111-111111111122",
+  "name": "Upgrade Intent Co",
+  "arr": 68000.0,
+  "renewal_date": "2027-08-15",
+  "crm_health": "green",
+  "seats_purchased": 60,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "183a8d29-be45-4b5f-aed7-c7cd375693cb",
+      "email": "mona@upgrade.com",
+      "name": "Mona S"
+    },
+    {
+      "id": "d48393ac-1e35-4d78-8478-74f3ce0ad00a",
+      "email": "max@upgrade.com",
+      "name": "Max S"
+    }
+  ],
+  "deals": [
+    {
+      "id": "7008e46d-29b5-4dd2-b9ed-67aa8b5dcf45",
+      "deal_type": "expansion",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": [
+    {
+      "id": "f11ce054-e385-4ec0-b937-ce47ca1f0a08",
+      "kind": "upgrade_intent",
+      "confidence": 0.85,
+      "created_at": "2026-09-28T10:00:00Z",
+      "quote": "We would like to upgrade to the Enterprise tier with SSO next month."
+    }
+  ]
+}

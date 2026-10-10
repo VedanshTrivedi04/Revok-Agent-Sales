@@ -1,0 +1,26 @@
+[
+  {
+    "id": "fcd942da-d4f2-442d-ac92-a4ad3e32c17a",
+    "period_start": "2026-10-02",
+    "active_users": 15.0,
+    "seats_used": 15
+  },
+  {
+    "id": "7cd70d29-3ff0-45b4-a558-9bb58a02ed86",
+    "period_start": "2026-09-25",
+    "active_users": 15.0,
+    "seats_used": 15
+  },
+  {
+    "id": "b50ff686-93e9-415c-9f77-f4045b22efe0",
+    "period_start": "2026-09-18",
+    "active_users": 15.0,
+    "seats_used": 15
+  },
+  {
+    "id": "a4afe237-abbb-4c9c-8ed6-b1cb7b374555",
+    "period_start": "2026-09-11",
+    "active_users": 15.0,
+    "seats_used": 15
+  }
+]

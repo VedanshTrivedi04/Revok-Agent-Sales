@@ -1,0 +1,25 @@
+{
+  "id": "11111111-1111-1111-1111-111111111113",
+  "name": "Single Thread Enterprise",
+  "arr": 90000.0,
+  "renewal_date": "2027-05-15",
+  "crm_health": "green",
+  "seats_purchased": 80,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "49d17f51-5e27-49e8-8e8a-b592eddac7fb",
+      "email": "solo@enterprise.com",
+      "name": "Solo Contact"
+    }
+  ],
+  "deals": [
+    {
+      "id": "ea708e90-09bc-4880-8747-99559fd17567",
+      "deal_type": "renewal",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": []
+}

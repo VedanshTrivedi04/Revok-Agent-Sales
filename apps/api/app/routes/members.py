@@ -145,7 +145,8 @@ async def patch_member_real(
 async def put_member_real(
     request: Request, member_id: UUID, body: MemberPatchIn, **kwargs: Any
 ) -> MemberOut:
-    return await patch_member_real(request, member_id=member_id, body=body, **kwargs)
+    out: MemberOut = await patch_member_real(request, member_id=member_id, body=body, **kwargs)
+    return out
 
 
 @real("remove_member")

@@ -9,7 +9,6 @@ Implements V4-02 Block Kit structures:
 from __future__ import annotations
 
 from typing import Any
-from uuid import UUID
 
 from app.models.actions import ActionCard
 

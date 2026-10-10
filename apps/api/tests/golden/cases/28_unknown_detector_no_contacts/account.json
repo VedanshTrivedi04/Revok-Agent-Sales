@@ -1,0 +1,19 @@
+{
+  "id": "11111111-1111-1111-1111-111111111128",
+  "name": "Empty Rolodex Corp",
+  "arr": 40000.0,
+  "renewal_date": "2027-05-01",
+  "crm_health": "green",
+  "seats_purchased": 20,
+  "org_median_arr": 50000.0,
+  "contacts": [],
+  "deals": [
+    {
+      "id": "e1990881-449e-4ba8-83aa-77f933b56f08",
+      "deal_type": "renewal",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": []
+}

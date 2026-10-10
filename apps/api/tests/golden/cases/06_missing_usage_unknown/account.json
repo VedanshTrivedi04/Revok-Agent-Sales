@@ -1,0 +1,30 @@
+{
+  "id": "11111111-1111-1111-1111-111111111106",
+  "name": "Soylent Corp",
+  "arr": 30000.0,
+  "renewal_date": "2027-02-01",
+  "crm_health": "yellow",
+  "seats_purchased": 20,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "264f2d30-05f5-4586-bd40-00d45277a523",
+      "email": "thorn@soylent.com",
+      "name": "Det. Thorn"
+    },
+    {
+      "id": "cc57ebd5-0deb-43fd-9084-717bc7b0c97e",
+      "email": "shirl@soylent.com",
+      "name": "Shirl S"
+    }
+  ],
+  "deals": [
+    {
+      "id": "d0d21404-da93-4dbf-b064-b387a8e43802",
+      "deal_type": "renewal",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": []
+}

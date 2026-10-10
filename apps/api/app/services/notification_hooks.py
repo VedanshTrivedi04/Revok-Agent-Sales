@@ -15,18 +15,16 @@ Also triggers real-time SSE broadcasts for:
 
 from __future__ import annotations
 
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.actions import ActionCard
 from app.models.audit import Notification
 from app.models.tenancy import Membership
 from app.services.notifications import notify
 from app.utils.events import publish
-from app.utils.time import utcnow
 
 log = structlog.get_logger()
 

@@ -51,6 +51,7 @@ celery_app.conf.update(
         "app.executor",
         "app.workers.tasks_sync",
         "app.workers.tasks_slack",
+        "app.workers.tasks_run",
     ),
     beat_schedule={
         "hourly-hubspot-sync": {
@@ -60,6 +61,10 @@ celery_app.conf.update(
         "daily-digest-fanout": {
             "task": "notify.daily_digest_fanout",
             "schedule": 3600.0,
+        },
+        "nightly-account-runs": {
+            "task": "run.nightly_dispatch",
+            "schedule": 900.0,
         },
     },
 )

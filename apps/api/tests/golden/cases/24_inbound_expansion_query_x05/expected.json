@@ -1,0 +1,11 @@
+{
+  "finding_type": "expansion",
+  "rule_hits": [
+    "X05_renewal_strong_health"
+  ],
+  "severity": "low",
+  "priority_min": 40.0,
+  "priority_max": 75.0,
+  "unknowns": [],
+  "contradictions": []
+}

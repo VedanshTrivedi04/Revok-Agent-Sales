@@ -1,0 +1,11 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R01_usage_drop"
+  ],
+  "severity": "low",
+  "priority_min": 40.0,
+  "priority_max": 75.0,
+  "unknowns": [],
+  "contradictions": []
+}

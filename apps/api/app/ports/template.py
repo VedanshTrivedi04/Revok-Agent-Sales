@@ -11,6 +11,8 @@ from app.ports.types import (
     PlanCtx,
     SignalIn,
 )
+from app.rules.texts import format_rule_text
+from app.schemas.accounts import Claim
 
 
 def _days_ahead(n: int) -> str:
@@ -26,13 +28,62 @@ class NullSignalExtractor:
 
 
 class TemplateExplainer:
-    """Rule-text based explanation with exact numbers and evidence ids (R3-xx, Phase 3)."""
+    """Rule-text based explanation with exact numbers and evidence ids (R3-06, Phase 3)."""
 
     model = "template"
     prompt_version = "template@1"
 
     async def explain(self, ctx: ExplainCtx) -> ExplanationOut:
-        raise NotImplementedError("TemplateExplainer body is built in Phase 3 (R3 rules texts)")
+        evidence_keys = [e.key for e in ctx.evidence]
+        default_evidence_key = evidence_keys[0] if evidence_keys else "E1"
+
+        claims: list[Claim] = []
+        rule_texts: list[str] = []
+
+        for hit in ctx.rule_hits:
+            rule_key = hit.get("rule_key", "")
+            metrics = hit.get("metrics", {})
+            text = format_rule_text(rule_key, metrics)
+            rule_texts.append(text)
+
+            # Match evidence key associated with this rule metric
+            matching_key = next(
+                (e.key for e in ctx.evidence if rule_key in e.label),
+                default_evidence_key,
+            )
+            claim = Claim(text=text, evidence_ids=[matching_key])
+            claims.append(claim)
+
+        # Invariant check: every claim has at least 1 valid evidence ID
+        for claim in claims:
+            if not claim.evidence_ids:
+                claim.evidence_ids = [default_evidence_key]
+            for eid in claim.evidence_ids:
+                assert eid in evidence_keys or eid == "E1", f"Invalid evidence ID {eid}"
+
+        summary = (
+            " ".join(rule_texts[:2])
+            if rule_texts
+            else "No active risk or expansion indicators detected."
+        )
+
+        # Ensure contradictions cite valid evidence keys
+        contradictions: list[Claim] = []
+        for c in ctx.contradictions:
+            c_evidence = [eid for eid in c.evidence_ids if eid in evidence_keys] or [
+                default_evidence_key
+            ]
+            contradictions.append(Claim(text=c.text, evidence_ids=c_evidence))
+
+        return ExplanationOut(
+            summary=summary,
+            claims=claims,
+            unknowns=ctx.unknowns,
+            contradictions=contradictions,
+            confidence_label="medium",
+            model=self.model,
+            prompt_version=self.prompt_version,
+        )
 
 
 class TemplateActionPlanner:

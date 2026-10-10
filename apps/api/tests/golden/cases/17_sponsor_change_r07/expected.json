@@ -1,0 +1,11 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R11_pricing_budget"
+  ],
+  "severity": "low",
+  "priority_min": 40.0,
+  "priority_max": 70.0,
+  "unknowns": [],
+  "contradictions": []
+}

@@ -1,0 +1,11 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R03_no_reply"
+  ],
+  "severity": "low",
+  "priority_min": 40.0,
+  "priority_max": 70.0,
+  "unknowns": [],
+  "contradictions": []
+}

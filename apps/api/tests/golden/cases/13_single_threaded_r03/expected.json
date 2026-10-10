@@ -1,0 +1,11 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R09_single_threaded"
+  ],
+  "severity": "low",
+  "priority_min": 40.0,
+  "priority_max": 65.0,
+  "unknowns": [],
+  "contradictions": []
+}

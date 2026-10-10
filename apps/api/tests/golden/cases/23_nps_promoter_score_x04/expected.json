@@ -1,0 +1,11 @@
+{
+  "finding_type": "expansion",
+  "rule_hits": [
+    "X04_new_stakeholders"
+  ],
+  "severity": "low",
+  "priority_min": 35.0,
+  "priority_max": 65.0,
+  "unknowns": [],
+  "contradictions": []
+}

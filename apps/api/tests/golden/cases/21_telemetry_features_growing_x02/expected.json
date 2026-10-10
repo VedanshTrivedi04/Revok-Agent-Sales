@@ -1,0 +1,11 @@
+{
+  "finding_type": "expansion",
+  "rule_hits": [
+    "X02_usage_growth"
+  ],
+  "severity": "low",
+  "priority_min": 40.0,
+  "priority_max": 70.0,
+  "unknowns": [],
+  "contradictions": []
+}

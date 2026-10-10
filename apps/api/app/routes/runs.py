@@ -3,9 +3,12 @@ from uuid import UUID
 
 from fastapi import Depends, Query
 
-from app.contract import endpoint
+from app.auth.deps import CurrentMembership
+from app.contract import endpoint, real
+from app.db.session import org_session
 from app.permissions import Action
 from app.schemas.ops import RunDetail, RunOut, RunStatus
+from app.services.runs import get_run_service, list_runs_service
 from app.utils.pagination import Page, PageParams, page_params
 
 PAGE = "C10 Agent Runs"
@@ -22,9 +25,35 @@ async def list_runs(
     raise NotImplementedError
 
 
+@real("list_runs")
+async def list_runs_real(
+    membership: CurrentMembership,
+    page: Paging,
+    account_id: Annotated[UUID | None, Query()] = None,
+    status: Annotated[RunStatus | None, Query()] = None,
+) -> Page[RunOut]:
+    async with org_session(membership.org_id) as session:
+        return await list_runs_service(
+            session,
+            membership.org_id,
+            page,
+            account_id=account_id,
+            status=status,
+        )
+
+
 @endpoint(
     "GET", "/runs/{run_id}", group="runs", page=PAGE, owner="R", phase=3, access=Action.VIEW_RUNS
 )
 async def get_run(run_id: UUID) -> RunDetail:
     """Run steps, timings and trace link."""
     raise NotImplementedError
+
+
+@real("get_run")
+async def get_run_real(
+    run_id: UUID,
+    membership: CurrentMembership,
+) -> RunDetail:
+    async with org_session(membership.org_id) as session:
+        return await get_run_service(session, membership.org_id, run_id)

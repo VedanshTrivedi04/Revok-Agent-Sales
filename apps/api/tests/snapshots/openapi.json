@@ -9327,6 +9327,58 @@
     "tags": [
      "D5 Members & Invites"
     ]
+   },
+   "put": {
+    "description": "Change role, status, CRM owner id or Slack link via PUT (admin).",
+    "operationId": "put_member",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "member_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Member Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/MemberPatchIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MemberOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Change role, status, CRM owner id or Slack link via PUT (admin).",
+    "tags": [
+     "D5 Members & Invites"
+    ]
    }
   },
   "/api/v1/notifications": {

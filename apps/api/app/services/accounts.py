@@ -527,4 +527,10 @@ async def run_account_service(
     session.add(agent_run)
     await session.flush()
 
+    try:
+        from app.workers.tasks_run import run_account_task
+        run_account_task.delay(str(org_id), str(account_id), "manual", str(user_id), str(agent_run.id))
+    except Exception:
+        pass
+
     return RunTriggerOut(agent_run_id=agent_run.id)

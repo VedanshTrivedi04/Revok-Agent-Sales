@@ -1,0 +1,38 @@
+{
+  "id": "11111111-1111-1111-1111-111111111117",
+  "name": "Budget Cuts LLC",
+  "arr": 72000.0,
+  "renewal_date": "2027-03-10",
+  "crm_health": "yellow",
+  "seats_purchased": 60,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "cadde54c-c684-47e6-901b-cee1d0ddbb8b",
+      "email": "hank@budgetcuts.com",
+      "name": "Hank L"
+    },
+    {
+      "id": "9553f844-3cba-4f45-b849-3640f0ba0874",
+      "email": "helen@budgetcuts.com",
+      "name": "Helen L"
+    }
+  ],
+  "deals": [
+    {
+      "id": "ff4915dd-edd0-426d-9eab-64203d87bb9a",
+      "deal_type": "renewal",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": [
+    {
+      "id": "25a400ce-f2df-4ac4-86ce-a21209222933",
+      "kind": "budget_cut",
+      "confidence": 0.85,
+      "created_at": "2026-09-25T11:00:00Z",
+      "quote": "Due to company-wide budget cuts our department spend is frozen."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "finding_type": "expansion",
+  "rule_hits": [
+    "X01_seat_saturation"
+  ],
+  "severity": "low",
+  "priority_min": 45.0,
+  "priority_max": 75.0,
+  "unknowns": [],
+  "contradictions": []
+}

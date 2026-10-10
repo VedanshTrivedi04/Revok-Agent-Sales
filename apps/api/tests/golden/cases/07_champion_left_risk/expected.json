@@ -1,0 +1,11 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R05_champion_risk"
+  ],
+  "severity": "low",
+  "priority_min": 45.0,
+  "priority_max": 75.0,
+  "unknowns": [],
+  "contradictions": []
+}

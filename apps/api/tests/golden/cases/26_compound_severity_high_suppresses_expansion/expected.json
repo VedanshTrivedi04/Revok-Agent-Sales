@@ -1,0 +1,14 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R02_meeting_gap",
+    "R04_renewal_near_no_plan",
+    "R09_single_threaded",
+    "X01_seat_saturation"
+  ],
+  "severity": "high",
+  "priority_min": 70.0,
+  "priority_max": 95.0,
+  "unknowns": [],
+  "contradictions": []
+}

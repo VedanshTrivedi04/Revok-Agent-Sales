@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.workers.celery_app import tenant_task
+from app.workers.celery_app import celery_app, tenant_task
 
 
 @tenant_task("maintenance.ping", queue="default")

@@ -1,7 +1,6 @@
 import json
 import time
 from typing import Any
-from uuid import UUID
 
 from fastapi import Body, Request
 from fastapi.responses import RedirectResponse

@@ -1,0 +1,12 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R06_negative_sentiment",
+    "X01_seat_saturation"
+  ],
+  "severity": "low",
+  "priority_min": 45.0,
+  "priority_max": 75.0,
+  "contradictions_count_min": 1,
+  "unknowns": []
+}

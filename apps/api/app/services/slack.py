@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import json
 import time
 from datetime import date, timedelta
 from typing import Any
@@ -23,7 +22,6 @@ from app.config import get_settings
 from app.connectors.registry import get as get_connector
 from app.connectors.slack.blocks import (
     build_card_action_result_blocks,
-    build_card_approval_blocks,
     build_digest_blocks,
 )
 from app.connectors.slack.client import SlackConnector
@@ -31,7 +29,7 @@ from app.db.session import admin_session, org_session
 from app.models.actions import ActionCard
 from app.models.audit import Notification
 from app.models.integrations import Integration, OAuthToken
-from app.models.tenancy import Membership, Organization, User
+from app.models.tenancy import Membership, User
 from app.models.timeline import Account
 from app.schemas.cards import CardApproveIn, CardRejectIn
 from app.schemas.integrations import SlackUserOut

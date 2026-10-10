@@ -1,0 +1,11 @@
+{
+  "finding_type": "risk",
+  "rule_hits": [
+    "R04_renewal_near_no_plan"
+  ],
+  "severity": "low",
+  "priority_min": 40.0,
+  "priority_max": 75.0,
+  "unknowns": [],
+  "contradictions": []
+}

@@ -1,0 +1,9 @@
+{
+  "finding_type": "none",
+  "rule_hits": [],
+  "severity": "low",
+  "priority_min": 0.0,
+  "priority_max": 50.0,
+  "unknowns_count_min": 1,
+  "contradictions": []
+}

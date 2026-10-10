@@ -1,0 +1,30 @@
+{
+  "id": "11111111-1111-1111-1111-111111111119",
+  "name": "Near Cap Co",
+  "arr": 115000.0,
+  "renewal_date": "2027-06-15",
+  "crm_health": "green",
+  "seats_purchased": 100,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "8c362e62-bfca-457b-b245-311682d3a3df",
+      "email": "jack@nearcap.com",
+      "name": "Jack C"
+    },
+    {
+      "id": "99d8f2b5-067f-4494-a2d7-76a3d8b063d1",
+      "email": "jill@nearcap.com",
+      "name": "Jill C"
+    }
+  ],
+  "deals": [
+    {
+      "id": "bf730344-d469-4817-8500-05ec96458174",
+      "deal_type": "expansion",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": []
+}

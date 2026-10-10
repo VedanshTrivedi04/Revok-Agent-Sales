@@ -1,0 +1,30 @@
+{
+  "id": "11111111-1111-1111-1111-111111111109",
+  "name": "Cyberdyne Systems",
+  "arr": 60000.0,
+  "renewal_date": "2027-10-01",
+  "crm_health": "green",
+  "seats_purchased": 50,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "f78517c4-6103-4951-8542-b27a67bf7b59",
+      "email": "miles@cyberdyne.com",
+      "name": "Miles D"
+    },
+    {
+      "id": "d47ac197-bba0-4d3c-a3bd-d10d4a64bfa1",
+      "email": "john@cyberdyne.com",
+      "name": "John C"
+    }
+  ],
+  "deals": [
+    {
+      "id": "120364f1-5123-4657-9ac5-c319dba37434",
+      "deal_type": "renewal",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": []
+}

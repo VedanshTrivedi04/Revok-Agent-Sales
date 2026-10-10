@@ -1,0 +1,32 @@
+{
+  "id": "11111111-1111-1111-1111-111111111123",
+  "name": "Expanding Team Co",
+  "arr": 55000.0,
+  "renewal_date": "2027-05-30",
+  "crm_health": "green",
+  "seats_purchased": 40,
+  "org_median_arr": 50000.0,
+  "contacts": [
+    {
+      "id": "b88d0073-6d7e-4d80-9bd2-0821f0f121a3",
+      "email": "ned@delighted.com",
+      "name": "Ned F",
+      "created_at": "2026-09-25T10:00:00Z"
+    },
+    {
+      "id": "8a93b680-84f4-408e-8de0-3ae4fa5518d3",
+      "email": "nancy@delighted.com",
+      "name": "Nancy F",
+      "created_at": "2026-09-28T10:00:00Z"
+    }
+  ],
+  "deals": [
+    {
+      "id": "776c356c-1d5b-4c4b-b26e-28e8b8138ebc",
+      "deal_type": "expansion",
+      "dealstage": "active",
+      "next_step": "regular check"
+    }
+  ],
+  "signals": []
+}
