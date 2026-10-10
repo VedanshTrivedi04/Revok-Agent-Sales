@@ -135,8 +135,12 @@ def main() -> None:
     import json
 
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--live", nargs=2, metavar=("ORG_ID", "INTEGRATION_ID"),
-                    help="reconcile the DB against the REAL HubSpot portal (needs a connected integration)")
+    ap.add_argument(
+        "--live",
+        nargs=2,
+        metavar=("ORG_ID", "INTEGRATION_ID"),
+        help="reconcile the DB against the REAL HubSpot portal (needs a connected integration)",
+    )
     ap.add_argument("--sample", type=int, default=20)
     args = ap.parse_args()
 
@@ -145,7 +149,9 @@ def main() -> None:
 
         from app.services.reconcile import reconcile_hubspot
 
-        report = asyncio.run(reconcile_hubspot(UUID(args.live[0]), UUID(args.live[1]), sample=args.sample))
+        report = asyncio.run(
+            reconcile_hubspot(UUID(args.live[0]), UUID(args.live[1]), sample=args.sample)
+        )
         print(json.dumps(report, indent=2, default=str))
         sys.exit(0 if report["ok"] else 1)
 

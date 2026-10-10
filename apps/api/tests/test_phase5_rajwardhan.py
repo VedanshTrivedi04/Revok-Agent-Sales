@@ -715,7 +715,9 @@ async def test_calendar_sync_410_fallback(
 
 
 @pytest.mark.asyncio
-async def test_disconnect_purge_removes_user_google_events() -> None:
+async def test_disconnect_purge_removes_user_google_events(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     org_id = uuid4()
     user_id = uuid4()
     integ_id = uuid4()
@@ -749,7 +751,13 @@ async def test_disconnect_purge_removes_user_google_events() -> None:
     evs_exec = MagicMock()
     evs_exec.scalars.return_value.all.return_value = [ev_mine, ev_other]
 
-    session.execute.side_effect = [integ_exec, evs_exec]
+    tok_exec = MagicMock()
+    tok_exec.scalars.return_value = []  # no stored tokens
+    session.execute.side_effect = [integ_exec, evs_exec, tok_exec]
+    monkeypatch.setattr(
+        "app.services.integrations.revoke_provider_tokens", AsyncMock(return_value=False)
+    )
+    monkeypatch.setattr("app.services.integrations.decision_log.log", AsyncMock())
 
     ack = await disconnect_integration_service(
         session, org_id, user_id, Role.MEMBER, integ_id, purge=True

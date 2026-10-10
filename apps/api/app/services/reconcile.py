@@ -35,27 +35,41 @@ def _num(v: Any) -> float | None:
         return None
 
 
-async def reconcile_hubspot(org_id: UUID, integration_id: UUID, *, sample: int = 20) -> dict[str, Any]:
+async def reconcile_hubspot(
+    org_id: UUID, integration_id: UUID, *, sample: int = 20
+) -> dict[str, Any]:
     ctx = await ConnCtx.load(org_id, integration_id)
-    report: dict[str, Any] = {"counts": {}, "duplicates": {}, "spot_check": {"checked": 0, "mismatches": []}}
+    report: dict[str, Any] = {
+        "counts": {},
+        "duplicates": {},
+        "spot_check": {"checked": 0, "mismatches": []},
+    }
 
     async with org_session(org_id) as s:
         db_counts = {
-            "companies": await s.scalar(select(func.count()).select_from(Account).where(Account.status != "archived")) or 0,
+            "companies": await s.scalar(
+                select(func.count()).select_from(Account).where(Account.status != "archived")
+            )
+            or 0,
             "contacts": await s.scalar(select(func.count()).select_from(Contact)) or 0,
             "deals": await s.scalar(select(func.count()).select_from(Deal)) or 0,
         }
+        hid_col = Account.external_ids["hubspot"].astext  # one expression object: same bind param
         dup = (
             await s.execute(
-                select(Account.external_ids["hubspot"].astext, func.count())
-                .where(Account.external_ids["hubspot"].astext.is_not(None))
-                .group_by(Account.external_ids["hubspot"].astext)
+                select(hid_col, func.count())
+                .where(hid_col.is_not(None))
+                .group_by(hid_col)
                 .having(func.count() > 1)
             )
         ).all()
         mapping = (await s.execute(select(FieldMapping))).scalar_one_or_none()
         accounts = (
-            (await s.execute(select(Account).where(Account.external_ids["hubspot"].astext.is_not(None))))
+            (
+                await s.execute(
+                    select(Account).where(Account.external_ids["hubspot"].astext.is_not(None))
+                )
+            )
             .scalars()
             .all()
         )
@@ -66,7 +80,11 @@ async def reconcile_hubspot(org_id: UUID, integration_id: UUID, *, sample: int =
             "POST", f"{HS_BASE}/crm/v3/objects/{obj}/search", json={"limit": 1, "filterGroups": []}
         )
         total = int(resp.json().get("total", 0))  # type: ignore[attr-defined]
-        report["counts"][obj] = {"db": db_counts[obj], "hubspot": total, "match": db_counts[obj] == total}
+        report["counts"][obj] = {
+            "db": db_counts[obj],
+            "hubspot": total,
+            "match": db_counts[obj] == total,
+        }
 
     props = ["name", "domain"]
     mapped: dict[str, str | None] = {
@@ -79,7 +97,9 @@ async def reconcile_hubspot(org_id: UUID, integration_id: UUID, *, sample: int =
     for acc in random.sample(accounts, min(sample, len(accounts))):
         hid = acc.external_ids["hubspot"]
         resp = await ctx.request(
-            "GET", f"{HS_BASE}/crm/v3/objects/companies/{hid}", params={"properties": ",".join(props)}
+            "GET",
+            f"{HS_BASE}/crm/v3/objects/companies/{hid}",
+            params={"properties": ",".join(props)},
         )
         hp = resp.json().get("properties", {})  # type: ignore[attr-defined]
         checks = {
@@ -93,7 +113,9 @@ async def reconcile_hubspot(org_id: UUID, integration_id: UUID, *, sample: int =
             if field != "name" and not mapped.get(field):
                 continue  # not mapped for this org
             if ours != theirs:
-                report["spot_check"]["mismatches"].append({"account": str(acc.id), "field": field, "ours": ours, "hubspot": theirs})
+                report["spot_check"]["mismatches"].append(
+                    {"account": str(acc.id), "field": field, "ours": ours, "hubspot": theirs}
+                )
         report["spot_check"]["checked"] += 1
 
     report["ok"] = (
@@ -114,7 +136,9 @@ async def reconcile_gmail(
         params: dict[str, Any] = {"q": f"after:{after} -in:chats", "maxResults": 500}
         if token:
             params["pageToken"] = token
-        body = (await ctx.request("GET", f"{GMAIL_BASE}/gmail/v1/users/me/messages", params=params)).json()  # type: ignore[attr-defined]
+        body = (
+            await ctx.request("GET", f"{GMAIL_BASE}/gmail/v1/users/me/messages", params=params)
+        ).json()  # type: ignore[attr-defined]
         total += len(body.get("messages", []))
         token = body.get("nextPageToken")
         if not token:
@@ -138,7 +162,11 @@ async def reconcile_gmail(
     missing: list[str] = []
     for rid in random.sample(ids, min(sample, len(ids))):
         try:
-            await ctx.request("GET", f"{GMAIL_BASE}/gmail/v1/users/me/messages/{rid}", params={"format": "minimal"})
+            await ctx.request(
+                "GET",
+                f"{GMAIL_BASE}/gmail/v1/users/me/messages/{rid}",
+                params={"format": "minimal"},
+            )
         except Exception:
             missing.append(rid)
     report = {

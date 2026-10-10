@@ -1082,6 +1082,17 @@ def m_run_evals(request: Request, body: Any, **_: Any) -> Any:
     return {"ok": True, "detail": {"suite": body.suite}}
 
 
+@mock("data_health")
+def m_data_health(request: Request, **_: Any) -> Any:
+    return {
+        "accounts_missing_renewal_date": 1,
+        "unmapped_owners": 2,
+        "orphan_events": 2,
+        "contacts_without_account": 0,
+        "details": {"note": "mock data"},
+    }
+
+
 @mock("list_flags")
 def m_flags(request: Request, **_: Any) -> Any:
     return store().d["admin"]["flags"]

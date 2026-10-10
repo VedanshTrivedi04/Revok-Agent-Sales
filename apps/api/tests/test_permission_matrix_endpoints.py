@@ -20,7 +20,9 @@ from tests.test_contract import PATH_VALUES
 
 ROLES = ["owner", "admin", "manager", "member", "viewer"]
 GUARDED = [d for d in ENDPOINTS if isinstance(d.access, Action)]
-ANY = [d for d in ENDPOINTS if d.access == "any" and d.spec.operation_id != "stream"]  # SSE never ends
+ANY = [
+    d for d in ENDPOINTS if d.access == "any" and d.spec.operation_id != "stream"
+]  # SSE never ends
 # Role-guard passes at route level but the service narrows further (org-level provider => admin).
 SERVICE_NARROWED = {"connect_integration", "trigger_sync", "disconnect_integration"}
 SUPERADMIN = [d for d in ENDPOINTS if d.access == "superadmin"]

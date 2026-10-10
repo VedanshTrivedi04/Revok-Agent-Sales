@@ -150,7 +150,7 @@ class TemplateActionPlanner:
                                     "object": "company",
                                     "id": account.get("crm_id", ""),
                                     "field": "revops_risk_level",
-                                    "before": None,  # unasserted: current CRM value is read as pre-image
+                                    "before": None,  # not asserted
                                     "after": "high",
                                 }
                             ]

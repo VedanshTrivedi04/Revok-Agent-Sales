@@ -34,6 +34,14 @@ from tests.helpers import SeededOrg
 HS = "https://api.hubapi.com"
 
 
+@pytest.fixture(autouse=True)
+def _real_handlers() -> None:
+    """Other test modules register fake handlers globally; restore the production registry."""
+    from app.executor import _register_handlers
+
+    _register_handlers()
+
+
 @pytest.fixture
 def enc_keys(monkeypatch: pytest.MonkeyPatch) -> str:
     keys = f"k1:{generate_key()}"

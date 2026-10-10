@@ -68,7 +68,7 @@ async def _rollup_daily_to_weekly(
     A weekly row that was pushed directly is never overwritten.
     """
     for account_id, monday in weeks:
-        days = (
+        days = list(
             (
                 await session.execute(
                     select(UsageSnapshot).where(

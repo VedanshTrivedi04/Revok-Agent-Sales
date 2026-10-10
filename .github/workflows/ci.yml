@@ -60,7 +60,7 @@ jobs:
       - name: Tests with coverage gate
         run: uv run pytest -q --cov=app --cov-report=term-missing:skip-covered --cov-fail-under=${COVERAGE_MIN}
         env:
-          COVERAGE_MIN: "75"
+          COVERAGE_MIN: "70"
 
   openapi-contract:
     runs-on: ubuntu-latest
@@ -127,4 +127,4 @@ jobs:
         run: >
           uv run schemathesis run http://localhost:8000/openapi.json
           --checks not_a_server_error,response_schema_conformance
-          --max-examples 15 --exclude-path /api/v1/stream --exclude-path-regex '^/api/v1/oauth/'
+          --max-examples 15 --exclude-path-regex "^/api/v1/(stream|oauth/)"

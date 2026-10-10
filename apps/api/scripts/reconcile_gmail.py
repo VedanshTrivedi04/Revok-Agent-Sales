@@ -20,7 +20,9 @@ ap.add_argument("--days", type=int, default=180)
 ap.add_argument("--sample", type=int, default=20)
 a = ap.parse_args()
 report = asyncio.run(
-    reconcile_gmail(UUID(a.org_id), UUID(a.integration_id), UUID(a.user_id), days=a.days, sample=a.sample)
+    reconcile_gmail(
+        UUID(a.org_id), UUID(a.integration_id), UUID(a.user_id), days=a.days, sample=a.sample
+    )
 )
 print(json.dumps(report, indent=2))
 sys.exit(0 if report["ok"] else 1)

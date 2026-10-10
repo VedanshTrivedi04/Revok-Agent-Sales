@@ -24,6 +24,7 @@ import psycopg
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+API_ROOT = Path(__file__).resolve().parents[1]
 ADMIN_DSN = os.environ.get("BENCH_ADMIN_DSN", "postgresql://owner:owner@localhost:5433/postgres")
 HOST_PORT = "localhost:5433"
 
@@ -93,14 +94,17 @@ async def main(accounts: int, requests: int, concurrency: int) -> None:
         )  # fmt: skip
         with psycopg.connect(f"postgresql://owner:owner@{HOST_PORT}/{db}", autocommit=True) as conn:
             conn.execute("GRANT USAGE ON SCHEMA public TO app, admin")
-            conn.execute("ALTER DEFAULT PRIVILEGES FOR ROLE owner IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app, admin")
-            conn.execute("ALTER DEFAULT PRIVILEGES FOR ROLE owner IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO app, admin")
+            conn.execute(
+                "ALTER DEFAULT PRIVILEGES FOR ROLE owner IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app, admin"
+            )
+            conn.execute(
+                "ALTER DEFAULT PRIVILEGES FOR ROLE owner IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO app, admin"
+            )
         from alembic import command
         from alembic.config import Config
 
-        root = Path(__file__).resolve().parents[1]
-        cfg = Config(str(root / "alembic.ini"))
-        cfg.set_main_option("script_location", str(root / "migrations"))
+        cfg = Config(str(API_ROOT / "alembic.ini"))
+        cfg.set_main_option("script_location", str(API_ROOT / "migrations"))
         command.upgrade(cfg, "head")
 
         t0 = time.perf_counter()
@@ -121,7 +125,9 @@ async def main(accounts: int, requests: int, concurrency: int) -> None:
         from tests.helpers import bearer, mint_jwt
 
         headers = bearer(mint_jwt(user, org))
-        async with httpx.AsyncClient(transport=ASGITransport(app=create_app()), base_url="http://b", headers=headers) as c:
+        async with httpx.AsyncClient(
+            transport=ASGITransport(app=create_app()), base_url="http://b", headers=headers
+        ) as c:
             acc_id = (await c.get("/api/v1/accounts?limit=1")).json()["items"][0]["id"]
             fid = (await c.get("/api/v1/findings?limit=1")).json()["items"][0]["id"]
             targets = {
@@ -145,15 +151,19 @@ async def main(accounts: int, requests: int, concurrency: int) -> None:
                     assert r.status_code == 200
                 conc: list[float] = []
 
-                async def worker() -> None:
+                async def worker(u: str = url, out: list[float] = conc) -> None:
                     for _ in range(max(1, requests // concurrency)):
                         t = time.perf_counter()
-                        await c.get(url)
-                        conc.append((time.perf_counter() - t) * 1000)
+                        await c.get(u)
+                        out.append((time.perf_counter() - t) * 1000)
 
                 await asyncio.gather(*(worker() for _ in range(concurrency)))
-                rows.append((name, statistics.median(lat), pct(lat, 0.95), pct(lat, 0.99), pct(conc, 0.95)))
-        print(f"\n| Endpoint | p50 ms | p95 ms | p99 ms | p95 ms @ {concurrency} concurrent |\n|---|---|---|---|---|")
+                rows.append(
+                    (name, statistics.median(lat), pct(lat, 0.95), pct(lat, 0.99), pct(conc, 0.95))
+                )
+        print(
+            f"\n| Endpoint | p50 ms | p95 ms | p99 ms | p95 ms @ {concurrency} concurrent |\n|---|---|---|---|---|"
+        )
         for name, p50, p95, p99, c95 in rows:
             print(f"| {name} | {p50:.0f} | {p95:.0f} | {p99:.0f} | {c95:.0f} |")
     finally:

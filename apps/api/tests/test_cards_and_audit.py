@@ -457,9 +457,9 @@ async def test_create_from_proposals_and_dedupe(
             "payload": {"title": "Task 1", "due_date": "2026-10-25"},
         },
         {
-            "type": "crm_task",
-            "title": "Proposed follow up 2",
-            "payload": {"title": "Task 2", "due_date": "2026-10-26"},
+            "type": "crm_note",  # a second card of the SAME type for the account is deduped
+            "title": "Proposed note",
+            "payload": {"body": "Context", "associate": []},
         },
     ]
 
@@ -469,7 +469,8 @@ async def test_create_from_proposals_and_dedupe(
         )
         assert len(created) == 2
 
-        # Re-running same proposals -> deduped (0 created)
+        # Re-running (even with a new due date) -> deduped (0 created)
+        proposals[0]["payload"]["due_date"] = "2026-10-30"
         created_again = await create_from_proposals(
             s, org_id=org_a.org_id, account_id=acc_id, finding_id=None, proposals=proposals
         )

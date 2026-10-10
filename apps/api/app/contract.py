@@ -166,7 +166,7 @@ UNLIMITED_GROUPS = {"stream", "slack"}  # long-lived SSE; Slack webhooks are sig
 
 
 def _rate_limit_dependencies(d: EndpointDef, settings: Settings) -> list[Any]:
-    """120 req/min/user by default; 30/min on auth-sensitive and ingest routes (agent plan V0-08)."""
+    """120 req/min/user by default; 30/min on auth-sensitive and ingest routes (V0-08)."""
     from app.utils.ratelimit import rate_limit
 
     if not settings.rate_limit_enabled or d.spec.group in UNLIMITED_GROUPS:

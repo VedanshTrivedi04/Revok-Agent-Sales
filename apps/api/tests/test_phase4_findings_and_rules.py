@@ -376,7 +376,7 @@ async def test_today_endpoint_ranking_and_low_severity_filter(
         )
 
         # High severity on far renewal -> visible
-        f_high = await _create_finding(
+        await _create_finding(
             session,
             org_id,
             acc_far.id,
@@ -385,7 +385,7 @@ async def test_today_endpoint_ranking_and_low_severity_filter(
             priority_score=95.0,
         )
         # Low severity on far renewal (>30d) -> HIDDEN on Today
-        f_low_hidden = await _create_finding(
+        await _create_finding(
             session,
             org_id,
             acc_far.id,
@@ -394,7 +394,7 @@ async def test_today_endpoint_ranking_and_low_severity_filter(
             priority_score=40.0,
         )
         # Low severity on near renewal (<=30d) -> VISIBLE on Today
-        f_low_visible = await _create_finding(
+        await _create_finding(
             session,
             org_id,
             acc_near.id,
@@ -403,7 +403,7 @@ async def test_today_endpoint_ranking_and_low_severity_filter(
             priority_score=65.0,
         )
         # Dismissed finding -> EXCLUDED
-        f_dismissed = await _create_finding(
+        await _create_finding(
             session,
             org_id,
             acc_near.id,

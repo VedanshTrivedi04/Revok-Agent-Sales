@@ -227,7 +227,10 @@ async def test_decision_log_export_csv_and_json(
     assert res_csv.status_code == 202
     csv_data = res_csv.json()
     assert csv_data["status"] == "done"
-    assert "format=csv" in csv_data["download_url"]
+    assert csv_data["download_url"].endswith("/download")
+    assert (
+        (await client.get(csv_data["download_url"])).headers["content-type"].startswith("text/csv")
+    )
 
     # 2. Export JSON
     res_json = await client.post(
@@ -237,7 +240,8 @@ async def test_decision_log_export_csv_and_json(
     assert res_json.status_code == 202
     json_data = res_json.json()
     assert json_data["status"] == "done"
-    assert "format=json" in json_data["download_url"]
+    assert json_data["download_url"].endswith("/download")
+    assert isinstance((await client.get(json_data["download_url"])).json(), list)
 
 
 async def test_admin_data_health_endpoint(

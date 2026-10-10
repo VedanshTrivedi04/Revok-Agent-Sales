@@ -1,47 +1,46 @@
-# Performance Benchmarks & Load Testing (`docs/perf.md`)
+# Performance (`docs/perf.md`)
 
-> Load test results, latency percentiles, and database optimization strategies for high concurrency (50 organizations $\times$ 500 accounts).
-> Testing Framework: Locust (`apps/api/tests/load/locustfile.py`).
+Only numbers that were actually measured are listed here, with how to reproduce them. An earlier
+revision of this file contained a 50 orgs x 500 accounts results table that had **not** been
+produced by any run; it has been removed.
 
----
+## 1. Measured: one org, 500 accounts, in-process (`scripts/bench_api.py`)
+Setup: throw-away database on the dev Postgres 16 (Docker Desktop, Windows), Redis 7, real RLS and
+auth path (JWT + membership cache), single uvicorn-equivalent process (ASGI in-process, so no
+network). Seed: 500 accounts, 1,500 contacts, 10,000 events, 6,000 usage snapshots, 250 findings
+(6 evidence each), 250 cards. 100 sequential requests per endpoint after a 5-request warm-up, then
+the same endpoint hit by 20 concurrent clients.
 
-## 1. Executive Summary & Gates Verification
-
-All latency and throughput targets defined in the system specification have been met and held under load:
-
-| Endpoint / Operation | Target | Observed p50 | Observed p95 | Status |
+| Endpoint | p50 ms | p95 ms | p99 ms | p95 ms @ 20 concurrent |
 |---|---|---|---|---|
-| **Today View (`GET /today`)** | p95 < 800ms | 142ms | **418ms** | **PASSED** |
-| **Accounts List (`GET /accounts`)** | p95 < 500ms | 85ms | **260ms** | **PASSED** |
-| **Account Detail (`GET /accounts/{id}`)** | p95 < 300ms | 45ms | **128ms** | **PASSED** |
-| **Timeline Paging (`GET /accounts/{id}/timeline`)** | p95 < 400ms | 68ms | **195ms** | **PASSED** |
-| **Nightly Run (500 accounts batch)** | < 5 min (no AI) | 1.8 min | **3.2 min** | **PASSED** |
+| `GET /today?owner=all` | 30 | 101 | 154 | 1267 |
+| `GET /accounts?limit=50` | 12 | 14 | 15 | 280 |
+| `GET /accounts?query=` | 10 | 14 | 15 | 310 |
+| `GET /accounts/{id}` | 14 | 20 | 22 | 286 |
+| `GET /accounts/{id}/timeline` | 9 | 11 | 13 | 231 |
+| `GET /findings/{id}` | 12 | 16 | 17 | 230 |
+| `GET /action-cards?limit=25` | 11 | 13 | 16 | 265 |
 
----
+Reading it:
+- **Sequential latency meets the plan targets** (Today p95 < 800 ms, accounts list p95 < 500 ms) with a wide margin.
+- **Under 20 concurrent clients on ONE process, latency is queueing**, not query time: the process is CPU-bound
+  on a single event loop. `GET /today` is the heaviest (p95 1.27 s at 20 concurrent), which exceeds the 800 ms
+  target in that configuration. Production should run several workers (`uvicorn --workers N` or one container per
+  core); throughput scales with workers because the database is nowhere near saturated. Re-measure with the real
+  topology before sign-off.
+- The benchmark found a real defect (12 accounts/runs/entity-review handlers crashed because of a handler
+  signature mismatch). That is fixed and covered by `tests/test_permission_matrix_endpoints.py`.
 
-## 2. Load Profile (50 Orgs $\times$ 500 Accounts)
+Reproduce: `cd apps/api && PYTHONPATH=. uv run python scripts/bench_api.py --accounts 500 --requests 100 --concurrency 20`
+(creates and drops its own database).
 
-- **Total Accounts under management:** 25,000 accounts.
-- **Concurrent Active Users:** 250 simulated CSMs and managers.
-- **Simulated Request Rate:** 320 requests / second.
-- **Test Duration:** 60 minutes continuous sustained load.
-- **Error Rate:** 0.00% (0 errors over 1,152,000 requests).
+## 2. Not yet measured (do not quote targets as achieved)
+- 50 orgs x 500 accounts sustained load: `tests/load/locustfile.py` exists but has **not been run**; it needs a
+  deployed stack with several workers.
+- Nightly run for 500 accounts (< 5 min target): not timed.
+- Sync fan-out under load and Celery queue latency.
 
----
-
-## 3. Optimizations & Database Indexing
-
-1. **Elimination of N+1 Queries in Today Cockpit:**
-   - Pre-aggregated finding counts, pending card badges, and category groups in a single CTE query joining `findings` and `action_cards`.
-   - Replaced iterative per-row lookups with batch SQL statements.
-
-2. **Index Optimization:**
-   - Composite index `ix_findings_org_id_status_priority_score` on `(org_id, status, priority_score DESC)` ensures index-only scans for ranked Today findings.
-   - Index `ix_accounts_org_id_priority_score` on `(org_id, priority_score DESC NULLS LAST)` prevents table scans on accounts sorting.
-   - GIN index on `accounts.domains` provides sub-millisecond email domain resolution for timeline attribution.
-
-3. **Timeline Paging with Keyset Cursors:**
-   - Timeline queries use `(occurred_at DESC, id DESC)` compound indexing rather than expensive deep `OFFSET` pagination.
-
-4. **Async Worker Pool Isolation:**
-   - Dedicated Celery queues (`sync`, `agent`, `executor`, `notify`, `default`) prevent long-running sync operations from starving interactive user requests.
+## 3. Tuning already applied
+- Async engine pool `pool_size=10, max_overflow=20` (default 5 + 10 starved concurrent requests).
+- `ix_findings_org_id_status_priority_score` (Today), trigram index `ix_accounts_name_trgm` (account search),
+  aggregated usage trend query (no N+1; accounts list is a fixed number of queries).

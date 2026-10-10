@@ -20,13 +20,13 @@ Aligns with algorithm.md:
 """
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
 BASE_DIR = Path(__file__).resolve().parents[1] / "tests" / "golden" / "cases"
 
-NOW = datetime(2026, 10, 10, 3, 30, 0, tzinfo=timezone.utc)
+NOW = datetime(2026, 10, 10, 3, 30, 0, tzinfo=UTC)
 NOW_ISO = NOW.isoformat()
 
 
@@ -60,7 +60,14 @@ def create_case(
         json.dump(expected, f, indent=2)
 
 
-def make_usage(w0_au: float, w1_au: float, w2_au: float, w3_au: float, seats_used_ratio: float = 1.0, seats: int = 100) -> list[dict]:
+def make_usage(
+    w0_au: float,
+    w1_au: float,
+    w2_au: float,
+    w3_au: float,
+    seats_used_ratio: float = 1.0,
+    seats: int = 100,
+) -> list[dict]:
     return [
         {
             "id": str(uuid4()),
@@ -104,7 +111,12 @@ def main():
             "seats_purchased": 50,
             "org_median_arr": 50000.0,
             "contacts": [
-                {"id": str(uuid4()), "email": "alice@acme.com", "name": "Alice Admin", "role": "admin"}
+                {
+                    "id": str(uuid4()),
+                    "email": "alice@acme.com",
+                    "name": "Alice Admin",
+                    "role": "admin",
+                }
             ],
             "deals": [],
         },
@@ -141,10 +153,27 @@ def main():
             "seats_purchased": 100,
             "org_median_arr": 50000.0,
             "contacts": [
-                {"id": str(uuid4()), "email": "bob@globex.com", "name": "Bob Buyer", "role": "champion"},
-                {"id": str(uuid4()), "email": "carol@globex.com", "name": "Carol VP", "role": "exec"},
+                {
+                    "id": str(uuid4()),
+                    "email": "bob@globex.com",
+                    "name": "Bob Buyer",
+                    "role": "champion",
+                },
+                {
+                    "id": str(uuid4()),
+                    "email": "carol@globex.com",
+                    "name": "Carol VP",
+                    "role": "exec",
+                },
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "expansion", "dealstage": "stage1", "next_step": "expansion discussion"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "expansion",
+                    "dealstage": "stage1",
+                    "next_step": "expansion discussion",
+                }
+            ],
         },
         events=[
             {
@@ -186,7 +215,14 @@ def main():
                 {"id": str(uuid4()), "email": "peter@initech.com", "name": "Peter G"},
                 {"id": str(uuid4()), "email": "samir@initech.com", "name": "Samir N"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "closedwon", "next_step": "annual sync"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "closedwon",
+                    "next_step": "annual sync",
+                }
+            ],
         },
         events=[
             {
@@ -228,7 +264,14 @@ def main():
                 {"id": str(uuid4()), "email": "albert@umbrella.com", "name": "Albert W"},
                 {"id": str(uuid4()), "email": "jill@umbrella.com", "name": "Jill V"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -270,7 +313,14 @@ def main():
                 {"id": str(uuid4()), "email": "walter@massive.com", "name": "Walter B"},
                 {"id": str(uuid4()), "email": "peter@massive.com", "name": "Peter B"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -321,7 +371,14 @@ def main():
                 {"id": str(uuid4()), "email": "thorn@soylent.com", "name": "Det. Thorn"},
                 {"id": str(uuid4()), "email": "shirl@soylent.com", "name": "Shirl S"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -360,11 +417,23 @@ def main():
             "seats_purchased": 200,
             "org_median_arr": 50000.0,
             "contacts": [
-                {"id": str(uuid4()), "email": "tony@stark.com", "name": "Tony S", "is_champion": True},
+                {
+                    "id": str(uuid4()),
+                    "email": "tony@stark.com",
+                    "name": "Tony S",
+                    "is_champion": True,
+                },
                 {"id": str(uuid4()), "email": "pepper@stark.com", "name": "Pepper P"},
                 {"id": str(uuid4()), "email": "rhodey@stark.com", "name": "Rhodey R"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -414,7 +483,14 @@ def main():
                 {"id": str(uuid4()), "email": "bruce@wayne.com", "name": "Bruce W"},
                 {"id": str(uuid4()), "email": "alfred@wayne.com", "name": "Alfred P"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -464,7 +540,14 @@ def main():
                 {"id": str(uuid4()), "email": "miles@cyberdyne.com", "name": "Miles D"},
                 {"id": str(uuid4()), "email": "john@cyberdyne.com", "name": "John C"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -506,7 +589,14 @@ def main():
                 {"id": str(uuid4()), "email": "gavin@hooli.com", "name": "Gavin B"},
                 {"id": str(uuid4()), "email": "richard@piedpiper.com", "name": "Richard H"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -549,7 +639,14 @@ def main():
                 {"id": str(uuid4()), "email": "sarah@consulting.com", "name": "Sarah C"},
                 {"id": str(uuid4()), "email": "sam@consulting.com", "name": "Sam C"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -591,7 +688,14 @@ def main():
                 {"id": str(uuid4()), "email": "mark@underused.com", "name": "Mark U"},
                 {"id": str(uuid4()), "email": "lisa@underused.com", "name": "Lisa U"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -629,8 +733,17 @@ def main():
             "crm_health": "green",
             "seats_purchased": 80,
             "org_median_arr": 50000.0,
-            "contacts": [{"id": str(uuid4()), "email": "solo@enterprise.com", "name": "Solo Contact"}],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "contacts": [
+                {"id": str(uuid4()), "email": "solo@enterprise.com", "name": "Solo Contact"}
+            ],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -714,7 +827,14 @@ def main():
                 {"id": str(uuid4()), "email": "frank@ghosting.com", "name": "Frank G"},
                 {"id": str(uuid4()), "email": "fiona@ghosting.com", "name": "Fiona G"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -768,7 +888,14 @@ def main():
                 {"id": str(uuid4()), "email": "grace@escalated.com", "name": "Grace B"},
                 {"id": str(uuid4()), "email": "george@escalated.com", "name": "George B"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -818,7 +945,14 @@ def main():
                 {"id": str(uuid4()), "email": "hank@budgetcuts.com", "name": "Hank L"},
                 {"id": str(uuid4()), "email": "helen@budgetcuts.com", "name": "Helen L"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -919,7 +1053,14 @@ def main():
                 {"id": str(uuid4()), "email": "jack@nearcap.com", "name": "Jack C"},
                 {"id": str(uuid4()), "email": "jill@nearcap.com", "name": "Jill C"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "expansion", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "expansion",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -961,7 +1102,14 @@ def main():
                 {"id": str(uuid4()), "email": "karen@fullhouse.com", "name": "Karen H"},
                 {"id": str(uuid4()), "email": "ken@fullhouse.com", "name": "Ken H"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "expansion", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "expansion",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -1003,7 +1151,14 @@ def main():
                 {"id": str(uuid4()), "email": "leo@growth.com", "name": "Leo G"},
                 {"id": str(uuid4()), "email": "lara@growth.com", "name": "Lara G"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "expansion", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "expansion",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -1045,7 +1200,14 @@ def main():
                 {"id": str(uuid4()), "email": "mona@upgrade.com", "name": "Mona S"},
                 {"id": str(uuid4()), "email": "max@upgrade.com", "name": "Max S"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "expansion", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "expansion",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -1092,10 +1254,27 @@ def main():
             "seats_purchased": 40,
             "org_median_arr": 50000.0,
             "contacts": [
-                {"id": str(uuid4()), "email": "ned@delighted.com", "name": "Ned F", "created_at": "2026-09-25T10:00:00Z"},
-                {"id": str(uuid4()), "email": "nancy@delighted.com", "name": "Nancy F", "created_at": "2026-09-28T10:00:00Z"},
+                {
+                    "id": str(uuid4()),
+                    "email": "ned@delighted.com",
+                    "name": "Ned F",
+                    "created_at": "2026-09-25T10:00:00Z",
+                },
+                {
+                    "id": str(uuid4()),
+                    "email": "nancy@delighted.com",
+                    "name": "Nancy F",
+                    "created_at": "2026-09-28T10:00:00Z",
+                },
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "expansion", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "expansion",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -1137,7 +1316,14 @@ def main():
                 {"id": str(uuid4()), "email": "oliver@solid.com", "name": "Oliver E"},
                 {"id": str(uuid4()), "email": "olivia@solid.com", "name": "Olivia E"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "negotiation", "next_step": "plan renewal"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "negotiation",
+                    "next_step": "plan renewal",
+                }
+            ],
         },
         events=[
             {
@@ -1179,7 +1365,14 @@ def main():
                 {"id": str(uuid4()), "email": "pam@drop.com", "name": "Pam R"},
                 {"id": str(uuid4()), "email": "jim@drop.com", "name": "Jim R"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -1231,7 +1424,12 @@ def main():
         signals=[],
         expected={
             "finding_type": "risk",
-            "rule_hits": ["R02_meeting_gap", "R04_renewal_near_no_plan", "R09_single_threaded", "X01_seat_saturation"],
+            "rule_hits": [
+                "R02_meeting_gap",
+                "R04_renewal_near_no_plan",
+                "R09_single_threaded",
+                "X01_seat_saturation",
+            ],
             "severity": "high",
             "priority_min": 70.0,
             "priority_max": 95.0,
@@ -1255,7 +1453,14 @@ def main():
                 {"id": str(uuid4()), "email": "ray@unmapped.com", "name": "Ray U"},
                 {"id": str(uuid4()), "email": "rita@unmapped.com", "name": "Rita U"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {
@@ -1294,7 +1499,14 @@ def main():
             "seats_purchased": 20,
             "org_median_arr": 50000.0,
             "contacts": [],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[],
         usage=make_usage(15.0, 15.0, 15.0, 15.0, seats_used_ratio=0.75, seats=20),
@@ -1325,7 +1537,14 @@ def main():
                 {"id": str(uuid4()), "email": "stan@powerusers.com", "name": "Stan P"},
                 {"id": str(uuid4()), "email": "sue@powerusers.com", "name": "Sue P"},
             ],
-            "deals": [{"id": str(uuid4()), "deal_type": "renewal", "dealstage": "active", "next_step": "regular check"}],
+            "deals": [
+                {
+                    "id": str(uuid4()),
+                    "deal_type": "renewal",
+                    "dealstage": "active",
+                    "next_step": "regular check",
+                }
+            ],
         },
         events=[
             {

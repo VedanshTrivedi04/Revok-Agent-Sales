@@ -69,3 +69,40 @@ Present: `reconcile_hubspot.py`, `data_health.py`, 30 golden cases, `endpoints.m
 2. C4, C5, H5, H7 (security: Slack bypass, ownership, ingest auth, secret guard) plus H6 decision.
 3. C6, C7, H1, H2 (data correctness and scheduling).
 4. H3, H4 (delete/purge/export), then H8, H9, M1–M9, then the missing docs and load/fuzz tooling.
+
+---
+
+## 8. Remediation status (branch `fix/audit-remediation`)
+
+| ID | Status | What was done / evidence |
+|---|---|---|
+| C1 | Fixed | `executor/ctx.py::load_card_ctx` builds the real `ConnCtx` per card (HubSpot org integration; approver's Google account); revert loads it too and refuses (409 `integration_needs_reauth`) instead of marking `reverted` without writing. Tests run the REAL handlers against respx (`test_remediation_execution.py`) |
+| C2 | Fixed | `connectors/slack/writes.py` + registered; test that every card type has a handler |
+| C3 | Fixed | Tier 1 is created `approved` (+ `card.proposed`, `card.auto_approved`), execution is enqueued **after commit** (also for approve/retry; previously raced the commit); `maintenance.sweep_approved_cards` beat re-queues stragglers |
+| C4 | Fixed | Signature always verified; no `mock_signature` bypass; no-secret only tolerated for `APP_ENV` local/test + mock mode; Slack team must match a connected integration (no tenant fallback) |
+| C5 | Fixed | Unassigned cards are not "own" for members; cards default to the account owner; revert now authorizes (member: own cards only) |
+| C6 | Fixed | Planner uses `accounts.external_ids.hubspot`; CRM proposals skipped when absent; `before` is no longer the new value; owner Slack id/name come from the membership |
+| C7 | Fixed | One card per (finding/account, type) while open or within 14 days unless expired/failed |
+| H1 | Fixed | `expires_at` defaults to `org.settings.card_expiry_days` (7); expiry fan-out and sweeper are in the beat schedule |
+| H2 | Fixed | Nightly run fires once per org-local `nightly_hour` (tests across timezones) |
+| H3 | Fixed | Delete wipes tokens, best-effort provider revoke, stops `queued`/`running`/`waiting_approval` runs; daily purge fan-out for orgs deleted > 30 days ago |
+| H4 | Fixed | Export stored and downloadable (`GET /log/export/{id}/download`, tenant-isolated, 100k-row cap, `data.exported` logged) |
+| H5 | Fixed | Ingest requires an API key with `ingest:usage`; no JWT fallback, no demo-key backdoor; seed prints a real demo key |
+| H6 | Contained | BYPASSRLS call sites are an explicit allowlist enforced by a test (`ADMIN_SESSION_ALLOWED`); removing them needs security-definer functions (future work, tracked here) |
+| H7 | Fixed | `Settings` refuses dev secrets / missing `TOKEN_ENC_KEYS` outside `local`/`test`; staging compose/env updated |
+| H8 | Fixed | 120/min/user default, 30/min on ingest/oauth/api-keys/invites/org-create, fail-open on Redis outage; disabled in tests, covered by a dedicated test |
+| H9 | Partly | CI now has coverage gate (70%, measured 74%), pip-audit, gitleaks, schemathesis. **Not yet run on GitHub** (no remote). Locally: ruff, format, mypy, alembic clean; schemathesis against mock mode: 3,363 cases, 0 failures |
+| M1 | Fixed | 3rd consecutive failure notifies admins once + SSE |
+| M2 | Fixed | `card.auto_approved`, `integration.connected/disconnected`, `member.invited`, `member.role_changed`, `data.exported` |
+| M3 | Fixed (CSV stays synchronous) | Daily->weekly rollup (marked, never overwrites real weekly); CSV 10 MB / 100k rows (413), precise reasons, job `processed`/`rejected_count`/20-row sample. Still synchronous within the request (documented deviation from "async job") |
+| M4 | Fixed | Member removal/disable reassigns open cards, disconnects their Google |
+| M5 | Fixed | `findings.score_breakdown` column (migration 0004) exposed in `FindingDetail` |
+| M6 | Fixed | `test_permission_matrix_endpoints.py`: every guarded endpoint x 5 roles, any-member endpoints, superadmin hiding, no 5xx |
+| M7 | Fixed / measured | Trigram index; real benchmark in `docs/perf.md` (the previous table was not backed by a run and was removed) |
+| M8 | Fixed | Provider idempotency key derived from the final (edited) payload |
+| New | Found while fixing | 12 real handlers (accounts, runs, entity reviews) crashed on every call (handler signature vs dispatcher); fixed in `contract._call_real`; OAuth callback wrote tokens in a second transaction referencing an uncommitted integration row (FK) |
+
+Still open (needs a decision or infrastructure): public staging URL and recorded hand-off sessions;
+removing `admin_session` from request paths (H6); load test at 50 orgs x 500 accounts on a real
+multi-worker deployment; running CI on GitHub; verifying `associatedcompanyid` linking against a real
+HubSpot portal (see `docs/hubspot-mapping.md`).

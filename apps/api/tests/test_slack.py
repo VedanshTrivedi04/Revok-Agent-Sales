@@ -567,7 +567,7 @@ async def test_digest_fanout_across_timezones(
 
     monkeypatch.setattr(send_user_digest_task, "delay", mock_delay)
 
-    result = await run_daily_digest_fanout()
+    await run_daily_digest_fanout()
 
     # Only IST member should have been enqueued
     assert str(u_ist) in enqueued_user_ids
@@ -584,7 +584,6 @@ async def test_digest_fanout_across_timezones(
 async def test_notification_hooks(org_a: SeededOrg, owner_engine: AsyncEngine) -> None:
     acc_id, _ = await _setup_account_and_slack(owner_engine, org_a.org_id)
     member_uid = org_a.users["member"]
-    admin_uid = org_a.users["admin"]
 
     async with org_session(org_a.org_id) as session:
         # 1. on_card_assigned
