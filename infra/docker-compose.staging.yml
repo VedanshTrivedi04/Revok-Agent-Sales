@@ -44,6 +44,7 @@ services:
       API_JWT_SECRET: ${API_JWT_SECRET:?set API_JWT_SECRET (shared with the web app)}
       API_JWT_AUDIENCE: revops-api
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:?set INTERNAL_API_KEY}
+      TOKEN_ENC_KEYS: ${TOKEN_ENC_KEYS:?set TOKEN_ENC_KEYS (id:base64 32 bytes)}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       WEB_URL: ${WEB_URL:-http://localhost:3000}
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8080}

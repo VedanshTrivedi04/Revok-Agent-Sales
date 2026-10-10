@@ -62,6 +62,7 @@ markers = ["golden: golden dataset tests"]
 "scripts/*" = ["E501"]
 "app/routes/*" = ["E501", "B008"]
 "tests/*" = ["E501", "B008"]
+"tests/conftest.py" = ["E402", "E501", "B008", "I001"]
 "migrations/*" = ["E501", "I001"]
 
 [[tool.mypy.overrides]]

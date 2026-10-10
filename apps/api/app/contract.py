@@ -147,6 +147,29 @@ def _wrap(defn: EndpointDef) -> Callable[..., Any]:
     return wrapper
 
 
+SENSITIVE_GROUPS = {"ingest", "oauth", "api_keys"}
+SENSITIVE_OPERATIONS = {"accept_invite", "create_invite", "create_org", "connect_integration"}
+UNLIMITED_GROUPS = {"stream", "slack"}  # long-lived SSE; Slack webhooks are signature-verified
+
+
+def _rate_limit_dependencies(d: EndpointDef, settings: Settings) -> list[Any]:
+    """120 req/min/user by default; 30/min on auth-sensitive and ingest routes (agent plan V0-08)."""
+    from app.utils.ratelimit import rate_limit
+
+    if not settings.rate_limit_enabled or d.spec.group in UNLIMITED_GROUPS:
+        return []
+    sensitive = (
+        d.spec.group in SENSITIVE_GROUPS
+        or d.spec.operation_id in SENSITIVE_OPERATIONS
+        or d.access in ("public", "api_key")
+    )
+    if sensitive:
+        return [
+            Depends(rate_limit(settings.rate_limit_sensitive_per_minute, 60, f"s:{d.spec.group}"))
+        ]
+    return [Depends(rate_limit(settings.rate_limit_per_minute, 60, "api"))]
+
+
 def build_router(settings: Settings) -> APIRouter:
     import app.routes  # noqa: F401  (imports every route module so ENDPOINTS is populated)
 
@@ -165,7 +188,10 @@ def build_router(settings: Settings) -> APIRouter:
             operation_id=d.spec.operation_id,
             summary=d.spec.summary,
             status_code=d.status_code,
-            dependencies=_access_dependencies(d.access, enforce),
+            dependencies=[
+                *_rate_limit_dependencies(d, settings),
+                *_access_dependencies(d.access, enforce),
+            ],
             **extra,
         )
     return router

@@ -63,9 +63,12 @@ def rate_limit(
     """FastAPI dependency. Defaults: 120 req/min/user; use 30 for auth-sensitive and ingest."""
 
     async def dep(request: Request) -> None:
-        allowed, retry_after = await take(
-            f"{name}:{_identity(request)}", capacity=capacity, per_seconds=per_seconds
-        )
+        try:
+            allowed, retry_after = await take(
+                f"{name}:{_identity(request)}", capacity=capacity, per_seconds=per_seconds
+            )
+        except Exception:  # Redis unavailable: fail open (availability over throttling)
+            return
         if not allowed:
             raise AppError(
                 "rate_limited",

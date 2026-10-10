@@ -31,6 +31,11 @@ ORG = UUID(D.ORG_ID)
 OTHER = UUID(D.OTHER_ORG_ID)
 
 
+def demo_api_key(key_id: str) -> str:
+    """Documented synthetic demo API key (never a real secret): rk_live_demo_<id without dashes>."""
+    return "rk_live_demo_" + key_id.replace("-", "")
+
+
 def U(v: str | None) -> UUID | None:
     return UUID(v) if v else None
 
@@ -88,7 +93,7 @@ async def seed_demo_org() -> dict[str, int]:
             for i, (r, m) in enumerate(zip(D.USERS, S["members.json"]["members"], strict=True), 1)
         ])  # fmt: skip
         await put(s, tenancy.Invite, [{"id": U(i["id"]), "org_id": ORG, "email": i["email"], "role": i["role"], "token_hash": hashlib.sha256(i["id"].encode()).hexdigest(), "invited_by": U(i["invited_by"]), "expires_at": dt(i["expires_at"]), "created_at": dt(i["created_at"])} for i in S["members.json"]["invites"]])  # fmt: skip
-        await put(s, tenancy.ApiKey, [{"id": U(k["id"]), "org_id": ORG, "name": k["name"], "prefix": k["prefix"], "key_hash": hashlib.sha256(f"demo-{k['id']}".encode()).hexdigest(), "scopes": k["scopes"], "last_used_at": dt(k["last_used_at"]), "revoked_at": dt(k["revoked_at"])} for k in S["members.json"]["api_keys"]])  # fmt: skip
+        await put(s, tenancy.ApiKey, [{"id": U(k["id"]), "org_id": ORG, "name": k["name"], "prefix": k["prefix"], "key_hash": hashlib.sha256(demo_api_key(k["id"]).encode()).hexdigest(), "scopes": k["scopes"], "last_used_at": dt(k["last_used_at"]), "revoked_at": dt(k["revoked_at"])} for k in S["members.json"]["api_keys"]])  # fmt: skip
         fm = S["integrations.json"]["field_mapping"]
         await put(s, integrations.FieldMapping, [{"org_id": ORG, **{k: v for k, v in fm.items() if k not in ("updated_at", "updated_by")}}])  # fmt: skip
         await put(s, integrations.Integration, [{"id": U(i["id"]), "org_id": ORG, "provider": i["provider"], "scope_level": i["scope_level"], "user_id": U(i["user_id"]), "status": i["status"], "external_account_label": i["external_account_label"], "scopes": i["scopes"], "last_sync_at": dt(i["last_sync_at"]), "last_success_at": dt(i["last_success_at"]), "last_error": i["last_error"]} for i in S["integrations.json"]["integrations"]])  # fmt: skip

@@ -59,10 +59,8 @@ async def _verify_request(request: Request, raw_body: bytes) -> None:
     sig = request.headers.get("x-slack-signature", "")
     ts = request.headers.get("x-slack-request-timestamp", "")
 
-    # In strict mode with secret configured, or if signature header is provided:
-    if secret or sig:
-        if not verify_slack_signature(secret, ts, raw_body, sig):
-            raise AppError("forbidden", "Invalid Slack signature")
+    if not verify_slack_signature(secret, ts, raw_body, sig):
+        raise AppError("forbidden", "Invalid Slack signature")
 
 
 @real("slack_events")

@@ -1,15 +1,14 @@
-import asyncio
 import hashlib
 import hmac
 import json
 import time
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 from uuid import UUID, uuid4
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.config import get_settings
@@ -18,10 +17,8 @@ from app.models.actions import ActionCard
 from app.models.audit import DecisionLog, Notification
 from app.models.brain import Finding
 from app.models.integrations import Integration
-from app.models.tenancy import Membership, User
+from app.models.tenancy import Membership
 from app.models.timeline import Account, Contact
-from app.schemas.identity import MemberPatchIn
-from app.services import cards as cards_service
 from app.services.notification_hooks import (
     on_card_assigned,
     on_entity_review_resolved,
@@ -41,10 +38,17 @@ from app.utils.time import utcnow
 from app.workers.tasks_slack import run_daily_digest_fanout
 from tests.helpers import SeededOrg, bearer, mint_jwt
 
-
 # =====================================================================
 # Signature & Helper Utilities
 # =====================================================================
+
+SIGNING_SECRET = "test-signing-secret-for-slack"
+
+
+@pytest.fixture(autouse=True)
+def _slack_signing_secret(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(get_settings(), "slack_signing_secret", SIGNING_SECRET)
+
 
 def _make_slack_signature(secret: str, timestamp: str, body: bytes) -> str:
     basestring = b"v0:" + timestamp.encode() + b":" + body
@@ -133,6 +137,7 @@ async def _setup_account_and_slack(
 # Tests: Signature Verification (V4-01)
 # =====================================================================
 
+
 @pytest.mark.asyncio
 async def test_slack_signature_verification_unit() -> None:
     secret = "test_signing_secret_123"
@@ -200,6 +205,7 @@ async def test_slack_endpoints_signature_rejection(
 # Tests: Fast ACK Under 3s (V4-01)
 # =====================================================================
 
+
 @pytest.mark.asyncio
 async def test_slack_interaction_ack_under_3s(
     client: AsyncClient, org_a: SeededOrg, owner_engine: AsyncEngine
@@ -210,7 +216,9 @@ async def test_slack_interaction_ack_under_3s(
         "type": "block_actions",
         "team": {"id": "T_ACK_TEST"},
         "user": {"id": "U_ACK_TEST"},
-        "actions": [{"action_id": "card_approve", "value": str(uuid4()), "action_ts": str(time.time())}],
+        "actions": [
+            {"action_id": "card_approve", "value": str(uuid4()), "action_ts": str(time.time())}
+        ],
     }
     raw = json.dumps(payload).encode()
     ts = str(int(time.time()))
@@ -222,7 +230,7 @@ async def test_slack_interaction_ack_under_3s(
         headers={
             "content-type": "application/json",
             "x-slack-request-timestamp": ts,
-            "x-slack-signature": "v0=mock_signature",
+            "x-slack-signature": _make_slack_signature(SIGNING_SECRET, ts, raw),
         },
     )
     duration = time.perf_counter() - start_time
@@ -236,6 +244,7 @@ async def test_slack_interaction_ack_under_3s(
 # =====================================================================
 # Tests: Replay Deduplication via Redis SETNX (V4-01)
 # =====================================================================
+
 
 @pytest.mark.asyncio
 async def test_slack_replay_deduplication(client: AsyncClient) -> None:
@@ -265,7 +274,7 @@ async def test_slack_replay_deduplication(client: AsyncClient) -> None:
         headers={
             "content-type": "application/json",
             "x-slack-request-timestamp": ts,
-            "x-slack-signature": "v0=mock_signature",
+            "x-slack-signature": _make_slack_signature(SIGNING_SECRET, ts, raw),
         },
     )
     assert resp.status_code == 200
@@ -275,6 +284,7 @@ async def test_slack_replay_deduplication(client: AsyncClient) -> None:
 # =====================================================================
 # Tests: Permission Parity with Web Approval (V4-02)
 # =====================================================================
+
 
 @pytest.mark.asyncio
 async def test_slack_approval_permission_parity(
@@ -319,7 +329,9 @@ async def test_slack_approval_permission_parity(
 
     # Card must remain pending
     async with org_session(org_a.org_id) as session:
-        c1 = (await session.execute(select(ActionCard).where(ActionCard.id == card.id))).scalar_one()
+        c1 = (
+            await session.execute(select(ActionCard).where(ActionCard.id == card.id))
+        ).scalar_one()
         assert c1.status == "pending_approval"
 
     # 2. Viewer (no approve permission) cannot approve -> Parity with web
@@ -331,7 +343,9 @@ async def test_slack_approval_permission_parity(
     await handle_slack_interaction(org_a.org_id, viewer_payload)
 
     async with org_session(org_a.org_id) as session:
-        c2 = (await session.execute(select(ActionCard).where(ActionCard.id == card.id))).scalar_one()
+        c2 = (
+            await session.execute(select(ActionCard).where(ActionCard.id == card.id))
+        ).scalar_one()
         assert c2.status == "pending_approval"
 
     # 3. Manager (authorized) approves card -> transitions to approved with channel=slack
@@ -343,7 +357,9 @@ async def test_slack_approval_permission_parity(
     await handle_slack_interaction(org_a.org_id, mgr_payload)
 
     async with org_session(org_a.org_id) as session:
-        c3 = (await session.execute(select(ActionCard).where(ActionCard.id == card.id))).scalar_one()
+        c3 = (
+            await session.execute(select(ActionCard).where(ActionCard.id == card.id))
+        ).scalar_one()
         assert c3.status == "approved"
         assert c3.decision_channel == "slack"
         assert c3.decided_by == mgr_uid
@@ -362,6 +378,7 @@ async def test_slack_approval_permission_parity(
 # =====================================================================
 # Tests: User Mapping & Link via PUT /members/{id} (V4-01)
 # =====================================================================
+
 
 @pytest.mark.asyncio
 async def test_user_mapping_and_link(
@@ -406,6 +423,7 @@ async def test_user_mapping_and_link(
 # =====================================================================
 # Tests: Daily Digest Algorithm & Suppression (V4-03)
 # =====================================================================
+
 
 @pytest.mark.asyncio
 async def test_daily_digest_algorithm_and_suppression(
@@ -480,6 +498,7 @@ async def test_daily_digest_algorithm_and_suppression(
 # Tests: Digest Fanout Across Timezones (V4-03)
 # =====================================================================
 
+
 @pytest.mark.asyncio
 async def test_digest_fanout_across_timezones(
     org_a: SeededOrg, owner_engine: AsyncEngine, monkeypatch: pytest.MonkeyPatch
@@ -530,7 +549,7 @@ async def test_digest_fanout_across_timezones(
     # - In UTC: 03:30 (hour 3) -> Not 9 AM
     # - In Asia/Kolkata: 03:30 + 05:30 = 09:00 (hour 9) -> Matches 9 AM!
     # - In America/New_York: 03:30 - 05:00 = 22:30 previous day (hour 22) -> Not 9 AM
-    mock_now_utc = datetime(2026, 10, 15, 3, 30, 0, tzinfo=timezone.utc)
+    mock_now_utc = datetime(2026, 10, 15, 3, 30, 0, tzinfo=UTC)
 
     class MockDatetime:
         @classmethod
@@ -559,6 +578,7 @@ async def test_digest_fanout_across_timezones(
 # =====================================================================
 # Tests: Notification Hooks (V4-04)
 # =====================================================================
+
 
 @pytest.mark.asyncio
 async def test_notification_hooks(org_a: SeededOrg, owner_engine: AsyncEngine) -> None:
@@ -621,3 +641,50 @@ async def test_notification_hooks(org_a: SeededOrg, owner_engine: AsyncEngine) -
 
     # 5. on_entity_review_resolved publishes SSE
     await on_entity_review_resolved(org_a.org_id, uuid4(), "approved")
+
+
+# =====================================================================
+# Regression (audit C4): no signature bypass, no tenant guessing
+# =====================================================================
+
+
+@pytest.mark.asyncio
+async def test_magic_mock_signature_and_missing_headers_are_rejected(client: AsyncClient) -> None:
+    body = json.dumps({"type": "block_actions", "user": {"id": "U1"}}).encode()
+    ts = str(int(time.time()))
+    for headers in (
+        {"x-slack-request-timestamp": ts, "x-slack-signature": "v0=mock_signature"},
+        {"x-slack-request-timestamp": ts},
+        {},
+    ):
+        resp = await client.post(
+            "/api/v1/slack/interactions",
+            content=body,
+            headers={"content-type": "application/json", **headers},
+        )
+        assert resp.status_code == 403, headers
+
+
+def test_no_secret_is_only_tolerated_in_local_mock_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    settings = get_settings()
+    sig = "v0=anything"
+    monkeypatch.setattr(settings, "mock_api", False)
+    assert verify_slack_signature("", "1", b"{}", sig) is False
+    monkeypatch.setattr(settings, "mock_api", True)
+    monkeypatch.setattr(settings, "app_env", "staging")
+    assert verify_slack_signature("", "1", b"{}", sig) is False
+    monkeypatch.setattr(settings, "app_env", "local")
+    assert verify_slack_signature("", "1", b"{}", sig) is True
+
+
+@pytest.mark.asyncio
+async def test_unknown_slack_team_never_resolves_to_an_org(
+    org_a: SeededOrg, owner_engine: AsyncEngine
+) -> None:
+    from app.services.slack import resolve_org_from_slack_payload
+
+    await _setup_account_and_slack(owner_engine, org_a.org_id, team_id="T_KNOWN")
+    assert await resolve_org_from_slack_payload({"team": {"id": "T_KNOWN"}}) == org_a.org_id
+    assert await resolve_org_from_slack_payload({"team": {"id": "T_OTHER"}}) is None
+    card = str(uuid4())
+    assert await resolve_org_from_slack_payload({"actions": [{"value": card}]}) is None

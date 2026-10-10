@@ -65,11 +65,10 @@ def verify_slack_signature(
     Enforces replay rejection if timestamp is older than 5 minutes.
     """
     if not signing_secret:
-        # Mock mode fallback when no secret is configured
+        # No secret configured: only local mock mode may skip verification. Never in staging/prod,
+        # and never because of a magic header value.
         settings = get_settings()
-        if settings.mock_api or signature == "v0=mock_signature":
-            return True
-        return False
+        return bool(settings.mock_api and settings.app_env in ("local", "test"))
 
     try:
         req_ts = int(timestamp)
@@ -290,32 +289,9 @@ async def resolve_org_from_slack_payload(payload: dict[str, Any]) -> UUID | None
             if found_org:
                 return found_org
 
-    # 2. Look up by action card id in block actions
-    actions = payload.get("actions", [])
-    if actions and isinstance(actions, list):
-        action_val = actions[0].get("value")
-        if action_val:
-            try:
-                card_uuid = UUID(action_val)
-                async with admin_session() as s:
-                    c_stmt = select(ActionCard.org_id).where(ActionCard.id == card_uuid).limit(1)
-                    found_org = (await s.execute(c_stmt)).scalar_one_or_none()
-                    if found_org:
-                        return found_org
-            except (ValueError, TypeError):
-                pass
-
-    # 3. Fallback: single active connected Slack integration across orgs
-    async with admin_session() as s:
-        fallback_stmt = (
-            select(Integration.org_id)
-            .where(
-                Integration.provider == "slack",
-                Integration.status == "connected",
-            )
-            .limit(1)
-        )
-        return (await s.execute(fallback_stmt)).scalar_one_or_none()
+    # No other fallback: a payload whose Slack team is not connected to exactly one org is
+    # rejected (never guess a tenant from a card id or "the only org with Slack").
+    return None
 
 
 # ---------------------------------------------------------------------------

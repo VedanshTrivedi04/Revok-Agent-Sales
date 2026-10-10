@@ -142,6 +142,9 @@ async def require_superadmin(claims: Annotated[Claims, Depends(get_claims)]) -> 
     return CurrentUser(id=claims.user_id, email=claims.email)
 
 
+REQUIRED_API_SCOPE = "ingest:usage"  # the only API-key-authenticated surface today
+
+
 @dataclass(frozen=True)
 class ApiKeyContext:
     org_id: UUID
@@ -169,55 +172,20 @@ async def api_key_auth(request: Request) -> ApiKeyContext:
     if settings.mock_api and key.startswith("rk_"):
         demo_org = UUID("0ff871dd-5dba-5118-a723-4611c0bb2120")
         structlog.contextvars.bind_contextvars(org_id=str(demo_org))
-        return ApiKeyContext(org_id=demo_org, scopes=["ingest:usage"])
+        mock_ctx = ApiKeyContext(org_id=demo_org, scopes=["ingest:usage"])
+        request.state.api_key_ctx = mock_ctx
+        return mock_ctx
 
     org_id, scopes = await verify_api_key(key)
+    if REQUIRED_API_SCOPE not in scopes:
+        raise AppError("forbidden", f"API key lacks the '{REQUIRED_API_SCOPE}' scope", 403)
     structlog.contextvars.bind_contextvars(org_id=str(org_id))
-    return ApiKeyContext(org_id=org_id, scopes=scopes)
+    ctx = ApiKeyContext(org_id=org_id, scopes=scopes)
+    request.state.api_key_ctx = ctx
+    return ctx
 
 
 async def get_api_key_org(request: Request) -> UUID:
-    """Authenticate request using API key (Bearer rk_...) or JWT token; returns org_id."""
-    import hashlib
-
-    from app.db.session import admin_session
-    from app.models.tenancy import ApiKey
-    from app.utils.time import utcnow
-
-    header = request.headers.get("authorization", "")
-    scheme, _, token = header.partition(" ")
-    if scheme.lower() != "bearer" or not token:
-        raise AppError("unauthenticated", "Provide an API key as 'Bearer rk_live_...'", 401)
-
-    if token.startswith("rk_"):
-        token_hash = hashlib.sha256(token.encode()).hexdigest()
-        async with admin_session() as s:
-            stmt = (
-                select(ApiKey, Organization.status)
-                .join(Organization, Organization.id == ApiKey.org_id)
-                .where(ApiKey.key_hash == token_hash, ApiKey.revoked_at.is_(None))
-            )
-            row = (await s.execute(stmt)).first()
-            if row is None:
-                # Support demo key in seed
-                demo_hash = hashlib.sha256(f"demo-{token}".encode()).hexdigest()
-                stmt = (
-                    select(ApiKey, Organization.status)
-                    .join(Organization, Organization.id == ApiKey.org_id)
-                    .where(ApiKey.key_hash == demo_hash, ApiKey.revoked_at.is_(None))
-                )
-                row = (await s.execute(stmt)).first()
-            if row is None:
-                raise AppError("unauthenticated", "Invalid or revoked API key", 401)
-            key_row, org_status = row
-            if org_status == "suspended":
-                raise AppError("org_suspended", "This organization is suspended", 403)
-            key_row.last_used_at = utcnow()
-            return key_row.org_id
-
-    # Fallback to JWT
-    claims = verify_service_jwt(token)
-    m = await _load_membership(claims.user_id, claims.org_id)
-    if m and m.get("org_status") == "suspended":
-        raise AppError("org_suspended", "This organization is suspended", 403)
-    return claims.org_id
+    """org_id of the authenticated API key (ingest routes). JWT users are not accepted here."""
+    ctx = getattr(request.state, "api_key_ctx", None) or await api_key_auth(request)
+    return ctx.org_id

@@ -9,6 +9,8 @@ users_by_role, client_as(role, org=...), plus `respx_mock` (HTTP mocking) from t
 """
 
 import os
+os.environ.setdefault("RATE_LIMIT_ENABLED", "false")  # tests opt in explicitly (see test_remediation_security)
+
 from collections.abc import AsyncIterator, Callable, Iterator
 from pathlib import Path
 from uuid import UUID
