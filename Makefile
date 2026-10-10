@@ -1,7 +1,7 @@
 .PHONY: dev up down api test lint fmt migrate seed
 
 up:
-	docker compose -f infra/docker-compose.yml up -d --wait postgres redis
+	docker compose -f infra/docker-compose.yml up -d --wait postgres redis mailpit
 
 down:
 	docker compose -f infra/docker-compose.yml down
