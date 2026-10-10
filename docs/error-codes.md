@@ -8,6 +8,7 @@ Every error uses the envelope `{"error": {"code", "message", "details"}}`. Forei
 |---|---|---|
 | `bad_request` | 400 | The request is malformed or cannot be processed. |
 | `invalid_cursor` | 400 | The pagination cursor is not valid. |
+| `invalid_state` | 400 | The OAuth state is invalid, expired, replayed or for another provider. |
 | `invalid_token` | 401 | The service JWT is invalid (signature, audience or required claims). |
 | `token_expired` | 401 | The service JWT has expired. |
 | `unauthenticated` | 401 | No bearer token was provided. |
