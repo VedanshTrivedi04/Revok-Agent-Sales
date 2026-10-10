@@ -57,7 +57,10 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with: { enable-cache: true }
       - run: uv sync --frozen
-      - run: uv run pytest -q
+      - name: Tests with coverage gate
+        run: uv run pytest -q --cov=app --cov-report=term-missing:skip-covered --cov-fail-under=${COVERAGE_MIN}
+        env:
+          COVERAGE_MIN: "75"
 
   openapi-contract:
     runs-on: ubuntu-latest
@@ -80,3 +83,48 @@ jobs:
           PYTHONPATH=. uv run python scripts/gen_error_codes.py
           PYTHONPATH=. uv run python scripts/gen_mocks.py
           git diff --exit-code -- ../../docs ../api/app/mocks
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Known vulnerabilities in locked runtime dependencies
+        run: |
+          uv export --frozen --no-dev --no-hashes --no-emit-project > /tmp/requirements.txt
+          uvx pip-audit -r /tmp/requirements.txt --strict
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: . } }
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  api-fuzz:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+    env:
+      MOCK_API: "true"
+      MOCK_AUTH: "false"
+      RATE_LIMIT_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - name: Start API (mock mode)
+        run: |
+          uv run uvicorn app.main:app --port 8000 &
+          for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
+      - name: Schemathesis (no 5xx, responses match the schema)
+        run: >
+          uv run schemathesis run http://localhost:8000/openapi.json
+          --checks not_a_server_error,response_schema_conformance
+          --max-examples 15 --exclude-path /api/v1/stream --exclude-path-regex '^/api/v1/oauth/'

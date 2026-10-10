@@ -130,18 +130,35 @@ def verify_sync_idempotency_simulation() -> bool:
 
 
 def main() -> None:
-    print("=" * 60)
-    print("Running Phase 2 HubSpot Reconciliation Gate")
-    print("=" * 60)
+    import argparse
+    import asyncio
+    import json
 
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--live", nargs=2, metavar=("ORG_ID", "INTEGRATION_ID"),
+                    help="reconcile the DB against the REAL HubSpot portal (needs a connected integration)")
+    ap.add_argument("--sample", type=int, default=20)
+    args = ap.parse_args()
+
+    if args.live:
+        from uuid import UUID
+
+        from app.services.reconcile import reconcile_hubspot
+
+        report = asyncio.run(reconcile_hubspot(UUID(args.live[0]), UUID(args.live[1]), sample=args.sample))
+        print(json.dumps(report, indent=2, default=str))
+        sys.exit(0 if report["ok"] else 1)
+
+    print("=" * 60)
+    print("Offline checks (pure-logic simulations; NOT a reconciliation with HubSpot)")
+    print("Run with --live ORG_ID INTEGRATION_ID for the real count + field spot-check")
+    print("=" * 60)
     try:
         verify_entity_resolution_golden_cases()
         verify_sync_idempotency_simulation()
-        print("=" * 60)
-        print("ALL RECONCILIATION GATE CHECKS PASSED SUCCESSFULLY")
-        print("=" * 60)
+        print("OFFLINE CHECKS PASSED")
     except AssertionError as e:
-        print(f"RECONCILIATION FAILED: {e}", file=sys.stderr)
+        print(f"CHECK FAILED: {e}", file=sys.stderr)
         sys.exit(1)
 
 
