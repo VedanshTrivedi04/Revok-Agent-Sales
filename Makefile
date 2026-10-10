@@ -1,4 +1,4 @@
-.PHONY: dev up down api test lint fmt
+.PHONY: dev up down api test lint fmt migrate seed
 
 up:
 	docker compose -f infra/docker-compose.yml up -d --wait postgres redis
@@ -19,3 +19,9 @@ lint:
 
 fmt:
 	cd apps/api && uv run ruff check --fix . && uv run ruff format .
+
+migrate:
+	cd apps/api && uv run alembic upgrade head
+
+seed:
+	cd apps/api && uv run python scripts/seed_demo.py
