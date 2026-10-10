@@ -1,15 +1,20 @@
-import logging
 from typing import Any
 
-import sentry_sdk
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
+from app.middleware import IdempotencyMiddleware, RequestIdMiddleware
+from app.observability import configure_logging, init_sentry
 from app.routes import health, me
-from app.utils.errors import AppError
+from app.utils.errors import ERROR_CODES, AppError
+
+log = structlog.get_logger()
+
+_STATUS_TO_CODE = {400: "bad_request", 401: "unauthenticated", 403: "forbidden", 404: "not_found"}
 
 
 def _envelope(code: str, message: str, details: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -18,22 +23,8 @@ def _envelope(code: str, message: str, details: dict[str, Any] | None = None) ->
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    logging.basicConfig(level=settings.log_level)
-    structlog.configure(
-        processors=[
-            structlog.processors.add_log_level,
-            structlog.processors.TimeStamper(fmt="iso", utc=True),
-            structlog.processors.JSONRenderer(),
-        ]
-    )
-    if settings.sentry_dsn:
-        # Never ship request bodies or PII (agent.md hard rule 10).
-        sentry_sdk.init(
-            dsn=settings.sentry_dsn,
-            environment=settings.app_env,
-            send_default_pii=False,
-            max_request_body_size="never",
-        )
+    configure_logging(settings.log_level)
+    init_sentry(settings.sentry_dsn, settings.app_env)
 
     app = FastAPI(title="RevOps Agent API", version="0.1.0")
     app.include_router(health.router)
@@ -41,15 +32,38 @@ def create_app() -> FastAPI:
 
     @app.exception_handler(AppError)
     async def _app_error(_: Request, exc: AppError) -> JSONResponse:
-        return JSONResponse(_envelope(exc.code, exc.message, exc.details), status_code=exc.status)
+        return JSONResponse(
+            _envelope(exc.code, exc.message, exc.details),
+            status_code=exc.status,
+            headers=exc.headers or None,
+        )
 
     @app.exception_handler(RequestValidationError)
     async def _validation(_: Request, exc: RequestValidationError) -> JSONResponse:
         errors = [{"loc": list(e["loc"]), "msg": e["msg"], "type": e["type"]} for e in exc.errors()]
         return JSONResponse(
-            _envelope("validation_error", "Invalid request", {"errors": errors}), status_code=422
+            _envelope("validation_error", ERROR_CODES["validation_error"][1], {"errors": errors}),
+            status_code=422,
         )
 
+    @app.exception_handler(StarletteHTTPException)
+    async def _http(_: Request, exc: StarletteHTTPException) -> JSONResponse:
+        code = _STATUS_TO_CODE.get(exc.status_code, "bad_request")
+        return JSONResponse(
+            _envelope(code, exc.detail if exc.status_code != 404 else "Not found"),
+            status_code=exc.status_code,
+        )
+
+    @app.exception_handler(Exception)
+    async def _unhandled(_: Request, exc: Exception) -> JSONResponse:
+        log.error("unhandled_exception", exc_type=type(exc).__name__)  # never log message/body
+        return JSONResponse(
+            _envelope("internal_error", ERROR_CODES["internal_error"][1]), status_code=500
+        )
+
+    # Outermost first: request id wraps everything; idempotency sits inside it.
+    app.add_middleware(IdempotencyMiddleware)
+    app.add_middleware(RequestIdMiddleware)
     return app
 
 
