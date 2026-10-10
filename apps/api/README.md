@@ -4,6 +4,8 @@ FastAPI + SQLAlchemy 2 (async) + PostgreSQL 16 with RLS + Redis + Celery. Python
 Read `../../agent.md` first (hard rules), then `../../docs/conventions.md`.
 
 ## Quick start
+> Windows: `make` is not installed by default (`choco install make` or use WSL/Git Bash with make); otherwise run the commands inside each Makefile target by hand.
+
 ```bash
 make up            # Postgres (host port 5433), Redis, Mailpit (:8025)
 cp ../../.env.example .env
