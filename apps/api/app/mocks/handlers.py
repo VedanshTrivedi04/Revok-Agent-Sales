@@ -369,6 +369,39 @@ def m_put_mapping(request: Request, body: Any, **_: Any) -> Any:
     return fm
 
 
+@mock("preview_field_mapping")
+def m_preview_mapping(request: Request, **_: Any) -> Any:
+    return [
+        {
+            "account_id": None,
+            "company_name": "Acme Corp",
+            "renewal_date": "2026-11-22",
+            "arr": 84000.0,
+            "seats": 45,
+            "crm_health": "Green",
+            "raw_properties": {"domain": "acme.example.com", "annualrevenue": "84000"},
+        },
+        {
+            "account_id": None,
+            "company_name": "Globex Corporation",
+            "renewal_date": "2026-12-15",
+            "arr": 120000.0,
+            "seats": 80,
+            "crm_health": "At Risk",
+            "raw_properties": {"domain": "globex.example.com", "annualrevenue": "120000"},
+        },
+        {
+            "account_id": None,
+            "company_name": "Initech LLC",
+            "renewal_date": "2027-01-10",
+            "arr": 45000.0,
+            "seats": 20,
+            "crm_health": "Red",
+            "raw_properties": {"domain": "initech.example.com", "annualrevenue": "45000"},
+        },
+    ]
+
+
 @mock("ingest_usage")
 def m_ingest(request: Request, rows: list[Any], **_: Any) -> Any:
     if not request.headers.get("authorization", "").startswith("Bearer rk_"):

@@ -173,3 +173,39 @@ async def api_key_auth(request: Request) -> ApiKeyContext:
     org_id, scopes = await verify_api_key(key)
     structlog.contextvars.bind_contextvars(org_id=str(org_id))
     return ApiKeyContext(org_id=org_id, scopes=scopes)
+
+
+async def get_api_key_org(request: Request) -> UUID:
+    """Authenticate request using API key (Bearer rk_...) or JWT token; returns org_id."""
+    import hashlib
+
+    from app.db.session import admin_session
+    from app.models.tenancy import ApiKey
+    from app.utils.time import utcnow
+
+    header = request.headers.get("authorization", "")
+    scheme, _, token = header.partition(" ")
+    if scheme.lower() != "bearer" or not token:
+        raise AppError("unauthenticated", "Provide an API key as 'Bearer rk_live_...'", 401)
+
+    if token.startswith("rk_"):
+        token_hash = hashlib.sha256(token.encode()).hexdigest()
+        async with admin_session() as s:
+            stmt = select(ApiKey).where(ApiKey.key_hash == token_hash, ApiKey.revoked_at.is_(None))
+            key_row = (await s.execute(stmt)).scalar_one_or_none()
+            if key_row is None:
+                # Support demo key in seed
+                demo_hash = hashlib.sha256(f"demo-{token}".encode()).hexdigest()
+                stmt = select(ApiKey).where(
+                    ApiKey.key_hash == demo_hash, ApiKey.revoked_at.is_(None)
+                )
+                key_row = (await s.execute(stmt)).scalar_one_or_none()
+            if key_row is None:
+                raise AppError("unauthenticated", "Invalid or revoked API key", 401)
+            key_row.last_used_at = utcnow()
+            return key_row.org_id
+
+    # Fallback to JWT
+    claims = verify_service_jwt(token)
+    return claims.org_id
+

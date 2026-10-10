@@ -1,10 +1,12 @@
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 from uuid import UUID
 
-from fastapi import Query
+from fastapi import Query, Request
 from fastapi.responses import RedirectResponse
 
-from app.contract import endpoint
+from app.auth.deps import current_membership, get_claims
+from app.contract import endpoint, real
+from app.db.session import org_session
 from app.permissions import Action
 from app.schemas.identity import Ack
 from app.schemas.integrations import (
@@ -12,11 +14,26 @@ from app.schemas.integrations import (
     CrmPropertyOut,
     FieldMappingBody,
     FieldMappingOut,
+    FieldMappingPreviewItem,
     IntegrationOut,
     Provider,
     SlackUserOut,
     SyncRunOut,
     SyncTriggerOut,
+)
+from app.services.field_mapping import (
+    get_field_mapping_preview_service,
+    get_field_mapping_service,
+    put_field_mapping_service,
+)
+from app.services.integrations import (
+    connect_integration_service,
+    disconnect_integration_service,
+    list_hubspot_properties_service,
+    list_integrations_service,
+    list_sync_runs_service,
+    oauth_callback_service,
+    trigger_sync_service,
 )
 
 PAGE = "B2 HubSpot & Integrations"
@@ -151,3 +168,103 @@ async def get_field_mapping() -> FieldMappingOut:
 async def put_field_mapping(body: FieldMappingBody) -> FieldMappingOut:
     """Save the CRM field mapping (admin)."""
     raise NotImplementedError
+
+
+@endpoint(
+    "GET",
+    "/field-mapping/preview",
+    group="field_mapping",
+    page="B4 Field Mapping",
+    owner="R",
+    phase=1,
+)
+async def preview_field_mapping() -> list[FieldMappingPreviewItem]:
+    """3 sample companies with mapped values."""
+    raise NotImplementedError
+
+
+# ============================================================ Real Handlers
+
+
+@real("list_integrations")
+async def list_integrations_real(request: Request, **_: Any) -> list[IntegrationOut]:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await list_integrations_service(session, m.org_id, m.user_id)
+
+
+@real("connect_integration")
+async def connect_integration_real(request: Request, provider: str, **_: Any) -> ConnectOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    return await connect_integration_service(m.org_id, m.user_id, provider, m.role)
+
+
+@real("oauth_callback")
+async def oauth_callback_real(
+    request: Request, provider: str, code: str, state: str, **_: Any
+) -> RedirectResponse:
+    error = request.query_params.get("error")
+    return await oauth_callback_service(provider, code, state, error=error)
+
+
+@real("list_hubspot_properties")
+async def list_hubspot_properties_real(
+    request: Request, object: str = "companies", **_: Any
+) -> list[CrmPropertyOut]:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    return await list_hubspot_properties_service(m.org_id, object_type=object)
+
+
+@real("trigger_sync")
+async def trigger_sync_real(request: Request, integration_id: UUID, **_: Any) -> SyncTriggerOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await trigger_sync_service(session, m.org_id, m.user_id, m.role, integration_id)
+
+
+@real("disconnect_integration")
+async def disconnect_integration_real(request: Request, integration_id: UUID, **_: Any) -> Ack:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await disconnect_integration_service(
+            session, m.org_id, m.user_id, m.role, integration_id
+        )
+
+
+@real("list_sync_runs")
+async def list_sync_runs_real(request: Request, integration_id: UUID, **_: Any) -> list[SyncRunOut]:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await list_sync_runs_service(session, m.org_id, integration_id)
+
+
+@real("get_field_mapping")
+async def get_field_mapping_real(request: Request, **_: Any) -> FieldMappingOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await get_field_mapping_service(session, m.org_id)
+
+
+@real("put_field_mapping")
+async def put_field_mapping_real(
+    request: Request, body: FieldMappingBody, **_: Any
+) -> FieldMappingOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await put_field_mapping_service(session, m.org_id, m.user_id, body)
+
+
+@real("preview_field_mapping")
+async def preview_field_mapping_real(request: Request, **_: Any) -> list[FieldMappingPreviewItem]:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as session:
+        return await get_field_mapping_preview_service(session, m.org_id)

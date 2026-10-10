@@ -2270,6 +2270,82 @@
     "title": "FieldMappingOut",
     "type": "object"
    },
+   "FieldMappingPreviewItem": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "arr": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr"
+     },
+     "company_name": {
+      "title": "Company Name",
+      "type": "string"
+     },
+     "crm_health": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Health"
+     },
+     "raw_properties": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Raw Properties",
+      "type": "object"
+     },
+     "renewal_date": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal Date"
+     },
+     "seats": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats"
+     }
+    },
+    "required": [
+     "company_name"
+    ],
+    "title": "FieldMappingPreviewItem",
+    "type": "object"
+   },
    "FindingDetail": {
     "properties": {
      "account_id": {
@@ -7651,6 +7727,32 @@
      }
     },
     "summary": "Save the CRM field mapping (admin).",
+    "tags": [
+     "B4 Field Mapping"
+    ]
+   }
+  },
+  "/api/v1/field-mapping/preview": {
+   "get": {
+    "description": "3 sample companies with mapped values.",
+    "operationId": "preview_field_mapping",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/FieldMappingPreviewItem"
+         },
+         "title": "Response Preview Field Mapping",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "3 sample companies with mapped values.",
     "tags": [
      "B4 Field Mapping"
     ]

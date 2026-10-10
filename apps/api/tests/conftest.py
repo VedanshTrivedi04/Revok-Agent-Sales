@@ -69,16 +69,61 @@ def infra() -> Iterator[None]:
     get_settings.cache_clear()
 
 
+class FakeAsyncRedis:
+    def __init__(self) -> None:
+        self._data: dict[str, str] = {}
+
+    async def set(
+        self,
+        key: str,
+        value: object,
+        ex: int | None = None,
+        nx: bool = False,
+        xx: bool = False,
+    ) -> bool | None:
+        if nx and key in self._data:
+            return None
+        if xx and key not in self._data:
+            return None
+        self._data[key] = str(value)
+        return True
+
+    async def get(self, key: str) -> str | None:
+        return self._data.get(key)
+
+    async def delete(self, *keys: str) -> int:
+        c = 0
+        for k in keys:
+            if k in self._data:
+                del self._data[k]
+                c += 1
+        return c
+
+    async def eval(self, script: str, numkeys: int, *keys_and_args: object) -> tuple[int, int]:
+        return (1, 0)
+
+    async def aclose(self) -> None:
+        self._data.clear()
+
+
 @pytest_asyncio.fixture(autouse=True)
-async def _fresh_engine() -> AsyncIterator[None]:
+async def _fresh_engine(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[None]:
     """Each test gets its own engine and Redis client (bound to the test's event loop)."""
     db_session.get_engine.cache_clear()
     db_session._sessionmaker.cache_clear()
     db_session.get_admin_engine.cache_clear()
     db_session._admin_sessionmaker.cache_clear()
+    if os.environ.get("TEST_INFRA") == "compose":
+        import app.utils.redis as redis_mod
+
+        fake = FakeAsyncRedis()
+        monkeypatch.setattr(redis_mod, "get_redis", lambda: fake)
+        monkeypatch.setattr(redis_mod, "_client", fake)
     yield
-    await db_session.get_engine().dispose()
-    await db_session.get_admin_engine().dispose()
+    if os.environ.get("TEST_INFRA") != "compose":
+        await db_session.get_engine().dispose()
+        await db_session.get_admin_engine().dispose()
+
     db_session.get_engine.cache_clear()
     db_session._sessionmaker.cache_clear()
     db_session.get_admin_engine.cache_clear()

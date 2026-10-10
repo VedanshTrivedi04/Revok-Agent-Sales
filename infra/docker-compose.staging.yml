@@ -35,8 +35,7 @@ services:
     environment:
       APP_ENV: staging
       MOCK_API: "true"
-      MOCK_AUTH: ${MOCK_AUTH:-true}
-      REAL_ROUTERS: ${REAL_ROUTERS:-me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log,stream}
+      REAL_ROUTERS: ${REAL_ROUTERS:-me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log,stream,integrations,oauth,field_mapping,ingest}
       SEED_ON_START: "true"
       DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/revops
       DATABASE_ADMIN_URL: postgresql+asyncpg://admin:admin@postgres:5432/revops
@@ -49,6 +48,7 @@ services:
       WEB_URL: ${WEB_URL:-http://localhost:3000}
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8080}
       SENTRY_DSN: ${SENTRY_DSN:-}
+
     ports:
       - "${API_PORT:-8080}:8000"
     healthcheck:
