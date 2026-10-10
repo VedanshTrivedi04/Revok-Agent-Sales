@@ -639,9 +639,10 @@ uv run python scripts/check_openapi.py --update                   # after any co
 
 **Git**
 - Branch: `main`
-- Commit: pending
-- Push: pending
-- Status: staged for commit
+- Commit: `3d5099ba44ab80cdc06fb4e6176feb501eb47409`
+- Push: `successful`
+- Remote: `origin/main`
+- Status: `clean`
 
 **Proposal for Vedansh (Database Migration)**
 - Propose adding `score_breakdown = Column(JSONB, nullable=False, server_default='{}')` to the `findings` table in the next additive migration. In Phase 3, `score_breakdown` is safely stored in `previous_snapshot["score_breakdown"]` and returned in API responses to maintain backward schema compatibility without blocking.
