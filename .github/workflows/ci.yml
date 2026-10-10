@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: apps/api
+
+jobs:
+  lint-and-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy app
+
+  migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: owner, POSTGRES_PASSWORD: owner, POSTGRES_DB: revops }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U owner -d revops" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_MIGRATOR_URL: postgresql+psycopg://owner:owner@localhost:5432/revops
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - name: Create roles
+        run: PGPASSWORD=owner psql -h localhost -U owner -d revops -f ../../infra/db/init.sql
+      - run: uv run alembic upgrade head
+      - name: Models and migrations agree
+        run: uv run alembic check
+      - name: Downgrade is clean
+        run: uv run alembic downgrade base && uv run alembic upgrade head
+
+  tests:
+    runs-on: ubuntu-latest   # Docker is available: tests start Postgres/Redis via testcontainers
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - run: uv run pytest -q
+
+  openapi-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - name: Snapshot matches the code (update it in the same PR)
+        run: uv run python scripts/check_openapi.py
+      - name: No breaking changes vs main
+        if: github.event_name == 'pull_request'
+        run: |
+          git show origin/${{ github.base_ref }}:apps/api/tests/snapshots/openapi.json > /tmp/base-openapi.json || { echo "no base snapshot yet"; exit 0; }
+          uv run python scripts/check_openapi.py --base /tmp/base-openapi.json
+      - name: Generated docs are current
+        run: |
+          PYTHONPATH=. uv run python scripts/gen_endpoints.py
+          PYTHONPATH=. uv run python scripts/gen_error_codes.py
+          PYTHONPATH=. uv run python scripts/gen_mocks.py
+          git diff --exit-code -- ../../docs ../api/app/mocks

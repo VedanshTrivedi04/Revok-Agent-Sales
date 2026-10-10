@@ -1,0 +1,1208 @@
+{
+ "components": {
+  "schemas": {
+   "AckOut": {
+    "properties": {
+     "ok": {
+      "default": true,
+      "title": "Ok",
+      "type": "boolean"
+     }
+    },
+    "title": "AckOut",
+    "type": "object"
+   },
+   "Claim": {
+    "properties": {
+     "evidence_ids": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text",
+     "evidence_ids"
+    ],
+    "title": "Claim",
+    "type": "object"
+   },
+   "ContextOut": {
+    "properties": {
+     "account": {
+      "additionalProperties": true,
+      "title": "Account",
+      "type": "object"
+     },
+     "contacts": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Contacts",
+      "type": "array"
+     },
+     "deals": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Deals",
+      "type": "array"
+     },
+     "evidence": {
+      "items": {
+       "$ref": "#/components/schemas/EvidenceOut"
+      },
+      "title": "Evidence",
+      "type": "array"
+     },
+     "missing_data": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Missing Data",
+      "type": "array"
+     },
+     "recent_events": {
+      "items": {
+       "$ref": "#/components/schemas/EventView"
+      },
+      "title": "Recent Events",
+      "type": "array"
+     },
+     "rule_hits": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Rule Hits",
+      "type": "array"
+     },
+     "signals": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Signals",
+      "type": "array"
+     },
+     "usage": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Usage",
+      "type": "array"
+     }
+    },
+    "required": [
+     "account",
+     "contacts",
+     "deals",
+     "usage",
+     "recent_events",
+     "signals",
+     "rule_hits",
+     "evidence",
+     "missing_data"
+    ],
+    "title": "ContextOut",
+    "type": "object"
+   },
+   "EventView": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "type": {
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "account_id",
+     "type",
+     "occurred_at",
+     "text"
+    ],
+    "title": "EventView",
+    "type": "object"
+   },
+   "EvidenceOut": {
+    "properties": {
+     "detail": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Detail"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "event",
+       "usage",
+       "deal",
+       "contact",
+       "account_field",
+       "signal",
+       "rule_metric"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "occurred_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Occurred At"
+     },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     },
+     "source_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Url"
+     }
+    },
+    "required": [
+     "key",
+     "kind",
+     "label"
+    ],
+    "title": "EvidenceOut",
+    "type": "object"
+   },
+   "ExplanationIn": {
+    "properties": {
+     "claims": {
+      "items": {
+       "$ref": "#/components/schemas/Claim"
+      },
+      "title": "Claims",
+      "type": "array"
+     },
+     "confidence_label": {
+      "default": "medium",
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Confidence Label",
+      "type": "string"
+     },
+     "contradictions": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/Claim"
+      },
+      "title": "Contradictions",
+      "type": "array"
+     },
+     "model": {
+      "title": "Model",
+      "type": "string"
+     },
+     "prompt_version": {
+      "title": "Prompt Version",
+      "type": "string"
+     },
+     "summary": {
+      "title": "Summary",
+      "type": "string"
+     },
+     "unknowns": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+     }
+    },
+    "required": [
+     "summary",
+     "claims",
+     "model",
+     "prompt_version"
+    ],
+    "title": "ExplanationIn",
+    "type": "object"
+   },
+   "ExplanationSavedOut": {
+    "properties": {
+     "accepted": {
+      "title": "Accepted",
+      "type": "boolean"
+     },
+     "errors": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+     },
+     "finding_id": {
+      "format": "uuid",
+      "title": "Finding Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "finding_id",
+     "accepted"
+    ],
+    "title": "ExplanationSavedOut",
+    "type": "object"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "title": "Detail",
+      "type": "array"
+     }
+    },
+    "title": "HTTPValidationError",
+    "type": "object"
+   },
+   "InternalContact": {
+    "properties": {
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "role_tags": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Role Tags",
+      "type": "array"
+     }
+    },
+    "required": [
+     "id",
+     "email"
+    ],
+    "title": "InternalContact",
+    "type": "object"
+   },
+   "PendingExtractionOut": {
+    "properties": {
+     "events": {
+      "items": {
+       "$ref": "#/components/schemas/EventView"
+      },
+      "title": "Events",
+      "type": "array"
+     }
+    },
+    "required": [
+     "events"
+    ],
+    "title": "PendingExtractionOut",
+    "type": "object"
+   },
+   "ProposalIn": {
+    "properties": {
+     "evidence_keys": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Evidence Keys",
+      "type": "array"
+     },
+     "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+     },
+     "rationale": {
+      "title": "Rationale",
+      "type": "string"
+     },
+     "type": {
+      "enum": [
+       "email_draft",
+       "crm_task",
+       "crm_field_update",
+       "crm_note",
+       "slack_internal",
+       "meeting_request"
+      ],
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "type",
+     "payload",
+     "rationale"
+    ],
+    "title": "ProposalIn",
+    "type": "object"
+   },
+   "ProposalsIn": {
+    "properties": {
+     "proposals": {
+      "items": {
+       "$ref": "#/components/schemas/ProposalIn"
+      },
+      "title": "Proposals",
+      "type": "array"
+     }
+    },
+    "required": [
+     "proposals"
+    ],
+    "title": "ProposalsIn",
+    "type": "object"
+   },
+   "ProposalsSavedOut": {
+    "properties": {
+     "created_card_ids": {
+      "items": {
+       "format": "uuid",
+       "type": "string"
+      },
+      "title": "Created Card Ids",
+      "type": "array"
+     },
+     "rejected": {
+      "default": [],
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Rejected",
+      "type": "array"
+     }
+    },
+    "required": [
+     "created_card_ids"
+    ],
+    "title": "ProposalsSavedOut",
+    "type": "object"
+   },
+   "RunStatusIn": {
+    "properties": {
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "stats": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Stats",
+      "type": "object"
+     },
+     "status": {
+      "enum": [
+       "running",
+       "waiting_approval",
+       "completed",
+       "failed",
+       "skipped"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "status"
+    ],
+    "title": "RunStatusIn",
+    "type": "object"
+   },
+   "SignalIn": {
+    "properties": {
+     "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+     },
+     "kind": {
+      "enum": [
+       "sentiment",
+       "competitor_mention",
+       "champion_leaving",
+       "pricing_concern",
+       "budget_cut",
+       "escalation",
+       "feature_request",
+       "upgrade_intent",
+       "renewal_intent",
+       "new_stakeholder",
+       "suspicious_instruction"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "model": {
+      "title": "Model",
+      "type": "string"
+     },
+     "polarity": {
+      "enum": [
+       "negative",
+       "positive",
+       "neutral"
+      ],
+      "title": "Polarity",
+      "type": "string"
+     },
+     "prompt_version": {
+      "title": "Prompt Version",
+      "type": "string"
+     },
+     "quote": {
+      "maxLength": 300,
+      "title": "Quote",
+      "type": "string"
+     },
+     "value": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Value",
+      "type": "object"
+     }
+    },
+    "required": [
+     "kind",
+     "polarity",
+     "confidence",
+     "quote",
+     "model",
+     "prompt_version"
+    ],
+    "title": "SignalIn",
+    "type": "object"
+   },
+   "SignalsIn": {
+    "properties": {
+     "signals": {
+      "items": {
+       "$ref": "#/components/schemas/SignalIn"
+      },
+      "title": "Signals",
+      "type": "array"
+     }
+    },
+    "required": [
+     "signals"
+    ],
+    "title": "SignalsIn",
+    "type": "object"
+   },
+   "SignalsSavedOut": {
+    "properties": {
+     "rejected": {
+      "default": [],
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Rejected",
+      "type": "array"
+     },
+     "saved": {
+      "title": "Saved",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "saved"
+    ],
+    "title": "SignalsSavedOut",
+    "type": "object"
+   },
+   "ValidationError": {
+    "properties": {
+     "ctx": {
+      "title": "Context",
+      "type": "object"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "title": "Location",
+      "type": "array"
+     },
+     "msg": {
+      "title": "Message",
+      "type": "string"
+     },
+     "type": {
+      "title": "Error Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError",
+    "type": "object"
+   }
+  }
+ },
+ "info": {
+  "title": "RevOps Internal AI API",
+  "version": "0.1.0"
+ },
+ "openapi": "3.1.0",
+ "paths": {
+  "/v1/orgs/{org}/accounts/{account_id}/contacts": {
+   "get": {
+    "description": "Contact ids for recipient selection.",
+    "operationId": "ai_contacts",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/InternalContact"
+         },
+         "title": "Response Ai Contacts",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Contacts",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/accounts/{account_id}/context": {
+   "get": {
+    "description": "Everything needed for a run, including the backend-numbered evidence list.",
+    "operationId": "ai_get_context",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ContextOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Get Context",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/events/pending-extraction": {
+   "get": {
+    "description": "Events whose signals_extracted_at is null.",
+    "operationId": "ai_pending_events",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PendingExtractionOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Pending Events",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/events/{event_id}/signals": {
+   "post": {
+    "description": "Save extracted signals (each quote must be a substring of the event text).",
+    "operationId": "ai_save_signals",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "event_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Event Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SignalsIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SignalsSavedOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Save Signals",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/findings/{finding_id}/explanation": {
+   "post": {
+    "description": "Save an explanation (all evidence ids must exist for the finding).",
+    "operationId": "ai_save_explanation",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "finding_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Finding Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ExplanationIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExplanationSavedOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Save Explanation",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/findings/{finding_id}/proposals": {
+   "post": {
+    "description": "Save action proposals; the backend applies policy, allowlists and tiers.",
+    "operationId": "ai_save_proposals",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "finding_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Finding Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ProposalsIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProposalsSavedOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Save Proposals",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/runs/{run_id}/status": {
+   "post": {
+    "description": "Report run progress or failure.",
+    "operationId": "ai_run_status",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "run_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Run Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RunStatusIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AckOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Run Status",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  }
+ }
+}

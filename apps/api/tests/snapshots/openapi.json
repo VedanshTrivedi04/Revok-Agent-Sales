@@ -1,0 +1,10098 @@
+{
+ "components": {
+  "schemas": {
+   "AccountDetail": {
+    "properties": {
+     "arr": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr"
+     },
+     "crm_health": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Health"
+     },
+     "crm_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Url"
+     },
+     "data_gaps": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Data Gaps",
+      "type": "array"
+     },
+     "domains": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Domains",
+      "type": "array"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "last_activity_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Activity At"
+     },
+     "metrics": {
+      "$ref": "#/components/schemas/AccountMetrics",
+      "default": {
+       "open_deals": 0,
+       "unanswered_emails": 0
+      }
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "open_findings": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/OpenFindingRef"
+      },
+      "title": "Open Findings",
+      "type": "array"
+     },
+     "owner": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/OwnerRef"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "plan_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Name"
+     },
+     "priority_score": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Priority Score"
+     },
+     "renewal_date": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal Date"
+     },
+     "renewal_in_days": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal In Days"
+     },
+     "risk_level": {
+      "anyOf": [
+       {
+        "enum": [
+         "high",
+         "medium",
+         "low"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Risk Level"
+     },
+     "seats_purchased": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats Purchased"
+     },
+     "status": {
+      "default": "active",
+      "enum": [
+       "active",
+       "churned",
+       "prospect",
+       "archived"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "AccountDetail",
+    "type": "object"
+   },
+   "AccountListItem": {
+    "properties": {
+     "arr": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr"
+     },
+     "crm_health": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Health"
+     },
+     "crm_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Url"
+     },
+     "domains": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Domains",
+      "type": "array"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "last_activity_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Activity At"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "owner": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/OwnerRef"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "plan_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Name"
+     },
+     "priority_score": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Priority Score"
+     },
+     "renewal_date": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal Date"
+     },
+     "renewal_in_days": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal In Days"
+     },
+     "risk_level": {
+      "anyOf": [
+       {
+        "enum": [
+         "high",
+         "medium",
+         "low"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Risk Level"
+     },
+     "seats_purchased": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats Purchased"
+     },
+     "status": {
+      "default": "active",
+      "enum": [
+       "active",
+       "churned",
+       "prospect",
+       "archived"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "AccountListItem",
+    "type": "object"
+   },
+   "AccountMetrics": {
+    "properties": {
+     "active_users": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Active Users"
+     },
+     "active_users_change_pct": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Active Users Change Pct"
+     },
+     "days_since_last_meeting": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Days Since Last Meeting"
+     },
+     "open_deals": {
+      "default": 0,
+      "title": "Open Deals",
+      "type": "integer"
+     },
+     "seats_used": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats Used"
+     },
+     "unanswered_emails": {
+      "default": 0,
+      "title": "Unanswered Emails",
+      "type": "integer"
+     }
+    },
+    "title": "AccountMetrics",
+    "type": "object"
+   },
+   "AccountPatchIn": {
+    "properties": {
+     "add_domains": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Add Domains"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "enum": [
+         "active",
+         "churned",
+         "prospect",
+         "archived"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     }
+    },
+    "title": "AccountPatchIn",
+    "type": "object"
+   },
+   "AccountSummary": {
+    "properties": {
+     "arr": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr"
+     },
+     "crm_health": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Health"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "owner": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/OwnerRef"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "renewal_date": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal Date"
+     },
+     "renewal_in_days": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal In Days"
+     }
+    },
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "AccountSummary",
+    "type": "object"
+   },
+   "Ack": {
+    "properties": {
+     "detail": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Detail",
+      "type": "object"
+     },
+     "ok": {
+      "default": true,
+      "title": "Ok",
+      "type": "boolean"
+     }
+    },
+    "title": "Ack",
+    "type": "object"
+   },
+   "AdminJobOut": {
+    "properties": {
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "failed_at": {
+      "format": "date-time",
+      "title": "Failed At",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "org_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Org Id"
+     },
+     "retried_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Retried At"
+     },
+     "task_name": {
+      "title": "Task Name",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "task_name",
+     "failed_at"
+    ],
+    "title": "AdminJobOut",
+    "type": "object"
+   },
+   "AdminOrgDetail": {
+    "properties": {
+     "accounts": {
+      "title": "Accounts",
+      "type": "integer"
+     },
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "failed_jobs_24h": {
+      "default": 0,
+      "title": "Failed Jobs 24H",
+      "type": "integer"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "integrations": {
+      "default": [],
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Integrations",
+      "type": "array"
+     },
+     "last_sync_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Sync At"
+     },
+     "members": {
+      "title": "Members",
+      "type": "integer"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "open_findings": {
+      "default": 0,
+      "title": "Open Findings",
+      "type": "integer"
+     },
+     "plan": {
+      "title": "Plan",
+      "type": "string"
+     },
+     "recent_errors": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Recent Errors",
+      "type": "array"
+     },
+     "status": {
+      "enum": [
+       "active",
+       "suspended",
+       "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "status",
+     "plan",
+     "members",
+     "accounts",
+     "created_at"
+    ],
+    "title": "AdminOrgDetail",
+    "type": "object"
+   },
+   "AdminOrgOut": {
+    "properties": {
+     "accounts": {
+      "title": "Accounts",
+      "type": "integer"
+     },
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "failed_jobs_24h": {
+      "default": 0,
+      "title": "Failed Jobs 24H",
+      "type": "integer"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "last_sync_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Sync At"
+     },
+     "members": {
+      "title": "Members",
+      "type": "integer"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "open_findings": {
+      "default": 0,
+      "title": "Open Findings",
+      "type": "integer"
+     },
+     "plan": {
+      "title": "Plan",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "active",
+       "suspended",
+       "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "status",
+     "plan",
+     "members",
+     "accounts",
+     "created_at"
+    ],
+    "title": "AdminOrgOut",
+    "type": "object"
+   },
+   "ApiKeyCreateIn": {
+    "properties": {
+     "name": {
+      "maxLength": 80,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+     },
+     "scopes": {
+      "default": [
+       "ingest:usage"
+      ],
+      "items": {
+       "type": "string"
+      },
+      "title": "Scopes",
+      "type": "array"
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "title": "ApiKeyCreateIn",
+    "type": "object"
+   },
+   "ApiKeyCreatedOut": {
+    "properties": {
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "last_used_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Used At"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "prefix": {
+      "title": "Prefix",
+      "type": "string"
+     },
+     "revoked_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Revoked At"
+     },
+     "scopes": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Scopes",
+      "type": "array"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "prefix",
+     "scopes",
+     "created_at",
+     "key"
+    ],
+    "title": "ApiKeyCreatedOut",
+    "type": "object"
+   },
+   "ApiKeyOut": {
+    "properties": {
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "last_used_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Used At"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "prefix": {
+      "title": "Prefix",
+      "type": "string"
+     },
+     "revoked_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Revoked At"
+     },
+     "scopes": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Scopes",
+      "type": "array"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "prefix",
+     "scopes",
+     "created_at"
+    ],
+    "title": "ApiKeyOut",
+    "type": "object"
+   },
+   "AutonomyPolicyOut": {
+    "properties": {
+     "action_type": {
+      "enum": [
+       "email_draft",
+       "crm_task",
+       "crm_field_update",
+       "crm_note",
+       "slack_internal",
+       "meeting_request"
+      ],
+      "title": "Action Type",
+      "type": "string"
+     },
+     "conditions": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Conditions",
+      "type": "object"
+     },
+     "locked": {
+      "default": false,
+      "title": "Locked",
+      "type": "boolean"
+     },
+     "tier": {
+      "enum": [
+       1,
+       2,
+       3
+      ],
+      "title": "Tier",
+      "type": "integer"
+     },
+     "updated_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated At"
+     }
+    },
+    "required": [
+     "action_type",
+     "tier"
+    ],
+    "title": "AutonomyPolicyOut",
+    "type": "object"
+   },
+   "AutonomyPutIn": {
+    "properties": {
+     "conditions": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Conditions",
+      "type": "object"
+     },
+     "tier": {
+      "enum": [
+       1,
+       2,
+       3
+      ],
+      "title": "Tier",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "tier"
+    ],
+    "title": "AutonomyPutIn",
+    "type": "object"
+   },
+   "Body_upload_usage_csv": {
+    "properties": {
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     },
+     "mapping": {
+      "title": "Mapping",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file",
+     "mapping"
+    ],
+    "title": "Body_upload_usage_csv",
+    "type": "object"
+   },
+   "CardApproveIn": {
+    "properties": {
+     "edited_payload": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Edited Payload"
+     }
+    },
+    "title": "CardApproveIn",
+    "type": "object"
+   },
+   "CardAssignIn": {
+    "properties": {
+     "user_id": {
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "user_id"
+    ],
+    "title": "CardAssignIn",
+    "type": "object"
+   },
+   "CardOut": {
+    "properties": {
+     "account_id": {
+      "format": "uuid",
+      "title": "Account Id",
+      "type": "string"
+     },
+     "account_name": {
+      "title": "Account Name",
+      "type": "string"
+     },
+     "assignee_user_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Assignee User Id"
+     },
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "decided_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Decided At"
+     },
+     "decided_by": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Decided By"
+     },
+     "decision_channel": {
+      "anyOf": [
+       {
+        "enum": [
+         "web",
+         "slack",
+         "auto"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Decision Channel"
+     },
+     "edited_payload": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Edited Payload"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "evidence_keys": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Evidence Keys",
+      "type": "array"
+     },
+     "executed_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Executed At"
+     },
+     "expires_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Expires At"
+     },
+     "external_ref": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "External Ref"
+     },
+     "finding_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finding Id"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+     },
+     "preview": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/PreviewChange"
+      },
+      "title": "Preview",
+      "type": "array"
+     },
+     "rationale": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rationale"
+     },
+     "rejection_note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rejection Note"
+     },
+     "rejection_reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rejection Reason"
+     },
+     "reverted_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reverted At"
+     },
+     "status": {
+      "enum": [
+       "proposed",
+       "pending_approval",
+       "approved",
+       "rejected",
+       "executing",
+       "executed",
+       "failed",
+       "reverted",
+       "expired",
+       "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "tier": {
+      "enum": [
+       1,
+       2,
+       3
+      ],
+      "title": "Tier",
+      "type": "integer"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "type": {
+      "enum": [
+       "email_draft",
+       "crm_task",
+       "crm_field_update",
+       "crm_note",
+       "slack_internal",
+       "meeting_request"
+      ],
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "account_id",
+     "account_name",
+     "type",
+     "tier",
+     "status",
+     "title",
+     "payload",
+     "created_at"
+    ],
+    "title": "CardOut",
+    "type": "object"
+   },
+   "CardPatchIn": {
+    "properties": {
+     "edited_payload": {
+      "additionalProperties": true,
+      "title": "Edited Payload",
+      "type": "object"
+     }
+    },
+    "required": [
+     "edited_payload"
+    ],
+    "title": "CardPatchIn",
+    "type": "object"
+   },
+   "CardRef": {
+    "properties": {
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "status": {
+      "title": "Status",
+      "type": "string"
+     },
+     "tier": {
+      "enum": [
+       1,
+       2,
+       3
+      ],
+      "title": "Tier",
+      "type": "integer"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "type": {
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "type",
+     "tier",
+     "status",
+     "title"
+    ],
+    "title": "CardRef",
+    "type": "object"
+   },
+   "CardRejectIn": {
+    "properties": {
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     },
+     "reason": {
+      "enum": [
+       "wrong_action",
+       "wrong_content",
+       "not_now",
+       "already_done",
+       "other"
+      ],
+      "title": "Reason",
+      "type": "string"
+     }
+    },
+    "required": [
+     "reason"
+    ],
+    "title": "CardRejectIn",
+    "type": "object"
+   },
+   "Claim": {
+    "properties": {
+     "evidence_ids": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text",
+     "evidence_ids"
+    ],
+    "title": "Claim",
+    "type": "object"
+   },
+   "ConnectOut": {
+    "properties": {
+     "authorize_url": {
+      "title": "Authorize Url",
+      "type": "string"
+     }
+    },
+    "required": [
+     "authorize_url"
+    ],
+    "title": "ConnectOut",
+    "type": "object"
+   },
+   "ContactOut": {
+    "properties": {
+     "crm_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Url"
+     },
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "is_active": {
+      "default": true,
+      "title": "Is Active",
+      "type": "boolean"
+     },
+     "last_inbound_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Inbound At"
+     },
+     "last_outbound_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Outbound At"
+     },
+     "left_company_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Left Company At"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "role_tags": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Role Tags",
+      "type": "array"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     }
+    },
+    "required": [
+     "id",
+     "email"
+    ],
+    "title": "ContactOut",
+    "type": "object"
+   },
+   "CrmPropertyOut": {
+    "properties": {
+     "group": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Group"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "type": {
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name",
+     "label",
+     "type"
+    ],
+    "title": "CrmPropertyOut",
+    "type": "object"
+   },
+   "CsvJobOut": {
+    "properties": {
+     "accepted": {
+      "default": 0,
+      "title": "Accepted",
+      "type": "integer"
+     },
+     "errors": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/UsageRejected"
+      },
+      "title": "Errors",
+      "type": "array"
+     },
+     "job_id": {
+      "format": "uuid",
+      "title": "Job Id",
+      "type": "string"
+     },
+     "progress": {
+      "default": 0.0,
+      "title": "Progress",
+      "type": "number"
+     },
+     "status": {
+      "enum": [
+       "queued",
+       "running",
+       "done",
+       "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "job_id",
+     "status"
+    ],
+    "title": "CsvJobOut",
+    "type": "object"
+   },
+   "DealOut": {
+    "properties": {
+     "amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Amount"
+     },
+     "close_date": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Close Date"
+     },
+     "crm_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Url"
+     },
+     "deal_type": {
+      "default": "other",
+      "enum": [
+       "new",
+       "renewal",
+       "expansion",
+       "other"
+      ],
+      "title": "Deal Type",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "is_closed": {
+      "default": false,
+      "title": "Is Closed",
+      "type": "boolean"
+     },
+     "is_won": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Is Won"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "next_step": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Step"
+     },
+     "stage_label": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Stage Label"
+     }
+    },
+    "required": [
+     "id"
+    ],
+    "title": "DealOut",
+    "type": "object"
+   },
+   "DismissIn": {
+    "properties": {
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     },
+     "reason": {
+      "enum": [
+       "not_relevant",
+       "already_handled",
+       "wrong_data",
+       "other"
+      ],
+      "title": "Reason",
+      "type": "string"
+     }
+    },
+    "required": [
+     "reason"
+    ],
+    "title": "DismissIn",
+    "type": "object"
+   },
+   "EntityReviewOut": {
+    "properties": {
+     "candidate_account_ids": {
+      "items": {
+       "format": "uuid",
+       "type": "string"
+      },
+      "title": "Candidate Account Ids",
+      "type": "array"
+     },
+     "candidate_account_names": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Candidate Account Names",
+      "type": "array"
+     },
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+     },
+     "event_title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Event Title"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reason"
+     },
+     "status": {
+      "enum": [
+       "open",
+       "resolved",
+       "ignored"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "event_id",
+     "candidate_account_ids",
+     "status",
+     "created_at"
+    ],
+    "title": "EntityReviewOut",
+    "type": "object"
+   },
+   "EntityReviewResolveIn": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "ignore": {
+      "default": false,
+      "title": "Ignore",
+      "type": "boolean"
+     }
+    },
+    "title": "EntityReviewResolveIn",
+    "type": "object"
+   },
+   "EvalRunIn": {
+    "properties": {
+     "suite": {
+      "default": "smoke",
+      "title": "Suite",
+      "type": "string"
+     }
+    },
+    "title": "EvalRunIn",
+    "type": "object"
+   },
+   "EvalSummary": {
+    "properties": {
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "ran_at": {
+      "format": "date-time",
+      "title": "Ran At",
+      "type": "string"
+     },
+     "score": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Score"
+     },
+     "status": {
+      "enum": [
+       "passed",
+       "failed",
+       "running"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "status",
+     "ran_at"
+    ],
+    "title": "EvalSummary",
+    "type": "object"
+   },
+   "EvidenceOut": {
+    "properties": {
+     "detail": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Detail"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "event",
+       "usage",
+       "deal",
+       "contact",
+       "account_field",
+       "signal",
+       "rule_metric"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "occurred_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Occurred At"
+     },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     },
+     "source_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Url"
+     }
+    },
+    "required": [
+     "key",
+     "kind",
+     "label"
+    ],
+    "title": "EvidenceOut",
+    "type": "object"
+   },
+   "ExecutionOut": {
+    "properties": {
+     "attempt": {
+      "title": "Attempt",
+      "type": "integer"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "started",
+       "succeeded",
+       "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "attempt",
+     "status",
+     "started_at"
+    ],
+    "title": "ExecutionOut",
+    "type": "object"
+   },
+   "FeedbackIn": {
+    "properties": {
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     },
+     "useful": {
+      "title": "Useful",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "useful"
+    ],
+    "title": "FeedbackIn",
+    "type": "object"
+   },
+   "FieldMappingBody": {
+    "properties": {
+     "arr_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr Property"
+     },
+     "health_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Health Property"
+     },
+     "health_values": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "default": {},
+      "title": "Health Values",
+      "type": "object"
+     },
+     "lifecycle_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lifecycle Property"
+     },
+     "mrr_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Mrr Property"
+     },
+     "next_step_property": {
+      "default": "hs_next_step",
+      "title": "Next Step Property",
+      "type": "string"
+     },
+     "plan_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Property"
+     },
+     "renewal_date_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal Date Property"
+     },
+     "seats_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats Property"
+     }
+    },
+    "title": "FieldMappingBody",
+    "type": "object"
+   },
+   "FieldMappingOut": {
+    "properties": {
+     "arr_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr Property"
+     },
+     "health_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Health Property"
+     },
+     "health_values": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "default": {},
+      "title": "Health Values",
+      "type": "object"
+     },
+     "lifecycle_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lifecycle Property"
+     },
+     "mrr_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Mrr Property"
+     },
+     "next_step_property": {
+      "default": "hs_next_step",
+      "title": "Next Step Property",
+      "type": "string"
+     },
+     "plan_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Property"
+     },
+     "renewal_date_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal Date Property"
+     },
+     "seats_property": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats Property"
+     },
+     "updated_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated At"
+     },
+     "updated_by": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated By"
+     }
+    },
+    "title": "FieldMappingOut",
+    "type": "object"
+   },
+   "FindingDetail": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "cards": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/CardRef"
+      },
+      "title": "Cards",
+      "type": "array"
+     },
+     "claims": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/Claim"
+      },
+      "title": "Claims",
+      "type": "array"
+     },
+     "confidence": {
+      "title": "Confidence",
+      "type": "number"
+     },
+     "contradictions": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/Claim"
+      },
+      "title": "Contradictions",
+      "type": "array"
+     },
+     "dismissed_reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Dismissed Reason"
+     },
+     "evidence": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/EvidenceOut"
+      },
+      "title": "Evidence",
+      "type": "array"
+     },
+     "history": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/FindingHistoryItem"
+      },
+      "title": "History",
+      "type": "array"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "model": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model"
+     },
+     "priority_score": {
+      "title": "Priority Score",
+      "type": "number"
+     },
+     "prompt_version": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Prompt Version"
+     },
+     "rule_hits": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/RuleHitOut"
+      },
+      "title": "Rule Hits",
+      "type": "array"
+     },
+     "severity": {
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+     },
+     "snoozed_until": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Snoozed Until"
+     },
+     "status": {
+      "enum": [
+       "open",
+       "in_review",
+       "actioned",
+       "dismissed",
+       "snoozed",
+       "expired",
+       "needs_review",
+       "resolved"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "summary": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Summary"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "type": {
+      "enum": [
+       "risk",
+       "expansion"
+      ],
+      "title": "Type",
+      "type": "string"
+     },
+     "unknowns": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+     }
+    },
+    "required": [
+     "id",
+     "type",
+     "status",
+     "severity",
+     "priority_score",
+     "confidence",
+     "title"
+    ],
+    "title": "FindingDetail",
+    "type": "object"
+   },
+   "FindingHistoryItem": {
+    "properties": {
+     "event": {
+      "title": "Event",
+      "type": "string"
+     },
+     "ts": {
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+     }
+    },
+    "required": [
+     "ts",
+     "event"
+    ],
+    "title": "FindingHistoryItem",
+    "type": "object"
+   },
+   "FindingListItem": {
+    "properties": {
+     "account_id": {
+      "format": "uuid",
+      "title": "Account Id",
+      "type": "string"
+     },
+     "account_name": {
+      "title": "Account Name",
+      "type": "string"
+     },
+     "confidence": {
+      "title": "Confidence",
+      "type": "number"
+     },
+     "first_seen_at": {
+      "format": "date-time",
+      "title": "First Seen At",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "last_seen_at": {
+      "format": "date-time",
+      "title": "Last Seen At",
+      "type": "string"
+     },
+     "priority_score": {
+      "title": "Priority Score",
+      "type": "number"
+     },
+     "renewal_in_days": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal In Days"
+     },
+     "severity": {
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "open",
+       "in_review",
+       "actioned",
+       "dismissed",
+       "snoozed",
+       "expired",
+       "needs_review",
+       "resolved"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "summary": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Summary"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "type": {
+      "enum": [
+       "risk",
+       "expansion"
+      ],
+      "title": "Type",
+      "type": "string"
+     },
+     "value_at_stake": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Value At Stake"
+     }
+    },
+    "required": [
+     "id",
+     "account_id",
+     "account_name",
+     "type",
+     "status",
+     "severity",
+     "priority_score",
+     "confidence",
+     "title",
+     "first_seen_at",
+     "last_seen_at"
+    ],
+    "title": "FindingListItem",
+    "type": "object"
+   },
+   "FlagOut": {
+    "properties": {
+     "default": {
+      "title": "Default",
+      "type": "boolean"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "per_org": {
+      "additionalProperties": {
+       "type": "boolean"
+      },
+      "default": {},
+      "title": "Per Org",
+      "type": "object"
+     }
+    },
+    "required": [
+     "key",
+     "default"
+    ],
+    "title": "FlagOut",
+    "type": "object"
+   },
+   "FlagPutIn": {
+    "properties": {
+     "default": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Default"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "per_org": {
+      "anyOf": [
+       {
+        "additionalProperties": {
+         "type": "boolean"
+        },
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Per Org"
+     }
+    },
+    "required": [
+     "key"
+    ],
+    "title": "FlagPutIn",
+    "type": "object"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "title": "Detail",
+      "type": "array"
+     }
+    },
+    "title": "HTTPValidationError",
+    "type": "object"
+   },
+   "HealthOut": {
+    "properties": {
+     "status": {
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "status"
+    ],
+    "title": "HealthOut",
+    "type": "object"
+   },
+   "IntegrationOut": {
+    "properties": {
+     "external_account_label": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "External Account Label"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "last_error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Error"
+     },
+     "last_success_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Success At"
+     },
+     "last_sync_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Sync At"
+     },
+     "provider": {
+      "enum": [
+       "hubspot",
+       "gmail",
+       "gcal",
+       "slack",
+       "usage_api",
+       "usage_csv"
+      ],
+      "title": "Provider",
+      "type": "string"
+     },
+     "scope_level": {
+      "enum": [
+       "org",
+       "user"
+      ],
+      "title": "Scope Level",
+      "type": "string"
+     },
+     "scopes": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Scopes",
+      "type": "array"
+     },
+     "status": {
+      "enum": [
+       "connected",
+       "syncing",
+       "needs_reauth",
+       "error",
+       "disconnected"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "user_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "User Id"
+     }
+    },
+    "required": [
+     "id",
+     "provider",
+     "scope_level",
+     "status"
+    ],
+    "title": "IntegrationOut",
+    "type": "object"
+   },
+   "InviteAcceptIn": {
+    "properties": {
+     "token": {
+      "title": "Token",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "title": "InviteAcceptIn",
+    "type": "object"
+   },
+   "InviteAcceptOut": {
+    "properties": {
+     "org_id": {
+      "format": "uuid",
+      "title": "Org Id",
+      "type": "string"
+     },
+     "role": {
+      "enum": [
+       "owner",
+       "admin",
+       "manager",
+       "member",
+       "viewer"
+      ],
+      "title": "Role",
+      "type": "string"
+     }
+    },
+    "required": [
+     "org_id",
+     "role"
+    ],
+    "title": "InviteAcceptOut",
+    "type": "object"
+   },
+   "InviteCreateIn": {
+    "properties": {
+     "email": {
+      "format": "email",
+      "title": "Email",
+      "type": "string"
+     },
+     "role": {
+      "default": "member",
+      "enum": [
+       "owner",
+       "admin",
+       "manager",
+       "member",
+       "viewer"
+      ],
+      "title": "Role",
+      "type": "string"
+     }
+    },
+    "required": [
+     "email"
+    ],
+    "title": "InviteCreateIn",
+    "type": "object"
+   },
+   "InviteOut": {
+    "properties": {
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "expires_at": {
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "invited_by": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Invited By"
+     },
+     "role": {
+      "enum": [
+       "owner",
+       "admin",
+       "manager",
+       "member",
+       "viewer"
+      ],
+      "title": "Role",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "email",
+     "role",
+     "expires_at",
+     "created_at"
+    ],
+    "title": "InviteOut",
+    "type": "object"
+   },
+   "LlmHealthOut": {
+    "properties": {
+     "latency_ms": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Latency Ms"
+     },
+     "mode": {
+      "enum": [
+       "template",
+       "external"
+      ],
+      "title": "Mode",
+      "type": "string"
+     },
+     "model": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model"
+     },
+     "status": {
+      "enum": [
+       "ok",
+       "down",
+       "not_configured"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "status",
+     "mode"
+    ],
+    "title": "LlmHealthOut",
+    "type": "object"
+   },
+   "LogDetailOut": {
+    "description": "'Why replay': the entry plus everything needed to understand the decision.",
+    "properties": {
+     "data": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Data",
+      "type": "object"
+     },
+     "entry": {
+      "$ref": "#/components/schemas/LogEntryOut"
+     },
+     "evidence_snapshot": {
+      "default": [],
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Evidence Snapshot",
+      "type": "array"
+     },
+     "executions": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/ExecutionOut"
+      },
+      "title": "Executions",
+      "type": "array"
+     },
+     "payload_diff": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/PayloadDiff"
+      },
+      "title": "Payload Diff",
+      "type": "array"
+     },
+     "related": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/LogEntryOut"
+      },
+      "title": "Related",
+      "type": "array"
+     },
+     "rule_metrics": {
+      "default": [],
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "title": "Rule Metrics",
+      "type": "array"
+     }
+    },
+    "required": [
+     "entry"
+    ],
+    "title": "LogDetailOut",
+    "type": "object"
+   },
+   "LogEntryOut": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "actor_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Actor Id"
+     },
+     "actor_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Actor Name"
+     },
+     "actor_type": {
+      "enum": [
+       "user",
+       "agent",
+       "system"
+      ],
+      "title": "Actor Type",
+      "type": "string"
+     },
+     "entity_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Entity Id"
+     },
+     "entity_type": {
+      "title": "Entity Type",
+      "type": "string"
+     },
+     "event": {
+      "title": "Event",
+      "type": "string"
+     },
+     "id": {
+      "title": "Id",
+      "type": "integer"
+     },
+     "summary": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Summary"
+     },
+     "ts": {
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "ts",
+     "actor_type",
+     "event",
+     "entity_type"
+    ],
+    "title": "LogEntryOut",
+    "type": "object"
+   },
+   "LogExportIn": {
+    "properties": {
+     "format": {
+      "default": "csv",
+      "enum": [
+       "csv",
+       "json"
+      ],
+      "title": "Format",
+      "type": "string"
+     },
+     "from_": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "From"
+     },
+     "to": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "To"
+     }
+    },
+    "title": "LogExportIn",
+    "type": "object"
+   },
+   "LogExportOut": {
+    "properties": {
+     "download_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Download Url"
+     },
+     "job_id": {
+      "format": "uuid",
+      "title": "Job Id",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "queued",
+       "running",
+       "done",
+       "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "job_id",
+     "status"
+    ],
+    "title": "LogExportOut",
+    "type": "object"
+   },
+   "LogVerifyOut": {
+    "properties": {
+     "checked": {
+      "title": "Checked",
+      "type": "integer"
+     },
+     "first_bad_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "First Bad Id"
+     },
+     "ok": {
+      "title": "Ok",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "ok",
+     "checked"
+    ],
+    "title": "LogVerifyOut",
+    "type": "object"
+   },
+   "MeMembership": {
+    "properties": {
+     "org_id": {
+      "format": "uuid",
+      "title": "Org Id",
+      "type": "string"
+     },
+     "org_name": {
+      "title": "Org Name",
+      "type": "string"
+     },
+     "role": {
+      "enum": [
+       "owner",
+       "admin",
+       "manager",
+       "member",
+       "viewer"
+      ],
+      "title": "Role",
+      "type": "string"
+     }
+    },
+    "required": [
+     "org_id",
+     "org_name",
+     "role"
+    ],
+    "title": "MeMembership",
+    "type": "object"
+   },
+   "MeOrg": {
+    "properties": {
+     "currency": {
+      "title": "Currency",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "plan": {
+      "title": "Plan",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "active",
+       "suspended",
+       "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "timezone": {
+      "title": "Timezone",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "status",
+     "plan",
+     "timezone",
+     "currency"
+    ],
+    "title": "MeOrg",
+    "type": "object"
+   },
+   "MePatchIn": {
+    "properties": {
+     "name": {
+      "anyOf": [
+       {
+        "maxLength": 120,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "notification_prefs": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/NotificationPrefs"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "timezone": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Timezone"
+     }
+    },
+    "title": "MePatchIn",
+    "type": "object"
+   },
+   "MeResponse": {
+    "properties": {
+     "flags": {
+      "additionalProperties": {
+       "type": "boolean"
+      },
+      "default": {},
+      "title": "Flags",
+      "type": "object"
+     },
+     "memberships": {
+      "items": {
+       "$ref": "#/components/schemas/MeMembership"
+      },
+      "title": "Memberships",
+      "type": "array"
+     },
+     "onboarding": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/OnboardingOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "org": {
+      "$ref": "#/components/schemas/MeOrg"
+     },
+     "permissions": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Permissions",
+      "type": "array"
+     },
+     "role": {
+      "enum": [
+       "owner",
+       "admin",
+       "manager",
+       "member",
+       "viewer"
+      ],
+      "title": "Role",
+      "type": "string"
+     },
+     "user": {
+      "$ref": "#/components/schemas/MeUser"
+     }
+    },
+    "required": [
+     "user",
+     "memberships",
+     "org",
+     "role",
+     "permissions"
+    ],
+    "title": "MeResponse",
+    "type": "object"
+   },
+   "MeUser": {
+    "properties": {
+     "avatar_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Avatar Url"
+     },
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "notification_prefs": {
+      "$ref": "#/components/schemas/NotificationPrefs",
+      "default": {
+       "alert_assigned": true,
+       "alert_failed": true,
+       "alert_high": true,
+       "digest_channel": "slack",
+       "digest_days": "weekdays",
+       "digest_hour": 9
+      }
+     },
+     "timezone": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Timezone"
+     }
+    },
+    "required": [
+     "id",
+     "email"
+    ],
+    "title": "MeUser",
+    "type": "object"
+   },
+   "MemberOut": {
+    "properties": {
+     "crm_owner_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Owner Id"
+     },
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "integrations": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Integrations",
+      "type": "array"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "role": {
+      "enum": [
+       "owner",
+       "admin",
+       "manager",
+       "member",
+       "viewer"
+      ],
+      "title": "Role",
+      "type": "string"
+     },
+     "slack_user_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Slack User Id"
+     },
+     "status": {
+      "enum": [
+       "active",
+       "disabled"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "user_id": {
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "user_id",
+     "email",
+     "role",
+     "status"
+    ],
+    "title": "MemberOut",
+    "type": "object"
+   },
+   "MemberPatchIn": {
+    "properties": {
+     "crm_owner_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Crm Owner Id"
+     },
+     "role": {
+      "anyOf": [
+       {
+        "enum": [
+         "owner",
+         "admin",
+         "manager",
+         "member",
+         "viewer"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Role"
+     },
+     "slack_user_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Slack User Id"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "enum": [
+         "active",
+         "disabled"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     }
+    },
+    "title": "MemberPatchIn",
+    "type": "object"
+   },
+   "NotificationOut": {
+    "properties": {
+     "body": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Body"
+     },
+     "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "finding_high",
+       "card_assigned",
+       "execution_failed",
+       "integration_error",
+       "digest"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "link": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Link"
+     },
+     "read_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Read At"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "kind",
+     "title",
+     "created_at"
+    ],
+    "title": "NotificationOut",
+    "type": "object"
+   },
+   "NotificationPrefs": {
+    "properties": {
+     "alert_assigned": {
+      "default": true,
+      "title": "Alert Assigned",
+      "type": "boolean"
+     },
+     "alert_failed": {
+      "default": true,
+      "title": "Alert Failed",
+      "type": "boolean"
+     },
+     "alert_high": {
+      "default": true,
+      "title": "Alert High",
+      "type": "boolean"
+     },
+     "digest_channel": {
+      "default": "slack",
+      "enum": [
+       "slack",
+       "email",
+       "off"
+      ],
+      "title": "Digest Channel",
+      "type": "string"
+     },
+     "digest_days": {
+      "default": "weekdays",
+      "enum": [
+       "weekdays",
+       "daily"
+      ],
+      "title": "Digest Days",
+      "type": "string"
+     },
+     "digest_hour": {
+      "default": 9,
+      "maximum": 23.0,
+      "minimum": 0.0,
+      "title": "Digest Hour",
+      "type": "integer"
+     }
+    },
+    "title": "NotificationPrefs",
+    "type": "object"
+   },
+   "NotificationsReadIn": {
+    "properties": {
+     "all": {
+      "default": false,
+      "title": "All",
+      "type": "boolean"
+     },
+     "ids": {
+      "anyOf": [
+       {
+        "items": {
+         "format": "uuid",
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ids"
+     }
+    },
+    "title": "NotificationsReadIn",
+    "type": "object"
+   },
+   "OnboardingOut": {
+    "properties": {
+     "first_findings_ready": {
+      "title": "First Findings Ready",
+      "type": "boolean"
+     },
+     "steps": {
+      "items": {
+       "$ref": "#/components/schemas/OnboardingStep"
+      },
+      "title": "Steps",
+      "type": "array"
+     }
+    },
+    "required": [
+     "steps",
+     "first_findings_ready"
+    ],
+    "title": "OnboardingOut",
+    "type": "object"
+   },
+   "OnboardingStep": {
+    "properties": {
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "todo",
+       "in_progress",
+       "done",
+       "skipped"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "key",
+     "status"
+    ],
+    "title": "OnboardingStep",
+    "type": "object"
+   },
+   "OpenFindingRef": {
+    "properties": {
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "priority_score": {
+      "title": "Priority Score",
+      "type": "number"
+     },
+     "severity": {
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "type": {
+      "enum": [
+       "risk",
+       "expansion"
+      ],
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "type",
+     "severity",
+     "title",
+     "priority_score"
+    ],
+    "title": "OpenFindingRef",
+    "type": "object"
+   },
+   "OrgCreateIn": {
+    "properties": {
+     "currency": {
+      "default": "USD",
+      "maxLength": 3,
+      "minLength": 3,
+      "title": "Currency",
+      "type": "string"
+     },
+     "name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+     },
+     "primary_domain": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Primary Domain"
+     },
+     "timezone": {
+      "default": "Asia/Kolkata",
+      "title": "Timezone",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "title": "OrgCreateIn",
+    "type": "object"
+   },
+   "OrgDeleteIn": {
+    "properties": {
+     "confirm": {
+      "title": "Confirm",
+      "type": "string"
+     }
+    },
+    "required": [
+     "confirm"
+    ],
+    "title": "OrgDeleteIn",
+    "type": "object"
+   },
+   "OrgDetail": {
+    "properties": {
+     "currency": {
+      "title": "Currency",
+      "type": "string"
+     },
+     "extra_domains": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Extra Domains",
+      "type": "array"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "onboarding": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/OnboardingOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "plan": {
+      "title": "Plan",
+      "type": "string"
+     },
+     "primary_domain": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Primary Domain"
+     },
+     "settings": {
+      "$ref": "#/components/schemas/OrgSettings",
+      "default": {
+       "backfill_days": 90,
+       "card_expiry_days": 7,
+       "digest_hour": 9,
+       "nightly_hour": 2
+      }
+     },
+     "slug": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Slug"
+     },
+     "status": {
+      "enum": [
+       "active",
+       "suspended",
+       "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "timezone": {
+      "title": "Timezone",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "timezone",
+     "currency",
+     "plan",
+     "status"
+    ],
+    "title": "OrgDetail",
+    "type": "object"
+   },
+   "OrgPatchIn": {
+    "properties": {
+     "currency": {
+      "anyOf": [
+       {
+        "maxLength": 3,
+        "minLength": 3,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Currency"
+     },
+     "extra_domains": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Extra Domains"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "maxLength": 120,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "primary_domain": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Primary Domain"
+     },
+     "settings": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/OrgSettings"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "timezone": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Timezone"
+     }
+    },
+    "title": "OrgPatchIn",
+    "type": "object"
+   },
+   "OrgSettings": {
+    "properties": {
+     "backfill_days": {
+      "default": 90,
+      "title": "Backfill Days",
+      "type": "integer"
+     },
+     "card_expiry_days": {
+      "default": 7,
+      "title": "Card Expiry Days",
+      "type": "integer"
+     },
+     "digest_hour": {
+      "default": 9,
+      "title": "Digest Hour",
+      "type": "integer"
+     },
+     "nightly_hour": {
+      "default": 2,
+      "title": "Nightly Hour",
+      "type": "integer"
+     }
+    },
+    "title": "OrgSettings",
+    "type": "object"
+   },
+   "OwnerRef": {
+    "properties": {
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "OwnerRef",
+    "type": "object"
+   },
+   "Page_AccountListItem_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/AccountListItem"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[AccountListItem]",
+    "type": "object"
+   },
+   "Page_AdminJobOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/AdminJobOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[AdminJobOut]",
+    "type": "object"
+   },
+   "Page_AdminOrgOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/AdminOrgOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[AdminOrgOut]",
+    "type": "object"
+   },
+   "Page_CardOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/CardOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[CardOut]",
+    "type": "object"
+   },
+   "Page_EntityReviewOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/EntityReviewOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[EntityReviewOut]",
+    "type": "object"
+   },
+   "Page_FindingListItem_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/FindingListItem"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[FindingListItem]",
+    "type": "object"
+   },
+   "Page_InviteOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/InviteOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[InviteOut]",
+    "type": "object"
+   },
+   "Page_LogEntryOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/LogEntryOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[LogEntryOut]",
+    "type": "object"
+   },
+   "Page_MemberOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/MemberOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[MemberOut]",
+    "type": "object"
+   },
+   "Page_NotificationOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/NotificationOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[NotificationOut]",
+    "type": "object"
+   },
+   "Page_RunOut_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/RunOut"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[RunOut]",
+    "type": "object"
+   },
+   "Page_TimelineEvent_": {
+    "properties": {
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/TimelineEvent"
+      },
+      "title": "Items",
+      "type": "array"
+     },
+     "next_cursor": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Next Cursor"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "Page[TimelineEvent]",
+    "type": "object"
+   },
+   "PayloadDiff": {
+    "properties": {
+     "edited": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Edited"
+     },
+     "field": {
+      "title": "Field",
+      "type": "string"
+     },
+     "proposed": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Proposed"
+     }
+    },
+    "required": [
+     "field"
+    ],
+    "title": "PayloadDiff",
+    "type": "object"
+   },
+   "PreviewChange": {
+    "properties": {
+     "after": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "After"
+     },
+     "before": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Before"
+     },
+     "field": {
+      "title": "Field",
+      "type": "string"
+     },
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "label": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Label"
+     },
+     "object": {
+      "title": "Object",
+      "type": "string"
+     }
+    },
+    "required": [
+     "object",
+     "id",
+     "field"
+    ],
+    "title": "PreviewChange",
+    "type": "object"
+   },
+   "ReadyOut": {
+    "properties": {
+     "checks": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "title": "Checks",
+      "type": "object"
+     },
+     "status": {
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "status",
+     "checks"
+    ],
+    "title": "ReadyOut",
+    "type": "object"
+   },
+   "RuleHitOut": {
+    "properties": {
+     "category": {
+      "title": "Category",
+      "type": "string"
+     },
+     "metrics": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Metrics",
+      "type": "object"
+     },
+     "rule_key": {
+      "title": "Rule Key",
+      "type": "string"
+     }
+    },
+    "required": [
+     "rule_key",
+     "category"
+    ],
+    "title": "RuleHitOut",
+    "type": "object"
+   },
+   "RuleOut": {
+    "properties": {
+     "category": {
+      "title": "Category",
+      "type": "string"
+     },
+     "default_params": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Default Params",
+      "type": "object"
+     },
+     "enabled": {
+      "title": "Enabled",
+      "type": "boolean"
+     },
+     "finding_type": {
+      "enum": [
+       "risk",
+       "expansion"
+      ],
+      "title": "Finding Type",
+      "type": "string"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "params": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Params",
+      "type": "object"
+     },
+     "requires_signals": {
+      "default": false,
+      "title": "Requires Signals",
+      "type": "boolean"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "updated_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated At"
+     }
+    },
+    "required": [
+     "key",
+     "title",
+     "category",
+     "finding_type",
+     "enabled"
+    ],
+    "title": "RuleOut",
+    "type": "object"
+   },
+   "RulePreviewIn": {
+    "properties": {
+     "params": {
+      "additionalProperties": true,
+      "title": "Params",
+      "type": "object"
+     }
+    },
+    "required": [
+     "params"
+    ],
+    "title": "RulePreviewIn",
+    "type": "object"
+   },
+   "RulePreviewOut": {
+    "properties": {
+     "currently_firing": {
+      "title": "Currently Firing",
+      "type": "integer"
+     },
+     "sample_account_ids": {
+      "default": [],
+      "items": {
+       "format": "uuid",
+       "type": "string"
+      },
+      "title": "Sample Account Ids",
+      "type": "array"
+     },
+     "would_fire": {
+      "title": "Would Fire",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "would_fire",
+     "currently_firing"
+    ],
+    "title": "RulePreviewOut",
+    "type": "object"
+   },
+   "RulePutIn": {
+    "properties": {
+     "enabled": {
+      "title": "Enabled",
+      "type": "boolean"
+     },
+     "params": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Params",
+      "type": "object"
+     }
+    },
+    "required": [
+     "enabled"
+    ],
+    "title": "RulePutIn",
+    "type": "object"
+   },
+   "RunDetail": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "account_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Name"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "model": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model"
+     },
+     "prompt_versions": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "default": {},
+      "title": "Prompt Versions",
+      "type": "object"
+     },
+     "started_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Started At"
+     },
+     "stats": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Stats",
+      "type": "object"
+     },
+     "status": {
+      "enum": [
+       "queued",
+       "running",
+       "waiting_approval",
+       "completed",
+       "failed",
+       "skipped"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "steps": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/RunStep"
+      },
+      "title": "Steps",
+      "type": "array"
+     },
+     "trace_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Trace Url"
+     },
+     "trigger": {
+      "enum": [
+       "nightly",
+       "manual",
+       "webhook",
+       "retry"
+      ],
+      "title": "Trigger",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "trigger",
+     "status"
+    ],
+    "title": "RunDetail",
+    "type": "object"
+   },
+   "RunOut": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "account_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Name"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "model": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model"
+     },
+     "started_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Started At"
+     },
+     "stats": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Stats",
+      "type": "object"
+     },
+     "status": {
+      "enum": [
+       "queued",
+       "running",
+       "waiting_approval",
+       "completed",
+       "failed",
+       "skipped"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "trigger": {
+      "enum": [
+       "nightly",
+       "manual",
+       "webhook",
+       "retry"
+      ],
+      "title": "Trigger",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "trigger",
+     "status"
+    ],
+    "title": "RunOut",
+    "type": "object"
+   },
+   "RunStep": {
+    "properties": {
+     "detail": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Detail"
+     },
+     "duration_ms": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration Ms"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "ok",
+       "skipped",
+       "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name",
+     "status"
+    ],
+    "title": "RunStep",
+    "type": "object"
+   },
+   "RunTriggerOut": {
+    "properties": {
+     "agent_run_id": {
+      "format": "uuid",
+      "title": "Agent Run Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "agent_run_id"
+    ],
+    "title": "RunTriggerOut",
+    "type": "object"
+   },
+   "SlackAck": {
+    "properties": {
+     "challenge": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Challenge"
+     },
+     "extra": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Extra",
+      "type": "object"
+     },
+     "ok": {
+      "default": true,
+      "title": "Ok",
+      "type": "boolean"
+     }
+    },
+    "title": "SlackAck",
+    "type": "object"
+   },
+   "SlackUserOut": {
+    "properties": {
+     "email": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Email"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "slack_user_id": {
+      "title": "Slack User Id",
+      "type": "string"
+     },
+     "suggested_member_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Suggested Member Id"
+     }
+    },
+    "required": [
+     "slack_user_id",
+     "name"
+    ],
+    "title": "SlackUserOut",
+    "type": "object"
+   },
+   "SnoozeIn": {
+    "properties": {
+     "until": {
+      "format": "date-time",
+      "title": "Until",
+      "type": "string"
+     }
+    },
+    "required": [
+     "until"
+    ],
+    "title": "SnoozeIn",
+    "type": "object"
+   },
+   "SyncRunOut": {
+    "properties": {
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "integration_id": {
+      "format": "uuid",
+      "title": "Integration Id",
+      "type": "string"
+     },
+     "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+     },
+     "stats": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "default": {},
+      "title": "Stats",
+      "type": "object"
+     },
+     "status": {
+      "enum": [
+       "running",
+       "success",
+       "partial",
+       "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "integration_id",
+     "started_at",
+     "status"
+    ],
+    "title": "SyncRunOut",
+    "type": "object"
+   },
+   "SyncTriggerOut": {
+    "properties": {
+     "status": {
+      "const": "running",
+      "default": "running",
+      "title": "Status",
+      "type": "string"
+     },
+     "sync_run_id": {
+      "format": "uuid",
+      "title": "Sync Run Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "sync_run_id"
+    ],
+    "title": "SyncTriggerOut",
+    "type": "object"
+   },
+   "TimelineEvent": {
+    "properties": {
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+     },
+     "participants": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/TimelineParticipant"
+      },
+      "title": "Participants",
+      "type": "array"
+     },
+     "source": {
+      "enum": [
+       "hubspot",
+       "gmail",
+       "gcal",
+       "usage",
+       "slack",
+       "system"
+      ],
+      "title": "Source",
+      "type": "string"
+     },
+     "source_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Url"
+     },
+     "summary": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Summary"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "type": {
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "source",
+     "type",
+     "occurred_at"
+    ],
+    "title": "TimelineEvent",
+    "type": "object"
+   },
+   "TimelineParticipant": {
+    "properties": {
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "role": {
+      "enum": [
+       "from",
+       "to",
+       "cc",
+       "attendee"
+      ],
+      "title": "Role",
+      "type": "string"
+     }
+    },
+    "required": [
+     "email",
+     "role"
+    ],
+    "title": "TimelineParticipant",
+    "type": "object"
+   },
+   "TodayCounts": {
+    "properties": {
+     "expansion": {
+      "title": "Expansion",
+      "type": "integer"
+     },
+     "pending_cards": {
+      "title": "Pending Cards",
+      "type": "integer"
+     },
+     "risk": {
+      "title": "Risk",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "risk",
+     "expansion",
+     "pending_cards"
+    ],
+    "title": "TodayCounts",
+    "type": "object"
+   },
+   "TodayItem": {
+    "properties": {
+     "account": {
+      "$ref": "#/components/schemas/AccountSummary"
+     },
+     "changed_since_yesterday": {
+      "default": false,
+      "title": "Changed Since Yesterday",
+      "type": "boolean"
+     },
+     "contradictions_count": {
+      "default": 0,
+      "title": "Contradictions Count",
+      "type": "integer"
+     },
+     "finding_id": {
+      "format": "uuid",
+      "title": "Finding Id",
+      "type": "string"
+     },
+     "is_new": {
+      "default": false,
+      "title": "Is New",
+      "type": "boolean"
+     },
+     "pending_cards": {
+      "default": 0,
+      "title": "Pending Cards",
+      "type": "integer"
+     },
+     "priority_score": {
+      "title": "Priority Score",
+      "type": "number"
+     },
+     "severity": {
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+     },
+     "summary": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Summary"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "top_reasons": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/TopReason"
+      },
+      "title": "Top Reasons",
+      "type": "array"
+     },
+     "type": {
+      "enum": [
+       "risk",
+       "expansion"
+      ],
+      "title": "Type",
+      "type": "string"
+     },
+     "unknowns_count": {
+      "default": 0,
+      "title": "Unknowns Count",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "finding_id",
+     "type",
+     "severity",
+     "priority_score",
+     "title",
+     "account"
+    ],
+    "title": "TodayItem",
+    "type": "object"
+   },
+   "TodayResponse": {
+    "properties": {
+     "counts": {
+      "$ref": "#/components/schemas/TodayCounts"
+     },
+     "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+     },
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/TodayItem"
+      },
+      "title": "Items",
+      "type": "array"
+     }
+    },
+    "required": [
+     "generated_at",
+     "items",
+     "counts"
+    ],
+    "title": "TodayResponse",
+    "type": "object"
+   },
+   "TopReason": {
+    "properties": {
+     "evidence_ids": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text",
+     "evidence_ids"
+    ],
+    "title": "TopReason",
+    "type": "object"
+   },
+   "UsageIngestOut": {
+    "properties": {
+     "accepted": {
+      "title": "Accepted",
+      "type": "integer"
+     },
+     "rejected": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/UsageRejected"
+      },
+      "title": "Rejected",
+      "type": "array"
+     }
+    },
+    "required": [
+     "accepted"
+    ],
+    "title": "UsageIngestOut",
+    "type": "object"
+   },
+   "UsagePoint": {
+    "properties": {
+     "active_users": {
+      "title": "Active Users",
+      "type": "integer"
+     },
+     "key_events": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "default": {},
+      "title": "Key Events",
+      "type": "object"
+     },
+     "logins": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Logins"
+     },
+     "period_end": {
+      "format": "date",
+      "title": "Period End",
+      "type": "string"
+     },
+     "period_start": {
+      "format": "date",
+      "title": "Period Start",
+      "type": "string"
+     },
+     "seats_used": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats Used"
+     }
+    },
+    "required": [
+     "period_start",
+     "period_end",
+     "active_users"
+    ],
+    "title": "UsagePoint",
+    "type": "object"
+   },
+   "UsageRejected": {
+    "properties": {
+     "index": {
+      "title": "Index",
+      "type": "integer"
+     },
+     "reason": {
+      "title": "Reason",
+      "type": "string"
+     }
+    },
+    "required": [
+     "index",
+     "reason"
+    ],
+    "title": "UsageRejected",
+    "type": "object"
+   },
+   "UsageRowIn": {
+    "properties": {
+     "account_key": {
+      "title": "Account Key",
+      "type": "string"
+     },
+     "account_key_type": {
+      "enum": [
+       "domain",
+       "external_id",
+       "hubspot_id"
+      ],
+      "title": "Account Key Type",
+      "type": "string"
+     },
+     "active_users": {
+      "minimum": 0.0,
+      "title": "Active Users",
+      "type": "integer"
+     },
+     "granularity": {
+      "enum": [
+       "day",
+       "week"
+      ],
+      "title": "Granularity",
+      "type": "string"
+     },
+     "key_events": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "default": {},
+      "title": "Key Events",
+      "type": "object"
+     },
+     "logins": {
+      "anyOf": [
+       {
+        "minimum": 0.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Logins"
+     },
+     "period_end": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Period End"
+     },
+     "period_start": {
+      "format": "date",
+      "title": "Period Start",
+      "type": "string"
+     },
+     "seats_used": {
+      "anyOf": [
+       {
+        "minimum": 0.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seats Used"
+     }
+    },
+    "required": [
+     "account_key",
+     "account_key_type",
+     "period_start",
+     "granularity",
+     "active_users"
+    ],
+    "title": "UsageRowIn",
+    "type": "object"
+   },
+   "UsageSeries": {
+    "properties": {
+     "baseline": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Baseline"
+     },
+     "granularity": {
+      "enum": [
+       "day",
+       "week"
+      ],
+      "title": "Granularity",
+      "type": "string"
+     },
+     "points": {
+      "items": {
+       "$ref": "#/components/schemas/UsagePoint"
+      },
+      "title": "Points",
+      "type": "array"
+     }
+    },
+    "required": [
+     "granularity",
+     "points"
+    ],
+    "title": "UsageSeries",
+    "type": "object"
+   },
+   "ValidationError": {
+    "properties": {
+     "ctx": {
+      "title": "Context",
+      "type": "object"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "title": "Location",
+      "type": "array"
+     },
+     "msg": {
+      "title": "Message",
+      "type": "string"
+     },
+     "type": {
+      "title": "Error Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError",
+    "type": "object"
+   }
+  }
+ },
+ "info": {
+  "title": "RevOps Agent API",
+  "version": "0.1.0"
+ },
+ "openapi": "3.1.0",
+ "paths": {
+  "/api/v1/accounts": {
+   "get": {
+    "description": "Accounts list with filters and sorting.",
+    "operationId": "list_accounts",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Query"
+      }
+     },
+     {
+      "in": "query",
+      "name": "owner",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Owner"
+      }
+     },
+     {
+      "in": "query",
+      "name": "risk",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "high",
+          "medium",
+          "low"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Risk"
+      }
+     },
+     {
+      "in": "query",
+      "name": "renewal_within",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "maximum": 365,
+         "minimum": 1,
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Renewal Within"
+      }
+     },
+     {
+      "in": "query",
+      "name": "sort",
+      "required": false,
+      "schema": {
+       "default": "priority",
+       "enum": [
+        "priority",
+        "arr",
+        "renewal",
+        "name"
+       ],
+       "title": "Sort",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_AccountListItem_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Accounts list with filters and sorting.",
+    "tags": [
+     "C5 Accounts"
+    ]
+   }
+  },
+  "/api/v1/accounts/{account_id}": {
+   "get": {
+    "description": "Account detail with metrics and open findings.",
+    "operationId": "get_account",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Account detail with metrics and open findings.",
+    "tags": [
+     "C6 Account Detail"
+    ]
+   },
+   "patch": {
+    "description": "Change account status or add domains (manager+).",
+    "operationId": "patch_account",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AccountPatchIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Change account status or add domains (manager+).",
+    "tags": [
+     "C6 Account Detail"
+    ]
+   }
+  },
+  "/api/v1/accounts/{account_id}/contacts": {
+   "get": {
+    "description": "Account contacts.",
+    "operationId": "list_account_contacts",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ContactOut"
+         },
+         "title": "Response List Account Contacts",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Account contacts.",
+    "tags": [
+     "C6 Account Detail"
+    ]
+   }
+  },
+  "/api/v1/accounts/{account_id}/deals": {
+   "get": {
+    "description": "Account deals.",
+    "operationId": "list_account_deals",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/DealOut"
+         },
+         "title": "Response List Account Deals",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Account deals.",
+    "tags": [
+     "C6 Account Detail"
+    ]
+   }
+  },
+  "/api/v1/accounts/{account_id}/run": {
+   "post": {
+    "description": "Enqueue a manual agent run for the account (member: own accounts only).",
+    "operationId": "run_account",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunTriggerOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Enqueue a manual agent run for the account (member: own accounts only).",
+    "tags": [
+     "C6 Account Detail"
+    ]
+   }
+  },
+  "/api/v1/accounts/{account_id}/timeline": {
+   "get": {
+    "description": "Account timeline events.",
+    "operationId": "get_account_timeline",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     },
+     {
+      "description": "comma-separated event types",
+      "in": "query",
+      "name": "types",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "comma-separated event types",
+       "title": "Types"
+      }
+     },
+     {
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date-time",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "From"
+      }
+     },
+     {
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date-time",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "To"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_TimelineEvent_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Account timeline events.",
+    "tags": [
+     "C6 Account Detail"
+    ]
+   }
+  },
+  "/api/v1/accounts/{account_id}/usage": {
+   "get": {
+    "description": "Usage series for charts.",
+    "operationId": "get_account_usage",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "account_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Account Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "granularity",
+      "required": false,
+      "schema": {
+       "default": "week",
+       "enum": [
+        "day",
+        "week"
+       ],
+       "title": "Granularity",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "weeks",
+      "required": false,
+      "schema": {
+       "default": 12,
+       "maximum": 52,
+       "minimum": 1,
+       "title": "Weeks",
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UsageSeries"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Usage series for charts.",
+    "tags": [
+     "C6 Account Detail"
+    ]
+   }
+  },
+  "/api/v1/action-cards": {
+   "get": {
+    "description": "Approval inbox.",
+    "operationId": "list_cards",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "status",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "proposed",
+          "pending_approval",
+          "approved",
+          "rejected",
+          "executing",
+          "executed",
+          "failed",
+          "reverted",
+          "expired",
+          "blocked"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Status"
+      }
+     },
+     {
+      "description": "me | <user_id>",
+      "in": "query",
+      "name": "assignee",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "me | <user_id>",
+       "title": "Assignee"
+      }
+     },
+     {
+      "in": "query",
+      "name": "type",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "email_draft",
+          "crm_task",
+          "crm_field_update",
+          "crm_note",
+          "slack_internal",
+          "meeting_request"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Type"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_CardOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Approval inbox.",
+    "tags": [
+     "C3 Approval Inbox"
+    ]
+   }
+  },
+  "/api/v1/action-cards/{card_id}": {
+   "get": {
+    "description": "One action card.",
+    "operationId": "get_card",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "card_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Card Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "One action card.",
+    "tags": [
+     "C4 Action Card"
+    ]
+   },
+   "patch": {
+    "description": "Save edits (validated against the type schema and allowlists).",
+    "operationId": "patch_card",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "card_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Card Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CardPatchIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Save edits (validated against the type schema and allowlists).",
+    "tags": [
+     "C4 Action Card"
+    ]
+   }
+  },
+  "/api/v1/action-cards/{card_id}/approve": {
+   "post": {
+    "description": "Approve (optionally with edits) and enqueue execution.",
+    "operationId": "approve_card",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "card_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Card Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CardApproveIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Approve (optionally with edits) and enqueue execution.",
+    "tags": [
+     "C4 Action Card"
+    ]
+   }
+  },
+  "/api/v1/action-cards/{card_id}/assign": {
+   "post": {
+    "description": "Reassign a card to another member.",
+    "operationId": "assign_card",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "card_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Card Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CardAssignIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Reassign a card to another member.",
+    "tags": [
+     "C4 Action Card"
+    ]
+   }
+  },
+  "/api/v1/action-cards/{card_id}/reject": {
+   "post": {
+    "description": "Reject with a reason.",
+    "operationId": "reject_card",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "card_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Card Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CardRejectIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Reject with a reason.",
+    "tags": [
+     "C4 Action Card"
+    ]
+   }
+  },
+  "/api/v1/action-cards/{card_id}/retry": {
+   "post": {
+    "description": "Retry a failed card (manager+).",
+    "operationId": "retry_card",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "card_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Card Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Retry a failed card (manager+).",
+    "tags": [
+     "C4 Action Card"
+    ]
+   }
+  },
+  "/api/v1/action-cards/{card_id}/revert": {
+   "post": {
+    "description": "Revert an executed action (409 revert_conflict if the value changed).",
+    "operationId": "revert_card",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "card_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Card Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Revert an executed action (409 revert_conflict if the value changed).",
+    "tags": [
+     "C4 Action Card"
+    ]
+   }
+  },
+  "/api/v1/admin/evals": {
+   "get": {
+    "description": "Eval results (placeholder until the AI phase).",
+    "operationId": "list_evals",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/EvalSummary"
+         },
+         "title": "Response List Evals",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Eval results (placeholder until the AI phase).",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/evals/run": {
+   "post": {
+    "description": "Trigger an eval run (placeholder).",
+    "operationId": "run_evals",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EvalRunIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Trigger an eval run (placeholder).",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/flags": {
+   "get": {
+    "description": "Feature flags.",
+    "operationId": "list_flags",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/FlagOut"
+         },
+         "title": "Response List Flags",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Feature flags.",
+    "tags": [
+     "E Admin Console"
+    ]
+   },
+   "put": {
+    "description": "Create or update a feature flag (default and per-org overrides).",
+    "operationId": "put_flag",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FlagPutIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FlagOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Create or update a feature flag (default and per-org overrides).",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/jobs": {
+   "get": {
+    "description": "Dead-lettered background jobs.",
+    "operationId": "list_admin_jobs",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_AdminJobOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Dead-lettered background jobs.",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/jobs/{job_id}/discard": {
+   "post": {
+    "description": "Discard a failed job.",
+    "operationId": "discard_admin_job",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Discard a failed job.",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/jobs/{job_id}/retry": {
+   "post": {
+    "description": "Re-enqueue a failed job.",
+    "operationId": "retry_admin_job",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Re-enqueue a failed job.",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/llm/health": {
+   "get": {
+    "description": "AI service health (template mode reports `template`).",
+    "operationId": "llm_health",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LlmHealthOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "AI service health (template mode reports `template`).",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/orgs": {
+   "get": {
+    "description": "All organizations: counts and statuses only, no customer content.",
+    "operationId": "list_admin_orgs",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_AdminOrgOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "All organizations: counts and statuses only, no customer content.",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/orgs/{org_id}": {
+   "get": {
+    "description": "One organization's health.",
+    "operationId": "get_admin_org",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AdminOrgDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "One organization's health.",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/orgs/{org_id}/suspend": {
+   "post": {
+    "description": "Suspend an org (403 org_suspended on all its routes).",
+    "operationId": "suspend_org",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AdminOrgOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Suspend an org (403 org_suspended on all its routes).",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/admin/orgs/{org_id}/unsuspend": {
+   "post": {
+    "description": "Lift a suspension.",
+    "operationId": "unsuspend_org",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AdminOrgOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Lift a suspension.",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
+  "/api/v1/api-keys": {
+   "get": {
+    "description": "List API keys (prefix only).",
+    "operationId": "list_api_keys",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ApiKeyOut"
+         },
+         "title": "Response List Api Keys",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "List API keys (prefix only).",
+    "tags": [
+     "D10 API Keys"
+    ]
+   },
+   "post": {
+    "description": "Create an API key; the plaintext key is returned exactly once.",
+    "operationId": "create_api_key",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ApiKeyCreateIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiKeyCreatedOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Create an API key; the plaintext key is returned exactly once.",
+    "tags": [
+     "B5 Usage Data"
+    ]
+   }
+  },
+  "/api/v1/api-keys/{key_id}": {
+   "delete": {
+    "description": "Revoke an API key.",
+    "operationId": "revoke_api_key",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "key_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Key Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Revoke an API key.",
+    "tags": [
+     "D10 API Keys"
+    ]
+   }
+  },
+  "/api/v1/autonomy": {
+   "get": {
+    "description": "Tier per action type.",
+    "operationId": "list_autonomy",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/AutonomyPolicyOut"
+         },
+         "title": "Response List Autonomy",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Tier per action type.",
+    "tags": [
+     "D9 Autonomy"
+    ]
+   }
+  },
+  "/api/v1/autonomy/{action_type}": {
+   "put": {
+    "description": "Change the tier for an action type (cannot lower locked tiers: tier_blocked).",
+    "operationId": "put_autonomy",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "action_type",
+      "required": true,
+      "schema": {
+       "enum": [
+        "email_draft",
+        "crm_task",
+        "crm_field_update",
+        "crm_note",
+        "slack_internal",
+        "meeting_request"
+       ],
+       "title": "Action Type",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AutonomyPutIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AutonomyPolicyOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Change the tier for an action type (cannot lower locked tiers: tier_blocked).",
+    "tags": [
+     "D9 Autonomy"
+    ]
+   }
+  },
+  "/api/v1/entity-reviews": {
+   "get": {
+    "description": "Ambiguous email/account matches waiting for a human.",
+    "operationId": "list_entity_reviews",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_EntityReviewOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Ambiguous email/account matches waiting for a human.",
+    "tags": [
+     "C9 Entity Review"
+    ]
+   }
+  },
+  "/api/v1/entity-reviews/{review_id}/resolve": {
+   "post": {
+    "description": "Assign the event to an account, or ignore it.",
+    "operationId": "resolve_entity_review",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "review_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Review Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EntityReviewResolveIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Assign the event to an account, or ignore it.",
+    "tags": [
+     "C9 Entity Review"
+    ]
+   }
+  },
+  "/api/v1/field-mapping": {
+   "get": {
+    "description": "Current CRM field mapping.",
+    "operationId": "get_field_mapping",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldMappingOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Current CRM field mapping.",
+    "tags": [
+     "D7 Field Mapping"
+    ]
+   },
+   "put": {
+    "description": "Save the CRM field mapping (admin).",
+    "operationId": "put_field_mapping",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FieldMappingBody"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldMappingOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Save the CRM field mapping (admin).",
+    "tags": [
+     "B4 Field Mapping"
+    ]
+   }
+  },
+  "/api/v1/findings": {
+   "get": {
+    "description": "Findings list with filters.",
+    "operationId": "list_findings",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "status",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "open",
+          "in_review",
+          "actioned",
+          "dismissed",
+          "snoozed",
+          "expired",
+          "needs_review",
+          "resolved"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Status"
+      }
+     },
+     {
+      "in": "query",
+      "name": "type",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "risk",
+          "expansion"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Type"
+      }
+     },
+     {
+      "in": "query",
+      "name": "severity",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "high",
+          "medium",
+          "low"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Severity"
+      }
+     },
+     {
+      "in": "query",
+      "name": "account_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Account Id"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_FindingListItem_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Findings list with filters.",
+    "tags": [
+     "C2 Finding Detail"
+    ]
+   }
+  },
+  "/api/v1/findings/{finding_id}": {
+   "get": {
+    "description": "Full finding: claims, evidence, unknowns, contradictions, cards, history.",
+    "operationId": "get_finding",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "finding_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Finding Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FindingDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Full finding: claims, evidence, unknowns, contradictions, cards, history.",
+    "tags": [
+     "C2 Finding Detail"
+    ]
+   }
+  },
+  "/api/v1/findings/{finding_id}/dismiss": {
+   "post": {
+    "description": "Dismiss a finding with a reason (member: own accounts).",
+    "operationId": "dismiss_finding",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "finding_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Finding Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DismissIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FindingDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Dismiss a finding with a reason (member: own accounts).",
+    "tags": [
+     "C2 Finding Detail"
+    ]
+   }
+  },
+  "/api/v1/findings/{finding_id}/feedback": {
+   "post": {
+    "description": "Thumbs up/down on a finding.",
+    "operationId": "finding_feedback",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "finding_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Finding Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FeedbackIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Thumbs up/down on a finding.",
+    "tags": [
+     "C2 Finding Detail"
+    ]
+   }
+  },
+  "/api/v1/findings/{finding_id}/reopen": {
+   "post": {
+    "description": "Reopen a dismissed or snoozed finding.",
+    "operationId": "reopen_finding",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "finding_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Finding Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FindingDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Reopen a dismissed or snoozed finding.",
+    "tags": [
+     "C2 Finding Detail"
+    ]
+   }
+  },
+  "/api/v1/findings/{finding_id}/snooze": {
+   "post": {
+    "description": "Snooze a finding until a date.",
+    "operationId": "snooze_finding",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "finding_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Finding Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SnoozeIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FindingDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Snooze a finding until a date.",
+    "tags": [
+     "C2 Finding Detail"
+    ]
+   }
+  },
+  "/api/v1/ingest/usage": {
+   "post": {
+    "description": "Batch usage ingest (max 1,000 rows) authenticated with an org API key.",
+    "operationId": "ingest_usage",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "items": {
+         "$ref": "#/components/schemas/UsageRowIn"
+        },
+        "title": "Rows",
+        "type": "array"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UsageIngestOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Batch usage ingest (max 1,000 rows) authenticated with an org API key.",
+    "tags": [
+     "B5 Usage Data"
+    ]
+   }
+  },
+  "/api/v1/ingest/usage/csv": {
+   "post": {
+    "description": "Upload a usage CSV with a column mapping (JSON in `mapping`); returns a job.",
+    "operationId": "upload_usage_csv",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_upload_usage_csv"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CsvJobOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Upload a usage CSV with a column mapping (JSON in `mapping`); returns a job.",
+    "tags": [
+     "B5 Usage Data"
+    ]
+   }
+  },
+  "/api/v1/ingest/usage/csv/{job_id}": {
+   "get": {
+    "description": "CSV import progress and row errors.",
+    "operationId": "get_usage_csv_job",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CsvJobOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "CSV import progress and row errors.",
+    "tags": [
+     "B5 Usage Data"
+    ]
+   }
+  },
+  "/api/v1/integrations": {
+   "get": {
+    "description": "Org-level and my user-level integrations with status.",
+    "operationId": "list_integrations",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/IntegrationOut"
+         },
+         "title": "Response List Integrations",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Org-level and my user-level integrations with status.",
+    "tags": [
+     "B2 HubSpot & Integrations"
+    ]
+   }
+  },
+  "/api/v1/integrations/hubspot/properties": {
+   "get": {
+    "description": "HubSpot properties for the field-mapping dropdowns.",
+    "operationId": "list_hubspot_properties",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "object",
+      "required": false,
+      "schema": {
+       "default": "companies",
+       "enum": [
+        "companies",
+        "deals",
+        "contacts"
+       ],
+       "title": "Object",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/CrmPropertyOut"
+         },
+         "title": "Response List Hubspot Properties",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "HubSpot properties for the field-mapping dropdowns.",
+    "tags": [
+     "B4 Field Mapping"
+    ]
+   }
+  },
+  "/api/v1/integrations/slack/users": {
+   "get": {
+    "description": "Slack workspace users with suggested member matches (to link members).",
+    "operationId": "list_slack_users",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/SlackUserOut"
+         },
+         "title": "Response List Slack Users",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Slack workspace users with suggested member matches (to link members).",
+    "tags": [
+     "B6 Slack"
+    ]
+   }
+  },
+  "/api/v1/integrations/{integration_id}": {
+   "delete": {
+    "description": "Revoke tokens and disconnect (admin / self).",
+    "operationId": "disconnect_integration",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "integration_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Integration Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Revoke tokens and disconnect (admin / self).",
+    "tags": [
+     "D6 Integrations"
+    ]
+   }
+  },
+  "/api/v1/integrations/{integration_id}/sync": {
+   "post": {
+    "description": "Trigger a sync now (admin for org integrations, self for user integrations).",
+    "operationId": "trigger_sync",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "integration_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Integration Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SyncTriggerOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Trigger a sync now (admin for org integrations, self for user integrations).",
+    "tags": [
+     "D6 Integrations"
+    ]
+   }
+  },
+  "/api/v1/integrations/{integration_id}/sync-runs": {
+   "get": {
+    "description": "Last 20 sync runs.",
+    "operationId": "list_sync_runs",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "integration_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Integration Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/SyncRunOut"
+         },
+         "title": "Response List Sync Runs",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Last 20 sync runs.",
+    "tags": [
+     "D6 Integrations"
+    ]
+   }
+  },
+  "/api/v1/integrations/{provider}/connect": {
+   "post": {
+    "description": "Start OAuth; returns the provider authorize URL (org-level providers need admin).",
+    "operationId": "connect_integration",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "enum": [
+        "hubspot",
+        "gmail",
+        "gcal",
+        "slack",
+        "usage_api",
+        "usage_csv"
+       ],
+       "title": "Provider",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ConnectOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Start OAuth; returns the provider authorize URL (org-level providers need admin).",
+    "tags": [
+     "B2 HubSpot & Integrations"
+    ]
+   }
+  },
+  "/api/v1/invites": {
+   "get": {
+    "description": "Pending invites (admin).",
+    "operationId": "list_invites",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_InviteOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Pending invites (admin).",
+    "tags": [
+     "D5 Members & Invites"
+    ]
+   },
+   "post": {
+    "description": "Invite a teammate by email (admin).",
+    "operationId": "create_invite",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/InviteCreateIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/InviteOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Invite a teammate by email (admin).",
+    "tags": [
+     "B7 Invite Teammates"
+    ]
+   }
+  },
+  "/api/v1/invites/accept": {
+   "post": {
+    "description": "Accept an invite with the emailed token.",
+    "operationId": "accept_invite",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/InviteAcceptIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/InviteAcceptOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Accept an invite with the emailed token.",
+    "tags": [
+     "A5 Accept Invite"
+    ]
+   }
+  },
+  "/api/v1/invites/{invite_id}": {
+   "delete": {
+    "description": "Revoke a pending invite (admin).",
+    "operationId": "revoke_invite",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "invite_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Invite Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Revoke a pending invite (admin).",
+    "tags": [
+     "D5 Members & Invites"
+    ]
+   }
+  },
+  "/api/v1/log": {
+   "get": {
+    "description": "Decision log entries (append-only audit trail).",
+    "operationId": "list_log",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "account_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Account Id"
+      }
+     },
+     {
+      "in": "query",
+      "name": "event",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Event"
+      }
+     },
+     {
+      "in": "query",
+      "name": "actor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Actor"
+      }
+     },
+     {
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date-time",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "From"
+      }
+     },
+     {
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date-time",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "To"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_LogEntryOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Decision log entries (append-only audit trail).",
+    "tags": [
+     "C7 Decision Log"
+    ]
+   }
+  },
+  "/api/v1/log/export": {
+   "post": {
+    "description": "Start a log export job (CSV or JSON).",
+    "operationId": "export_log",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LogExportIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LogExportOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Start a log export job (CSV or JSON).",
+    "tags": [
+     "C8 Log Verify & Export"
+    ]
+   }
+  },
+  "/api/v1/log/export/{job_id}": {
+   "get": {
+    "description": "Export job status and download URL.",
+    "operationId": "get_log_export",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LogExportOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Export job status and download URL.",
+    "tags": [
+     "C8 Log Verify & Export"
+    ]
+   }
+  },
+  "/api/v1/log/verify": {
+   "get": {
+    "description": "Verify the hash chain between two log ids (admin).",
+    "operationId": "verify_log",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "From"
+      }
+     },
+     {
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "To"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LogVerifyOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Verify the hash chain between two log ids (admin).",
+    "tags": [
+     "C8 Log Verify & Export"
+    ]
+   }
+  },
+  "/api/v1/log/{entry_id}": {
+   "get": {
+    "description": "Entry plus related entries, evidence snapshot, payload diff and executions.",
+    "operationId": "get_log_entry",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "entry_id",
+      "required": true,
+      "schema": {
+       "title": "Entry Id",
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LogDetailOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Entry plus related entries, evidence snapshot, payload diff and executions.",
+    "tags": [
+     "C8 Log Detail (Why Replay)"
+    ]
+   }
+  },
+  "/api/v1/me": {
+   "get": {
+    "description": "Current user, memberships, current org and permissions.",
+    "operationId": "get_me",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MeResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Current user, memberships, current org and permissions.",
+    "tags": [
+     "A1 Auth & Profile"
+    ]
+   },
+   "patch": {
+    "description": "Update name, timezone and notification preferences.",
+    "operationId": "patch_me",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/MePatchIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MeResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Update name, timezone and notification preferences.",
+    "tags": [
+     "D1 Profile & Notifications"
+    ]
+   }
+  },
+  "/api/v1/members": {
+   "get": {
+    "description": "Members with role, status and connected integrations.",
+    "operationId": "list_members",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_MemberOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Members with role, status and connected integrations.",
+    "tags": [
+     "D5 Members & Invites"
+    ]
+   }
+  },
+  "/api/v1/members/{member_id}": {
+   "delete": {
+    "description": "Remove a member (admin).",
+    "operationId": "remove_member",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "member_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Member Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Remove a member (admin).",
+    "tags": [
+     "D5 Members & Invites"
+    ]
+   },
+   "patch": {
+    "description": "Change role, status, CRM owner id or Slack link (admin).",
+    "operationId": "patch_member",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "member_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Member Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/MemberPatchIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MemberOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Change role, status, CRM owner id or Slack link (admin).",
+    "tags": [
+     "D5 Members & Invites"
+    ]
+   }
+  },
+  "/api/v1/notifications": {
+   "get": {
+    "description": "My notifications.",
+    "operationId": "list_notifications",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "unread",
+      "required": false,
+      "schema": {
+       "default": false,
+       "title": "Unread",
+       "type": "boolean"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_NotificationOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "My notifications.",
+    "tags": [
+     "C11 Notifications"
+    ]
+   }
+  },
+  "/api/v1/notifications/read": {
+   "post": {
+    "description": "Mark notifications read (ids or all).",
+    "operationId": "mark_notifications_read",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/NotificationsReadIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Mark notifications read (ids or all).",
+    "tags": [
+     "C11 Notifications"
+    ]
+   }
+  },
+  "/api/v1/oauth/{provider}/callback": {
+   "get": {
+    "description": "OAuth redirect target: exchange code, store tokens, redirect to the web app.",
+    "operationId": "oauth_callback",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "enum": [
+        "hubspot",
+        "gmail",
+        "gcal",
+        "slack",
+        "usage_api",
+        "usage_csv"
+       ],
+       "title": "Provider",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "code",
+      "required": true,
+      "schema": {
+       "title": "Code",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "state",
+      "required": true,
+      "schema": {
+       "title": "State",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "302": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "OAuth redirect target: exchange code, store tokens, redirect to the web app.",
+    "tags": [
+     "B2 HubSpot & Integrations"
+    ]
+   }
+  },
+  "/api/v1/orgs": {
+   "post": {
+    "description": "Create an organization; the creator becomes owner.",
+    "operationId": "create_org",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OrgCreateIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OrgDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Create an organization; the creator becomes owner.",
+    "tags": [
+     "B1 Organization"
+    ]
+   }
+  },
+  "/api/v1/orgs/current": {
+   "delete": {
+    "description": "Soft-delete the organization (owner; typed confirmation required).",
+    "operationId": "delete_current_org",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OrgDeleteIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Soft-delete the organization (owner; typed confirmation required).",
+    "tags": [
+     "D11 Data & Deletion"
+    ]
+   },
+   "get": {
+    "description": "Organization details, settings and onboarding state.",
+    "operationId": "get_current_org",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OrgDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Organization details, settings and onboarding state.",
+    "tags": [
+     "D4 General Settings"
+    ]
+   },
+   "patch": {
+    "description": "Update name, domains, timezone, currency and settings (admin).",
+    "operationId": "patch_current_org",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OrgPatchIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OrgDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Update name, domains, timezone, currency and settings (admin).",
+    "tags": [
+     "D4 General Settings"
+    ]
+   }
+  },
+  "/api/v1/orgs/current/onboarding": {
+   "get": {
+    "description": "Onboarding steps and whether the first findings are ready.",
+    "operationId": "get_onboarding",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OnboardingOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Onboarding steps and whether the first findings are ready.",
+    "tags": [
+     "B8 First Sync"
+    ]
+   }
+  },
+  "/api/v1/rules": {
+   "get": {
+    "description": "All rules with org overrides and defaults.",
+    "operationId": "list_rules",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/RuleOut"
+         },
+         "title": "Response List Rules",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "All rules with org overrides and defaults.",
+    "tags": [
+     "D8 Rules"
+    ]
+   }
+  },
+  "/api/v1/rules/{key}": {
+   "put": {
+    "description": "Enable/disable a rule or change its params (validated against the rule schema).",
+    "operationId": "put_rule",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "key",
+      "required": true,
+      "schema": {
+       "title": "Key",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RulePutIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RuleOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Enable/disable a rule or change its params (validated against the rule schema).",
+    "tags": [
+     "D8 Rules"
+    ]
+   }
+  },
+  "/api/v1/rules/{key}/preview": {
+   "post": {
+    "description": "How many accounts would fire with these params now.",
+    "operationId": "preview_rule",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "key",
+      "required": true,
+      "schema": {
+       "title": "Key",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RulePreviewIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RulePreviewOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "How many accounts would fire with these params now.",
+    "tags": [
+     "D8 Rules"
+    ]
+   }
+  },
+  "/api/v1/runs": {
+   "get": {
+    "description": "Agent runs (manager+).",
+    "operationId": "list_runs",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "account_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Account Id"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "queued",
+          "running",
+          "waiting_approval",
+          "completed",
+          "failed",
+          "skipped"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Status"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "cursor",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Cursor"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Page_RunOut_"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Agent runs (manager+).",
+    "tags": [
+     "C10 Agent Runs"
+    ]
+   }
+  },
+  "/api/v1/runs/{run_id}": {
+   "get": {
+    "description": "Run steps, timings and trace link.",
+    "operationId": "get_run",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "run_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Run Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunDetail"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Run steps, timings and trace link.",
+    "tags": [
+     "C10 Agent Runs"
+    ]
+   }
+  },
+  "/api/v1/slack/events": {
+   "post": {
+    "description": "Slack Events API (URL verification + events). Signature-verified; must ack within 3 s.",
+    "operationId": "slack_events",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "additionalProperties": true,
+        "title": "Payload",
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SlackAck"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Slack Events API (URL verification + events). Signature-verified; must ack within 3 s.",
+    "tags": [
+     "F Slack"
+    ]
+   }
+  },
+  "/api/v1/slack/interactions": {
+   "post": {
+    "description": "Slack block actions and view submissions. Signature-verified; must ack within 3 s.",
+    "operationId": "slack_interactions",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "additionalProperties": true,
+        "title": "Payload",
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SlackAck"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Slack block actions and view submissions. Signature-verified; must ack within 3 s.",
+    "tags": [
+     "F Slack"
+    ]
+   }
+  },
+  "/api/v1/slack/oauth/callback": {
+   "get": {
+    "description": "Slack OAuth v2 redirect target.",
+    "operationId": "slack_oauth_callback",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "code",
+      "required": true,
+      "schema": {
+       "title": "Code",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "state",
+      "required": true,
+      "schema": {
+       "title": "State",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "302": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Slack OAuth v2 redirect target.",
+    "tags": [
+     "B6 Slack"
+    ]
+   }
+  },
+  "/api/v1/stream": {
+   "get": {
+    "description": "Server-sent events: card.updated, finding.updated, run.updated, sync.updated,\nnotification.created, member.updated, org.updated, review.updated. Heartbeat every 20 s.",
+    "operationId": "stream",
+    "responses": {
+     "200": {
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Server-sent events: card.updated, finding.updated, run.updated, sync.updated,",
+    "tags": [
+     "Realtime (SSE)"
+    ]
+   }
+  },
+  "/api/v1/today": {
+   "get": {
+    "description": "Ranked open findings with account summary and pending card counts.",
+    "operationId": "get_today",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "type",
+      "required": false,
+      "schema": {
+       "default": "all",
+       "enum": [
+        "risk",
+        "expansion",
+        "all"
+       ],
+       "title": "Type",
+       "type": "string"
+      }
+     },
+     {
+      "description": "me | all | <user_id>",
+      "in": "query",
+      "name": "owner",
+      "required": false,
+      "schema": {
+       "default": "me",
+       "description": "me | all | <user_id>",
+       "title": "Owner",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TodayResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Ranked open findings with account summary and pending card counts.",
+    "tags": [
+     "C1 Today"
+    ]
+   }
+  },
+  "/health": {
+   "get": {
+    "operationId": "health_health_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HealthOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Health",
+    "tags": [
+     "Health"
+    ]
+   }
+  },
+  "/health/ready": {
+   "get": {
+    "operationId": "ready_health_ready_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReadyOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Ready",
+    "tags": [
+     "Health"
+    ]
+   }
+  }
+ }
+}
