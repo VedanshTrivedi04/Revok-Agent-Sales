@@ -1,8 +1,8 @@
-# memory.md — RevOps Agent backend: full project memory (end of Phase 1)
+# memory.md — RevOps Agent backend: full project memory (end of Phase 2)
 
 > Purpose: one file that carries *all* context so any person or AI session can resume without re-deriving
-> anything. Written at the end of Phase 0 and updated at the end of Phase 1 by Claude Code for **Vedansh** (backend owner of the base and the
-> control plane). Last verified: 430 tests passing, ruff + mypy (strict) clean, `alembic check` clean.
+> anything. Written at the end of Phase 0 and updated at the end of Phase 1 and Phase 2 by Claude Code for **Vedansh** (backend owner of the base and the
+> control plane). Last verified: 446 tests passing, ruff + mypy (strict) clean, `alembic check` clean.
 > If this file and the code disagree, the code wins; fix this file. Update it at the end of every phase.
 
 ---------------------------------------------------------------------------------------------------
@@ -121,6 +121,19 @@ apps/api/
 | V1-05 | API keys: `GET/POST/DELETE /api-keys` (`rk_live_<random>` returned once, prefix + sha256 stored, scopes, `api_key_auth` dependency for key-based routes) |
 | V1-06 | Notifications: `notify(...)` helper with SSE Redis broadcast, `GET /notifications` (cursor pagination, unread filter), `POST /notifications/read` |
 | V1-07 | Router switch: `REAL_ROUTERS=me,orgs,members,invites,api_keys,notifications` in staging compose; 23 tests in `tests/test_identity.py`; table-driven permission matrix per role x endpoint; docs/endpoints.md updated |
+
+### 4.2 Phase 2 task ledger (all 8 done)
+
+| Task | Result |
+|---|---|
+| V2-01 | Payload schemas per card type with allowlists (`app/services/payload_validator.py`): recipients subset of account contacts + internal org domains; writable CRM fields allowlist; banned phrase regex check for emails (`discount\|%\s*off\|free\s+month\|...`) |
+| V2-02 | Policy service (`app/services/policy.py`) per algorithm.md §9: Tiers 1/2/3; locked Tier 3 actions cannot be lowered; safety escalations (send mode, non-writable CRM fields, external Slack); `PUT /autonomy/{type}` rejects lowering locked tiers with 403 `tier_blocked` |
+| V2-03 | Card state machine (`app/services/cards.py`) as the ONLY code that changes status; transition table in `vedanshhandover.md §4`: `SELECT ... FOR UPDATE`, validate, update, `decision_log` in same transaction, SSE publish helper stub, notification where defined; illegal transitions raise 409 `card_not_pending` / `card_invalid_state`; Tier 3 never approvable |
+| V2-04 | Card endpoints (`app/routes/action_cards.py`): `GET /action-cards` (filters, cursor), `GET/PATCH /action-cards/{id}`, `POST /action-cards/{id}/approve` (validate `edited_payload`, store it, status `approved`, enqueue `execute_card` stub, return 202), `POST /action-cards/{id}/reject` (reason required), `POST /action-cards/{id}/assign` (notifies assignee), `POST /action-cards/{id}/retry` (manager+ for failed cards) |
+| V2-05 | Proposals to cards: `cards.create_from_proposals()` with deduplication by idempotency key |
+| V2-06 | Decision log APIs (`app/services/audit.py`): `GET /log` with filters and cursor, `GET /log/{id}` returning why-replay bundle (entry, related entries, evidence snapshot, rule metrics, proposed vs edited diff, execution rows), `GET /log/verify` (hash chain check), `POST /log/export` job & `GET /log/export/{id}` |
+| V2-07 | Hourly card expiry job (`app/workers/tasks_maintenance.py`): `maintenance.expire_cards` task expiring pending cards where `expires_at < now()` |
+| V2-08 | Router switch: `REAL_ROUTERS=me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log` in staging compose; 16 comprehensive tests in `tests/test_cards_and_audit.py` with 100% transition coverage, concurrent double-approve, Tier 3 rejection, allowlist violations, hash chain verify; total 446 tests passing |
 
 ## 5. Architecture as built (details a new session needs)
 
@@ -269,15 +282,14 @@ apps/api/
 - CI workflow untested on GitHub; no remote repo; no public staging; session recordings pending.
 - `0001` migration is large (~730 lines) and hand-edited in two places (citext extension, escaped colons).
 
-## 9. Next steps (Phase 2 — Cards, Autonomy policies, State machine; see backend-plan.md §6 and vedanshhandover §4)
+## 9. Next steps (Phase 3 — Executor & Connectors write side; see backend-plan.md §6 and vedanshhandover §5)
 
-Phase 1 (V1-01..V1-07) is COMPLETE and verified.
-Phase 2 (Vedansh: V2-01..V2-06):
-- `services/cards.py` is the **only** code allowed to change `status` (state machine table in vedanshhandover §4;
-  `SELECT … FOR UPDATE`, log in the same transaction, SSE publish, 202 on approve with `execute_card` enqueue).
-- Autonomy policies: `GET/PUT /autonomy/{action_type}` (default policies seeded in org creation).
-- Action cards routes: `GET /cards`, `GET /cards/{id}`, `POST /cards/{id}/approve`, `POST /cards/{id}/dismiss`, etc.
-- Decision log verification and hash chaining for all card actions.
+Phase 1 (V1-01..V1-07) and Phase 2 (V2-01..V2-08) are COMPLETE and verified (446 tests passing).
+Phase 3 (Vedansh: V3-01..V3-06):
+- Executor: Celery `executor.execute_card` worker executing approved action cards safely with pre-image storage and idempotency.
+- Connectors write side: HubSpot (tasks, field updates, notes), Gmail (draft/send with safety allowlists), Slack (internal channel notifications).
+- Revert handling (`POST /action-cards/{id}/revert`) within the 7-day window.
+- Decision log event `card.executed`, `card.failed`, `card.reverted`.
 
 ## 10. How to resume quickly
 

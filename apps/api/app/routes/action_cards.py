@@ -1,9 +1,11 @@
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import Depends, Query
+from fastapi import Depends, Query, Request
 
-from app.contract import endpoint
+from app.auth.deps import current_membership, get_claims
+from app.contract import endpoint, real
+from app.db.session import org_session
 from app.permissions import Action
 from app.schemas.cards import (
     CardApproveIn,
@@ -14,6 +16,7 @@ from app.schemas.cards import (
     CardStatus,
     CardType,
 )
+from app.services import cards as cards_service
 from app.utils.pagination import Page, PageParams, page_params
 
 PAGE = "C3 Approval Inbox"
@@ -128,3 +131,117 @@ async def revert_card(card_id: UUID) -> CardOut:
 async def retry_card(card_id: UUID) -> CardOut:
     """Retry a failed card (manager+)."""
     raise NotImplementedError
+
+
+@real("list_cards")
+async def list_cards_real(
+    request: Request,
+    page: PageParams,
+    status: CardStatus | None = None,
+    assignee: str | None = None,
+    type: CardType | None = None,
+    **_: Any,
+) -> Page[CardOut]:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await cards_service.list_cards(
+            s,
+            org_id=m.org_id,
+            user_id=m.user_id,
+            user_role=m.role,
+            status=status,
+            assignee=assignee,
+            card_type=type,
+            page_params=page,
+        )
+
+
+@real("get_card")
+async def get_card_real(request: Request, card_id: UUID, **_: Any) -> CardOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await cards_service.get_card(s, org_id=m.org_id, card_id=card_id)
+
+
+@real("patch_card")
+async def patch_card_real(request: Request, card_id: UUID, body: CardPatchIn, **_: Any) -> CardOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await cards_service.patch_card(
+            s,
+            org_id=m.org_id,
+            user_id=m.user_id,
+            user_role=m.role,
+            card_id=card_id,
+            patch_in=body,
+        )
+
+
+@real("approve_card")
+async def approve_card_real(
+    request: Request, card_id: UUID, body: CardApproveIn, **_: Any
+) -> CardOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await cards_service.approve_card(
+            s,
+            org_id=m.org_id,
+            user_id=m.user_id,
+            user_role=m.role,
+            card_id=card_id,
+            approve_in=body,
+            channel="web",
+        )
+
+
+@real("reject_card")
+async def reject_card_real(
+    request: Request, card_id: UUID, body: CardRejectIn, **_: Any
+) -> CardOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await cards_service.reject_card(
+            s,
+            org_id=m.org_id,
+            user_id=m.user_id,
+            user_role=m.role,
+            card_id=card_id,
+            reject_in=body,
+            channel="web",
+        )
+
+
+@real("assign_card")
+async def assign_card_real(
+    request: Request, card_id: UUID, body: CardAssignIn, **_: Any
+) -> CardOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await cards_service.assign_card(
+            s,
+            org_id=m.org_id,
+            user_id=m.user_id,
+            user_role=m.role,
+            card_id=card_id,
+            assign_in=body,
+        )
+
+
+@real("retry_card")
+async def retry_card_real(request: Request, card_id: UUID, **_: Any) -> CardOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await cards_service.retry_card(
+            s,
+            org_id=m.org_id,
+            user_id=m.user_id,
+            user_role=m.role,
+            card_id=card_id,
+        )

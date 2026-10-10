@@ -20,14 +20,14 @@
 | GET | `/api/v1/accounts/{account_id}/deals` | C6 Account Detail | Rajwardhan | P2 | mock | any |
 | POST | `/api/v1/accounts/{account_id}/run` | C6 Account Detail | Rajwardhan | P3 | mock | run:now |
 | PATCH | `/api/v1/accounts/{account_id}` | C6 Account Detail | Rajwardhan | P2 | mock | approve:any |
-| GET | `/api/v1/action-cards` | C3 Approval Inbox | Vedansh | P2 | mock | any |
-| GET | `/api/v1/action-cards/{card_id}` | C4 Action Card | Vedansh | P2 | mock | any |
-| PATCH | `/api/v1/action-cards/{card_id}` | C4 Action Card | Vedansh | P2 | mock | edit:card |
-| POST | `/api/v1/action-cards/{card_id}/approve` | C4 Action Card | Vedansh | P2 | mock | approve:own |
-| POST | `/api/v1/action-cards/{card_id}/reject` | C4 Action Card | Vedansh | P2 | mock | approve:own |
-| POST | `/api/v1/action-cards/{card_id}/assign` | C4 Action Card | Vedansh | P2 | mock | approve:own |
+| GET | `/api/v1/action-cards` | C3 Approval Inbox | Vedansh | P2 | real | any |
+| GET | `/api/v1/action-cards/{card_id}` | C4 Action Card | Vedansh | P2 | real | any |
+| PATCH | `/api/v1/action-cards/{card_id}` | C4 Action Card | Vedansh | P2 | real | edit:card |
+| POST | `/api/v1/action-cards/{card_id}/approve` | C4 Action Card | Vedansh | P2 | real | approve:own |
+| POST | `/api/v1/action-cards/{card_id}/reject` | C4 Action Card | Vedansh | P2 | real | approve:own |
+| POST | `/api/v1/action-cards/{card_id}/assign` | C4 Action Card | Vedansh | P2 | real | approve:own |
 | POST | `/api/v1/action-cards/{card_id}/revert` | C4 Action Card | Vedansh | P3 | mock | revert |
-| POST | `/api/v1/action-cards/{card_id}/retry` | C4 Action Card | Vedansh | P3 | mock | approve:any |
+| POST | `/api/v1/action-cards/{card_id}/retry` | C4 Action Card | Vedansh | P3 | real | approve:any |
 | GET | `/api/v1/admin/orgs` | E Admin Console | Vedansh | P5 | mock | superadmin |
 | GET | `/api/v1/admin/orgs/{org_id}` | E Admin Console | Vedansh | P5 | mock | superadmin |
 | POST | `/api/v1/admin/orgs/{org_id}/suspend` | E Admin Console | Vedansh | P5 | mock | superadmin |
@@ -43,8 +43,8 @@
 | GET | `/api/v1/api-keys` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
 | POST | `/api/v1/api-keys` | B5 Usage Data | Vedansh | P1 | real | apikeys:manage |
 | DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
-| GET | `/api/v1/autonomy` | D9 Autonomy | Vedansh | P2 | mock | any |
-| PUT | `/api/v1/autonomy/{action_type}` | D9 Autonomy | Vedansh | P2 | mock | autonomy:edit |
+| GET | `/api/v1/autonomy` | D9 Autonomy | Vedansh | P2 | real | any |
+| PUT | `/api/v1/autonomy/{action_type}` | D9 Autonomy | Vedansh | P2 | real | autonomy:edit |
 | GET | `/api/v1/entity-reviews` | C9 Entity Review | Rajwardhan | P2 | mock | review:view |
 | POST | `/api/v1/entity-reviews/{review_id}/resolve` | C9 Entity Review | Rajwardhan | P2 | mock | review:view |
 | GET | `/api/v1/findings` | C2 Finding Detail | Rajwardhan | P3 | mock | any |
@@ -66,11 +66,11 @@
 | GET | `/api/v1/integrations/{integration_id}/sync-runs` | D6 Integrations | Rajwardhan | P2 | mock | integrations:manage |
 | GET | `/api/v1/field-mapping` | D7 Field Mapping | Rajwardhan | P1 | mock | any |
 | PUT | `/api/v1/field-mapping` | B4 Field Mapping | Rajwardhan | P1 | mock | mapping:edit |
-| GET | `/api/v1/log` | C7 Decision Log | Vedansh | P2 | mock | any |
-| GET | `/api/v1/log/verify` | C8 Log Verify & Export | Vedansh | P2 | mock | data:export |
-| GET | `/api/v1/log/{entry_id}` | C8 Log Detail (Why Replay) | Vedansh | P2 | mock | any |
-| POST | `/api/v1/log/export` | C8 Log Verify & Export | Vedansh | P2 | mock | data:export |
-| GET | `/api/v1/log/export/{job_id}` | C8 Log Verify & Export | Vedansh | P2 | mock | data:export |
+| GET | `/api/v1/log` | C7 Decision Log | Vedansh | P2 | real | any |
+| GET | `/api/v1/log/verify` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
+| GET | `/api/v1/log/{entry_id}` | C8 Log Detail (Why Replay) | Vedansh | P2 | real | any |
+| POST | `/api/v1/log/export` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
+| GET | `/api/v1/log/export/{job_id}` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
 | GET | `/api/v1/me` | A1 Auth & Profile | Vedansh | P1 | real | any |
 | PATCH | `/api/v1/me` | D1 Profile & Notifications | Vedansh | P1 | real | any |
 | GET | `/api/v1/members` | D5 Members & Invites | Vedansh | P1 | real | any |
