@@ -1,0 +1,20 @@
+meta {
+  name: retry_card
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/v1/action-cards/912da8ce-99a4-5661-8507-cfecef21a571/retry
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Retry a failed card (manager+).
+  Page: C4 Action Card | Owner: V | Phase: P3 | Access: approve:any
+}

@@ -1,0 +1,29 @@
+meta {
+  name: put_rule
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/v1/rules/R01_usage_drop
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "enabled": true,
+    "params": {
+      "drop_pct": 25
+    }
+  }
+}
+
+docs {
+  Enable/disable a rule or change its params (validated against the rule schema).
+  Page: D8 Rules | Owner: R | Phase: P4 | Access: rules:edit
+}

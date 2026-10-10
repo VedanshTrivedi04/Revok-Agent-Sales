@@ -1,0 +1,26 @@
+meta {
+  name: accept_invite
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/invites/accept
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "token": "token-from-email"
+  }
+}
+
+docs {
+  Accept an invite with the emailed token.
+  Page: A5 Accept Invite | Owner: V | Phase: P1 | Access: user
+}

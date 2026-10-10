@@ -1,0 +1,26 @@
+meta {
+  name: export_log
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/log/export
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "format": "csv"
+  }
+}
+
+docs {
+  Start a log export job (CSV or JSON).
+  Page: C8 Log Verify & Export | Owner: V | Phase: P2 | Access: data:export
+}

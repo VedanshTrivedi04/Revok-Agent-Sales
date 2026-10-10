@@ -1,0 +1,26 @@
+meta {
+  name: dismiss_finding
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/findings/83b1eb80-9db0-5354-b1f4-903ab2dbe325/dismiss
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "reason": "not_relevant"
+  }
+}
+
+docs {
+  Dismiss a finding with a reason (member: own accounts).
+  Page: C2 Finding Detail | Owner: R | Phase: P3 | Access: approve:own
+}

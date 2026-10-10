@@ -1,0 +1,28 @@
+meta {
+  name: preview_rule
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/rules/R01_usage_drop/preview
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "params": {
+      "drop_pct": 20
+    }
+  }
+}
+
+docs {
+  How many accounts would fire with these params now.
+  Page: D8 Rules | Owner: R | Phase: P4 | Access: rules:edit
+}

@@ -1,0 +1,20 @@
+meta {
+  name: get_log_entry
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/log/4
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Entry plus related entries, evidence snapshot, payload diff and executions.
+  Page: C8 Log Detail (Why Replay) | Owner: V | Phase: P2 | Access: any
+}

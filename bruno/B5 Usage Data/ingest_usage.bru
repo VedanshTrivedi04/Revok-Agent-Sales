@@ -1,0 +1,32 @@
+meta {
+  name: ingest_usage
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/ingest/usage
+  body: json
+  auth: none
+}
+
+auth:bearer {
+  token: rk_live_PASTE_API_KEY
+}
+
+body:json {
+  [
+    {
+      "account_key": "acme.example.com",
+      "account_key_type": "domain",
+      "period_start": "2026-10-05",
+      "granularity": "week",
+      "active_users": 30
+    }
+  ]
+}
+
+docs {
+  Batch usage ingest (max 1,000 rows) authenticated with an org API key.
+  Page: B5 Usage Data | Owner: R | Phase: P1 | Access: api_key
+}

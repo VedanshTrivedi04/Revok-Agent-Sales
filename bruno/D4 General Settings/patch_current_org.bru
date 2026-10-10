@@ -1,0 +1,26 @@
+meta {
+  name: patch_current_org
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/orgs/current
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Demo SaaS Inc"
+  }
+}
+
+docs {
+  Update name, domains, timezone, currency and settings (admin).
+  Page: D4 General Settings | Owner: V | Phase: P1 | Access: members:manage
+}

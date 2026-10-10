@@ -1,0 +1,20 @@
+meta {
+  name: list_runs
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/runs
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Agent runs (manager+).
+  Page: C10 Agent Runs | Owner: R | Phase: P3 | Access: runs:view
+}

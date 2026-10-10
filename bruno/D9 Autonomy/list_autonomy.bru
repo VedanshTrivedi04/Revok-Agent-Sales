@@ -1,0 +1,20 @@
+meta {
+  name: list_autonomy
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/autonomy
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Tier per action type.
+  Page: D9 Autonomy | Owner: V | Phase: P2 | Access: any
+}

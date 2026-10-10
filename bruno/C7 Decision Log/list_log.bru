@@ -1,0 +1,20 @@
+meta {
+  name: list_log
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/log
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Decision log entries (append-only audit trail).
+  Page: C7 Decision Log | Owner: V | Phase: P2 | Access: any
+}

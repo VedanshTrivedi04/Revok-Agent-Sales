@@ -1,0 +1,20 @@
+meta {
+  name: llm_health
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/v1/admin/llm/health
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  AI service health (template mode reports `template`).
+  Page: E Admin Console | Owner: V | Phase: P6 | Access: superadmin
+}

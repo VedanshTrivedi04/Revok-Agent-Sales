@@ -1,0 +1,26 @@
+meta {
+  name: reject_card
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/action-cards/912da8ce-99a4-5661-8507-cfecef21a571/reject
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "reason": "not_now"
+  }
+}
+
+docs {
+  Reject with a reason.
+  Page: C4 Action Card | Owner: V | Phase: P2 | Access: approve:own
+}

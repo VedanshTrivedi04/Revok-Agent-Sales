@@ -1,0 +1,24 @@
+meta {
+  name: approve_card
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/action-cards/912da8ce-99a4-5661-8507-cfecef21a571/approve
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {}
+}
+
+docs {
+  Approve (optionally with edits) and enqueue execution.
+  Page: C4 Action Card | Owner: V | Phase: P2 | Access: approve:own
+}

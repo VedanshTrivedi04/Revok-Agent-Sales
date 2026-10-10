@@ -1,0 +1,20 @@
+meta {
+  name: stream
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/stream
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Server-sent events: card.updated, finding.updated, run.updated, sync.updated,
+  Page: Realtime (SSE) | Owner: V | Phase: P3 | Access: any
+}

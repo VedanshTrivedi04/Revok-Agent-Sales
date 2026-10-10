@@ -1,0 +1,20 @@
+meta {
+  name: list_cards
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/action-cards
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Approval inbox.
+  Page: C3 Approval Inbox | Owner: V | Phase: P2 | Access: any
+}

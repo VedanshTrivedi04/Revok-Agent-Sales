@@ -1,0 +1,20 @@
+meta {
+  name: list_notifications
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/notifications
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  My notifications.
+  Page: C11 Notifications | Owner: V | Phase: P1 | Access: any
+}

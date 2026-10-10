@@ -1,0 +1,26 @@
+meta {
+  name: resolve_entity_review
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/entity-reviews/246865d3-d967-52f7-9866-4bec6e318097/resolve
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "ignore": true
+  }
+}
+
+docs {
+  Assign the event to an account, or ignore it.
+  Page: C9 Entity Review | Owner: R | Phase: P2 | Access: review:view
+}

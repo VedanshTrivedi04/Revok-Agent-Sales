@@ -1,0 +1,20 @@
+meta {
+  name: list_members
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/members
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Members with role, status and connected integrations.
+  Page: D5 Members & Invites | Owner: V | Phase: P1 | Access: any
+}

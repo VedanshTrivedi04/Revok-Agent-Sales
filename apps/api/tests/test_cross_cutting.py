@@ -310,3 +310,15 @@ async def test_cors_preflight_allows_web_origin_only(client: AsyncClient) -> Non
         headers={"Origin": "https://evil.example.com", "Access-Control-Request-Method": "GET"},
     )
     assert "access-control-allow-origin" not in bad.headers
+
+
+def test_bruno_collection_has_a_request_per_endpoint() -> None:
+    from app import routes  # noqa: F401
+    from app.contract import ENDPOINTS
+    from scripts.gen_bruno import OUT, render
+
+    files = render()
+    for d in ENDPOINTS:
+        assert any(k.endswith(f"/{d.spec.operation_id}.bru") for k in files), d.spec.operation_id
+    for rel, content in files.items():
+        assert (OUT / rel).read_text(encoding="utf-8") == content, "run scripts/gen_bruno.py"

@@ -1,0 +1,16 @@
+meta {
+  name: slack_oauth_callback
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/slack/oauth/callback
+  body: none
+  auth: none
+}
+
+docs {
+  Slack OAuth v2 redirect target.
+  Page: B6 Slack | Owner: V | Phase: P4 | Access: public
+}

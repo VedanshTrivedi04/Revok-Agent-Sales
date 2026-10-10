@@ -1,0 +1,20 @@
+meta {
+  name: revert_card
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/action-cards/912da8ce-99a4-5661-8507-cfecef21a571/revert
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Revert an executed action (409 revert_conflict if the value changed).
+  Page: C4 Action Card | Owner: V | Phase: P3 | Access: revert
+}

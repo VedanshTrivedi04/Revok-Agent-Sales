@@ -1,0 +1,20 @@
+meta {
+  name: retry_admin_job
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/admin/jobs/6bb1863a-8259-578f-841a-bcf5c8c1bc3e/retry
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Re-enqueue a failed job.
+  Page: E Admin Console | Owner: V | Phase: P5 | Access: superadmin
+}

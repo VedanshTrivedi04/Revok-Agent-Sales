@@ -1,0 +1,20 @@
+meta {
+  name: unsuspend_org
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/admin/orgs/0ff871dd-5dba-5118-a723-4611c0bb2120/unsuspend
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Lift a suspension.
+  Page: E Admin Console | Owner: V | Phase: P5 | Access: superadmin
+}

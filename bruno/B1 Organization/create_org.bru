@@ -1,0 +1,26 @@
+meta {
+  name: create_org
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/orgs
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "New Co"
+  }
+}
+
+docs {
+  Create an organization; the creator becomes owner.
+  Page: B1 Organization | Owner: V | Phase: P1 | Access: user
+}

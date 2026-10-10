@@ -1,0 +1,26 @@
+meta {
+  name: patch_me
+  type: http
+  seq: 1
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/me
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Priya M"
+  }
+}
+
+docs {
+  Update name, timezone and notification preferences.
+  Page: D1 Profile & Notifications | Owner: V | Phase: P1 | Access: any
+}

@@ -1,0 +1,20 @@
+meta {
+  name: list_rules
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/rules
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  All rules with org overrides and defaults.
+  Page: D8 Rules | Owner: R | Phase: P4 | Access: rules:edit
+}

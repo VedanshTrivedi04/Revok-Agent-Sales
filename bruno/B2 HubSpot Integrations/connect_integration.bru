@@ -1,0 +1,20 @@
+meta {
+  name: connect_integration
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/integrations/hubspot/connect
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Start OAuth; returns the provider authorize URL (org-level providers need admin).
+  Page: B2 HubSpot & Integrations | Owner: R | Phase: P1 | Access: connect:own
+}

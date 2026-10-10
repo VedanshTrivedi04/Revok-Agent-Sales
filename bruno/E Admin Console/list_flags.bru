@@ -1,0 +1,20 @@
+meta {
+  name: list_flags
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/api/v1/admin/flags
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Feature flags.
+  Page: E Admin Console | Owner: V | Phase: P5 | Access: superadmin
+}

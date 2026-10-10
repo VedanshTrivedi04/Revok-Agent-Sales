@@ -1,0 +1,20 @@
+meta {
+  name: run_account
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts/7a09dd68-0748-53c5-89a7-a98483511d6b/run
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Enqueue a manual agent run for the account (member: own accounts only).
+  Page: C6 Account Detail | Owner: R | Phase: P3 | Access: run:now
+}

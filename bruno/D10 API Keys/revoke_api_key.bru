@@ -1,0 +1,20 @@
+meta {
+  name: revoke_api_key
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/api-keys/b114ffe5-3e3b-5f8f-891e-5064b79a5e51
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Revoke an API key.
+  Page: D10 API Keys | Owner: V | Phase: P1 | Access: apikeys:manage
+}

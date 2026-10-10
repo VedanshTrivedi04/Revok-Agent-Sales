@@ -1,0 +1,20 @@
+meta {
+  name: get_log_export
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/log/export/6bb1863a-8259-578f-841a-bcf5c8c1bc3e
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Export job status and download URL.
+  Page: C8 Log Verify & Export | Owner: V | Phase: P2 | Access: data:export
+}

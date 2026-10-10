@@ -1,0 +1,26 @@
+meta {
+  name: snooze_finding
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/findings/83b1eb80-9db0-5354-b1f4-903ab2dbe325/snooze
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "until": "2026-11-01T00:00:00Z"
+  }
+}
+
+docs {
+  Snooze a finding until a date.
+  Page: C2 Finding Detail | Owner: R | Phase: P3 | Access: approve:own
+}

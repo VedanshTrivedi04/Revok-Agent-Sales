@@ -1,0 +1,20 @@
+meta {
+  name: list_admin_orgs
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/admin/orgs
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  All organizations: counts and statuses only, no customer content.
+  Page: E Admin Console | Owner: V | Phase: P5 | Access: superadmin
+}

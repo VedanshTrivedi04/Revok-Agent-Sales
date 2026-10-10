@@ -1,0 +1,35 @@
+meta {
+  name: patch_card
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/action-cards/912da8ce-99a4-5661-8507-cfecef21a571
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "edited_payload": {
+      "to": [
+        "dana@acme.example.com"
+      ],
+      "cc": [],
+      "subject": "Checking in ahead of your renewal",
+      "body_text": "Hi Dana,\n\nI wanted to set up a short call to plan your upcoming renewal and hear how the team is getting on.\n\nBest,\nPriya",
+      "reply_to_thread_id": null,
+      "mode": "draft"
+    }
+  }
+}
+
+docs {
+  Save edits (validated against the type schema and allowlists).
+  Page: C4 Action Card | Owner: V | Phase: P2 | Access: edit:card
+}

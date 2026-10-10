@@ -1,0 +1,26 @@
+meta {
+  name: delete_current_org
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/orgs/current
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "confirm": "Demo SaaS"
+  }
+}
+
+docs {
+  Soft-delete the organization (owner; typed confirmation required).
+  Page: D11 Data & Deletion | Owner: V | Phase: P6 | Access: org:delete
+}

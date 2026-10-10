@@ -1,0 +1,23 @@
+meta {
+  name: slack_events
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/slack/events
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "url_verification",
+    "challenge": "abc"
+  }
+}
+
+docs {
+  Slack Events API (URL verification + events). Signature-verified; must ack within 3 s.
+  Page: F Slack | Owner: V | Phase: P4 | Access: public
+}

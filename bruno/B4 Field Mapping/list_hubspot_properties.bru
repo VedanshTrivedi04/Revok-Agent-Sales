@@ -1,0 +1,20 @@
+meta {
+  name: list_hubspot_properties
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/integrations/hubspot/properties
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  HubSpot properties for the field-mapping dropdowns.
+  Page: B4 Field Mapping | Owner: R | Phase: P1 | Access: integrations:manage
+}

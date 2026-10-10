@@ -1,0 +1,20 @@
+meta {
+  name: list_integrations
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/integrations
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Org-level and my user-level integrations with status.
+  Page: B2 HubSpot & Integrations | Owner: R | Phase: P1 | Access: any
+}

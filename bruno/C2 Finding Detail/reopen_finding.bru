@@ -1,0 +1,20 @@
+meta {
+  name: reopen_finding
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/findings/83b1eb80-9db0-5354-b1f4-903ab2dbe325/reopen
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Reopen a dismissed or snoozed finding.
+  Page: C2 Finding Detail | Owner: R | Phase: P3 | Access: approve:own
+}

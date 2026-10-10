@@ -1,0 +1,26 @@
+meta {
+  name: create_api_key
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/api-keys
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Usage pipeline"
+  }
+}
+
+docs {
+  Create an API key; the plaintext key is returned exactly once.
+  Page: B5 Usage Data | Owner: V | Phase: P1 | Access: apikeys:manage
+}

@@ -1,0 +1,26 @@
+meta {
+  name: put_autonomy
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/v1/autonomy/email_draft
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "tier": 2
+  }
+}
+
+docs {
+  Change the tier for an action type (cannot lower locked tiers: tier_blocked).
+  Page: D9 Autonomy | Owner: V | Phase: P2 | Access: autonomy:edit
+}

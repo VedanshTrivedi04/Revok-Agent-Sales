@@ -1,0 +1,20 @@
+meta {
+  name: upload_usage_csv
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/ingest/usage/csv
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Upload a usage CSV with a column mapping (JSON in `mapping`); returns a job.
+  Page: B5 Usage Data | Owner: R | Phase: P1 | Access: integrations:manage
+}

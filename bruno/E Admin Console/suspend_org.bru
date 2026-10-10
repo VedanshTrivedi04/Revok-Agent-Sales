@@ -1,0 +1,20 @@
+meta {
+  name: suspend_org
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/admin/orgs/0ff871dd-5dba-5118-a723-4611c0bb2120/suspend
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Suspend an org (403 org_suspended on all its routes).
+  Page: E Admin Console | Owner: V | Phase: P5 | Access: superadmin
+}

@@ -1,0 +1,20 @@
+meta {
+  name: get_current_org
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/orgs/current
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Organization details, settings and onboarding state.
+  Page: D4 General Settings | Owner: V | Phase: P1 | Access: any
+}

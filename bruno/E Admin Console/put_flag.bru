@@ -1,0 +1,27 @@
+meta {
+  name: put_flag
+  type: http
+  seq: 12
+}
+
+put {
+  url: {{baseUrl}}/api/v1/admin/flags
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "key": "email_send",
+    "default": true
+  }
+}
+
+docs {
+  Create or update a feature flag (default and per-org overrides).
+  Page: E Admin Console | Owner: V | Phase: P5 | Access: superadmin
+}

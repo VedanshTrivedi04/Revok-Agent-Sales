@@ -1,0 +1,16 @@
+meta {
+  name: oauth_callback
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/oauth/hubspot/callback
+  body: none
+  auth: none
+}
+
+docs {
+  OAuth redirect target: exchange code, store tokens, redirect to the web app.
+  Page: B2 HubSpot & Integrations | Owner: R | Phase: P1 | Access: public
+}

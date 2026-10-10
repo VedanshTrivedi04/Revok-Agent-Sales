@@ -1,0 +1,26 @@
+meta {
+  name: finding_feedback
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/findings/83b1eb80-9db0-5354-b1f4-903ab2dbe325/feedback
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "useful": true
+  }
+}
+
+docs {
+  Thumbs up/down on a finding.
+  Page: C2 Finding Detail | Owner: R | Phase: P3 | Access: any
+}

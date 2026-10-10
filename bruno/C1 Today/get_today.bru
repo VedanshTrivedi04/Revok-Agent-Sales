@@ -1,0 +1,20 @@
+meta {
+  name: get_today
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/today
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Ranked open findings with account summary and pending card counts.
+  Page: C1 Today | Owner: R | Phase: P3 | Access: any
+}

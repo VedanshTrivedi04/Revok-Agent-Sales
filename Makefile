@@ -33,4 +33,4 @@ openapi-check:
 	cd apps/api && uv run python scripts/check_openapi.py
 
 docs-gen:
-	cd apps/api && PYTHONPATH=. uv run python scripts/gen_endpoints.py && PYTHONPATH=. uv run python scripts/gen_error_codes.py && PYTHONPATH=. uv run python scripts/gen_mocks.py
+	cd apps/api && PYTHONPATH=. uv run python scripts/gen_endpoints.py && PYTHONPATH=. uv run python scripts/gen_error_codes.py && PYTHONPATH=. uv run python scripts/gen_mocks.py && PYTHONPATH=. uv run python scripts/gen_bruno.py

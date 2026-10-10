@@ -1,0 +1,22 @@
+meta {
+  name: slack_interactions
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/slack/interactions
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "block_actions"
+  }
+}
+
+docs {
+  Slack block actions and view submissions. Signature-verified; must ack within 3 s.
+  Page: F Slack | Owner: V | Phase: P4 | Access: public
+}

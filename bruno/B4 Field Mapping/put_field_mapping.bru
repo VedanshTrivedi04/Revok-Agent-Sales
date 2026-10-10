@@ -1,0 +1,26 @@
+meta {
+  name: put_field_mapping
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/v1/field-mapping
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "arr_property": "annualrevenue"
+  }
+}
+
+docs {
+  Save the CRM field mapping (admin).
+  Page: B4 Field Mapping | Owner: R | Phase: P1 | Access: mapping:edit
+}

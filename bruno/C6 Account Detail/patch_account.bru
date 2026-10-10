@@ -1,0 +1,28 @@
+meta {
+  name: patch_account
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/accounts/7a09dd68-0748-53c5-89a7-a98483511d6b
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "add_domains": [
+      "acme.io"
+    ]
+  }
+}
+
+docs {
+  Change account status or add domains (manager+).
+  Page: C6 Account Detail | Owner: R | Phase: P2 | Access: approve:any
+}

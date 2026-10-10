@@ -1,0 +1,26 @@
+meta {
+  name: mark_notifications_read
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/notifications/read
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "all": true
+  }
+}
+
+docs {
+  Mark notifications read (ids or all).
+  Page: C11 Notifications | Owner: V | Phase: P1 | Access: any
+}

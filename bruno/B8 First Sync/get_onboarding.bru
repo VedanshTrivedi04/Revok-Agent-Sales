@@ -1,0 +1,20 @@
+meta {
+  name: get_onboarding
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/orgs/current/onboarding
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Onboarding steps and whether the first findings are ready.
+  Page: B8 First Sync | Owner: V | Phase: P3 | Access: any
+}

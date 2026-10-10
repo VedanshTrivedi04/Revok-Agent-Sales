@@ -1,0 +1,26 @@
+meta {
+  name: run_evals
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/v1/admin/evals/run
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "suite": "smoke"
+  }
+}
+
+docs {
+  Trigger an eval run (placeholder).
+  Page: E Admin Console | Owner: V | Phase: P6 | Access: superadmin
+}

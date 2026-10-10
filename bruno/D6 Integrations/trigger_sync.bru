@@ -1,0 +1,20 @@
+meta {
+  name: trigger_sync
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/integrations/a7ec4313-40b8-5c6b-8187-4ec4636db168/sync
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Trigger a sync now (admin for org integrations, self for user integrations).
+  Page: D6 Integrations | Owner: R | Phase: P2 | Access: connect:own
+}

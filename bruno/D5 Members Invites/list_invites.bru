@@ -1,0 +1,20 @@
+meta {
+  name: list_invites
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/invites
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Pending invites (admin).
+  Page: D5 Members & Invites | Owner: V | Phase: P1 | Access: members:manage
+}

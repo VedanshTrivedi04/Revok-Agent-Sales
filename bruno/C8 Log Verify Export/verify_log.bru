@@ -1,0 +1,20 @@
+meta {
+  name: verify_log
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/log/verify
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Verify the hash chain between two log ids (admin).
+  Page: C8 Log Verify & Export | Owner: V | Phase: P2 | Access: data:export
+}

@@ -1,0 +1,20 @@
+meta {
+  name: remove_member
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/members/6a87a621-a3df-5152-90f1-2e735adb4893
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Remove a member (admin).
+  Page: D5 Members & Invites | Owner: V | Phase: P1 | Access: members:manage
+}

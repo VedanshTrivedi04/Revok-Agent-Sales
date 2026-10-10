@@ -1,0 +1,20 @@
+meta {
+  name: get_finding
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/findings/83b1eb80-9db0-5354-b1f4-903ab2dbe325
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Full finding: claims, evidence, unknowns, contradictions, cards, history.
+  Page: C2 Finding Detail | Owner: R | Phase: P3 | Access: any
+}

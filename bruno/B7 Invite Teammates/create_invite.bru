@@ -1,0 +1,27 @@
+meta {
+  name: create_invite
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/invites
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "email": "new@demo-saas.example.com",
+    "role": "member"
+  }
+}
+
+docs {
+  Invite a teammate by email (admin).
+  Page: B7 Invite Teammates | Owner: V | Phase: P1 | Access: members:manage
+}

@@ -1,0 +1,20 @@
+meta {
+  name: list_account_deals
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/accounts/7a09dd68-0748-53c5-89a7-a98483511d6b/deals
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Account deals.
+  Page: C6 Account Detail | Owner: R | Phase: P2 | Access: any
+}

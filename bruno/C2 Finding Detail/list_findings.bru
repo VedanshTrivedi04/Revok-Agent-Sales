@@ -1,0 +1,20 @@
+meta {
+  name: list_findings
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/findings
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Findings list with filters.
+  Page: C2 Finding Detail | Owner: R | Phase: P3 | Access: any
+}

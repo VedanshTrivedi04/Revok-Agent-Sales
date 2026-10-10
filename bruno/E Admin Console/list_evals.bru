@@ -1,0 +1,20 @@
+meta {
+  name: list_evals
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/v1/admin/evals
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Eval results (placeholder until the AI phase).
+  Page: E Admin Console | Owner: V | Phase: P6 | Access: superadmin
+}

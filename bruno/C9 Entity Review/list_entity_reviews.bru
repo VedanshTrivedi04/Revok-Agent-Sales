@@ -1,0 +1,20 @@
+meta {
+  name: list_entity_reviews
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/entity-reviews
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Ambiguous email/account matches waiting for a human.
+  Page: C9 Entity Review | Owner: R | Phase: P2 | Access: review:view
+}

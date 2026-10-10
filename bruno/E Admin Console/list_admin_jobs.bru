@@ -1,0 +1,20 @@
+meta {
+  name: list_admin_jobs
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/admin/jobs
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Dead-lettered background jobs.
+  Page: E Admin Console | Owner: V | Phase: P5 | Access: superadmin
+}

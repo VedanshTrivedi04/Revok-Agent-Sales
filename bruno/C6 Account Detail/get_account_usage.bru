@@ -1,0 +1,20 @@
+meta {
+  name: get_account_usage
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/accounts/7a09dd68-0748-53c5-89a7-a98483511d6b/usage
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Usage series for charts.
+  Page: C6 Account Detail | Owner: R | Phase: P2 | Access: any
+}

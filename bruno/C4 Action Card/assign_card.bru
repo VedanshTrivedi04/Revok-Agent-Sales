@@ -1,0 +1,26 @@
+meta {
+  name: assign_card
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/action-cards/912da8ce-99a4-5661-8507-cfecef21a571/assign
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "user_id": "d5509e02-ada5-55e3-ba1f-a55e10630d1f"
+  }
+}
+
+docs {
+  Reassign a card to another member.
+  Page: C4 Action Card | Owner: V | Phase: P2 | Access: approve:own
+}
