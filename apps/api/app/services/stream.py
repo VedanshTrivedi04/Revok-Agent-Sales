@@ -18,6 +18,7 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import AsyncIterator
+from typing import Any, cast
 from uuid import UUID
 
 import structlog
@@ -48,10 +49,8 @@ async def org_event_stream(
         while True:
             # Poll for a message with a short timeout so we can fire heartbeats
             try:
-                message = await asyncio.wait_for(
-                    _get_message(pubsub), timeout=HEARTBEAT_INTERVAL
-                )
-            except asyncio.TimeoutError:
+                message = await asyncio.wait_for(_get_message(pubsub), timeout=HEARTBEAT_INTERVAL)
+            except TimeoutError:
                 # No message in HEARTBEAT_INTERVAL seconds → send heartbeat comment
                 yield ": heartbeat\n\n"
                 continue
@@ -82,7 +81,7 @@ async def org_event_stream(
         log.info("sse_unsubscribed", org_id=str(org_id))
 
 
-async def _get_message(pubsub: object) -> dict | None:
+async def _get_message(pubsub: object) -> dict[str, Any] | None:
     """Get next message from pubsub. Returns None for subscribe/unsubscribe confirmations."""
     msg = await pubsub.get_message(ignore_subscribe_messages=True, timeout=0.1)  # type: ignore[attr-defined]
-    return msg  # type: ignore[return-value]
+    return cast(dict[str, Any] | None, msg)

@@ -226,6 +226,13 @@ async def trigger_sync_service(
     session.add(run)
     await session.flush()
 
+    try:
+        from app.workers.tasks_sync import sync_hubspot
+
+        sync_hubspot.delay(str(org_id), str(integration_id))
+    except Exception:
+        pass
+
     return SyncTriggerOut(sync_run_id=run.id, status="running")
 
 

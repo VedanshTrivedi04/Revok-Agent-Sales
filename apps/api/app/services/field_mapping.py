@@ -116,6 +116,9 @@ async def put_field_mapping_service(
         mapping.updated_by = user_id
         mapping.updated_at = now_dt
 
+    from app.services.account_derivation import rederive_account_fields
+
+    await rederive_account_fields(session, org_id)
     await session.flush()
     return FieldMappingOut(
         renewal_date_property=mapping.renewal_date_property,

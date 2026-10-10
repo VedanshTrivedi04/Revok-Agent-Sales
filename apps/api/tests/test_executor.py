@@ -1,12 +1,11 @@
 import asyncio
-from datetime import date, timedelta
+from datetime import date
 from typing import Any
 from uuid import UUID, uuid4
 
 import httpx
 import pytest
-from httpx import AsyncClient
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.connectors.base import ExecResult
@@ -14,14 +13,11 @@ from app.connectors.ctx import ConnCtx
 from app.connectors.http import HttpClient
 from app.connectors.hubspot.writes import (
     HubSpotFieldUpdateHandler,
-    HubSpotNoteHandler,
     HubSpotTaskHandler,
 )
 from app.db.session import org_session
 from app.executor.core import (
     begin_execution,
-    fail_execution,
-    finish_execution,
     register_handler,
     run_execute_card,
 )
@@ -36,21 +32,16 @@ from app.schemas.action_payloads import (
     CrmRef,
     CrmTaskPayload,
 )
-from app.schemas.cards import CardApproveIn
-from app.services.cards import (
-    approve_card,
-    create_from_proposals,
-)
 from app.services.stream import org_event_stream
-from app.utils.errors import AppError, FatalError, TransientError
+from app.utils.errors import AppError, FatalError
 from app.utils.events import publish
 from app.utils.time import utcnow
-from tests.helpers import SeededOrg, mint_jwt, seed_org
-
+from tests.helpers import SeededOrg
 
 # =====================================================================
 # Fixtures and Helpers
 # =====================================================================
+
 
 async def _create_test_account(
     engine: AsyncEngine, org_id: UUID, name: str = "Acme Corp", domain: str = "acme.com"
@@ -88,9 +79,7 @@ class FakeWriteHandler:
     async def find_existing(self, ctx: Any, idem_key: str) -> ExecResult | None:
         return self.existing
 
-    async def apply(
-        self, ctx: Any, action_type: str, payload: Any, idem_key: str
-    ) -> ExecResult:
+    async def apply(self, ctx: Any, action_type: str, payload: Any, idem_key: str) -> ExecResult:
         self.applied_calls.append((action_type, payload, idem_key))
         return ExecResult(
             external_ref={"mock_id": "123", "type": action_type},
@@ -102,6 +91,7 @@ class FakeWriteHandler:
 # =====================================================================
 # V3-01: Executor Core Tests
 # =====================================================================
+
 
 async def test_begin_execution_transitions_state_and_tracks_attempt(
     engine: AsyncEngine, seeded_org: SeededOrg
@@ -136,8 +126,10 @@ async def test_begin_execution_transitions_state_and_tracks_attempt(
     # Verify Execution row was created with attempt 1
     async with org_session(org_id) as s:
         exec_rows = (
-            await s.execute(select(Execution).where(Execution.action_card_id == card_id))
-        ).scalars().all()
+            (await s.execute(select(Execution).where(Execution.action_card_id == card_id)))
+            .scalars()
+            .all()
+        )
         assert len(exec_rows) == 1
         assert exec_rows[0].attempt == 1
         assert exec_rows[0].status == "started"
@@ -196,7 +188,9 @@ async def test_run_execute_card_find_existing_skips_apply(
         s.add(card)
         await s.commit()
 
-    fake = FakeWriteHandler(existing=ExecResult(external_ref={"hubspot_task_id": "999"}, already_existed=True))
+    fake = FakeWriteHandler(
+        existing=ExecResult(external_ref={"hubspot_task_id": "999"}, already_existed=True)
+    )
     register_handler("crm_task", fake)
 
     res = await run_execute_card(org_id, card_id)
@@ -254,6 +248,7 @@ async def test_run_execute_card_fatal_error_marks_card_failed(
 # V3-02: HubSpot Write Handlers Tests
 # =====================================================================
 
+
 def make_test_ctx(handler: Any) -> ConnCtx:
     client = HttpClient("hubspot", base_url="http://p", transport=httpx.MockTransport(handler))
     ctx = ConnCtx(
@@ -271,6 +266,7 @@ async def test_hubspot_task_handler_creates_task_with_associations() -> None:
 
     def mock_hs(request: httpx.Request) -> httpx.Response:
         import json
+
         if request.url.path.endswith("/search"):
             return httpx.Response(200, json={"results": []})
         if request.url.path.endswith("/tasks"):
@@ -327,7 +323,7 @@ async def test_hubspot_field_update_handler_stale_preview_detection() -> None:
 
 async def test_hubspot_field_update_handler_saves_pre_image_when_matching() -> None:
     def mock_hs(request: httpx.Request) -> httpx.Response:
-        import json
+
         if request.method == "GET":
             return httpx.Response(200, json={"properties": {"revops_risk_level": "medium"}})
         if request.method == "PATCH":
@@ -357,6 +353,7 @@ async def test_hubspot_field_update_handler_saves_pre_image_when_matching() -> N
 # =====================================================================
 # V3-03: Revert Service Tests
 # =====================================================================
+
 
 async def test_revert_card_rejects_non_executed_state(
     engine: AsyncEngine, seeded_org: SeededOrg
@@ -455,7 +452,12 @@ async def test_revert_card_detects_conflict_when_provider_value_changed(
             payload={},
             external_ref={
                 "changes": [
-                    {"object": "company", "id": "comp_1", "field": "revops_risk_level", "after": "high"}
+                    {
+                        "object": "company",
+                        "id": "comp_1",
+                        "field": "revops_risk_level",
+                        "after": "high",
+                    }
                 ]
             },
             executed_at=utcnow(),
@@ -534,7 +536,9 @@ async def test_revert_card_success_updates_status_and_logs(
         await s.commit()
 
     async with org_session(org_id) as s:
-        reverted = (await s.execute(select(ActionCard).where(ActionCard.id == card_id))).scalar_one()
+        reverted = (
+            await s.execute(select(ActionCard).where(ActionCard.id == card_id))
+        ).scalar_one()
         assert reverted.status == "reverted"
         assert reverted.reverted_at is not None
         assert reverted.reverted_by == user_id
@@ -543,6 +547,7 @@ async def test_revert_card_success_updates_status_and_logs(
 # =====================================================================
 # V3-04: TemplateActionPlanner Tests
 # =====================================================================
+
 
 async def test_template_action_planner_high_risk_proposals(
     engine: AsyncEngine, seeded_org: SeededOrg
@@ -599,6 +604,7 @@ async def test_template_action_planner_expansion_proposals(
 # =====================================================================
 # V3-05: SSE Stream Service Tests
 # =====================================================================
+
 
 async def test_sse_stream_receives_published_events(seeded_org: SeededOrg) -> None:
     org_id = seeded_org.org_id

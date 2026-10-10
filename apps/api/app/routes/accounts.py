@@ -4,7 +4,9 @@ from uuid import UUID
 
 from fastapi import Depends, Query
 
-from app.contract import endpoint
+from app.auth.deps import CurrentMembership
+from app.contract import endpoint, real
+from app.db.session import org_session
 from app.permissions import Action
 from app.schemas.accounts import (
     AccountDetail,
@@ -16,6 +18,16 @@ from app.schemas.accounts import (
     TimelineEvent,
     TodayResponse,
     UsageSeries,
+)
+from app.services.accounts import (
+    get_account_detail_service,
+    get_account_timeline_service,
+    get_account_usage_service,
+    list_account_contacts_service,
+    list_account_deals_service,
+    list_accounts_service,
+    patch_account_service,
+    run_account_service,
 )
 from app.utils.pagination import Page, PageParams, page_params
 
@@ -44,12 +56,45 @@ async def list_accounts(
     raise NotImplementedError
 
 
+@real("list_accounts")
+async def list_accounts_real(
+    membership: CurrentMembership,
+    page: Paging,
+    query: Annotated[str | None, Query()] = None,
+    owner: Annotated[str | None, Query()] = None,
+    risk: Annotated[Literal["high", "medium", "low"] | None, Query()] = None,
+    renewal_within: Annotated[int | None, Query(ge=1, le=365)] = None,
+    sort: Annotated[Literal["priority", "arr", "renewal", "name"], Query()] = "priority",
+) -> Page[AccountListItem]:
+    async with org_session(membership.org_id) as session:
+        return await list_accounts_service(
+            session,
+            membership.org_id,
+            page,
+            query=query,
+            owner=owner,
+            current_user_id=membership.user_id,
+            risk=risk,
+            renewal_within=renewal_within,
+            sort=sort,
+        )
+
+
 @endpoint(
     "GET", "/accounts/{account_id}", group="accounts", page="C6 Account Detail", owner="R", phase=2
 )
 async def get_account(account_id: UUID) -> AccountDetail:
     """Account detail with metrics and open findings."""
     raise NotImplementedError
+
+
+@real("get_account")
+async def get_account_real(
+    account_id: UUID,
+    membership: CurrentMembership,
+) -> AccountDetail:
+    async with org_session(membership.org_id) as session:
+        return await get_account_detail_service(session, membership.org_id, account_id)
 
 
 @endpoint(
@@ -71,6 +116,21 @@ async def get_account_timeline(
     raise NotImplementedError
 
 
+@real("get_account_timeline")
+async def get_account_timeline_real(
+    account_id: UUID,
+    page: Paging,
+    membership: CurrentMembership,
+    types: Annotated[str | None, Query(description="comma-separated event types")] = None,
+    from_: Annotated[datetime | None, Query(alias="from")] = None,
+    to: Annotated[datetime | None, Query()] = None,
+) -> Page[TimelineEvent]:
+    async with org_session(membership.org_id) as session:
+        return await get_account_timeline_service(
+            session, membership.org_id, account_id, page, types=types, from_=from_, to=to
+        )
+
+
 @endpoint(
     "GET",
     "/accounts/{account_id}/usage",
@@ -88,6 +148,19 @@ async def get_account_usage(
     raise NotImplementedError
 
 
+@real("get_account_usage")
+async def get_account_usage_real(
+    account_id: UUID,
+    membership: CurrentMembership,
+    granularity: Annotated[Literal["day", "week"], Query()] = "week",
+    weeks: Annotated[int, Query(ge=1, le=52)] = 12,
+) -> UsageSeries:
+    async with org_session(membership.org_id) as session:
+        return await get_account_usage_service(
+            session, membership.org_id, account_id, granularity=granularity, weeks=weeks
+        )
+
+
 @endpoint(
     "GET",
     "/accounts/{account_id}/contacts",
@@ -101,6 +174,15 @@ async def list_account_contacts(account_id: UUID) -> list[ContactOut]:
     raise NotImplementedError
 
 
+@real("list_account_contacts")
+async def list_account_contacts_real(
+    account_id: UUID,
+    membership: CurrentMembership,
+) -> list[ContactOut]:
+    async with org_session(membership.org_id) as session:
+        return await list_account_contacts_service(session, membership.org_id, account_id)
+
+
 @endpoint(
     "GET",
     "/accounts/{account_id}/deals",
@@ -112,6 +194,15 @@ async def list_account_contacts(account_id: UUID) -> list[ContactOut]:
 async def list_account_deals(account_id: UUID) -> list[DealOut]:
     """Account deals."""
     raise NotImplementedError
+
+
+@real("list_account_deals")
+async def list_account_deals_real(
+    account_id: UUID,
+    membership: CurrentMembership,
+) -> list[DealOut]:
+    async with org_session(membership.org_id) as session:
+        return await list_account_deals_service(session, membership.org_id, account_id)
 
 
 @endpoint(
@@ -129,6 +220,15 @@ async def run_account(account_id: UUID) -> RunTriggerOut:
     raise NotImplementedError
 
 
+@real("run_account")
+async def run_account_real(
+    account_id: UUID,
+    membership: CurrentMembership,
+) -> RunTriggerOut:
+    async with org_session(membership.org_id) as session:
+        return await run_account_service(session, membership.org_id, membership.user_id, account_id)
+
+
 @endpoint(
     "PATCH",
     "/accounts/{account_id}",
@@ -141,3 +241,13 @@ async def run_account(account_id: UUID) -> RunTriggerOut:
 async def patch_account(account_id: UUID, body: AccountPatchIn) -> AccountDetail:
     """Change account status or add domains (manager+)."""
     raise NotImplementedError
+
+
+@real("patch_account")
+async def patch_account_real(
+    account_id: UUID,
+    body: AccountPatchIn,
+    membership: CurrentMembership,
+) -> AccountDetail:
+    async with org_session(membership.org_id) as session:
+        return await patch_account_service(session, membership.org_id, account_id, body)

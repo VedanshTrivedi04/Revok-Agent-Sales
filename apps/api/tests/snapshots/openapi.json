@@ -1835,6 +1835,11 @@
       ],
       "title": "Account Id"
      },
+     "apply_to_domain": {
+      "default": false,
+      "title": "Apply To Domain",
+      "type": "boolean"
+     },
      "ignore": {
       "default": false,
       "title": "Ignore",

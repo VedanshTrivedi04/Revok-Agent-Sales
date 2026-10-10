@@ -397,17 +397,86 @@ uv run python scripts/check_openapi.py --update                   # after any co
 **Files Changed**
 - None
 
+### 2026-10-11 01:33
+
+**User Request**
+> PHASE 2, Rajwardhan: implement R2-01..R2-06.
+> HubSpot sync in order owners, companies, contacts, deals, associations, engagements. Per-object cursor on hs_lastmodifieddate with 60s overlap, Search API page cap handling by splitting the time window, backfill limited by org.settings.backfill_days (default 180), upsert keys per vedanshhandover/rajwardhanhandover section 5.1, raw JSONB trimmed plus content_hash, property history for dealstage and mapped health to produce deal_stage_change and property_change events, merged and archived objects handled, sync_runs bookkeeping with user-safe last_error. Re-running a sync must produce zero changes.
+> Account field derivation (arr or mrr*12, renewal_date, seats_purchased, plan_name, crm_health, owner via memberships.crm_owner_id) after each sync and on mapping change. Entity resolution per algorithm.md section 1 as a pure resolve(event, index) function with freemail list, plus entity-review queue endpoints (GET /entity-reviews, POST resolve with apply_to_domain, SSE review.updated, decision_log). Celery beat hourly per org per integration with jitter, lock sync:{integration_id}, stop on needs_reauth, notify admin after 3 failures. Accounts APIs per backenddeveloper.md: GET /accounts (filters, sorts, cursor, usage trend, no N+1, p95 < 500ms at 500 accounts), GET /accounts/{id}, timeline, usage, contacts, deals, PATCH /accounts/{id}, POST /accounts/{id}/run stub.
+> Gate: scripts/reconcile_hubspot.py shows counts and 20 random records match; no duplicates; second sync is a no-op; entity-resolution golden cases pass (shared domain goes to review, free-mail ignored, contact email beats domain). Switch accounts, entity-reviews routers to REAL.
+
+**Exploration**
+- Inspected `apps/api/app/connectors/hubspot/client.py`, `models/timeline.py`, `models/integrations.py`, `algorithm.md`, and handover specifications.
+- Verified schema contracts for accounts and entity reviews in `apps/api/app/schemas/accounts.py` and `apps/api/app/schemas/ops.py`.
+- Checked pagination requirements in `apps/api/app/utils/pagination.py` and keyset ordering.
+
+**Work Done**
+- **R2-01 (HubSpot Sync Engine):** Created `HubSpotSyncEngine` in `apps/api/app/connectors/hubspot/sync.py`:
+  - Sync order: owners -> companies -> contacts -> deals -> associations -> engagements.
+  - Per-object cursor on `hs_lastmodifieddate` with 60s overlap.
+  - Handles Search API 10k page cap by recursively splitting time windows when total exceeds 9000.
+  - Backfill limited by `org.settings.backfill_days` (default 180).
+  - Raw JSONB trimmed plus SHA-256 `content_hash` to guarantee idempotency (rerun produces zero changes).
+  - Detects property transitions to emit `deal_stage_change` and `property_change` timeline events.
+  - Handles merged/archived records (`status="archived"`, `is_active=False`).
+  - `sync_runs` bookkeeping with sanitized, user-safe error descriptions.
+- **R2-02 (Account Field Derivation):** Created `rederive_account_fields` in `apps/api/app/services/account_derivation.py`:
+  - Computes `arr` (or `mrr * 12`), `renewal_date`, `seats_purchased`, `plan_name`, `crm_health`, and maps `owner_user_id` via `memberships.crm_owner_id`.
+  - Automatically triggered after each sync run and on field mapping change (`put_field_mapping_service`).
+- **R2-03 (Entity Resolution & Review Queue):**
+  - Created freemail domain registry in `apps/api/app/services/freemail.py`.
+  - Implemented pure `resolve(event, index)` function in `apps/api/app/services/entity_resolution.py` adhering to `algorithm.md` §1 (CRM association conf 1.0, contact email conf 0.95, domain conf 0.85, freemail exclusions, shared domain conflict -> review queue).
+  - Created review queue service in `apps/api/app/services/entity_reviews.py` for listing reviews and resolving with `apply_to_domain`, SSE `review.updated`, and audit logging via `decision_log`.
+- **R2-04 (Sync Scheduling & Celery Beat):**
+  - Implemented `@tenant_task("sync.hubspot")` and `@celery_app.task(name="sync.hourly_dispatch")` in `apps/api/app/workers/tasks_sync.py`.
+  - Distributed lock on `sync:{integration_id}`.
+  - Short-circuits on `needs_reauth`.
+  - Creates admin notification after 3 consecutive failures.
+  - Added hourly schedule to `apps/api/app/workers/celery_app.py`.
+- **R2-05 (Accounts APIs):**
+  - Implemented 8 real accounts services in `apps/api/app/services/accounts.py` and bound `@real` handlers in `apps/api/app/routes/accounts.py`.
+  - Pre-fetches owner records in batch to eliminate N+1 queries.
+  - Implemented `GET /accounts` (filters, sorting, cursor pagination), `GET /accounts/{id}`, `/timeline`, `/usage`, `/contacts`, `/deals`, `PATCH /accounts/{id}`, and `POST /accounts/{id}/run` stub.
+- **R2-06 (Reconciliation Gate & Staging Switch):**
+  - Created gate script `apps/api/scripts/reconcile_hubspot.py` validating 20 sample record matches, 0 duplicates, idempotent rerun, and golden cases.
+  - Switched `accounts` and `entity_reviews` routers to REAL in `infra/docker-compose.staging.yml` and `infra/.env.staging.example`.
+
+**Files Changed**
+- `apps/api/app/connectors/hubspot/sync.py` - Created full incremental HubSpot sync engine with window splitting and property history events.
+- `apps/api/app/services/account_derivation.py` - Created account field derivation service.
+- `apps/api/app/services/freemail.py` - Created freemail domains registry and lookup.
+- `apps/api/app/services/entity_resolution.py` - Created pure `resolve(event, index)` matching function.
+- `apps/api/app/services/entity_reviews.py` - Created review queue listing and resolution service.
+- `apps/api/app/services/accounts.py` - Created accounts domain services with no N+1 queries.
+- `apps/api/app/routes/accounts.py` - Bound all real handlers for accounts endpoints.
+- `apps/api/app/routes/entity_reviews.py` - Bound real handlers for entity reviews endpoints.
+- `apps/api/app/schemas/ops.py` - Added `apply_to_domain` to `EntityReviewResolveIn`.
+- `apps/api/app/services/field_mapping.py` - Integrated account field rederivation on mapping updates.
+- `apps/api/app/workers/tasks_sync.py` - Created Celery sync worker tasks, locking, and admin alerting.
+- `apps/api/app/workers/celery_app.py` - Registered sync tasks import and hourly beat schedule.
+- `apps/api/scripts/reconcile_hubspot.py` - Created Phase 2 reconciliation gate script.
+- `apps/api/tests/test_phase2_rajwardhan.py` - Created test suite for Phase 2 services.
+- `apps/api/tests/snapshots/openapi.json` - Updated OpenAPI specification snapshot.
+- `docs/endpoints.md` - Regenerated endpoint markdown documentation.
+- `infra/docker-compose.staging.yml` & `infra/.env.staging.example` - Added `accounts,entity_reviews` to `REAL_ROUTERS`.
+- `memory.md` - Recorded project history and state update.
+
 **Verification**
-- `git pull origin main` -> Already up to date.
-- `git status` -> On branch main, working tree clean.
+- `uv run ruff check .` -> PASSED (All checks passed).
+- `uv run ruff format --check .` -> PASSED (150 files already formatted).
+- `uv run mypy app` -> PASSED (Success: no issues found in 109 source files).
+- `uv run pytest -q tests/test_phase1_rajwardhan.py tests/test_phase2_rajwardhan.py tests/test_permissions.py tests/test_utils.py` -> PASSED (134 passed in 1.15s).
+- `uv run python scripts/reconcile_hubspot.py` -> PASSED (All reconciliation gate checks passed successfully).
+- `uv run python scripts/check_openapi.py` -> PASSED (OpenAPI snapshot is current).
 
 **Git**
 - Branch: `main`
-- Commit: `e27dbca`
-- Push: `up to date`
-- Status: `clean`
+- Commit: pending
+- Push: pending
+- Status: staged and validated
 
 **Notes**
-- Local branch is fully synchronized with `origin/main`. Awaiting next task requirements from user.
+- Phase 2 data and detection plane successfully completed and integrated with control plane.
+
 
 

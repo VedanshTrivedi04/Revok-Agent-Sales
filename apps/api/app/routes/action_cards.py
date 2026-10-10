@@ -253,6 +253,7 @@ async def revert_card_real(request: Request, card_id: UUID, **_: Any) -> CardOut
     m = await current_membership(claims)
     async with org_session(m.org_id) as s:
         from app.executor.revert import revert_card
+
         return await revert_card(
             s,
             org_id=m.org_id,
@@ -261,4 +262,3 @@ async def revert_card_real(request: Request, card_id: UUID, **_: Any) -> CardOut
             card_id=card_id,
             ctx=None,  # No live connector in template/test mode
         )
-

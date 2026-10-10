@@ -74,6 +74,7 @@ class EntityReviewOut(BaseModel):
 class EntityReviewResolveIn(BaseModel):
     account_id: UUID | None = None
     ignore: bool = False
+    apply_to_domain: bool = False
 
 
 # ---- admin (superadmin) ----

@@ -104,7 +104,9 @@ async def _create_test_card(
 # =====================================================================
 
 
-async def test_email_payload_recipient_allowlist(org_a: SeededOrg, owner_engine: AsyncEngine) -> None:
+async def test_email_payload_recipient_allowlist(
+    org_a: SeededOrg, owner_engine: AsyncEngine
+) -> None:
     acc_id, contact_email = await _create_test_account(owner_engine, org_a.org_id)
 
     async with org_session(org_a.org_id) as s:
@@ -116,7 +118,11 @@ async def test_email_payload_recipient_allowlist(org_a: SeededOrg, owner_engine:
             "mode": "draft",
         }
         res = await validate_card_payload(
-            s, org_id=org_a.org_id, account_id=acc_id, card_type="email_draft", payload_data=valid_payload
+            s,
+            org_id=org_a.org_id,
+            account_id=acc_id,
+            card_type="email_draft",
+            payload_data=valid_payload,
         )
         assert res["to"] == [contact_email]
 
@@ -128,7 +134,11 @@ async def test_email_payload_recipient_allowlist(org_a: SeededOrg, owner_engine:
         }
         with pytest.raises(AppError) as exc:
             await validate_card_payload(
-                s, org_id=org_a.org_id, account_id=acc_id, card_type="email_draft", payload_data=invalid_payload
+                s,
+                org_id=org_a.org_id,
+                account_id=acc_id,
+                card_type="email_draft",
+                payload_data=invalid_payload,
             )
         assert exc.value.code == "recipient_not_allowed"
 
@@ -144,7 +154,11 @@ async def test_email_payload_banned_phrase(org_a: SeededOrg, owner_engine: Async
         }
         with pytest.raises(AppError) as exc:
             await validate_card_payload(
-                s, org_id=org_a.org_id, account_id=acc_id, card_type="email_draft", payload_data=banned_payload
+                s,
+                org_id=org_a.org_id,
+                account_id=acc_id,
+                card_type="email_draft",
+                payload_data=banned_payload,
             )
         assert exc.value.code == "validation_error"
 
@@ -168,7 +182,11 @@ async def test_crm_field_update_writable_and_locked_fields(
             ]
         }
         res = await validate_card_payload(
-            s, org_id=org_a.org_id, account_id=acc_id, card_type="crm_field_update", payload_data=valid_payload
+            s,
+            org_id=org_a.org_id,
+            account_id=acc_id,
+            card_type="crm_field_update",
+            payload_data=valid_payload,
         )
         assert len(res["changes"]) == 1
 
@@ -186,7 +204,11 @@ async def test_crm_field_update_writable_and_locked_fields(
         }
         with pytest.raises(AppError) as exc:
             await validate_card_payload(
-                s, org_id=org_a.org_id, account_id=acc_id, card_type="crm_field_update", payload_data=locked_payload
+                s,
+                org_id=org_a.org_id,
+                account_id=acc_id,
+                card_type="crm_field_update",
+                payload_data=locked_payload,
             )
         assert exc.value.code == "tier_blocked"
 
@@ -207,11 +229,15 @@ async def test_policy_tier_calculation_and_escalation(
         assert t1 == 1
 
         # Default email_draft = tier 2
-        t2 = await tier_for(s, org_id=org_a.org_id, card_type="email_draft", payload={"mode": "draft"})
+        t2 = await tier_for(
+            s, org_id=org_a.org_id, card_type="email_draft", payload={"mode": "draft"}
+        )
         assert t2 == 2
 
         # Escalation: email_draft with mode=send -> tier 2 minimum
-        t_send = await tier_for(s, org_id=org_a.org_id, card_type="email_draft", payload={"mode": "send"})
+        t_send = await tier_for(
+            s, org_id=org_a.org_id, card_type="email_draft", payload={"mode": "send"}
+        )
         assert t_send == 2
 
         # Escalation: crm_field_update with non-writable field -> tier 3
@@ -250,9 +276,7 @@ async def test_autonomy_put_cannot_lower_locked_tiers(
 # =====================================================================
 
 
-async def test_state_machine_valid_transitions(
-    org_a: SeededOrg, owner_engine: AsyncEngine
-) -> None:
+async def test_state_machine_valid_transitions(org_a: SeededOrg, owner_engine: AsyncEngine) -> None:
     acc_id, contact_email = await _create_test_account(owner_engine, org_a.org_id)
     card_id = await _create_test_card(owner_engine, org_a.org_id, acc_id)
 
@@ -286,7 +310,10 @@ async def test_state_machine_illegal_transition_returns_409(
 ) -> None:
     acc_id, _ = await _create_test_account(owner_engine, org_a.org_id)
     card_id = await _create_test_card(
-        owner_engine, org_a.org_id, acc_id, status="approved"  # Already approved!
+        owner_engine,
+        org_a.org_id,
+        acc_id,
+        status="approved",  # Already approved!
     )
 
     client: AsyncClient = client_as("owner")  # type: ignore[operator]
@@ -405,9 +432,7 @@ async def test_card_retry_failed_by_manager(
     client_as: Callable[..., AsyncClient], org_a: SeededOrg, owner_engine: AsyncEngine
 ) -> None:
     acc_id, _ = await _create_test_account(owner_engine, org_a.org_id)
-    card_id = await _create_test_card(
-        owner_engine, org_a.org_id, acc_id, status="failed"
-    )
+    card_id = await _create_test_card(owner_engine, org_a.org_id, acc_id, status="failed")
 
     client: AsyncClient = client_as("manager")  # type: ignore[operator]
     r = await client.post(f"/api/v1/action-cards/{card_id}/retry")
@@ -542,14 +567,10 @@ async def test_decision_log_hash_chain_tamper_detection(
 # =====================================================================
 
 
-async def test_expire_cards_hourly_job(
-    org_a: SeededOrg, owner_engine: AsyncEngine
-) -> None:
+async def test_expire_cards_hourly_job(org_a: SeededOrg, owner_engine: AsyncEngine) -> None:
     acc_id, _ = await _create_test_account(owner_engine, org_a.org_id)
     past = utcnow() - timedelta(hours=2)
-    card_id = await _create_test_card(
-        owner_engine, org_a.org_id, acc_id, expires_at=past
-    )
+    card_id = await _create_test_card(owner_engine, org_a.org_id, acc_id, expires_at=past)
 
     async with org_session(org_a.org_id) as s:
         count = await expire_pending_cards(s, org_a.org_id)

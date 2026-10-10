@@ -46,8 +46,13 @@ celery_app.conf.update(
     broker_connection_retry_on_startup=True,
     task_serializer="json",
     accept_content=["json"],
-    imports=("app.workers.tasks_maintenance", "app.executor"),
-    beat_schedule={},  # Beat entries are added per phase (nightly fan-out, expire_cards, digests)
+    imports=("app.workers.tasks_maintenance", "app.executor", "app.workers.tasks_sync"),
+    beat_schedule={
+        "hourly-hubspot-sync": {
+            "task": "sync.hourly_dispatch",
+            "schedule": 3600.0,
+        },
+    },
 )
 
 

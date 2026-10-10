@@ -6,9 +6,8 @@ Last-Event-ID header is accepted but replay is best-effort (Redis pub/sub has no
 """
 
 from typing import Any
-from uuid import UUID
 
-from fastapi import Depends, Header, Request
+from fastapi import Header, Request
 from fastapi.responses import StreamingResponse
 
 from app.auth.deps import current_membership, get_claims

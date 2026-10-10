@@ -12,14 +12,14 @@
 | GET | `/health` | Health | Vedansh | P0 | real | public |
 | GET | `/health/ready` | Health | Vedansh | P0 | real | public |
 | GET | `/api/v1/today` | C1 Today | Rajwardhan | P3 | mock | any |
-| GET | `/api/v1/accounts` | C5 Accounts | Rajwardhan | P2 | mock | any |
-| GET | `/api/v1/accounts/{account_id}` | C6 Account Detail | Rajwardhan | P2 | mock | any |
-| GET | `/api/v1/accounts/{account_id}/timeline` | C6 Account Detail | Rajwardhan | P2 | mock | any |
-| GET | `/api/v1/accounts/{account_id}/usage` | C6 Account Detail | Rajwardhan | P2 | mock | any |
-| GET | `/api/v1/accounts/{account_id}/contacts` | C6 Account Detail | Rajwardhan | P2 | mock | any |
-| GET | `/api/v1/accounts/{account_id}/deals` | C6 Account Detail | Rajwardhan | P2 | mock | any |
-| POST | `/api/v1/accounts/{account_id}/run` | C6 Account Detail | Rajwardhan | P3 | mock | run:now |
-| PATCH | `/api/v1/accounts/{account_id}` | C6 Account Detail | Rajwardhan | P2 | mock | approve:any |
+| GET | `/api/v1/accounts` | C5 Accounts | Rajwardhan | P2 | real | any |
+| GET | `/api/v1/accounts/{account_id}` | C6 Account Detail | Rajwardhan | P2 | real | any |
+| GET | `/api/v1/accounts/{account_id}/timeline` | C6 Account Detail | Rajwardhan | P2 | real | any |
+| GET | `/api/v1/accounts/{account_id}/usage` | C6 Account Detail | Rajwardhan | P2 | real | any |
+| GET | `/api/v1/accounts/{account_id}/contacts` | C6 Account Detail | Rajwardhan | P2 | real | any |
+| GET | `/api/v1/accounts/{account_id}/deals` | C6 Account Detail | Rajwardhan | P2 | real | any |
+| POST | `/api/v1/accounts/{account_id}/run` | C6 Account Detail | Rajwardhan | P3 | real | run:now |
+| PATCH | `/api/v1/accounts/{account_id}` | C6 Account Detail | Rajwardhan | P2 | real | approve:any |
 | GET | `/api/v1/action-cards` | C3 Approval Inbox | Vedansh | P2 | real | any |
 | GET | `/api/v1/action-cards/{card_id}` | C4 Action Card | Vedansh | P2 | real | any |
 | PATCH | `/api/v1/action-cards/{card_id}` | C4 Action Card | Vedansh | P2 | real | edit:card |
@@ -45,8 +45,8 @@
 | DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
 | GET | `/api/v1/autonomy` | D9 Autonomy | Vedansh | P2 | real | any |
 | PUT | `/api/v1/autonomy/{action_type}` | D9 Autonomy | Vedansh | P2 | real | autonomy:edit |
-| GET | `/api/v1/entity-reviews` | C9 Entity Review | Rajwardhan | P2 | mock | review:view |
-| POST | `/api/v1/entity-reviews/{review_id}/resolve` | C9 Entity Review | Rajwardhan | P2 | mock | review:view |
+| GET | `/api/v1/entity-reviews` | C9 Entity Review | Rajwardhan | P2 | real | review:view |
+| POST | `/api/v1/entity-reviews/{review_id}/resolve` | C9 Entity Review | Rajwardhan | P2 | real | review:view |
 | GET | `/api/v1/findings` | C2 Finding Detail | Rajwardhan | P3 | mock | any |
 | GET | `/api/v1/findings/{finding_id}` | C2 Finding Detail | Rajwardhan | P3 | mock | any |
 | POST | `/api/v1/findings/{finding_id}/dismiss` | C2 Finding Detail | Rajwardhan | P3 | mock | approve:own |
@@ -72,7 +72,6 @@
 | GET | `/api/v1/log/{entry_id}` | C8 Log Detail (Why Replay) | Vedansh | P2 | real | any |
 | POST | `/api/v1/log/export` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
 | GET | `/api/v1/log/export/{job_id}` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
-
 | GET | `/api/v1/me` | A1 Auth & Profile | Vedansh | P1 | real | any |
 | PATCH | `/api/v1/me` | D1 Profile & Notifications | Vedansh | P1 | real | any |
 | GET | `/api/v1/members` | D5 Members & Invites | Vedansh | P1 | real | any |

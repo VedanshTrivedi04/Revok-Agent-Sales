@@ -23,11 +23,8 @@ async def expire_cards_task(session: AsyncSession, org_id: UUID) -> dict[str, in
 
 
 @tenant_task("executor.execute_card", queue="executor")
-async def execute_card_task(
-    session: AsyncSession, org_id: UUID, card_id: str
-) -> dict[str, str]:
+async def execute_card_task(session: AsyncSession, org_id: UUID, card_id: str) -> dict[str, str]:
     """Execute an approved action card: lock → begin_execution → handler → finish/fail."""
     from app.executor.core import run_execute_card
 
     return await run_execute_card(org_id, UUID(card_id))
-

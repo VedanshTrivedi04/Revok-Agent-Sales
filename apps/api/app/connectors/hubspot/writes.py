@@ -43,6 +43,7 @@ IDEM_PROP = "revops_card_id"
 # Utility helpers
 # ---------------------------------------------------------------------------
 
+
 async def _hs_get(ctx: ConnCtx, path: str, **kwargs: Any) -> Any:
     return await ctx.request("GET", f"{HS_BASE}{path}", **kwargs)
 
@@ -59,10 +60,11 @@ async def _hs_delete(ctx: ConnCtx, path: str) -> Any:
     return await ctx.request("DELETE", f"{HS_BASE}{path}")
 
 
-
 def _search_by_idem(object_type: str, idem_key: str) -> dict[str, Any]:
     return {
-        "filterGroups": [{"filters": [{"propertyName": IDEM_PROP, "operator": "EQ", "value": idem_key}]}],
+        "filterGroups": [
+            {"filters": [{"propertyName": IDEM_PROP, "operator": "EQ", "value": idem_key}]}
+        ],
         "properties": ["hs_object_id", IDEM_PROP],
         "limit": 1,
     }
@@ -72,13 +74,16 @@ def _search_by_idem(object_type: str, idem_key: str) -> dict[str, Any]:
 # crm_task handler
 # ---------------------------------------------------------------------------
 
+
 class HubSpotTaskHandler:
     """Create a HubSpot Task (TASK engagement type)."""
 
     provider = "hubspot"
 
     async def find_existing(self, ctx: ConnCtx, idem_key: str) -> ExecResult | None:
-        resp = await _hs_post(ctx, "/crm/v3/objects/tasks/search", _search_by_idem("tasks", idem_key))
+        resp = await _hs_post(
+            ctx, "/crm/v3/objects/tasks/search", _search_by_idem("tasks", idem_key)
+        )
         results = resp.get("results", []) if isinstance(resp, dict) else []
         if results:
             obj_id = str(results[0]["id"])
@@ -120,7 +125,9 @@ class HubSpotTaskHandler:
         return ExecResult(external_ref={"hubspot_task_id": obj_id}, pre_image=None)
 
     async def read_current(self, ctx: ConnCtx, ref: CrmRef, fields: list[str]) -> dict[str, Any]:
-        resp = await _hs_get(ctx, f"/crm/v3/objects/tasks/{ref.id}", params={"properties": ",".join(fields)})
+        resp = await _hs_get(
+            ctx, f"/crm/v3/objects/tasks/{ref.id}", params={"properties": ",".join(fields)}
+        )
         return {f: resp.get("properties", {}).get(f) for f in fields}
 
 
@@ -128,16 +135,21 @@ class HubSpotTaskHandler:
 # crm_note handler
 # ---------------------------------------------------------------------------
 
+
 class HubSpotNoteHandler:
     """Create a HubSpot Note (NOTE engagement type)."""
 
     provider = "hubspot"
 
     async def find_existing(self, ctx: ConnCtx, idem_key: str) -> ExecResult | None:
-        resp = await _hs_post(ctx, "/crm/v3/objects/notes/search", _search_by_idem("notes", idem_key))
+        resp = await _hs_post(
+            ctx, "/crm/v3/objects/notes/search", _search_by_idem("notes", idem_key)
+        )
         results = resp.get("results", []) if isinstance(resp, dict) else []
         if results:
-            return ExecResult(external_ref={"hubspot_note_id": str(results[0]["id"])}, already_existed=True)
+            return ExecResult(
+                external_ref={"hubspot_note_id": str(results[0]["id"])}, already_existed=True
+            )
         return None
 
     async def apply(
@@ -167,7 +179,9 @@ class HubSpotNoteHandler:
         return ExecResult(external_ref={"hubspot_note_id": obj_id}, pre_image=None)
 
     async def read_current(self, ctx: ConnCtx, ref: CrmRef, fields: list[str]) -> dict[str, Any]:
-        resp = await _hs_get(ctx, f"/crm/v3/objects/notes/{ref.id}", params={"properties": ",".join(fields)})
+        resp = await _hs_get(
+            ctx, f"/crm/v3/objects/notes/{ref.id}", params={"properties": ",".join(fields)}
+        )
         return {f: resp.get("properties", {}).get(f) for f in fields}
 
 
@@ -208,7 +222,9 @@ class HubSpotFieldUpdateHandler:
                 raise FatalError(f"Unknown CRM object type: {change.object}")
 
             # --- stale_preview check (algorithm.md §12) ---
-            current_props = await self.read_current(ctx, CrmRef(object=change.object, id=change.id), [change.field])
+            current_props = await self.read_current(
+                ctx, CrmRef(object=change.object, id=change.id), [change.field]
+            )
             current_val = current_props.get(change.field)
 
             # `before` is the value the card was generated with (snapshotted at propose time)
@@ -222,8 +238,17 @@ class HubSpotFieldUpdateHandler:
             pre_image[f"{change.object}:{change.id}:{change.field}"] = current_val
 
             # --- apply the update ---
-            await _hs_patch(ctx, f"{path}/{change.id}", {"properties": {change.field: change.after}})
-            applied.append({"object": change.object, "id": change.id, "field": change.field, "after": change.after})
+            await _hs_patch(
+                ctx, f"{path}/{change.id}", {"properties": {change.field: change.after}}
+            )
+            applied.append(
+                {
+                    "object": change.object,
+                    "id": change.id,
+                    "field": change.field,
+                    "after": change.after,
+                }
+            )
 
         log.info("hubspot_fields_updated", changes=len(applied), idem_key=idem_key)
         return ExecResult(

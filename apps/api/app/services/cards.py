@@ -140,7 +140,6 @@ async def list_cards(
             except ValueError as e:
                 raise AppError("bad_request", f"Invalid assignee UUID: {assignee}") from e
 
-
     order = [OrderKey(ActionCard.created_at, desc=True), OrderKey(ActionCard.id, desc=True)]
     rows, next_cursor = await paginate(s, query, order, page_params)
 
@@ -155,10 +154,7 @@ async def list_cards(
     acc_res = await s.execute(acc_stmt)
     names_by_id = {row[0]: row[1] for row in acc_res.all()}
 
-    items = [
-        _to_card_out(c, names_by_id.get(c.account_id, "Unknown Account"))
-        for c in rows
-    ]
+    items = [_to_card_out(c, names_by_id.get(c.account_id, "Unknown Account")) for c in rows]
     return Page(items=items, next_cursor=next_cursor)
 
 
@@ -183,9 +179,11 @@ async def patch_card(
     patch_in: CardPatchIn,
 ) -> CardOut:
     """Save edits to a pending card after validating against type schema and allowlists."""
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if not card:
         raise AppError("not_found", f"Action card {card_id} not found.")
@@ -243,9 +241,11 @@ async def approve_card(
     channel: str = "web",
 ) -> CardOut:
     """Approve card (with optional payload edits) and enqueue execution."""
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if not card:
         raise AppError("not_found", f"Action card {card_id} not found.")
@@ -361,9 +361,11 @@ async def reject_card(
     channel: str = "web",
 ) -> CardOut:
     """Reject pending card with required reason."""
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if not card:
         raise AppError("not_found", f"Action card {card_id} not found.")
@@ -424,9 +426,11 @@ async def assign_card(
     assign_in: CardAssignIn,
 ) -> CardOut:
     """Reassign card to another member."""
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if not card:
         raise AppError("not_found", f"Action card {card_id} not found.")
@@ -497,9 +501,11 @@ async def retry_card(
     if not can(user_role, Action.APPROVE_ANY):
         raise AppError("forbidden", "Only managers, admins, and owners can retry failed cards.")
 
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if not card:
         raise AppError("not_found", f"Action card {card_id} not found.")
@@ -544,9 +550,11 @@ async def retry_card(
 
 async def expire_card(s: AsyncSession, *, org_id: UUID, card_id: UUID) -> bool:
     """Transition expired pending card to expired."""
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if not card or card.status != "pending_approval":
         return False

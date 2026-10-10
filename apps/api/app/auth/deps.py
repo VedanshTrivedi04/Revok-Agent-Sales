@@ -208,4 +208,3 @@ async def get_api_key_org(request: Request) -> UUID:
     # Fallback to JWT
     claims = verify_service_jwt(token)
     return claims.org_id
-

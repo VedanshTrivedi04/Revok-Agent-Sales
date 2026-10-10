@@ -36,20 +36,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.connectors.ctx import ConnCtx
 from app.connectors.hubspot.writes import (
-    HubSpotFieldUpdateHandler,
-    HubSpotNoteHandler,
-    HubSpotTaskHandler,
     _OBJECT_PATHS,
+    HubSpotFieldUpdateHandler,
     _hs_delete,
-    _hs_get,
     _hs_patch,
 )
 from app.models.actions import ActionCard, Execution
 from app.schemas.action_payloads import CrmRef
 from app.schemas.cards import CardOut
 from app.services import decision_log
-from app.services.cards import _to_card_out, _get_account_name
-from app.utils.errors import AppError, FatalError
+from app.services.cards import _get_account_name, _to_card_out
+from app.utils.errors import AppError
 from app.utils.events import publish
 from app.utils.time import utcnow
 
@@ -76,9 +73,11 @@ async def revert_card(
       409 revert_conflict — current value differs from executed `after`
       403 tier_blocked — card type not revertable
     """
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if card is None:
         raise AppError("not_found", f"Action card {card_id} not found")
@@ -95,7 +94,9 @@ async def revert_card(
             f"Card type '{card.type}' is not revertable.",
         )
 
-    if card.executed_at is None or (utcnow() - card.executed_at) > timedelta(days=REVERT_WINDOW_DAYS):
+    if card.executed_at is None or (utcnow() - card.executed_at) > timedelta(
+        days=REVERT_WINDOW_DAYS
+    ):
         raise AppError(
             "card_invalid_state",
             f"Revert window ({REVERT_WINDOW_DAYS} days) has passed.",
@@ -175,7 +176,9 @@ async def _check_revert_conflict(
             continue
 
         current_props = await field_update_handler.read_current(
-            ctx, CrmRef(object=obj, id=obj_id), [field]  # type: ignore[arg-type]
+            ctx,
+            CrmRef(object=obj, id=obj_id),
+            [field],
         )
         current_val = current_props.get(field)
 

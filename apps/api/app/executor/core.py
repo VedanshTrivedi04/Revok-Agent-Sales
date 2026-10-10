@@ -28,16 +28,15 @@ Retry policy (Celery TenantTask):
 
 from __future__ import annotations
 
+from uuid import UUID
+
 import structlog
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.connectors.base import ExecResult, WritableConnector
-from app.connectors.ctx import ConnCtx
-from app.connectors.registry import get as get_connector
 from app.db.session import org_session
 from app.models.actions import ActionCard, Execution
 from app.schemas.action_payloads import ACTION_PAYLOADS
-from app.services import cards as cards_service
 from app.services import decision_log
 from app.services.payload_validator import validate_card_payload
 from app.utils.errors import AppError, FatalError, TransientError
@@ -45,9 +44,6 @@ from app.utils.events import publish
 from app.utils.idempotency import provider_idempotency_key
 from app.utils.locks import LockNotAcquired, lock
 from app.utils.time import utcnow
-
-from typing import TYPE_CHECKING
-from uuid import UUID
 
 log = structlog.get_logger()
 
@@ -70,15 +66,16 @@ def get_handler(card_type: str) -> WritableConnector | None:
 # Execution helpers (state transitions for executor tasks)
 # ---------------------------------------------------------------------------
 
-async def begin_execution(
-    s: AsyncSession, org_id: UUID, card_id: UUID
-) -> ActionCard | None:
+
+async def begin_execution(s: AsyncSession, org_id: UUID, card_id: UUID) -> ActionCard | None:
     """Transition approved → executing. Returns the card, or None if already past approved."""
     from sqlalchemy import select
 
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one_or_none()
     if card is None:
         raise AppError("not_found", f"Card {card_id} not found")
@@ -128,9 +125,11 @@ async def finish_execution(
     """Transition executing → executed; stores external_ref, pre_image in Execution row."""
     from sqlalchemy import select
 
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one()
 
     card.status = "executed"
@@ -173,9 +172,11 @@ async def fail_execution(
     """Transition executing → failed; logs the error."""
     from sqlalchemy import select
 
-    stmt = select(ActionCard).where(
-        ActionCard.org_id == org_id, ActionCard.id == card_id
-    ).with_for_update()
+    stmt = (
+        select(ActionCard)
+        .where(ActionCard.org_id == org_id, ActionCard.id == card_id)
+        .with_for_update()
+    )
     card = (await s.execute(stmt)).scalar_one()
 
     card.status = "failed"
@@ -206,16 +207,12 @@ async def _next_attempt_number(s: AsyncSession, org_id: UUID, card_id: UUID) -> 
     from sqlalchemy import func, select
 
     res = await s.execute(
-        select(func.count()).where(
-            Execution.org_id == org_id, Execution.action_card_id == card_id
-        )
+        select(func.count()).where(Execution.org_id == org_id, Execution.action_card_id == card_id)
     )
     return (res.scalar_one() or 0) + 1
 
 
-async def _latest_execution(
-    s: AsyncSession, org_id: UUID, card_id: UUID
-) -> Execution | None:
+async def _latest_execution(s: AsyncSession, org_id: UUID, card_id: UUID) -> Execution | None:
     from sqlalchemy import select
 
     stmt = (
@@ -232,6 +229,7 @@ async def _latest_execution(
 # Core executor orchestration (called from Celery task)
 # ---------------------------------------------------------------------------
 
+
 async def run_execute_card(org_id: UUID, card_id: UUID) -> dict[str, str]:
     """
     Full execution flow — algorithm.md §10:
@@ -242,8 +240,8 @@ async def run_execute_card(org_id: UUID, card_id: UUID) -> dict[str, str]:
     try:
         async with lock(f"exec:{card_id}", ttl=300, wait=5.0):
             await _execute_inner(org_id, card_id)
-    except LockNotAcquired:
-        raise TransientError(f"exec lock busy for card {card_id}; will retry")
+    except LockNotAcquired as err:
+        raise TransientError(f"exec lock busy for card {card_id}; will retry") from err
 
     return {"status": "done", "card_id": str(card_id)}
 

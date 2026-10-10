@@ -35,6 +35,9 @@ class CrmFieldChange(BaseModel):
     after: str
 
 
+CrmChange = CrmFieldChange
+
+
 class CrmFieldUpdatePayload(BaseModel):
     changes: list[CrmFieldChange] = Field(min_length=1, max_length=5)
 

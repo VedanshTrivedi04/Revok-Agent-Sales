@@ -54,4 +54,3 @@ async def put_autonomy_real(
             action_type=action_type,
             put_in=body,
         )
-

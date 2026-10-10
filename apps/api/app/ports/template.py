@@ -57,7 +57,9 @@ class TemplateActionPlanner:
 
         # Derive primary contact and owner names safely
         primary_contact = contacts[0] if contacts else {}
-        contact_first = (primary_contact.get("name") or "").split()[0] if primary_contact else "there"
+        contact_first = (
+            (primary_contact.get("name") or "").split()[0] if primary_contact else "there"
+        )
         owner_name = account.get("owner_name", "your account manager")
         account_name = account.get("name", "the account")
 
@@ -73,7 +75,9 @@ class TemplateActionPlanner:
                     type="crm_task",
                     payload={
                         "title": task_title,
-                        "body": f"Risk detected. Review findings and initiate contact with account team.",
+                        "body": (
+                            "Risk detected. Review findings and initiate contact with account team."
+                        ),
                         "due_date": _days_ahead(7),
                         "owner_crm_id": account.get("crm_owner_id", ""),
                         "priority": "HIGH" if severity == "high" else "MEDIUM",
@@ -135,13 +139,17 @@ class TemplateActionPlanner:
                                 "subject": f"Checking in — {account_name}",
                                 "body_text": (
                                     f"Hi {contact_first},\n\n"
-                                    f"I wanted to reach out to check in and see how things are going. "
-                                    f"Would love to connect this week — does any time work for you?\n\n"
+                                    "I wanted to reach out to check in and see "
+                                    "how things are going. "
+                                    "Would love to connect this week — "
+                                    "does any time work for you?\n\n"
                                     f"Best,\n{owner_name}"
                                 ),
                                 "mode": "draft",
                             },
-                            rationale="Check-in email draft for account owner to review before sending.",
+                            rationale=(
+                                "Check-in email draft for account owner to review before sending."
+                            ),
                             evidence_keys=[],
                         )
                     )
@@ -153,7 +161,9 @@ class TemplateActionPlanner:
                     type="crm_task",
                     payload={
                         "title": f"Expansion opportunity — {account_name}",
-                        "body": "Expansion signals detected. Review usage and discuss upgrade options.",
+                        "body": (
+                            "Expansion signals detected. Review usage and discuss upgrade options."
+                        ),
                         "due_date": _days_ahead(14),
                         "owner_crm_id": account.get("crm_owner_id", ""),
                         "priority": "MEDIUM",
@@ -175,9 +185,10 @@ class TemplateActionPlanner:
                                 "subject": f"Exploring how we can grow together — {account_name}",
                                 "body_text": (
                                     f"Hi {contact_first},\n\n"
-                                    f"We've been excited to see your team's engagement growing. "
-                                    f"I'd love to discuss how we can support your continued success. "
-                                    f"Can we find 30 minutes this week?\n\n"
+                                    "We've been excited to see your team's engagement growing. "
+                                    "I'd love to discuss how we can support "
+                                    "your continued success. "
+                                    "Can we find 30 minutes this week?\n\n"
                                     f"Best,\n{owner_name}"
                                 ),
                                 "mode": "draft",
@@ -188,7 +199,6 @@ class TemplateActionPlanner:
                     )
 
         return proposals
-
 
 
 class ExternalPending:

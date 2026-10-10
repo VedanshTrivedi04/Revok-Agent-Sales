@@ -146,10 +146,14 @@ async def update_autonomy_policy(
             f"Action type '{action_type}' is locked Tier 3 and cannot be modified.",
         )
 
-    stmt = select(AutonomyPolicy).where(
-        AutonomyPolicy.org_id == org_id,
-        AutonomyPolicy.action_type == action_type,
-    ).with_for_update()
+    stmt = (
+        select(AutonomyPolicy)
+        .where(
+            AutonomyPolicy.org_id == org_id,
+            AutonomyPolicy.action_type == action_type,
+        )
+        .with_for_update()
+    )
     res = await s.execute(stmt)
     policy = res.scalar_one_or_none()
 

@@ -10,8 +10,8 @@ def _register_handlers() -> None:
     )
     from app.executor.core import register_handler
 
-    register_handler("crm_task", hubspot_task_handler)           # type: ignore[arg-type]
-    register_handler("crm_note", hubspot_note_handler)           # type: ignore[arg-type]
+    register_handler("crm_task", hubspot_task_handler)  # type: ignore[arg-type]
+    register_handler("crm_note", hubspot_note_handler)  # type: ignore[arg-type]
     register_handler("crm_field_update", hubspot_field_update_handler)  # type: ignore[arg-type]
 
 
