@@ -1,0 +1,215 @@
+{
+ "field_mapping": {
+  "arr_property": "annualrevenue",
+  "health_property": "health_status",
+  "health_values": {
+   "at_risk": "At Risk",
+   "critical": "Red",
+   "healthy": "Green"
+  },
+  "lifecycle_property": "lifecyclestage",
+  "mrr_property": null,
+  "next_step_property": "hs_next_step",
+  "plan_property": "plan",
+  "renewal_date_property": "renewal_date",
+  "seats_property": "seats",
+  "updated_at": "2026-09-10T03:30:00Z",
+  "updated_by": "d08ad0f3-c2c9-5b55-80ae-ac4e4a24f6e6"
+ },
+ "hubspot_properties": [
+  {
+   "group": "companyinformation",
+   "label": "Renewal date",
+   "name": "renewal_date",
+   "type": "date"
+  },
+  {
+   "group": "companyinformation",
+   "label": "Annual revenue (ARR)",
+   "name": "annualrevenue",
+   "type": "number"
+  },
+  {
+   "group": "companyinformation",
+   "label": "Seats purchased",
+   "name": "seats",
+   "type": "number"
+  },
+  {
+   "group": "companyinformation",
+   "label": "Plan",
+   "name": "plan",
+   "type": "enumeration"
+  },
+  {
+   "group": "companyinformation",
+   "label": "Health",
+   "name": "health_status",
+   "type": "enumeration"
+  },
+  {
+   "group": "companyinformation",
+   "label": "Lifecycle stage",
+   "name": "lifecyclestage",
+   "type": "enumeration"
+  }
+ ],
+ "integrations": [
+  {
+   "external_account_label": "Demo SaaS HubSpot (portal 1234567)",
+   "id": "a7ec4313-40b8-5c6b-8187-4ec4636db168",
+   "last_error": null,
+   "last_success_at": "2026-10-10T01:30:00Z",
+   "last_sync_at": "2026-10-10T01:30:00Z",
+   "provider": "hubspot",
+   "scope_level": "org",
+   "scopes": [
+    "crm.objects.companies.read"
+   ],
+   "status": "connected",
+   "user_id": null
+  },
+  {
+   "external_account_label": "priya@demo-saas.example.com",
+   "id": "672cee9a-9731-58ab-a38b-2672e9970b2d",
+   "last_error": null,
+   "last_success_at": "2026-10-09T01:30:00Z",
+   "last_sync_at": "2026-10-10T02:30:00Z",
+   "provider": "gmail",
+   "scope_level": "user",
+   "scopes": [
+    "gmail.readonly",
+    "gmail.compose"
+   ],
+   "status": "syncing",
+   "user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555"
+  },
+  {
+   "external_account_label": "priya@demo-saas.example.com",
+   "id": "2150076e-d08b-5cb1-bd36-2888bba4a136",
+   "last_error": "Google access expired. Reconnect to resume.",
+   "last_success_at": "2026-10-07T03:30:00Z",
+   "last_sync_at": "2026-10-07T03:30:00Z",
+   "provider": "gcal",
+   "scope_level": "user",
+   "scopes": [
+    "calendar.readonly"
+   ],
+   "status": "needs_reauth",
+   "user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555"
+  },
+  {
+   "external_account_label": null,
+   "id": "906d0142-6152-5b6d-841f-4727d382056e",
+   "last_error": null,
+   "last_success_at": null,
+   "last_sync_at": null,
+   "provider": "slack",
+   "scope_level": "org",
+   "scopes": [],
+   "status": "disconnected",
+   "user_id": null
+  },
+  {
+   "external_account_label": "Usage API",
+   "id": "5a728032-f5bc-5b2f-8739-a86f28ffbf4a",
+   "last_error": "Last batch had 12 rejected rows.",
+   "last_success_at": "2026-10-04T03:30:00Z",
+   "last_sync_at": "2026-10-09T03:30:00Z",
+   "provider": "usage_api",
+   "scope_level": "org",
+   "scopes": [
+    "ingest:usage"
+   ],
+   "status": "error",
+   "user_id": null
+  }
+ ],
+ "slack_users": [
+  {
+   "email": "priya@demo-saas.example.com",
+   "name": "priya",
+   "slack_user_id": "U0PRIYA",
+   "suggested_member_id": "6a87a621-a3df-5152-90f1-2e735adb4893"
+  },
+  {
+   "email": "maya@demo-saas.example.com",
+   "name": "maya",
+   "slack_user_id": "U0MAYA",
+   "suggested_member_id": "563aa16b-c840-577e-aad0-f9924628a6ea"
+  },
+  {
+   "email": null,
+   "name": "ci-bot",
+   "slack_user_id": "U0BOT",
+   "suggested_member_id": null
+  }
+ ],
+ "sync_runs": [
+  {
+   "error": null,
+   "finished_at": "2026-10-10T01:36:00Z",
+   "id": "74f30951-f57a-5f0b-8be2-a007ec724438",
+   "integration_id": "a7ec4313-40b8-5c6b-8187-4ec4636db168",
+   "started_at": "2026-10-10T01:30:00Z",
+   "stats": {
+    "events_new": 14,
+    "fetched": 120,
+    "upserted": 118
+   },
+   "status": "success"
+  },
+  {
+   "error": null,
+   "finished_at": "2026-10-09T19:36:00Z",
+   "id": "674c51a4-66a5-5966-9b02-627a17bbb89a",
+   "integration_id": "a7ec4313-40b8-5c6b-8187-4ec4636db168",
+   "started_at": "2026-10-09T19:30:00Z",
+   "stats": {
+    "events_new": 14,
+    "fetched": 120,
+    "upserted": 118
+   },
+   "status": "success"
+  },
+  {
+   "error": "partial page failure",
+   "finished_at": "2026-10-09T13:36:00Z",
+   "id": "ecac98f4-392d-5802-86d8-454168764674",
+   "integration_id": "a7ec4313-40b8-5c6b-8187-4ec4636db168",
+   "started_at": "2026-10-09T13:30:00Z",
+   "stats": {
+    "events_new": 14,
+    "fetched": 120,
+    "upserted": 118
+   },
+   "status": "partial"
+  },
+  {
+   "error": null,
+   "finished_at": "2026-10-09T07:36:00Z",
+   "id": "ebc5fe16-ad31-5028-b6b6-120642e02177",
+   "integration_id": "a7ec4313-40b8-5c6b-8187-4ec4636db168",
+   "started_at": "2026-10-09T07:30:00Z",
+   "stats": {
+    "events_new": 14,
+    "fetched": 120,
+    "upserted": 118
+   },
+   "status": "failed"
+  },
+  {
+   "error": null,
+   "finished_at": "2026-10-09T01:36:00Z",
+   "id": "0ebf2308-39d5-576a-844d-73f667d89098",
+   "integration_id": "a7ec4313-40b8-5c6b-8187-4ec4636db168",
+   "started_at": "2026-10-09T01:30:00Z",
+   "stats": {
+    "events_new": 14,
+    "fetched": 120,
+    "upserted": 118
+   },
+   "status": "success"
+  }
+ ]
+}

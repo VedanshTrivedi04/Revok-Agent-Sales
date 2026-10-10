@@ -1,0 +1,421 @@
+[
+ {
+  "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+  "account_name": "Acme Corp",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": null,
+  "decided_by": null,
+  "decision_channel": null,
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [
+   "E3",
+   "E4",
+   "E5"
+  ],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "id": "912da8ce-99a4-5661-8507-cfecef21a571",
+  "payload": {
+   "body_text": "Hi Dana,\n\nI wanted to set up a short call to plan your upcoming renewal and hear how the team is getting on.\n\nBest,\nPriya",
+   "cc": [],
+   "mode": "draft",
+   "reply_to_thread_id": null,
+   "subject": "Checking in ahead of your renewal",
+   "to": [
+    "dana@acme.example.com"
+   ]
+  },
+  "preview": [],
+  "rationale": "Champion silent for 9 days; renewal in 43 days.",
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "pending_approval",
+  "tier": 2,
+  "title": "Email Priya's champion about the renewal plan",
+  "type": "email_draft"
+ },
+ {
+  "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+  "account_name": "Acme Corp",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": null,
+  "decided_by": null,
+  "decision_channel": null,
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [
+   "E2",
+   "E6"
+  ],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "id": "e8d266be-c527-5898-98c4-fcea90fad268",
+  "payload": {
+   "changes": [
+    {
+     "after": "At Risk",
+     "before": "Green",
+     "field": "health_status",
+     "id": "hs-acme",
+     "object": "company"
+    }
+   ]
+  },
+  "preview": [
+   {
+    "after": "At Risk",
+    "before": "Green",
+    "field": "health_status",
+    "id": "hs-acme",
+    "label": "Health",
+    "object": "company"
+   }
+  ],
+  "rationale": "Usage -38% contradicts Green.",
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "pending_approval",
+  "tier": 2,
+  "title": "Set HubSpot health to At Risk",
+  "type": "crm_field_update"
+ },
+ {
+  "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+  "account_name": "Acme Corp",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": "2026-10-09T03:30:00Z",
+  "decided_by": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "decision_channel": "auto",
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [],
+  "executed_at": "2026-10-09T03:30:00Z",
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": {
+   "hubspot_task_id": "hs-task-1"
+  },
+  "finding_id": "83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "id": "27b66406-40c1-5e1a-b5bf-1da7e0f5331a",
+  "payload": {
+   "associate": [
+    {
+     "id": "hs-acme",
+     "object": "company"
+    }
+   ],
+   "body": "Renewal risk review.",
+   "due_date": "2026-10-13",
+   "owner_crm_id": "hs-owner-1",
+   "priority": "HIGH",
+   "title": "Exec sponsor call"
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "executed",
+  "tier": 1,
+  "title": "Create task: exec sponsor call",
+  "type": "crm_task"
+ },
+ {
+  "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+  "account_name": "Acme Corp",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": null,
+  "decided_by": null,
+  "decision_channel": "auto",
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "id": "8af6e84d-d71b-5a72-9e0b-cc570871c989",
+  "payload": {
+   "channel_type": "dm",
+   "target": "U0PRIYA",
+   "text": "Acme is at high renewal risk. See Revenue Agent."
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "executing",
+  "tier": 1,
+  "title": "Notify Priya in Slack",
+  "type": "slack_internal"
+ },
+ {
+  "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+  "account_name": "Acme Corp",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": "2026-10-08T03:30:00Z",
+  "decided_by": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "decision_channel": "web",
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [],
+  "executed_at": "2026-10-08T03:30:00Z",
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "id": "fb2616ef-937e-52e5-af1d-2b7fd02d6f79",
+  "payload": {
+   "associate": [
+    {
+     "id": "hs-acme",
+     "object": "company"
+    }
+   ],
+   "body": "Risk summary added by Revenue Agent."
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": "2026-10-09T03:30:00Z",
+  "status": "reverted",
+  "tier": 1,
+  "title": "Add CRM note: risk summary",
+  "type": "crm_note"
+ },
+ {
+  "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+  "account_name": "Acme Corp",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": null,
+  "decided_by": null,
+  "decision_channel": null,
+  "edited_payload": null,
+  "error": "Tier 3 actions are never executed.",
+  "evidence_keys": [],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "id": "9ffa354e-6cf0-5e81-a686-e1df75af12fa",
+  "payload": {
+   "changes": [
+    {
+     "after": "70000",
+     "before": "84000",
+     "field": "amount",
+     "id": "hs-deal-1",
+     "object": "deal"
+    }
+   ]
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "blocked",
+  "tier": 3,
+  "title": "Change deal amount (blocked: Tier 3)",
+  "type": "crm_field_update"
+ },
+ {
+  "account_id": "6f142889-a3dd-5606-aefb-c42abec53b10",
+  "account_name": "Globex",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": null,
+  "decided_by": null,
+  "decision_channel": null,
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "46a5893e-6721-5616-91a5-7e173300d178",
+  "id": "5f9e3f91-8dc0-5292-b30f-85bb413fb5d4",
+  "payload": {
+   "associate": [
+    {
+     "id": "hs-acme",
+     "object": "company"
+    }
+   ],
+   "body": "Renewal risk review.",
+   "due_date": "2026-10-13",
+   "owner_crm_id": "hs-owner-1",
+   "priority": "HIGH",
+   "title": "Discuss seat expansion"
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "proposed",
+  "tier": 1,
+  "title": "Create task: discuss seat expansion",
+  "type": "crm_task"
+ },
+ {
+  "account_id": "6f142889-a3dd-5606-aefb-c42abec53b10",
+  "account_name": "Globex",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": "2026-10-10T01:30:00Z",
+  "decided_by": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "decision_channel": "web",
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "46a5893e-6721-5616-91a5-7e173300d178",
+  "id": "26db33ed-5c8e-5a67-98c6-dfbf4209ed59",
+  "payload": {
+   "body_text": "Hi Dana,\n\nI wanted to set up a short call to plan your upcoming renewal and hear how the team is getting on.\n\nBest,\nPriya",
+   "cc": [],
+   "mode": "draft",
+   "reply_to_thread_id": null,
+   "subject": "More seats for your team",
+   "to": [
+    "gina@globex.example.com"
+   ]
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "approved",
+  "tier": 2,
+  "title": "Email Globex about adding seats",
+  "type": "email_draft"
+ },
+ {
+  "account_id": "6de6403a-d3ed-515c-9601-d381bb4ce3d8",
+  "account_name": "Initech",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": "2026-10-07T03:30:00Z",
+  "decided_by": "d5509e02-ada5-55e3-ba1f-a55e10630d1f",
+  "decision_channel": "web",
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "dfbe6eda-3ea7-523a-b7b3-2bc2e9bf3997",
+  "id": "4b68241a-af6a-53a4-98c7-ca5a87f5c53f",
+  "payload": {
+   "body_text": "Hi Dana,\n\nI wanted to set up a short call to plan your upcoming renewal and hear how the team is getting on.\n\nBest,\nPriya",
+   "cc": [],
+   "mode": "draft",
+   "reply_to_thread_id": null,
+   "subject": "Checking in ahead of your renewal",
+   "to": [
+    "ian@initech.example.com"
+   ]
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": "Call first.",
+  "rejection_reason": "not_now",
+  "reverted_at": null,
+  "status": "rejected",
+  "tier": 2,
+  "title": "Email Initech about value review",
+  "type": "email_draft"
+ },
+ {
+  "account_id": "6de6403a-d3ed-515c-9601-d381bb4ce3d8",
+  "account_name": "Initech",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": null,
+  "decided_by": null,
+  "decision_channel": "auto",
+  "edited_payload": null,
+  "error": "HubSpot rate limit; retries exhausted.",
+  "evidence_keys": [],
+  "executed_at": null,
+  "expires_at": "2026-10-17T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "dfbe6eda-3ea7-523a-b7b3-2bc2e9bf3997",
+  "id": "aa4c652f-26d1-52fa-b09c-32d8038b0855",
+  "payload": {
+   "associate": [
+    {
+     "id": "hs-acme",
+     "object": "company"
+    }
+   ],
+   "body": "Renewal risk review.",
+   "due_date": "2026-10-13",
+   "owner_crm_id": "hs-owner-1",
+   "priority": "HIGH",
+   "title": "Value review call"
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "failed",
+  "tier": 1,
+  "title": "Create task: value review call",
+  "type": "crm_task"
+ },
+ {
+  "account_id": "3df5a28b-9c24-5231-aae2-e14c46355e65",
+  "account_name": "Hooli",
+  "assignee_user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "created_at": "2026-10-09T03:30:00Z",
+  "decided_at": null,
+  "decided_by": null,
+  "decision_channel": null,
+  "edited_payload": null,
+  "error": null,
+  "evidence_keys": [],
+  "executed_at": null,
+  "expires_at": "2026-10-09T03:30:00Z",
+  "external_ref": null,
+  "finding_id": "8594595b-a164-56f4-a881-0b50a24fd3ef",
+  "id": "3a725fd7-e645-510f-9b4a-d28b0ed1d951",
+  "payload": {
+   "body_text": "Hi Dana,\n\nI wanted to set up a short call to plan your upcoming renewal and hear how the team is getting on.\n\nBest,\nPriya",
+   "cc": [],
+   "mode": "draft",
+   "reply_to_thread_id": null,
+   "subject": "Checking in ahead of your renewal",
+   "to": [
+    "hank@hooli.example.com"
+   ]
+  },
+  "preview": [],
+  "rationale": null,
+  "rejection_note": null,
+  "rejection_reason": null,
+  "reverted_at": null,
+  "status": "expired",
+  "tier": 2,
+  "title": "Email Hooli check-in",
+  "type": "email_draft"
+ }
+]

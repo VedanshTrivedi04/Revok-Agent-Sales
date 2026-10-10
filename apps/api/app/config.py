@@ -28,7 +28,9 @@ class Settings(BaseSettings):
     smtp_port: int = 1025
 
     mock_api: bool = False
+    mock_auth: bool = True  # enforce JWT + role checks in mock mode too
     real_routers: str = ""
+    internal_api_key: str = "dev-internal-key"
     ai_mode: Literal["template", "external"] = "template"
     feature_email_send: bool = False
 

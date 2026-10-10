@@ -29,4 +29,5 @@ Every error uses the envelope `{"error": {"code", "message", "details"}}`. Forei
 | `validation_error` | 422 | The request body or parameters failed validation. |
 | `rate_limited` | 429 | Too many requests; retry after the Retry-After header. |
 | `internal_error` | 500 | Unexpected server error. |
+| `not_implemented` | 501 | The endpoint is part of the contract but not built yet. |
 | `provider_error` | 502 | An upstream provider (HubSpot, Google, Slack) returned an error. |

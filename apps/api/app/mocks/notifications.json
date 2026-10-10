@@ -1,0 +1,47 @@
+[
+ {
+  "body": "Usage down 38%, champion silent",
+  "created_at": "2026-10-10T00:30:00Z",
+  "id": "499fac08-152b-5b73-9f00-53793a318e10",
+  "kind": "finding_high",
+  "link": "/findings/83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "read_at": null,
+  "title": "High risk: Acme Corp"
+ },
+ {
+  "body": "Email Priya's champion about the renewal plan",
+  "created_at": "2026-10-10T00:30:00Z",
+  "id": "a887befb-8684-5b04-be8f-ee52d9fe5336",
+  "kind": "card_assigned",
+  "link": "/action-cards/912da8ce-99a4-5661-8507-cfecef21a571",
+  "read_at": null,
+  "title": "Card assigned to you"
+ },
+ {
+  "body": "Create task: value review call",
+  "created_at": "2026-10-09T07:30:00Z",
+  "id": "7e64a7fe-929f-5a96-b7ef-b66975ef36df",
+  "kind": "execution_failed",
+  "link": "/action-cards/aa4c652f-26d1-52fa-b09c-32d8038b0855",
+  "read_at": null,
+  "title": "Action failed"
+ },
+ {
+  "body": "Calendar access expired",
+  "created_at": "2026-10-07T03:30:00Z",
+  "id": "bf47f5e8-ba5e-5049-90a4-e3363f2d5547",
+  "kind": "integration_error",
+  "link": "/settings/integrations",
+  "read_at": "2026-10-08T11:30:00Z",
+  "title": "Google needs reconnecting"
+ },
+ {
+  "body": "3 risks, 1 expansion, 5 cards",
+  "created_at": "2026-10-09T03:30:00Z",
+  "id": "b9cf5647-8412-50ca-a5bd-1b83522c4f84",
+  "kind": "digest",
+  "link": "/today",
+  "read_at": "2026-10-09T17:30:00Z",
+  "title": "Your morning digest"
+ }
+]

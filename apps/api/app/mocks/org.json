@@ -1,0 +1,46 @@
+{
+ "currency": "USD",
+ "extra_domains": [],
+ "id": "0ff871dd-5dba-5118-a723-4611c0bb2120",
+ "name": "Demo SaaS",
+ "onboarding": {
+  "first_findings_ready": true,
+  "steps": [
+   {
+    "key": "org",
+    "status": "done"
+   },
+   {
+    "key": "hubspot",
+    "status": "done"
+   },
+   {
+    "key": "mapping",
+    "status": "done"
+   },
+   {
+    "key": "usage",
+    "status": "done"
+   },
+   {
+    "key": "invite",
+    "status": "done"
+   },
+   {
+    "key": "slack",
+    "status": "todo"
+   }
+  ]
+ },
+ "plan": "pilot",
+ "primary_domain": "demo-saas.example.com",
+ "settings": {
+  "backfill_days": 90,
+  "card_expiry_days": 7,
+  "digest_hour": 9,
+  "nightly_hour": 2
+ },
+ "slug": "demo-saas",
+ "status": "active",
+ "timezone": "Asia/Kolkata"
+}

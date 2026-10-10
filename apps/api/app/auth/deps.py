@@ -126,3 +126,16 @@ def require_permission(action: Action | str) -> Callable[..., Awaitable[CurrentM
         return m
 
     return dep
+
+
+async def require_superadmin(claims: Annotated[Claims, Depends(get_claims)]) -> CurrentUser:
+    """Platform operators only (users.is_superadmin). Used by /admin routers."""
+    from app.models.tenancy import User
+
+    async with org_session(claims.org_id) as s:
+        flag = (
+            await s.execute(select(User.is_superadmin).where(User.id == claims.user_id))
+        ).scalar_one_or_none()
+    if not flag:
+        raise AppError("forbidden", "Superadmin only", 403)
+    return CurrentUser(id=claims.user_id, email=claims.email)

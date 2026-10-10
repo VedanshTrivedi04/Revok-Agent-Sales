@@ -1,0 +1,36 @@
+{
+ "ids": {
+  "admin": "d08ad0f3-c2c9-5b55-80ae-ac4e4a24f6e6",
+  "manager": "d5509e02-ada5-55e3-ba1f-a55e10630d1f",
+  "member": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+  "owner": "ce9ca2a3-7518-5466-9a67-e9a9a740168d",
+  "viewer": "b81ffa96-97f6-5d6d-b8a0-131aa67d0787"
+ },
+ "users": {
+  "admin": {
+   "email": "adam@demo-saas.example.com",
+   "id": "d08ad0f3-c2c9-5b55-80ae-ac4e4a24f6e6",
+   "name": "Adam Admin"
+  },
+  "manager": {
+   "email": "maya@demo-saas.example.com",
+   "id": "d5509e02-ada5-55e3-ba1f-a55e10630d1f",
+   "name": "Maya Manager"
+  },
+  "member": {
+   "email": "priya@demo-saas.example.com",
+   "id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+   "name": "Priya Member"
+  },
+  "owner": {
+   "email": "olivia@demo-saas.example.com",
+   "id": "ce9ca2a3-7518-5466-9a67-e9a9a740168d",
+   "name": "Olivia Owner"
+  },
+  "viewer": {
+   "email": "victor@demo-saas.example.com",
+   "id": "b81ffa96-97f6-5d6d-b8a0-131aa67d0787",
+   "name": "Victor Viewer"
+  }
+ }
+}

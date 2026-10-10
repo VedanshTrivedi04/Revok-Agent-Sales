@@ -7,9 +7,11 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
+from app.contract import build_router
+from app.internal_app import create_internal_app
 from app.middleware import IdempotencyMiddleware, RequestIdMiddleware
 from app.observability import configure_logging, init_sentry
-from app.routes import health, me
+from app.routes import health
 from app.utils.errors import ERROR_CODES, AppError
 
 log = structlog.get_logger()
@@ -28,7 +30,8 @@ def create_app() -> FastAPI:
 
     app = FastAPI(title="RevOps Agent API", version="0.1.0")
     app.include_router(health.router)
-    app.include_router(me.router)
+    app.include_router(build_router(settings))
+    app.mount("/internal", create_internal_app())
 
     @app.exception_handler(AppError)
     async def _app_error(_: Request, exc: AppError) -> JSONResponse:

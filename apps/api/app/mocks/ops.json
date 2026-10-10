@@ -1,0 +1,380 @@
+{
+ "autonomy": [
+  {
+   "action_type": "email_draft",
+   "conditions": {
+    "max_recipients": 3
+   },
+   "locked": false,
+   "tier": 2,
+   "updated_at": null
+  },
+  {
+   "action_type": "crm_task",
+   "conditions": {},
+   "locked": false,
+   "tier": 1,
+   "updated_at": null
+  },
+  {
+   "action_type": "crm_field_update",
+   "conditions": {},
+   "locked": false,
+   "tier": 2,
+   "updated_at": null
+  },
+  {
+   "action_type": "crm_note",
+   "conditions": {},
+   "locked": false,
+   "tier": 1,
+   "updated_at": null
+  },
+  {
+   "action_type": "slack_internal",
+   "conditions": {},
+   "locked": false,
+   "tier": 1,
+   "updated_at": null
+  },
+  {
+   "action_type": "meeting_request",
+   "conditions": {},
+   "locked": false,
+   "tier": 2,
+   "updated_at": null
+  }
+ ],
+ "entity_reviews": [
+  {
+   "candidate_account_ids": [
+    "6f142889-a3dd-5606-aefb-c42abec53b10",
+    "6de6403a-d3ed-515c-9601-d381bb4ce3d8"
+   ],
+   "candidate_account_names": [
+    "Globex",
+    "Initech"
+   ],
+   "created_at": "2026-10-09T19:30:00Z",
+   "event_id": "e19e2a9a-4f01-5355-9bd2-7156ab499c4a",
+   "event_title": "Re: Pricing question",
+   "id": "246865d3-d967-52f7-9866-4bec6e318097",
+   "reason": "Sender domain matches two accounts",
+   "status": "open"
+  },
+  {
+   "candidate_account_ids": [
+    "4331f147-f90a-5036-b6f4-6e0af4e20a3f"
+   ],
+   "candidate_account_names": [
+    "Umbrella"
+   ],
+   "created_at": "2026-10-08T03:30:00Z",
+   "event_id": "b5e9e5ae-8391-5055-aeed-3cb76bc7e5fa",
+   "event_title": "Intro call",
+   "id": "07bcf559-7263-5e10-8152-4c5a661a70f7",
+   "reason": "Low-confidence domain match",
+   "status": "resolved"
+  }
+ ],
+ "rules": [
+  {
+   "category": "usage",
+   "default_params": {
+    "drop_pct": 30
+   },
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R01_usage_drop",
+   "params": {
+    "drop_pct": 30
+   },
+   "requires_signals": false,
+   "title": "Usage drop",
+   "updated_at": null
+  },
+  {
+   "category": "engagement",
+   "default_params": {
+    "gap_days": 21
+   },
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R02_meeting_gap",
+   "params": {
+    "gap_days": 21
+   },
+   "requires_signals": false,
+   "title": "Meeting gap",
+   "updated_at": null
+  },
+  {
+   "category": "engagement",
+   "default_params": {
+    "min_emails": 2,
+    "wait_days": 7
+   },
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R03_no_reply",
+   "params": {
+    "min_emails": 2,
+    "wait_days": 7
+   },
+   "requires_signals": false,
+   "title": "Unanswered emails",
+   "updated_at": null
+  },
+  {
+   "category": "renewal",
+   "default_params": {
+    "window": 60
+   },
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R04_renewal_near_no_plan",
+   "params": {
+    "window": 60
+   },
+   "requires_signals": false,
+   "title": "Renewal near, no plan",
+   "updated_at": null
+  },
+  {
+   "category": "stakeholder",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R05_champion_risk",
+   "params": {},
+   "requires_signals": false,
+   "title": "Champion risk",
+   "updated_at": null
+  },
+  {
+   "category": "sentiment",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R06_negative_sentiment",
+   "params": {},
+   "requires_signals": true,
+   "title": "Negative sentiment",
+   "updated_at": null
+  },
+  {
+   "category": "sentiment",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R07_competitor_mention",
+   "params": {},
+   "requires_signals": true,
+   "title": "Competitor mention",
+   "updated_at": null
+  },
+  {
+   "category": "usage",
+   "default_params": {
+    "min_util": 0.5
+   },
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R08_seat_underuse",
+   "params": {
+    "min_util": 0.5
+   },
+   "requires_signals": false,
+   "title": "Seat under-use",
+   "updated_at": null
+  },
+  {
+   "category": "stakeholder",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R09_single_threaded",
+   "params": {},
+   "requires_signals": false,
+   "title": "Single-threaded account",
+   "updated_at": null
+  },
+  {
+   "category": "engagement",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R10_no_next_step",
+   "params": {},
+   "requires_signals": false,
+   "title": "No next step",
+   "updated_at": null
+  },
+  {
+   "category": "sentiment",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "risk",
+   "key": "R11_pricing_budget",
+   "params": {},
+   "requires_signals": true,
+   "title": "Pricing or budget concern",
+   "updated_at": null
+  },
+  {
+   "category": "expansion",
+   "default_params": {
+    "min_util": 0.9
+   },
+   "enabled": true,
+   "finding_type": "expansion",
+   "key": "X01_seat_saturation",
+   "params": {
+    "min_util": 0.9
+   },
+   "requires_signals": false,
+   "title": "Seat saturation",
+   "updated_at": null
+  },
+  {
+   "category": "expansion",
+   "default_params": {
+    "min_growth_pct": 30
+   },
+   "enabled": true,
+   "finding_type": "expansion",
+   "key": "X02_usage_growth",
+   "params": {
+    "min_growth_pct": 30
+   },
+   "requires_signals": false,
+   "title": "Usage growth",
+   "updated_at": null
+  },
+  {
+   "category": "expansion",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "expansion",
+   "key": "X03_upgrade_intent",
+   "params": {},
+   "requires_signals": true,
+   "title": "Upgrade intent",
+   "updated_at": null
+  },
+  {
+   "category": "expansion",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "expansion",
+   "key": "X04_new_stakeholders",
+   "params": {},
+   "requires_signals": false,
+   "title": "New stakeholders",
+   "updated_at": null
+  },
+  {
+   "category": "expansion",
+   "default_params": {},
+   "enabled": true,
+   "finding_type": "expansion",
+   "key": "X05_renewal_strong_health",
+   "params": {},
+   "requires_signals": false,
+   "title": "Renewal with strong health",
+   "updated_at": null
+  }
+ ],
+ "runs": [
+  {
+   "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+   "account_name": "Acme Corp",
+   "error": null,
+   "finished_at": "2026-10-09T23:31:12Z",
+   "id": "d3a4821e-5b99-5453-a7b3-3d2a52ad4181",
+   "model": "template",
+   "started_at": "2026-10-09T23:30:00Z",
+   "stats": {
+    "llm_calls": 0,
+    "rule_hits": 3
+   },
+   "status": "completed",
+   "trigger": "nightly"
+  },
+  {
+   "account_id": "6f142889-a3dd-5606-aefb-c42abec53b10",
+   "account_name": "Globex",
+   "error": null,
+   "finished_at": "2026-10-09T23:31:12Z",
+   "id": "cfc29193-4a15-5d57-b9ce-3ee80502ce49",
+   "model": "template",
+   "started_at": "2026-10-09T23:30:00Z",
+   "stats": {
+    "llm_calls": 0,
+    "rule_hits": 3
+   },
+   "status": "completed",
+   "trigger": "nightly"
+  },
+  {
+   "account_id": "6de6403a-d3ed-515c-9601-d381bb4ce3d8",
+   "account_name": "Initech",
+   "error": null,
+   "finished_at": "2026-10-10T01:31:12Z",
+   "id": "a4d53352-47dc-55ff-89bd-7defa5360fbf",
+   "model": "template",
+   "started_at": "2026-10-10T01:30:00Z",
+   "stats": {
+    "llm_calls": 0,
+    "rule_hits": 3
+   },
+   "status": "waiting_approval",
+   "trigger": "manual"
+  },
+  {
+   "account_id": "3df5a28b-9c24-5231-aae2-e14c46355e65",
+   "account_name": "Hooli",
+   "error": null,
+   "finished_at": "2026-10-09T23:31:12Z",
+   "id": "2665136e-5a21-506a-b7f8-8587559ac64a",
+   "model": "template",
+   "started_at": "2026-10-09T23:30:00Z",
+   "stats": {
+    "llm_calls": 0,
+    "rule_hits": 3
+   },
+   "status": "skipped",
+   "trigger": "nightly"
+  },
+  {
+   "account_id": "a1f25648-ede6-5dc1-bcb0-d0fc83c2cbd9",
+   "account_name": "Soylent",
+   "error": "rule engine timeout",
+   "finished_at": "2026-10-10T02:31:12Z",
+   "id": "f5443bb9-acba-5225-9dd3-9722fe32227b",
+   "model": "template",
+   "started_at": "2026-10-10T02:30:00Z",
+   "stats": {
+    "llm_calls": 0,
+    "rule_hits": 3
+   },
+   "status": "failed",
+   "trigger": "retry"
+  },
+  {
+   "account_id": "4331f147-f90a-5036-b6f4-6e0af4e20a3f",
+   "account_name": "Umbrella",
+   "error": null,
+   "finished_at": null,
+   "id": "a6a452c5-3e61-575a-b5e2-cb3c05482871",
+   "model": "template",
+   "started_at": "2026-10-10T03:24:00Z",
+   "stats": {
+    "llm_calls": 0,
+    "rule_hits": 3
+   },
+   "status": "running",
+   "trigger": "webhook"
+  }
+ ]
+}

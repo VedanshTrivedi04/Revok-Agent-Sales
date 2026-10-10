@@ -1,0 +1,1535 @@
+{
+ "contacts": {
+  "acme": [
+   {
+    "crm_url": null,
+    "email": "dana@acme.example.com",
+    "id": "2c81176d-a60c-553b-8212-d35e20a51005",
+    "is_active": true,
+    "last_inbound_at": "2026-10-01T03:30:00Z",
+    "last_outbound_at": "2026-10-07T03:30:00Z",
+    "left_company_at": null,
+    "name": "Dana Champion",
+    "role_tags": [
+     "champion"
+    ],
+    "title": "Head of Ops"
+   },
+   {
+    "crm_url": null,
+    "email": "pat@acme.example.com",
+    "id": "043d6761-b5b2-5e69-b4a2-eed2ce1e1469",
+    "is_active": true,
+    "last_inbound_at": null,
+    "last_outbound_at": null,
+    "left_company_at": null,
+    "name": "Pat Executive",
+    "role_tags": [
+     "economic_buyer"
+    ],
+    "title": "VP"
+   }
+  ],
+  "globex": [
+   {
+    "crm_url": null,
+    "email": "gina@globex.example.com",
+    "id": "5f906bb4-05dd-5ae5-b00b-ce0eb4f2b8fa",
+    "is_active": true,
+    "last_inbound_at": "2026-10-08T03:30:00Z",
+    "last_outbound_at": "2026-10-07T03:30:00Z",
+    "left_company_at": null,
+    "name": "Gina Admin",
+    "role_tags": [
+     "champion"
+    ],
+    "title": "Head of Ops"
+   },
+   {
+    "crm_url": null,
+    "email": "pat@globex.example.com",
+    "id": "365bd78b-4648-5ed0-9fec-0fd12a3f2197",
+    "is_active": true,
+    "last_inbound_at": null,
+    "last_outbound_at": null,
+    "left_company_at": null,
+    "name": "Pat Executive",
+    "role_tags": [
+     "economic_buyer"
+    ],
+    "title": "VP"
+   }
+  ],
+  "hooli": [
+   {
+    "crm_url": null,
+    "email": "hank@hooli.example.com",
+    "id": "f506ddd1-832a-5131-b7fa-c9280a889d02",
+    "is_active": true,
+    "last_inbound_at": "2026-10-08T03:30:00Z",
+    "last_outbound_at": "2026-10-07T03:30:00Z",
+    "left_company_at": null,
+    "name": "Hank Ops",
+    "role_tags": [
+     "champion"
+    ],
+    "title": "Head of Ops"
+   },
+   {
+    "crm_url": null,
+    "email": "pat@hooli.example.com",
+    "id": "02391a3f-e8ee-5971-bb45-e4bbbdd43f85",
+    "is_active": true,
+    "last_inbound_at": null,
+    "last_outbound_at": null,
+    "left_company_at": null,
+    "name": "Pat Executive",
+    "role_tags": [
+     "economic_buyer"
+    ],
+    "title": "VP"
+   }
+  ],
+  "initech": [
+   {
+    "crm_url": null,
+    "email": "ian@initech.example.com",
+    "id": "e2ee2798-724e-52eb-93a3-01b675010b5f",
+    "is_active": true,
+    "last_inbound_at": "2026-10-08T03:30:00Z",
+    "last_outbound_at": "2026-10-07T03:30:00Z",
+    "left_company_at": null,
+    "name": "Ian Buyer",
+    "role_tags": [
+     "champion"
+    ],
+    "title": "Head of Ops"
+   },
+   {
+    "crm_url": null,
+    "email": "pat@initech.example.com",
+    "id": "6d0e1fff-5fcb-5089-81d9-f67306527e53",
+    "is_active": true,
+    "last_inbound_at": null,
+    "last_outbound_at": null,
+    "left_company_at": null,
+    "name": "Pat Executive",
+    "role_tags": [
+     "economic_buyer"
+    ],
+    "title": "VP"
+   }
+  ],
+  "soylent": [
+   {
+    "crm_url": null,
+    "email": "sol@soylent.example.com",
+    "id": "3376c2f0-a698-5c18-b977-fa215a344dad",
+    "is_active": true,
+    "last_inbound_at": "2026-10-08T03:30:00Z",
+    "last_outbound_at": "2026-10-07T03:30:00Z",
+    "left_company_at": null,
+    "name": "Sol Manager",
+    "role_tags": [
+     "champion"
+    ],
+    "title": "Head of Ops"
+   },
+   {
+    "crm_url": null,
+    "email": "pat@soylent.example.com",
+    "id": "00db74cf-e16c-57b8-9643-93cda78728f3",
+    "is_active": false,
+    "last_inbound_at": null,
+    "last_outbound_at": null,
+    "left_company_at": null,
+    "name": "Pat Executive",
+    "role_tags": [
+     "economic_buyer"
+    ],
+    "title": "VP"
+   }
+  ],
+  "umbrella": [
+   {
+    "crm_url": null,
+    "email": "uma@umbrella.example.com",
+    "id": "8a5aa9b1-4533-5347-84b6-80edd12d4d91",
+    "is_active": true,
+    "last_inbound_at": "2026-10-08T03:30:00Z",
+    "last_outbound_at": "2026-10-07T03:30:00Z",
+    "left_company_at": null,
+    "name": "Uma Lead",
+    "role_tags": [
+     "champion"
+    ],
+    "title": "Head of Ops"
+   },
+   {
+    "crm_url": null,
+    "email": "pat@umbrella.example.com",
+    "id": "8e15f145-5100-5ea0-94ca-29e8124be4fb",
+    "is_active": true,
+    "last_inbound_at": null,
+    "last_outbound_at": null,
+    "left_company_at": null,
+    "name": "Pat Executive",
+    "role_tags": [
+     "economic_buyer"
+    ],
+    "title": "VP"
+   }
+  ]
+ },
+ "deals": {
+  "acme": [
+   {
+    "amount": 84000,
+    "close_date": "2026-11-22",
+    "crm_url": null,
+    "deal_type": "renewal",
+    "id": "0eb8de6d-c9a8-5fa5-aa30-ff6bdfc3a6f8",
+    "is_closed": false,
+    "is_won": null,
+    "name": "Acme Corp renewal",
+    "next_step": null,
+    "stage_label": "Negotiation"
+   }
+  ],
+  "globex": [
+   {
+    "amount": 120000,
+    "close_date": "2027-02-07",
+    "crm_url": null,
+    "deal_type": "renewal",
+    "id": "be2e56e8-ddfb-5e78-9258-33aaff819343",
+    "is_closed": false,
+    "is_won": null,
+    "name": "Globex renewal",
+    "next_step": "Send order form",
+    "stage_label": "Proposal"
+   }
+  ],
+  "hooli": [
+   {
+    "amount": 48000,
+    "close_date": "2027-01-08",
+    "crm_url": null,
+    "deal_type": "renewal",
+    "id": "b3482aa9-4cf2-556f-90ef-d40a62a61554",
+    "is_closed": false,
+    "is_won": null,
+    "name": "Hooli renewal",
+    "next_step": "Send order form",
+    "stage_label": "Proposal"
+   }
+  ],
+  "initech": [
+   {
+    "amount": 36000,
+    "close_date": "2026-12-24",
+    "crm_url": null,
+    "deal_type": "renewal",
+    "id": "9bbf1fcc-3304-500e-a44a-ed188ce03342",
+    "is_closed": false,
+    "is_won": null,
+    "name": "Initech renewal",
+    "next_step": "Send order form",
+    "stage_label": "Proposal"
+   }
+  ],
+  "soylent": [
+   {
+    "amount": 24000,
+    "close_date": "2027-03-09",
+    "crm_url": null,
+    "deal_type": "renewal",
+    "id": "17148ff3-ace7-5b5e-a604-36a2d6e57cc6",
+    "is_closed": false,
+    "is_won": null,
+    "name": "Soylent renewal",
+    "next_step": "Send order form",
+    "stage_label": "Proposal"
+   }
+  ],
+  "umbrella": [
+   {
+    "amount": 60000,
+    "close_date": "2027-04-28",
+    "crm_url": null,
+    "deal_type": "renewal",
+    "id": "16ae2364-d960-5436-af12-d9fe4b9b82ae",
+    "is_closed": false,
+    "is_won": null,
+    "name": "Umbrella renewal",
+    "next_step": "Send order form",
+    "stage_label": "Proposal"
+   }
+  ]
+ },
+ "list": [
+  {
+   "arr": 84000,
+   "crm_health": "Green",
+   "crm_url": "https://app.hubspot.example/contacts/1/company/acme",
+   "domains": [
+    "acme.example.com"
+   ],
+   "id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+   "last_activity_at": "2026-10-08T03:30:00Z",
+   "name": "Acme Corp",
+   "owner": {
+    "id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+    "name": "Priya Member"
+   },
+   "plan_name": "Business",
+   "priority_score": 87.4,
+   "renewal_date": "2026-11-22",
+   "renewal_in_days": 43,
+   "risk_level": "high",
+   "seats_purchased": 100,
+   "status": "active"
+  },
+  {
+   "arr": 120000,
+   "crm_health": "Green",
+   "crm_url": "https://app.hubspot.example/contacts/1/company/globex",
+   "domains": [
+    "globex.example.com"
+   ],
+   "id": "6f142889-a3dd-5606-aefb-c42abec53b10",
+   "last_activity_at": "2026-10-08T03:30:00Z",
+   "name": "Globex",
+   "owner": {
+    "id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+    "name": "Priya Member"
+   },
+   "plan_name": "Business",
+   "priority_score": 61.0,
+   "renewal_date": "2027-02-07",
+   "renewal_in_days": 120,
+   "risk_level": null,
+   "seats_purchased": 100,
+   "status": "active"
+  },
+  {
+   "arr": 36000,
+   "crm_health": "Yellow",
+   "crm_url": "https://app.hubspot.example/contacts/1/company/initech",
+   "domains": [
+    "initech.example.com"
+   ],
+   "id": "6de6403a-d3ed-515c-9601-d381bb4ce3d8",
+   "last_activity_at": "2026-10-08T03:30:00Z",
+   "name": "Initech",
+   "owner": {
+    "id": "d5509e02-ada5-55e3-ba1f-a55e10630d1f",
+    "name": "Maya Manager"
+   },
+   "plan_name": "Team",
+   "priority_score": 55.2,
+   "renewal_date": "2026-12-24",
+   "renewal_in_days": 75,
+   "risk_level": "medium",
+   "seats_purchased": 40,
+   "status": "active"
+  },
+  {
+   "arr": 60000,
+   "crm_health": "Green",
+   "crm_url": "https://app.hubspot.example/contacts/1/company/umbrella",
+   "domains": [
+    "umbrella.example.com"
+   ],
+   "id": "4331f147-f90a-5036-b6f4-6e0af4e20a3f",
+   "last_activity_at": "2026-10-08T03:30:00Z",
+   "name": "Umbrella",
+   "owner": {
+    "id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+    "name": "Priya Member"
+   },
+   "plan_name": "Business",
+   "priority_score": null,
+   "renewal_date": "2027-04-28",
+   "renewal_in_days": 200,
+   "risk_level": null,
+   "seats_purchased": 60,
+   "status": "active"
+  },
+  {
+   "arr": 48000,
+   "crm_health": "Green",
+   "crm_url": "https://app.hubspot.example/contacts/1/company/hooli",
+   "domains": [
+    "hooli.example.com"
+   ],
+   "id": "3df5a28b-9c24-5231-aae2-e14c46355e65",
+   "last_activity_at": "2026-10-08T03:30:00Z",
+   "name": "Hooli",
+   "owner": {
+    "id": "2e30ad99-aae6-51e6-8722-33b1c746d555",
+    "name": "Priya Member"
+   },
+   "plan_name": "Team",
+   "priority_score": 22.0,
+   "renewal_date": "2027-01-08",
+   "renewal_in_days": 90,
+   "risk_level": "low",
+   "seats_purchased": 50,
+   "status": "active"
+  },
+  {
+   "arr": 24000,
+   "crm_health": "Green",
+   "crm_url": "https://app.hubspot.example/contacts/1/company/soylent",
+   "domains": [
+    "soylent.example.com"
+   ],
+   "id": "a1f25648-ede6-5dc1-bcb0-d0fc83c2cbd9",
+   "last_activity_at": "2026-10-08T03:30:00Z",
+   "name": "Soylent",
+   "owner": {
+    "id": "d5509e02-ada5-55e3-ba1f-a55e10630d1f",
+    "name": "Maya Manager"
+   },
+   "plan_name": "Team",
+   "priority_score": 18.5,
+   "renewal_date": "2027-03-09",
+   "renewal_in_days": 150,
+   "risk_level": "low",
+   "seats_purchased": 25,
+   "status": "active"
+  }
+ ],
+ "timeline": {
+  "acme": [
+   {
+    "id": "692e765d-28b2-590e-9df9-664a9f10c1d2",
+    "occurred_at": "2026-10-07T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@acme.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Following up on renewal",
+    "type": "email_out"
+   },
+   {
+    "id": "5d150746-b6b5-5f38-921e-f4927151e029",
+    "occurred_at": "2026-10-01T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@acme.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Checking in",
+    "type": "email_out"
+   },
+   {
+    "id": "2a7cbd84-0398-596d-ba54-4c915e855f88",
+    "occurred_at": "2026-09-19T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@acme.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "gcal",
+    "source_url": null,
+    "summary": null,
+    "title": "Quarterly business review",
+    "type": "meeting"
+   },
+   {
+    "id": "100564f6-2260-5b7d-83fb-c16729a61304",
+    "occurred_at": "2026-09-15T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@acme.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "hubspot",
+    "source_url": null,
+    "summary": null,
+    "title": "Call notes",
+    "type": "note"
+   },
+   {
+    "id": "89cb5bd9-9548-53b6-848f-cc79c719975b",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@acme.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "usage",
+    "source_url": null,
+    "summary": null,
+    "title": "Weekly usage snapshot",
+    "type": "usage_snapshot"
+   }
+  ],
+  "globex": [
+   {
+    "id": "c17f61cc-d329-588f-880e-501329199ba4",
+    "occurred_at": "2026-10-07T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@globex.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Following up on renewal",
+    "type": "email_out"
+   },
+   {
+    "id": "edf63c5f-a354-5f3b-a696-421ac1c7517c",
+    "occurred_at": "2026-10-01T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@globex.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Checking in",
+    "type": "email_out"
+   },
+   {
+    "id": "2087dcb3-db00-55f5-9dc1-a3290745c2b9",
+    "occurred_at": "2026-09-19T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@globex.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "gcal",
+    "source_url": null,
+    "summary": null,
+    "title": "Quarterly business review",
+    "type": "meeting"
+   },
+   {
+    "id": "44bab9e2-065a-5ea8-ac0d-dc8a250aa44f",
+    "occurred_at": "2026-09-15T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@globex.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "hubspot",
+    "source_url": null,
+    "summary": null,
+    "title": "Call notes",
+    "type": "note"
+   },
+   {
+    "id": "504e948a-9949-5a7c-baea-434d801052b7",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@globex.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "usage",
+    "source_url": null,
+    "summary": null,
+    "title": "Weekly usage snapshot",
+    "type": "usage_snapshot"
+   }
+  ],
+  "hooli": [
+   {
+    "id": "c3ac4265-e4de-56c2-afc0-dcb799381ceb",
+    "occurred_at": "2026-10-07T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@hooli.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Following up on renewal",
+    "type": "email_out"
+   },
+   {
+    "id": "d00b6296-ff72-5b74-8b3a-575c95167825",
+    "occurred_at": "2026-10-01T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@hooli.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Checking in",
+    "type": "email_out"
+   },
+   {
+    "id": "3ae6ce5e-85da-5203-81e8-8978908f3b63",
+    "occurred_at": "2026-09-19T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@hooli.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "gcal",
+    "source_url": null,
+    "summary": null,
+    "title": "Quarterly business review",
+    "type": "meeting"
+   },
+   {
+    "id": "7f3dc867-b150-5843-9e2a-eb40949a9610",
+    "occurred_at": "2026-09-15T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@hooli.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "hubspot",
+    "source_url": null,
+    "summary": null,
+    "title": "Call notes",
+    "type": "note"
+   },
+   {
+    "id": "53722166-d7ff-5774-8555-6ce68e92acac",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@hooli.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "usage",
+    "source_url": null,
+    "summary": null,
+    "title": "Weekly usage snapshot",
+    "type": "usage_snapshot"
+   }
+  ],
+  "initech": [
+   {
+    "id": "9504c3e8-3bb5-5e62-be0e-b6081edf8a17",
+    "occurred_at": "2026-10-07T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@initech.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Following up on renewal",
+    "type": "email_out"
+   },
+   {
+    "id": "1690b7f1-173c-531e-ae00-6a16685c4db2",
+    "occurred_at": "2026-10-01T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@initech.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Checking in",
+    "type": "email_out"
+   },
+   {
+    "id": "2ff9e7ba-2321-53e0-bc59-4f317a66126e",
+    "occurred_at": "2026-09-19T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@initech.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "gcal",
+    "source_url": null,
+    "summary": null,
+    "title": "Quarterly business review",
+    "type": "meeting"
+   },
+   {
+    "id": "80fab93e-b542-519e-8d69-982870790c98",
+    "occurred_at": "2026-09-15T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@initech.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "hubspot",
+    "source_url": null,
+    "summary": null,
+    "title": "Call notes",
+    "type": "note"
+   },
+   {
+    "id": "f9151d1f-cac7-524b-9d4e-6dacde0fc019",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@initech.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "usage",
+    "source_url": null,
+    "summary": null,
+    "title": "Weekly usage snapshot",
+    "type": "usage_snapshot"
+   }
+  ],
+  "soylent": [
+   {
+    "id": "c18cedb6-02b7-57fa-b70b-86ab8088679f",
+    "occurred_at": "2026-10-07T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@soylent.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Following up on renewal",
+    "type": "email_out"
+   },
+   {
+    "id": "ab49fafa-d6c9-517e-8fdc-ae3e536d3638",
+    "occurred_at": "2026-10-01T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@soylent.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Checking in",
+    "type": "email_out"
+   },
+   {
+    "id": "e8cabdbd-f786-5d21-bc36-e0d32e2a30ac",
+    "occurred_at": "2026-09-19T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@soylent.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "gcal",
+    "source_url": null,
+    "summary": null,
+    "title": "Quarterly business review",
+    "type": "meeting"
+   },
+   {
+    "id": "82b508cd-3424-51fa-85dd-f2f92ed7bfaf",
+    "occurred_at": "2026-09-15T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@soylent.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "hubspot",
+    "source_url": null,
+    "summary": null,
+    "title": "Call notes",
+    "type": "note"
+   },
+   {
+    "id": "e6a0dbaf-7161-5f77-9c5c-3da7c8926805",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@soylent.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "usage",
+    "source_url": null,
+    "summary": null,
+    "title": "Weekly usage snapshot",
+    "type": "usage_snapshot"
+   }
+  ],
+  "umbrella": [
+   {
+    "id": "8cef9124-d401-5258-b0f7-c7030d49e287",
+    "occurred_at": "2026-10-07T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@umbrella.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Following up on renewal",
+    "type": "email_out"
+   },
+   {
+    "id": "e751c3c5-99e7-5d83-a3ef-c7231a5e408d",
+    "occurred_at": "2026-10-01T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@umbrella.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "gmail",
+    "source_url": null,
+    "summary": null,
+    "title": "Checking in",
+    "type": "email_out"
+   },
+   {
+    "id": "0f59fe7a-ffe7-5ab0-8c1c-876e0aa8b36b",
+    "occurred_at": "2026-09-19T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@umbrella.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "gcal",
+    "source_url": null,
+    "summary": null,
+    "title": "Quarterly business review",
+    "type": "meeting"
+   },
+   {
+    "id": "f0b124f5-ba68-5bc8-85c4-a2bfb5971fa1",
+    "occurred_at": "2026-09-15T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@umbrella.example.com",
+      "name": null,
+      "role": "attendee"
+     }
+    ],
+    "source": "hubspot",
+    "source_url": null,
+    "summary": null,
+    "title": "Call notes",
+    "type": "note"
+   },
+   {
+    "id": "7ccc4a92-fe3b-5360-beef-6e6a5816a150",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "participants": [
+     {
+      "email": "dana@umbrella.example.com",
+      "name": null,
+      "role": "to"
+     }
+    ],
+    "source": "usage",
+    "source_url": null,
+    "summary": null,
+    "title": "Weekly usage snapshot",
+    "type": "usage_snapshot"
+   }
+  ]
+ },
+ "usage": {
+  "acme": {
+   "baseline": 52.0,
+   "granularity": "week",
+   "points": [
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-07-24",
+     "period_start": "2026-07-18",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-07-31",
+     "period_start": "2026-07-25",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-08-07",
+     "period_start": "2026-08-01",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-08-14",
+     "period_start": "2026-08-08",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-08-21",
+     "period_start": "2026-08-15",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-08-28",
+     "period_start": "2026-08-22",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-09-04",
+     "period_start": "2026-08-29",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-09-11",
+     "period_start": "2026-09-05",
+     "seats_used": 62
+    },
+    {
+     "active_users": 52,
+     "key_events": {
+      "reports_created": 17
+     },
+     "logins": 364,
+     "period_end": "2026-09-18",
+     "period_start": "2026-09-12",
+     "seats_used": 62
+    },
+    {
+     "active_users": 47,
+     "key_events": {
+      "reports_created": 15
+     },
+     "logins": 329,
+     "period_end": "2026-09-25",
+     "period_start": "2026-09-19",
+     "seats_used": 57
+    },
+    {
+     "active_users": 42,
+     "key_events": {
+      "reports_created": 14
+     },
+     "logins": 294,
+     "period_end": "2026-10-02",
+     "period_start": "2026-09-26",
+     "seats_used": 52
+    },
+    {
+     "active_users": 37,
+     "key_events": {
+      "reports_created": 12
+     },
+     "logins": 259,
+     "period_end": "2026-10-09",
+     "period_start": "2026-10-03",
+     "seats_used": 47
+    }
+   ]
+  },
+  "globex": {
+   "baseline": 80.0,
+   "granularity": "week",
+   "points": [
+    {
+     "active_users": 80,
+     "key_events": {
+      "reports_created": 26
+     },
+     "logins": 560,
+     "period_end": "2026-07-24",
+     "period_start": "2026-07-18",
+     "seats_used": 90
+    },
+    {
+     "active_users": 81,
+     "key_events": {
+      "reports_created": 27
+     },
+     "logins": 567,
+     "period_end": "2026-07-31",
+     "period_start": "2026-07-25",
+     "seats_used": 91
+    },
+    {
+     "active_users": 82,
+     "key_events": {
+      "reports_created": 27
+     },
+     "logins": 574,
+     "period_end": "2026-08-07",
+     "period_start": "2026-08-01",
+     "seats_used": 92
+    },
+    {
+     "active_users": 83,
+     "key_events": {
+      "reports_created": 27
+     },
+     "logins": 581,
+     "period_end": "2026-08-14",
+     "period_start": "2026-08-08",
+     "seats_used": 93
+    },
+    {
+     "active_users": 84,
+     "key_events": {
+      "reports_created": 28
+     },
+     "logins": 588,
+     "period_end": "2026-08-21",
+     "period_start": "2026-08-15",
+     "seats_used": 94
+    },
+    {
+     "active_users": 85,
+     "key_events": {
+      "reports_created": 28
+     },
+     "logins": 595,
+     "period_end": "2026-08-28",
+     "period_start": "2026-08-22",
+     "seats_used": 95
+    },
+    {
+     "active_users": 86,
+     "key_events": {
+      "reports_created": 28
+     },
+     "logins": 602,
+     "period_end": "2026-09-04",
+     "period_start": "2026-08-29",
+     "seats_used": 96
+    },
+    {
+     "active_users": 87,
+     "key_events": {
+      "reports_created": 29
+     },
+     "logins": 609,
+     "period_end": "2026-09-11",
+     "period_start": "2026-09-05",
+     "seats_used": 97
+    },
+    {
+     "active_users": 88,
+     "key_events": {
+      "reports_created": 29
+     },
+     "logins": 616,
+     "period_end": "2026-09-18",
+     "period_start": "2026-09-12",
+     "seats_used": 98
+    },
+    {
+     "active_users": 89,
+     "key_events": {
+      "reports_created": 29
+     },
+     "logins": 623,
+     "period_end": "2026-09-25",
+     "period_start": "2026-09-19",
+     "seats_used": 99
+    },
+    {
+     "active_users": 90,
+     "key_events": {
+      "reports_created": 30
+     },
+     "logins": 630,
+     "period_end": "2026-10-02",
+     "period_start": "2026-09-26",
+     "seats_used": 100
+    },
+    {
+     "active_users": 91,
+     "key_events": {
+      "reports_created": 30
+     },
+     "logins": 637,
+     "period_end": "2026-10-09",
+     "period_start": "2026-10-03",
+     "seats_used": 100
+    }
+   ]
+  },
+  "hooli": {
+   "baseline": 40.0,
+   "granularity": "week",
+   "points": [
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-07-24",
+     "period_start": "2026-07-18",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-07-31",
+     "period_start": "2026-07-25",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-07",
+     "period_start": "2026-08-01",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-14",
+     "period_start": "2026-08-08",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-21",
+     "period_start": "2026-08-15",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-28",
+     "period_start": "2026-08-22",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-04",
+     "period_start": "2026-08-29",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-11",
+     "period_start": "2026-09-05",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-18",
+     "period_start": "2026-09-12",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-25",
+     "period_start": "2026-09-19",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-10-02",
+     "period_start": "2026-09-26",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-10-09",
+     "period_start": "2026-10-03",
+     "seats_used": 50
+    }
+   ]
+  },
+  "initech": {
+   "baseline": 40.0,
+   "granularity": "week",
+   "points": [
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-07-24",
+     "period_start": "2026-07-18",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-07-31",
+     "period_start": "2026-07-25",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-07",
+     "period_start": "2026-08-01",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-14",
+     "period_start": "2026-08-08",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-21",
+     "period_start": "2026-08-15",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-28",
+     "period_start": "2026-08-22",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-04",
+     "period_start": "2026-08-29",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-11",
+     "period_start": "2026-09-05",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-18",
+     "period_start": "2026-09-12",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-25",
+     "period_start": "2026-09-19",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-10-02",
+     "period_start": "2026-09-26",
+     "seats_used": 40
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-10-09",
+     "period_start": "2026-10-03",
+     "seats_used": 40
+    }
+   ]
+  },
+  "soylent": {
+   "baseline": null,
+   "granularity": "week",
+   "points": []
+  },
+  "umbrella": {
+   "baseline": 40.0,
+   "granularity": "week",
+   "points": [
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-07-24",
+     "period_start": "2026-07-18",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-07-31",
+     "period_start": "2026-07-25",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-07",
+     "period_start": "2026-08-01",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-14",
+     "period_start": "2026-08-08",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-21",
+     "period_start": "2026-08-15",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-08-28",
+     "period_start": "2026-08-22",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-04",
+     "period_start": "2026-08-29",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-11",
+     "period_start": "2026-09-05",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-18",
+     "period_start": "2026-09-12",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-09-25",
+     "period_start": "2026-09-19",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-10-02",
+     "period_start": "2026-09-26",
+     "seats_used": 50
+    },
+    {
+     "active_users": 40,
+     "key_events": {
+      "reports_created": 13
+     },
+     "logins": 280,
+     "period_end": "2026-10-09",
+     "period_start": "2026-10-03",
+     "seats_used": 50
+    }
+   ]
+  }
+ }
+}

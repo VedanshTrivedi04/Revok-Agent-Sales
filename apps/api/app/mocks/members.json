@@ -1,0 +1,105 @@
+{
+ "api_keys": [
+  {
+   "created_at": "2026-08-31T03:30:00Z",
+   "id": "b114ffe5-3e3b-5f8f-891e-5064b79a5e51",
+   "last_used_at": "2026-10-09T22:30:00Z",
+   "name": "Product usage pipeline",
+   "prefix": "rk_live_",
+   "revoked_at": null,
+   "scopes": [
+    "ingest:usage"
+   ]
+  },
+  {
+   "created_at": "2026-08-11T03:30:00Z",
+   "id": "5562a7d4-e2cf-50db-b683-0d6fe4663daa",
+   "last_used_at": null,
+   "name": "Old test key",
+   "prefix": "rk_live_",
+   "revoked_at": "2026-09-30T03:30:00Z",
+   "scopes": [
+    "ingest:usage"
+   ]
+  }
+ ],
+ "invites": [
+  {
+   "created_at": "2026-10-08T03:30:00Z",
+   "email": "newhire@demo-saas.example.com",
+   "expires_at": "2026-10-15T03:30:00Z",
+   "id": "f95cc22d-0d25-52ee-84d7-ecd0041be9f7",
+   "invited_by": "d08ad0f3-c2c9-5b55-80ae-ac4e4a24f6e6",
+   "role": "member"
+  },
+  {
+   "created_at": "2026-10-09T03:30:00Z",
+   "email": "csm@demo-saas.example.com",
+   "expires_at": "2026-10-16T03:30:00Z",
+   "id": "2d286cfd-4b2a-559e-93f4-0c633c9faec7",
+   "invited_by": "ce9ca2a3-7518-5466-9a67-e9a9a740168d",
+   "role": "manager"
+  }
+ ],
+ "members": [
+  {
+   "crm_owner_id": "hs-owner-1",
+   "email": "olivia@demo-saas.example.com",
+   "id": "6c20ad2d-3adf-5f32-980d-702419388d83",
+   "integrations": [
+    "gmail"
+   ],
+   "name": "Olivia Owner",
+   "role": "owner",
+   "slack_user_id": "U0OWNER",
+   "status": "active",
+   "user_id": "ce9ca2a3-7518-5466-9a67-e9a9a740168d"
+  },
+  {
+   "crm_owner_id": "hs-owner-2",
+   "email": "adam@demo-saas.example.com",
+   "id": "51453cf9-de3f-516a-af43-bc472ed6f14c",
+   "integrations": [],
+   "name": "Adam Admin",
+   "role": "admin",
+   "slack_user_id": "U0ADMIN",
+   "status": "active",
+   "user_id": "d08ad0f3-c2c9-5b55-80ae-ac4e4a24f6e6"
+  },
+  {
+   "crm_owner_id": "hs-owner-3",
+   "email": "maya@demo-saas.example.com",
+   "id": "563aa16b-c840-577e-aad0-f9924628a6ea",
+   "integrations": [],
+   "name": "Maya Manager",
+   "role": "manager",
+   "slack_user_id": "U0MANAGER",
+   "status": "active",
+   "user_id": "d5509e02-ada5-55e3-ba1f-a55e10630d1f"
+  },
+  {
+   "crm_owner_id": "hs-owner-4",
+   "email": "priya@demo-saas.example.com",
+   "id": "6a87a621-a3df-5152-90f1-2e735adb4893",
+   "integrations": [
+    "gmail"
+   ],
+   "name": "Priya Member",
+   "role": "member",
+   "slack_user_id": "U0MEMBER",
+   "status": "active",
+   "user_id": "2e30ad99-aae6-51e6-8722-33b1c746d555"
+  },
+  {
+   "crm_owner_id": "hs-owner-5",
+   "email": "victor@demo-saas.example.com",
+   "id": "c3227ff8-0f7d-5d9b-a2f9-fb322e590b77",
+   "integrations": [],
+   "name": "Victor Viewer",
+   "role": "viewer",
+   "slack_user_id": null,
+   "status": "active",
+   "user_id": "b81ffa96-97f6-5d6d-b8a0-131aa67d0787"
+  }
+ ]
+}

@@ -1,0 +1,483 @@
+[
+ {
+  "account_id": "7a09dd68-0748-53c5-89a7-a98483511d6b",
+  "account_name": "Acme Corp",
+  "cards": [
+   {
+    "id": "912da8ce-99a4-5661-8507-cfecef21a571",
+    "status": "pending_approval",
+    "tier": 2,
+    "title": "Email Priya's champion about the renewal plan",
+    "type": "email_draft"
+   },
+   {
+    "id": "e8d266be-c527-5898-98c4-fcea90fad268",
+    "status": "pending_approval",
+    "tier": 2,
+    "title": "Set HubSpot health to At Risk",
+    "type": "crm_field_update"
+   }
+  ],
+  "claims": [
+   {
+    "evidence_ids": [
+     "E1"
+    ],
+    "text": "Renewal is in 43 days (2026-11-22)."
+   },
+   {
+    "evidence_ids": [
+     "E2"
+    ],
+    "text": "Active users fell from 52 to 32 (-38%) over 4 weeks."
+   },
+   {
+    "evidence_ids": [
+     "E3"
+    ],
+    "text": "No meeting for 21 days."
+   },
+   {
+    "evidence_ids": [
+     "E4",
+     "E5"
+    ],
+    "text": "2 emails to the champion are unanswered for 9 days."
+   }
+  ],
+  "confidence": 0.82,
+  "contradictions": [
+   {
+    "evidence_ids": [
+     "E6",
+     "E2"
+    ],
+    "text": "HubSpot health is Green while usage fell 38%."
+   }
+  ],
+  "dismissed_reason": null,
+  "evidence": [
+   {
+    "detail": null,
+    "key": "E1",
+    "kind": "account_field",
+    "label": "Renewal date 2026-11-22",
+    "occurred_at": null,
+    "source": "hubspot",
+    "source_url": "https://app.hubspot.example/hubspot/E1"
+   },
+   {
+    "detail": null,
+    "key": "E2",
+    "kind": "rule_metric",
+    "label": "Active users 52 -> 32 (-38%)",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "source": "usage",
+    "source_url": null
+   },
+   {
+    "detail": null,
+    "key": "E3",
+    "kind": "event",
+    "label": "Last meeting 21 days ago",
+    "occurred_at": "2026-09-19T03:30:00Z",
+    "source": "gcal",
+    "source_url": null
+   },
+   {
+    "detail": null,
+    "key": "E4",
+    "kind": "event",
+    "label": "Email to champion, no reply (9 days)",
+    "occurred_at": "2026-10-01T03:30:00Z",
+    "source": "gmail",
+    "source_url": null
+   },
+   {
+    "detail": null,
+    "key": "E5",
+    "kind": "event",
+    "label": "Follow-up email to champion, no reply (3 days)",
+    "occurred_at": "2026-10-07T03:30:00Z",
+    "source": "gmail",
+    "source_url": null
+   },
+   {
+    "detail": null,
+    "key": "E6",
+    "kind": "account_field",
+    "label": "HubSpot health = Green",
+    "occurred_at": null,
+    "source": "hubspot",
+    "source_url": "https://app.hubspot.example/hubspot/E6"
+   }
+  ],
+  "first_seen_at": "2026-10-09T03:30:00Z",
+  "history": [
+   {
+    "event": "finding.created",
+    "ts": "2026-10-09T03:30:00Z"
+   },
+   {
+    "event": "finding.updated",
+    "ts": "2026-10-10T00:30:00Z"
+   }
+  ],
+  "id": "83b1eb80-9db0-5354-b1f4-903ab2dbe325",
+  "last_seen_at": "2026-10-10T00:30:00Z",
+  "model": "template",
+  "priority_score": 87.4,
+  "prompt_version": "template@1",
+  "renewal_in_days": 43,
+  "rule_hits": [
+   {
+    "category": "usage",
+    "metrics": {
+     "baseline": 52,
+     "current": 32,
+     "drop_pct": 38.5
+    },
+    "rule_key": "R01_usage_drop"
+   },
+   {
+    "category": "engagement",
+    "metrics": {
+     "days_since_meeting": 21
+    },
+    "rule_key": "R02_meeting_gap"
+   },
+   {
+    "category": "engagement",
+    "metrics": {
+     "count": 2,
+     "oldest_days": 9
+    },
+    "rule_key": "R03_no_reply"
+   }
+  ],
+  "severity": "high",
+  "snoozed_until": null,
+  "status": "open",
+  "summary": "Acme renews in 43 days; usage fell 38% in 4 weeks and the champion has not replied to 2 emails.",
+  "title": "Renewal risk: usage down 38%, champion silent",
+  "type": "risk",
+  "unknowns": [
+   "Reason for the usage drop is not confirmed."
+  ],
+  "value_at_stake": 84000
+ },
+ {
+  "account_id": "6f142889-a3dd-5606-aefb-c42abec53b10",
+  "account_name": "Globex",
+  "cards": [
+   {
+    "id": "5f9e3f91-8dc0-5292-b30f-85bb413fb5d4",
+    "status": "proposed",
+    "tier": 1,
+    "title": "Create task: discuss seat expansion",
+    "type": "crm_task"
+   },
+   {
+    "id": "26db33ed-5c8e-5a67-98c6-dfbf4209ed59",
+    "status": "approved",
+    "tier": 2,
+    "title": "Email Globex about adding seats",
+    "type": "email_draft"
+   }
+  ],
+  "claims": [
+   {
+    "evidence_ids": [
+     "E1"
+    ],
+    "text": "96 of 100 seats are in use for 2 consecutive weeks."
+   }
+  ],
+  "confidence": 0.7,
+  "contradictions": [],
+  "dismissed_reason": null,
+  "evidence": [
+   {
+    "detail": null,
+    "key": "E1",
+    "kind": "rule_metric",
+    "label": "Seats used 96/100 (96%)",
+    "occurred_at": "2026-10-05T03:30:00Z",
+    "source": "usage",
+    "source_url": null
+   }
+  ],
+  "first_seen_at": "2026-10-08T03:30:00Z",
+  "history": [
+   {
+    "event": "finding.created",
+    "ts": "2026-10-08T03:30:00Z"
+   }
+  ],
+  "id": "46a5893e-6721-5616-91a5-7e173300d178",
+  "last_seen_at": "2026-10-09T03:30:00Z",
+  "model": "template",
+  "priority_score": 61.0,
+  "prompt_version": "template@1",
+  "renewal_in_days": 120,
+  "rule_hits": [
+   {
+    "category": "expansion",
+    "metrics": {
+     "purchased": 100,
+     "seat_util": 0.96,
+     "seats_used": 96
+    },
+    "rule_key": "X01_seat_saturation"
+   }
+  ],
+  "severity": "medium",
+  "snoozed_until": null,
+  "status": "open",
+  "summary": "Globex is near seat capacity and asked about upgrading.",
+  "title": "Expansion: seats at 96/100 for 2 weeks, upgrade question in email",
+  "type": "expansion",
+  "unknowns": [
+   "Budget for additional seats is unknown."
+  ],
+  "value_at_stake": 18000
+ },
+ {
+  "account_id": "6de6403a-d3ed-515c-9601-d381bb4ce3d8",
+  "account_name": "Initech",
+  "cards": [
+   {
+    "id": "4b68241a-af6a-53a4-98c7-ca5a87f5c53f",
+    "status": "rejected",
+    "tier": 2,
+    "title": "Email Initech about value review",
+    "type": "email_draft"
+   },
+   {
+    "id": "aa4c652f-26d1-52fa-b09c-32d8038b0855",
+    "status": "failed",
+    "tier": 1,
+    "title": "Create task: value review call",
+    "type": "crm_task"
+   }
+  ],
+  "claims": [
+   {
+    "evidence_ids": [
+     "E1"
+    ],
+    "text": "Contact wrote 'we're also looking at Gainsight'."
+   }
+  ],
+  "confidence": 0.65,
+  "contradictions": [],
+  "dismissed_reason": null,
+  "evidence": [
+   {
+    "detail": "we're also looking at Gainsight",
+    "key": "E1",
+    "kind": "signal",
+    "label": "Competitor mention: Gainsight",
+    "occurred_at": "2026-10-04T03:30:00Z",
+    "source": "gmail",
+    "source_url": null
+   }
+  ],
+  "first_seen_at": "2026-10-04T03:30:00Z",
+  "history": [
+   {
+    "event": "finding.created",
+    "ts": "2026-10-04T03:30:00Z"
+   }
+  ],
+  "id": "dfbe6eda-3ea7-523a-b7b3-2bc2e9bf3997",
+  "last_seen_at": "2026-10-09T03:30:00Z",
+  "model": "template",
+  "priority_score": 55.2,
+  "prompt_version": "template@1",
+  "renewal_in_days": 75,
+  "rule_hits": [
+   {
+    "category": "sentiment",
+    "metrics": {
+     "competitor": "Gainsight"
+    },
+    "rule_key": "R07_competitor_mention"
+   }
+  ],
+  "severity": "medium",
+  "snoozed_until": null,
+  "status": "open",
+  "summary": "A recent email mentions evaluating a competitor.",
+  "title": "Competitor mentioned: Initech is also looking at Gainsight",
+  "type": "risk",
+  "unknowns": [
+   "Whether a competing evaluation is formal is unknown."
+  ],
+  "value_at_stake": 36000
+ },
+ {
+  "account_id": "3df5a28b-9c24-5231-aae2-e14c46355e65",
+  "account_name": "Hooli",
+  "cards": [
+   {
+    "id": "3a725fd7-e645-510f-9b4a-d28b0ed1d951",
+    "status": "expired",
+    "tier": 2,
+    "title": "Email Hooli check-in",
+    "type": "email_draft"
+   }
+  ],
+  "claims": [
+   {
+    "evidence_ids": [
+     "E1"
+    ],
+    "text": "An inbound email contained instruction-like text."
+   }
+  ],
+  "confidence": 0.4,
+  "contradictions": [],
+  "dismissed_reason": null,
+  "evidence": [
+   {
+    "detail": null,
+    "key": "E1",
+    "kind": "signal",
+    "label": "suspicious_instruction flagged",
+    "occurred_at": "2026-10-06T03:30:00Z",
+    "source": "gmail",
+    "source_url": null
+   }
+  ],
+  "first_seen_at": "2026-10-06T03:30:00Z",
+  "history": [
+   {
+    "event": "finding.created",
+    "ts": "2026-10-06T03:30:00Z"
+   }
+  ],
+  "id": "8594595b-a164-56f4-a881-0b50a24fd3ef",
+  "last_seen_at": "2026-10-06T03:30:00Z",
+  "model": "template",
+  "priority_score": 22.0,
+  "prompt_version": "template@1",
+  "renewal_in_days": 90,
+  "rule_hits": [],
+  "severity": "low",
+  "snoozed_until": null,
+  "status": "needs_review",
+  "summary": "An email contained text trying to instruct the agent; it was flagged and had no influence.",
+  "title": "Suspicious instruction in an email was ignored",
+  "type": "risk",
+  "unknowns": [
+   "Intent of the sender is unknown."
+  ],
+  "value_at_stake": 48000
+ },
+ {
+  "account_id": "a1f25648-ede6-5dc1-bcb0-d0fc83c2cbd9",
+  "account_name": "Soylent",
+  "cards": [],
+  "claims": [
+   {
+    "evidence_ids": [
+     "E1"
+    ],
+    "text": "Renewal is in 150 days."
+   }
+  ],
+  "confidence": 0.3,
+  "contradictions": [],
+  "dismissed_reason": null,
+  "evidence": [
+   {
+    "detail": null,
+    "key": "E1",
+    "kind": "account_field",
+    "label": "Renewal date 2027-03-09",
+    "occurred_at": null,
+    "source": "hubspot",
+    "source_url": "https://app.hubspot.example/hubspot/E1"
+   }
+  ],
+  "first_seen_at": "2026-10-07T03:30:00Z",
+  "history": [
+   {
+    "event": "finding.created",
+    "ts": "2026-10-07T03:30:00Z"
+   }
+  ],
+  "id": "15eb545b-7fef-5759-9176-97523b1d6bad",
+  "last_seen_at": "2026-10-09T03:30:00Z",
+  "model": "template",
+  "priority_score": 18.5,
+  "prompt_version": "template@1",
+  "renewal_in_days": 150,
+  "rule_hits": [],
+  "severity": "low",
+  "snoozed_until": null,
+  "status": "open",
+  "summary": "Soylent has no usage data, so engagement-based risk cannot be assessed.",
+  "title": "Renewal in 150 days with no product usage data connected",
+  "type": "risk",
+  "unknowns": [
+   "No product usage data connected."
+  ],
+  "value_at_stake": 24000
+ },
+ {
+  "account_id": "6de6403a-d3ed-515c-9601-d381bb4ce3d8",
+  "account_name": "Initech",
+  "cards": [],
+  "claims": [],
+  "confidence": 0.6,
+  "contradictions": [],
+  "dismissed_reason": "already_handled",
+  "evidence": [
+   {
+    "detail": null,
+    "key": "E1",
+    "kind": "event",
+    "label": "Last meeting 24 days ago",
+    "occurred_at": "2026-09-16T03:30:00Z",
+    "source": "gcal",
+    "source_url": null
+   }
+  ],
+  "first_seen_at": "2026-09-10T03:30:00Z",
+  "history": [
+   {
+    "event": "finding.created",
+    "ts": "2026-09-10T03:30:00Z"
+   },
+   {
+    "event": "finding.dismissed",
+    "ts": "2026-09-12T03:30:00Z"
+   }
+  ],
+  "id": "35e6fe94-71dc-553d-b234-19afb0b108dc",
+  "last_seen_at": "2026-09-12T03:30:00Z",
+  "model": "template",
+  "priority_score": 40.0,
+  "prompt_version": "template@1",
+  "renewal_in_days": 75,
+  "rule_hits": [
+   {
+    "category": "engagement",
+    "metrics": {
+     "days_since_meeting": 24
+    },
+    "rule_key": "R02_meeting_gap"
+   }
+  ],
+  "severity": "medium",
+  "snoozed_until": null,
+  "status": "dismissed",
+  "summary": "Dismissed: already handled.",
+  "title": "Meeting gap: 24 days since last meeting",
+  "type": "risk",
+  "unknowns": [],
+  "value_at_stake": 36000
+ }
+]

@@ -1,0 +1,81 @@
+{
+ "evals": [
+  {
+   "id": "04a3f4bd-cb6c-59f2-b312-ef68e949065c",
+   "name": "golden-rules",
+   "ran_at": "2026-10-09T03:30:00Z",
+   "score": 1.0,
+   "status": "passed"
+  },
+  {
+   "id": "7be5eb33-6d17-5b65-bf10-cbecbefe21f1",
+   "name": "explanations-smoke",
+   "ran_at": "2026-10-09T03:30:00Z",
+   "score": 0.82,
+   "status": "failed"
+  }
+ ],
+ "flags": [
+  {
+   "default": false,
+   "key": "email_send",
+   "per_org": {}
+  },
+  {
+   "default": true,
+   "key": "slack_digest",
+   "per_org": {
+    "853708eb-9e5d-5eff-9b01-1041595c0836": false
+   }
+  },
+  {
+   "default": false,
+   "key": "ai_external",
+   "per_org": {}
+  }
+ ],
+ "jobs": [
+  {
+   "error": "HubSpot 429 after 5 retries",
+   "failed_at": "2026-10-09T21:30:00Z",
+   "id": "6bb1863a-8259-578f-841a-bcf5c8c1bc3e",
+   "org_id": "0ff871dd-5dba-5118-a723-4611c0bb2120",
+   "retried_at": null,
+   "task_name": "sync.hubspot"
+  },
+  {
+   "error": "stale_preview",
+   "failed_at": "2026-10-08T03:30:00Z",
+   "id": "1633a239-7f7c-59b1-92bc-e24805e8098a",
+   "org_id": "0ff871dd-5dba-5118-a723-4611c0bb2120",
+   "retried_at": "2026-10-09T03:30:00Z",
+   "task_name": "executor.execute_card"
+  }
+ ],
+ "orgs": [
+  {
+   "accounts": 6,
+   "created_at": "2026-08-26T03:30:00Z",
+   "failed_jobs_24h": 1,
+   "id": "0ff871dd-5dba-5118-a723-4611c0bb2120",
+   "last_sync_at": "2026-10-10T01:30:00Z",
+   "members": 5,
+   "name": "Demo SaaS",
+   "open_findings": 4,
+   "plan": "pilot",
+   "status": "active"
+  },
+  {
+   "accounts": 3,
+   "created_at": "2026-09-20T03:30:00Z",
+   "failed_jobs_24h": 0,
+   "id": "853708eb-9e5d-5eff-9b01-1041595c0836",
+   "last_sync_at": null,
+   "members": 2,
+   "name": "Other Co",
+   "open_findings": 0,
+   "plan": "pilot",
+   "status": "suspended"
+  }
+ ]
+}
