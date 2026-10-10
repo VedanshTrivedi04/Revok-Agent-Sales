@@ -1,0 +1,97 @@
+{
+  "messages": {
+    "msg_internal_only": {
+      "id": "msg_internal_only",
+      "threadId": "thread_internal_1",
+      "historyId": "101",
+      "internalDate": "1773000000000",
+      "payload": {
+        "headers": [
+          {"name": "From", "value": "olivia@demo-saas.example.com"},
+          {"name": "To", "value": "priya@demo-saas.example.com"},
+          {"name": "Subject", "value": "Internal sync on quarterly targets"},
+          {"name": "Date", "value": "Mon, 10 Oct 2026 10:00:00 +0000"}
+        ],
+        "mimeType": "text/plain",
+        "body": {
+          "data": "SGV5LCBsZXQncyBzeW5jIGludGVybmFsbHkgb24gdGhlIHRhcmdldHMu"
+        }
+      }
+    },
+    "msg_external_valid": {
+      "id": "msg_external_valid",
+      "threadId": "thread_ext_1",
+      "historyId": "102",
+      "internalDate": "1773003600000",
+      "payload": {
+        "headers": [
+          {"name": "From", "value": "Alice <alice@acme.example.com>"},
+          {"name": "To", "value": "priya@demo-saas.example.com"},
+          {"name": "Subject", "value": "Feedback on proposal"},
+          {"name": "Date", "value": "Mon, 10 Oct 2026 11:00:00 +0000"}
+        ],
+        "mimeType": "text/plain",
+        "body": {
+          "data": "V2UgaGF2ZSByZXZpZXdlZCB5b3VyIHByb3Bvc2FsLiBMb29rcyBwcm9taXNpbmch"
+        }
+      }
+    },
+    "msg_bulk_unknown": {
+      "id": "msg_bulk_unknown",
+      "threadId": "thread_bulk_1",
+      "historyId": "103",
+      "internalDate": "1773007200000",
+      "payload": {
+        "headers": [
+          {"name": "From", "value": "newsletter@marketing-spam.com"},
+          {"name": "To", "value": "priya@demo-saas.example.com"},
+          {"name": "Subject", "value": "Weekly SaaS Digest"},
+          {"name": "List-Unsubscribe", "value": "<mailto:unsub@marketing-spam.com>"},
+          {"name": "Precedence", "value": "bulk"},
+          {"name": "Date", "value": "Mon, 10 Oct 2026 12:00:00 +0000"}
+        ],
+        "mimeType": "text/plain",
+        "body": {
+          "data": "Q2hlY2sgb3V0IG91ciB3ZWVrbHkgdXBkYXRlIQ=="
+        }
+      }
+    },
+    "msg_bulk_known_contact": {
+      "id": "msg_bulk_known_contact",
+      "threadId": "thread_bulk_2",
+      "historyId": "104",
+      "internalDate": "1773010800000",
+      "payload": {
+        "headers": [
+          {"name": "From", "value": "alice@acme.example.com"},
+          {"name": "To", "value": "priya@demo-saas.example.com"},
+          {"name": "Subject", "value": "Acme Product Release Announcement"},
+          {"name": "List-Unsubscribe", "value": "<mailto:unsub@acme.example.com>"},
+          {"name": "Date", "value": "Mon, 10 Oct 2026 13:00:00 +0000"}
+        ],
+        "mimeType": "text/plain",
+        "body": {
+          "data": "SGVyZSBpcyBvdXIgbmV3IGZlYXR1cmUgYW5ub3VuY2VtZW50Lg=="
+        }
+      }
+    },
+    "msg_with_quotes_and_sig": {
+      "id": "msg_with_quotes_and_sig",
+      "threadId": "thread_ext_2",
+      "historyId": "105",
+      "internalDate": "1773014400000",
+      "payload": {
+        "headers": [
+          {"name": "From", "value": "priya@demo-saas.example.com"},
+          {"name": "To", "value": "bob@globex.example.com"},
+          {"name": "Subject", "value": "Re: Follow up on implementation"},
+          {"name": "Date", "value": "Mon, 10 Oct 2026 14:00:00 +0000"}
+        ],
+        "mimeType": "text/html",
+        "body": {
+          "data": "PHA+VGhhbmtzIGZvciB0aGUgdXBkYXRlIEJvYi4gV2Ugd2lsbCBwcm9jZWVkIHdpdGggdGhlIGZpeC48L3A+PHA+T24gTW9uLCBPY3QgMTAsIDIwMjYgYXQgMTozMCBQTSwgQm9iIHdyb3RlOjwvcD48YmxvY2txdW90ZT4+IFBsZWFzZSBsZXQgdXMga25vdyB3aGVuIHJlYWR5LjwvYmxvY2txdW90ZT48cD4tLSA8YnI+QmVzdCByZWdhcmRzLDxicj5Qcml5YSBSZXZPcHMgVGVhbTxicj5TZW50IGZyb20gbXkgaVBob25lPC9wPg=="
+        }
+      }
+    }
+  }
+}

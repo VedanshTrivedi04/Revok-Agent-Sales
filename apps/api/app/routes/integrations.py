@@ -228,11 +228,12 @@ async def trigger_sync_real(request: Request, integration_id: UUID, **_: Any) ->
 
 @real("disconnect_integration")
 async def disconnect_integration_real(request: Request, integration_id: UUID, **_: Any) -> Ack:
+    purge = request.query_params.get("purge", "").lower() in ("true", "1")
     claims = get_claims(request)
     m = await current_membership(claims)
     async with org_session(m.org_id) as session:
         return await disconnect_integration_service(
-            session, m.org_id, m.user_id, m.role, integration_id
+            session, m.org_id, m.user_id, m.role, integration_id, purge=purge
         )
 
 

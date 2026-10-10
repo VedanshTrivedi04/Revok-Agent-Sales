@@ -1,0 +1,46 @@
+{
+  "events": {
+    "evt_internal_only": {
+      "id": "evt_internal_only",
+      "status": "confirmed",
+      "summary": "Internal Team All-Hands",
+      "description": "Weekly all-hands meeting for Demo SaaS employees.",
+      "htmlLink": "https://www.google.com/calendar/event?eid=internal123",
+      "start": {"dateTime": "2026-10-10T15:00:00Z"},
+      "end": {"dateTime": "2026-10-10T16:00:00Z"},
+      "organizer": {"email": "olivia@demo-saas.example.com", "displayName": "Olivia"},
+      "attendees": [
+        {"email": "olivia@demo-saas.example.com", "displayName": "Olivia", "responseStatus": "accepted"},
+        {"email": "priya@demo-saas.example.com", "displayName": "Priya", "responseStatus": "accepted"}
+      ]
+    },
+    "evt_external_confirmed": {
+      "id": "evt_external_confirmed",
+      "status": "confirmed",
+      "summary": "Acme Renewal Discussion",
+      "description": "Agenda:\n1. Usage and value review\n2. Contract extension terms\n-- \nSent from my iPhone",
+      "htmlLink": "https://www.google.com/calendar/event?eid=external456",
+      "start": {"dateTime": "2026-10-11T16:00:00Z"},
+      "end": {"dateTime": "2026-10-11T17:00:00Z"},
+      "organizer": {"email": "priya@demo-saas.example.com", "displayName": "Priya"},
+      "attendees": [
+        {"email": "priya@demo-saas.example.com", "displayName": "Priya", "responseStatus": "accepted"},
+        {"email": "alice@acme.example.com", "displayName": "Alice Smith", "responseStatus": "accepted"}
+      ]
+    },
+    "evt_external_cancelled": {
+      "id": "evt_external_cancelled",
+      "status": "cancelled",
+      "summary": "Cancelled Check-in with Bob",
+      "description": "Cancelled meeting.",
+      "htmlLink": "https://www.google.com/calendar/event?eid=cancelled789",
+      "start": {"dateTime": "2026-10-12T10:00:00Z"},
+      "end": {"dateTime": "2026-10-12T10:30:00Z"},
+      "organizer": {"email": "priya@demo-saas.example.com", "displayName": "Priya"},
+      "attendees": [
+        {"email": "priya@demo-saas.example.com", "displayName": "Priya"},
+        {"email": "bob@globex.example.com", "displayName": "Bob Jones"}
+      ]
+    }
+  }
+}

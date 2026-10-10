@@ -24,10 +24,10 @@ GMAIL_SCOPES = [
 
 GCAL_SCOPES = [
     "https://www.googleapis.com/auth/calendar.readonly",
-    "https://www.googleapis.com/auth/calendar.events",
     "https://www.googleapis.com/auth/userinfo.email",
     "https://www.googleapis.com/auth/userinfo.profile",
 ]
+GCAL_EVENTS_SCOPE = "https://www.googleapis.com/auth/calendar.events"
 
 
 class GoogleOAuthConnector:
@@ -47,9 +47,9 @@ class GoogleOAuthConnector:
         if scopes:
             self.scopes = scopes
         elif provider == "gcal":
-            self.scopes = GCAL_SCOPES
+            self.scopes = list(GCAL_SCOPES)
         else:
-            self.scopes = GMAIL_SCOPES
+            self.scopes = list(GMAIL_SCOPES)
 
     def authorize_url(self, state: str, redirect_uri: str) -> str:
         params = {
@@ -123,7 +123,7 @@ class GoogleOAuthConnector:
         return str(email) if email else None
 
     async def sync(
-        self, ctx: ConnCtx, cursor: dict[str, Any], *, backfill_days: int | None
+        self, ctx: ConnCtx, cursor: dict[str, Any], *, backfill_days: int | None = None
     ) -> SyncResult:
         await self.test_connection(ctx)
         return SyncResult(fetched=0, upserted=0, events_new=0, new_cursor=cursor, partial=False)
@@ -135,9 +135,54 @@ class GmailConnector(GoogleOAuthConnector):
     def __init__(self, **kw: Any) -> None:
         super().__init__("gmail", **kw)
 
+    async def sync(
+        self, ctx: ConnCtx, cursor: dict[str, Any], *, backfill_days: int | None = None
+    ) -> SyncResult:
+        from app.connectors.google.gmail_sync import GmailSyncEngine
+        from app.db.session import org_session
+
+        async with org_session(ctx.org_id) as session:
+            engine = GmailSyncEngine(session, ctx.org_id, ctx.integration_id, user_id=ctx.user_id)
+            run = await engine.run(backfill_days=backfill_days)
+            stats = run.stats or {}
+            fetched = stats.get("messages_fetched", 0)
+            inserted = stats.get("events_inserted", 0)
+            updated = stats.get("events_updated", 0)
+            return SyncResult(
+                fetched=fetched,
+                upserted=inserted + updated,
+                events_new=inserted,
+                new_cursor=cursor,
+                partial=False,
+            )
+
 
 class GCalConnector(GoogleOAuthConnector):
     provider: ClassVar[str] = "gcal"
 
-    def __init__(self, **kw: Any) -> None:
-        super().__init__("gcal", **kw)
+    def __init__(self, *, enable_events: bool = False, **kw: Any) -> None:
+        scopes = list(GCAL_SCOPES)
+        if enable_events:
+            scopes.append(GCAL_EVENTS_SCOPE)
+        super().__init__("gcal", scopes=scopes, **kw)
+
+    async def sync(
+        self, ctx: ConnCtx, cursor: dict[str, Any], *, backfill_days: int | None = None
+    ) -> SyncResult:
+        from app.connectors.google.gcal_sync import GCalSyncEngine
+        from app.db.session import org_session
+
+        async with org_session(ctx.org_id) as session:
+            engine = GCalSyncEngine(session, ctx.org_id, ctx.integration_id, user_id=ctx.user_id)
+            run = await engine.run(backfill_days=backfill_days)
+            stats = run.stats or {}
+            fetched = stats.get("events_fetched", 0)
+            inserted = stats.get("events_inserted", 0)
+            updated = stats.get("events_updated", 0)
+            return SyncResult(
+                fetched=fetched,
+                upserted=inserted + updated,
+                events_new=inserted,
+                new_cursor=cursor,
+                partial=False,
+            )

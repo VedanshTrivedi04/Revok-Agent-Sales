@@ -109,4 +109,13 @@ def detect_unknowns(
         ):
             unknowns.append("Not confirmed whether the champion has left the organization.")
 
+    # 6. Data stale (integration last success > 48 h)
+    for stale in ctx.stale_integrations:
+        if isinstance(stale, dict):
+            src = stale.get("source", "Integration")
+            time_str = stale.get("last_updated", "over 48 hours ago")
+            unknowns.append(f"{src} data last updated {time_str}.")
+        else:
+            unknowns.append(f"{stale} data last updated over 48 hours ago.")
+
     return unknowns

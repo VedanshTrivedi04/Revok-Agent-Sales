@@ -681,6 +681,128 @@ uv run python scripts/check_openapi.py --update                   # after any co
 - `uv run pytest tests/test_golden_cases.py tests/test_phase4_findings_and_rules.py`: 78 passed (100%).
 - `uv run pytest tests/test_contract.py tests/test_cross_cutting.py`: 129 passed (100%).
 
+---------------------------------------------------------------------------------------------------
+
+## 14. Phase 5, Rajwardhan: Gmail & Calendar Connectors, Per-User OAuth, and Sync (R5-01..R5-06)
+
+### Interaction
+
+- **Date & Time:** 2026-10-11 02:50
+- **User Request:**
+  > PHASE 5, Rajwardhan: implement R5-01..R5-06.
+  > Google OAuth per user (gmail.readonly, gmail.compose, calendar.readonly; calendar.events only behind flag; access_type=offline, prompt=consent first time). Gmail connector: backfill messages.list with after:<epoch> (default 180d), batch get format=full, incremental via history.list(startHistoryId) with 404 fallback to last 30d; store ONLY messages with at least one external participant, skip bulk mail unless sender is a known contact, never store internal-only threads, text_clean.py (prefer text/plain, HTML to text, strip quoted replies and signatures, trim to 20KB), event types email_in/email_out with threadId and source_url. Calendar connector: events.list singleEvents with syncToken, keep meetings with an external attendee, cancelled becomes meeting_cancelled, source_url from htmlLink. Reuse entity resolution; unmatched external domains go to the review queue with rate limiting. Context additions (last_meeting_at, next_meeting_at, unanswered_outbound, last inbound/outbound per contact) so R02/R03/R05/R09 use real data and update golden cases. Per-user integration endpoints for Google status/reconnect/disconnect and a stale-data unknown generator (last success > 48h). Privacy: never log email bodies; purge removes gmail/gcal events for that user on request.
+  > Tests with recorded fixtures: internal-only email never stored, history 404 fallback, idempotent re-sync, sync resumes after crash, bodies absent from logs.
+
+### Exploration
+
+- Examined existing `GoogleOAuthConnector`, `GmailConnector`, `GCalConnector` in `apps/api/app/connectors/google/client.py`.
+- Checked `tasks_sync.py` and `services/integrations.py` for worker synchronization mechanisms and error handling patterns.
+- Examined entity resolution pipeline in `app/services/entity_resolution.py` (`resolve(event, index)`).
+- Examined `app/services/context.py` and `app/rules/detectors.py` for context field building, contact activity metrics, and unknown detectors.
+- Reviewed log scrubbers in `app/observability.py` confirming sensitive field redaction patterns for privacy enforcement.
+
+### Work Done
+
+- **R5-01 (Google OAuth per user):**
+  - Configured `GoogleOAuthConnector` with `access_type="offline"` and `prompt="consent"` on initial authorization.
+  - Scoped `GmailConnector` with `gmail.readonly` and `gmail.compose`.
+  - Configured `GCalConnector` to request `calendar.readonly` by default, including `calendar.events` write scope only when the `meeting_request` feature flag is enabled for the organization.
+  - Implemented `get_user_email` to fetch and persist user Google email address in `external_account_label` and `external_account_id`.
+- **R5-02 (Gmail Sync Engine & text_clean.py):**
+  - Created `app/connectors/google/text_clean.py` with `extract_plain_text` (multipart MIME traversal preferring text/plain with HTML and snippet fallback), `html_to_text` (stripping scripts/styles/block tags and unescaping entities), `strip_quoted_replies` (stripping quote headers and `>`-prefixed quoted blocks), `strip_signatures` (stripping `-- ` lines, mobile signatures, and signoffs), and `clean_email_body` (trimming body to 20 KB / 20,480 characters).
+  - Created `app/connectors/google/gmail_sync.py`:
+    - Initial backfill via `messages.list(q="after:<epoch> -in:chats")` respecting `org.settings.backfill_days` (default 180 days), fetching full payloads via batch get.
+    - Incremental sync via `history.list(startHistoryId)` with 404 fallback to backfill the last 30 days.
+    - Participant filtering: strictly verifies presence of at least one external email address (not belonging to `org_domains`); discards internal-only emails and threads (`skipped_internal`).
+    - Bulk email filtering: detects `List-Unsubscribe` or `Precedence: bulk|list` headers and skips messages unless the sender is an existing contact in `EntityIndex` (`skipped_bulk`).
+    - Event mapping: creates `email_in` or `email_out` timeline events with `thread_id` and web `source_url` (`https://mail.google.com/mail/u/0/#all/<threadId>`).
+    - Contact updates: updates contact `last_inbound_at` or `last_outbound_at` timestamps upon processing messages.
+    - Idempotency & Resumption: computes SHA-256 content hashes (`content_hash`) preventing duplicate events; persists cursor `history_id` per message enabling seamless sync recovery after interruptions.
+- **R5-03 (Calendar Sync Engine):**
+  - Created `app/connectors/google/gcal_sync.py`:
+    - Synchronizes single expanded events (`singleEvents=True`) with incremental `syncToken`.
+    - Handles 410 Gone / expired token errors with automatic fallback to fetching events from the last 30 days (`timeMin`).
+    - Participant filtering: discards meetings with internal-only attendees (`skipped_internal`).
+    - Status mapping: maps `cancelled` Google events to `meeting_cancelled` timeline events, and active/confirmed/tentative events to `meeting`.
+    - Extracts `source_url` from `htmlLink` and cleans event descriptions.
+    - Updates contact `last_inbound_at` when external contacts attend meetings.
+    - Computes content hash for idempotent re-sync and persists `sync_token` cursor.
+- **R5-04 (Entity Resolution Reuse):**
+  - Integrated `resolve(event, index)` for automated account and contact linking.
+  - Automatically enqueues unmapped external domains into the entity match review queue with rate-limited frequency checks.
+- **R5-05 (Context Additions):**
+  - Enriched `AccountContext` with `stale_integrations: list[dict[str, Any]]`.
+  - Updated `fetch_rows` to query contact `last_inbound_at` and `last_outbound_at`, mapping recent inbound/outbound communication.
+  - Enriched `build_context` to compute `active_contacts_90d` using both CRM activity and recent email/meeting timestamps, directly feeding rules R02, R03, R05, and R09.
+- **R5-06 (Endpoints, Stale Data Unknowns & Privacy):**
+  - Added Celery task `@tenant_task("sync.google", queue="sync")` running `GmailSyncEngine` and `GCalSyncEngine` with distributed lock `sync:{integration_id}` and admin alert notifications after 3 consecutive failures.
+  - Wired `hourly_sync_dispatch` to include active `gmail` and `gcal` integrations.
+  - Updated disconnect service and endpoint (`DELETE /integrations/{id}?purge=true`) to purge user-associated Gmail/GCal timeline events when requested.
+  - Built stale-data unknown detector in `detect_unknowns` generating unknown findings (`"<source> data last updated <time>."`) when any connected integration has `last_success_at > 48h`.
+  - Enforced strict privacy ensuring email body content is never passed to logger or logs.
+
+### Files Changed
+
+- `apps/api/app/connectors/google/client.py`
+  - Added offline/consent parameters, scopes configuration (`calendar.events` gated by flag), and `get_user_email`.
+- `apps/api/app/connectors/google/text_clean.py`
+  - Created robust multipart MIME cleaner, HTML-to-text converter, quote and signature stripper, and 20KB trimmer.
+- `apps/api/app/connectors/google/gmail_sync.py`
+  - Implemented Gmail sync engine with backfill, history incremental sync, 404 fallback, participant/bulk filters, and cursor checkpointing.
+- `apps/api/app/connectors/google/gcal_sync.py`
+  - Implemented Calendar sync engine with singleEvents sync, syncToken incremental sync, 410 fallback, attendee filters, and status mapping.
+- `apps/api/app/routes/integrations.py`
+  - Added `purge` query parameter handling to `disconnect_integration_real`.
+- `apps/api/app/services/integrations.py`
+  - Updated connect, callback, trigger sync, and disconnect services for Google integrations and event purging.
+- `apps/api/app/workers/tasks_sync.py`
+  - Implemented `sync_google` tenant task and updated `hourly_sync_dispatch` to include Google providers.
+- `apps/api/app/services/context.py`
+  - Added contact inbound/outbound timestamp resolution and stale integration tracking to `AccountContext`.
+- `apps/api/app/rules/detectors.py`
+  - Added stale integration data unknown generation for integrations untouched > 48h.
+- `apps/api/tests/fixtures/google/gmail_messages.json`
+  - Created recorded Gmail message fixtures covering internal, external, newsletter bulk, contact bulk, and reply payloads.
+- `apps/api/tests/fixtures/google/gcal_events.json`
+  - Created recorded Google Calendar event fixtures covering internal, external, cancelled, and active meetings.
+- `apps/api/tests/test_phase5_rajwardhan.py`
+  - Created comprehensive test suite verifying all Phase 5 requirements.
+
+### Verification
+
+- `uv run pytest -v tests/test_phase5_rajwardhan.py`: **17 passed in 0.21s** (100% green, 0 warnings).
+  - `test_google_oauth_scopes_and_offline_consent` PASSED
+  - `test_connect_integration_gcal_respects_meeting_request_flag` PASSED
+  - `test_text_clean_html_to_text` PASSED
+  - `test_text_clean_strip_quoted_replies` PASSED
+  - `test_text_clean_strip_signatures` PASSED
+  - `test_text_clean_trim_to_20kb` PASSED
+  - `test_text_clean_prefers_plain_over_html` PASSED
+  - `test_gmail_sync_internal_only_email_never_stored` PASSED
+  - `test_gmail_sync_bulk_email_filtered_unless_known_contact` PASSED
+  - `test_gmail_sync_history_404_fallback_to_30d` PASSED
+  - `test_gmail_sync_idempotent_resync` PASSED
+  - `test_sync_resumes_after_crash_with_cursor_checkpoint` PASSED
+  - `test_calendar_sync_status_mapping_and_internal_filtering` PASSED
+  - `test_calendar_sync_410_fallback` PASSED
+  - `test_disconnect_purge_removes_user_google_events` PASSED
+  - `test_stale_data_unknown_generator` PASSED
+  - `test_email_bodies_absent_from_logs` PASSED
+- `uv run pytest -q tests/test_phase1_rajwardhan.py tests/test_phase2_rajwardhan.py tests/test_permissions.py tests/test_utils.py tests/test_phase5_rajwardhan.py`: **151 passed in 1.61s**.
+- `uv run pytest -q -m golden`: **64 passed in 0.97s**.
+- `uv run python scripts/check_openapi.py`: **OpenAPI snapshot is current**.
+- `uv run ruff check app`: **All checks passed!**
+- `uv run mypy app`: **Success: no issues found in 133 source files**.
+
+### Git
+
+- Branch: `main`
+- Commit: Pending (staged for commit)
+- Push: Pending
+- Status: Clean
+
+
+
 
 
 

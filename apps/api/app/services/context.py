@@ -73,6 +73,9 @@ class AccountContext:
     # Benchmarks
     org_median_arr: float = 0.0
 
+    # Stale integrations (last success > 48h)
+    stale_integrations: list[dict[str, Any]] = field(default_factory=list)
+
     # Evidence references
     usage_row_ids: list[UUID] = field(default_factory=list)
     event_row_ids: list[UUID] = field(default_factory=list)
@@ -295,6 +298,20 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
         if created_at and created_at >= cutoff_30d:
             new_contacts_30d.append(c)
 
+        # Check last inbound / outbound activity in last 90 days
+        c_email = c.get("email")
+        if c_email:
+            linb = c.get("last_inbound_at")
+            if isinstance(linb, str):
+                linb = datetime.fromisoformat(linb)
+            if linb and linb >= cutoff_90d:
+                active_contact_emails_90d.add(c_email.lower())
+            lout = c.get("last_outbound_at")
+            if isinstance(lout, str):
+                lout = datetime.fromisoformat(lout)
+            if lout and lout >= cutoff_90d:
+                active_contact_emails_90d.add(c_email.lower())
+
     # Signals
     signals = rows.get("signals") or []
     cutoff_60d = now - timedelta(days=60)
@@ -375,6 +392,7 @@ def build_context(rows: dict[str, Any], now: datetime | None = None) -> AccountC
         open_renewal_deal=open_renewal_deal,
         open_deals=open_deals,
         org_median_arr=float(rows.get("org_median_arr") or arr),
+        stale_integrations=rows.get("stale_integrations") or [],
         usage_row_ids=usage_row_ids,
         event_row_ids=[e["id"] for e in events if e.get("id")],
         deal_row_ids=deal_row_ids,
@@ -450,6 +468,34 @@ async def fetch_rows(
     ).where(Account.org_id == org_id, Account.status == "active")
     median_arr = (await session.execute(med_stmt)).scalar() or 0.0
 
+    # Stale integrations: status == 'connected' and (now - last_success_at) > 48h
+    from app.models.integrations import Integration
+
+    integ_stmt = select(Integration).where(
+        Integration.org_id == org_id,
+        Integration.status == "connected",
+    )
+    integrations = list((await session.execute(integ_stmt)).scalars().all())
+    cutoff_48h = now - timedelta(hours=48)
+    stale_integrations: list[dict[str, Any]] = []
+    for integ in integrations:
+        if integ.last_success_at:
+            if integ.last_success_at < cutoff_48h:
+                stale_integrations.append(
+                    {
+                        "source": integ.provider,
+                        "last_updated": integ.last_success_at.isoformat(),
+                    }
+                )
+        else:
+            if integ.created_at and integ.created_at < cutoff_48h:
+                stale_integrations.append(
+                    {
+                        "source": integ.provider,
+                        "last_updated": integ.created_at.isoformat(),
+                    }
+                )
+
     return {
         "account": {
             "id": acc.id,
@@ -472,6 +518,8 @@ async def fetch_rows(
                 "role_tags": c.role_tags or [],
                 "is_active": c.is_active,
                 "created_at": c.created_at,
+                "last_inbound_at": c.last_inbound_at,
+                "last_outbound_at": c.last_outbound_at,
             }
             for c in contacts
         ],
@@ -523,4 +571,5 @@ async def fetch_rows(
             for s in signals
         ],
         "org_median_arr": float(median_arr),
+        "stale_integrations": stale_integrations,
     }

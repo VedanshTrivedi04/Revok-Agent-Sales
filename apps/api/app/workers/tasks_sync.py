@@ -74,6 +74,70 @@ async def sync_hubspot(session: Any, org_id: str, integration_id: str) -> dict[s
             raise
 
 
+@tenant_task("sync.google", queue="sync")
+async def sync_google(session: Any, org_id: str, integration_id: str) -> dict[str, Any]:
+    """Incremental sync for a Gmail or Google Calendar integration."""
+    oid = UUID(org_id)
+    iid = UUID(integration_id)
+    lock_key = f"sync:{iid}"
+
+    async with lock(lock_key, ttl=600):
+        stmt = select(Integration).where(
+            Integration.id == iid,
+            Integration.org_id == oid,
+        )
+        integ = (await session.execute(stmt)).scalar_one_or_none()
+        if not integ:
+            log.warning("sync_integration_not_found", integration_id=integration_id)
+            return {"status": "not_found"}
+
+        if integ.status == "needs_reauth":
+            log.info("sync_skipped_needs_reauth", integration_id=integration_id)
+            return {"status": "needs_reauth"}
+
+        try:
+            run: Any = None
+            if integ.provider == "gmail":
+                from app.connectors.google.gmail_sync import GmailSyncEngine
+
+                gmail_engine = GmailSyncEngine(session, oid, iid, user_id=integ.user_id)
+                run = await gmail_engine.run()
+            elif integ.provider == "gcal":
+                from app.connectors.google.gcal_sync import GCalSyncEngine
+
+                gcal_engine = GCalSyncEngine(session, oid, iid, user_id=integ.user_id)
+                run = await gcal_engine.run()
+            else:
+                return {"status": "unsupported_provider"}
+
+            return {"status": "success", "run_id": str(run.id), "stats": run.stats}
+        except Exception as e:
+            log.error("sync_google_failed", integration_id=integration_id, error=str(e))
+            if integ.error_count >= 3:
+                target_user_ids = [integ.user_id] if integ.user_id else []
+                if not target_user_ids:
+                    admin_stmt = select(Membership.user_id).where(
+                        Membership.org_id == oid,
+                        Membership.role.in_(("owner", "admin")),
+                        Membership.status == "active",
+                    )
+                    target_user_ids = list((await session.execute(admin_stmt)).scalars().all())
+
+                for uid in target_user_ids:
+                    err_msg = integ.last_error or str(e)[:200]
+                    notif = Notification(
+                        org_id=oid,
+                        user_id=uid,
+                        kind="integration_error",
+                        title=f"{integ.provider.capitalize()} Integration Sync Failing",
+                        body=f"Sync has failed {integ.error_count} consecutive times: {err_msg}",
+                        link="/settings/integrations",
+                    )
+                    session.add(notif)
+                await session.flush()
+            raise
+
+
 @celery_app.task(name="sync.hourly_dispatch")
 def hourly_sync_dispatch() -> None:
     """Hourly beat dispatcher scheduling sync for all connected integrations."""
@@ -89,12 +153,15 @@ def hourly_sync_dispatch() -> None:
                 .where(
                     Organization.status == "active",
                     Integration.status.in_(("connected", "error")),
-                    Integration.provider == "hubspot",
+                    Integration.provider.in_(("hubspot", "gmail", "gcal")),
                 )
             )
             integrations = (await s.execute(stmt)).scalars().all()
             for integ in integrations:
-                sync_hubspot.delay(str(integ.org_id), str(integ.id))
+                if integ.provider == "hubspot":
+                    sync_hubspot.delay(str(integ.org_id), str(integ.id))
+                elif integ.provider in ("gmail", "gcal"):
+                    sync_google.delay(str(integ.org_id), str(integ.id))
 
     import asyncio
 

@@ -1,5 +1,6 @@
 """Integrations service: OAuth, connection lifecycle, sync triggers, and sync run tracking."""
 
+from typing import Any
 from uuid import UUID
 
 from fastapi.responses import RedirectResponse
@@ -61,7 +62,11 @@ async def list_integrations_service(
 
 
 async def connect_integration_service(
-    org_id: UUID, user_id: UUID, provider: str, role: Role
+    org_id: UUID,
+    user_id: UUID,
+    provider: str,
+    role: Role,
+    session: AsyncSession | None = None,
 ) -> ConnectOut:
     if provider in ("hubspot", "slack") and role not in (Role.OWNER, Role.ADMIN):
         raise AppError(
@@ -70,7 +75,23 @@ async def connect_integration_service(
             status=403,
         )
 
-    connector = registry.get(provider)
+    connector: Any
+    if provider == "gcal":
+        from app.connectors.google.client import GCalConnector
+        from app.services.identity import get_feature_flags
+
+        if session is not None:
+            flags = await get_feature_flags(session, org_id)
+        else:
+            try:
+                async with org_session(org_id) as s:
+                    flags = await get_feature_flags(s, org_id)
+            except Exception:
+                flags = {}
+        enable_events = flags.get("meeting_request", False)
+        connector = GCalConnector(enable_events=enable_events)
+    else:
+        connector = registry.get(provider)
     if not isinstance(connector, OAuthConnector):
         raise AppError("bad_request", f"Provider {provider} does not support OAuth")
 
@@ -161,6 +182,18 @@ async def oauth_callback_service(
         )
         await ctx.store_tokens(tokens)
 
+        if provider in ("gmail", "gcal"):
+            try:
+                get_email_fn = getattr(connector, "get_user_email", None)
+                if callable(get_email_fn):
+                    user_email = await get_email_fn(ctx)
+                    if user_email:
+                        existing.external_account_label = user_email
+                        existing.external_account_id = user_email
+                        await session.flush()
+            except Exception:
+                pass
+
         # Enqueue initial sync run
         initial_run = SyncRun(
             org_id=oauth_state.org_id,
@@ -169,6 +202,18 @@ async def oauth_callback_service(
             stats={},
         )
         session.add(initial_run)
+
+        try:
+            if provider == "hubspot":
+                from app.workers.tasks_sync import sync_hubspot
+
+                sync_hubspot.delay(str(oauth_state.org_id), str(integration_id))
+            elif provider in ("gmail", "gcal"):
+                from app.workers.tasks_sync import sync_google
+
+                sync_google.delay(str(oauth_state.org_id), str(integration_id))
+        except Exception:
+            pass
 
     return RedirectResponse(f"{redirect_base}?connected={provider}", status_code=302)
 
@@ -227,9 +272,14 @@ async def trigger_sync_service(
     await session.flush()
 
     try:
-        from app.workers.tasks_sync import sync_hubspot
+        if integ.provider == "hubspot":
+            from app.workers.tasks_sync import sync_hubspot
 
-        sync_hubspot.delay(str(org_id), str(integration_id))
+            sync_hubspot.delay(str(org_id), str(integration_id))
+        elif integ.provider in ("gmail", "gcal"):
+            from app.workers.tasks_sync import sync_google
+
+            sync_google.delay(str(org_id), str(integration_id))
     except Exception:
         pass
 
@@ -242,6 +292,7 @@ async def disconnect_integration_service(
     user_id: UUID,
     role: Role,
     integration_id: UUID,
+    purge: bool = False,
 ) -> Ack:
     stmt = select(Integration).where(
         Integration.id == integration_id,
@@ -258,7 +309,22 @@ async def disconnect_integration_service(
     if integ.scope_level == "user" and integ.user_id != user_id:
         raise AppError("forbidden", "You can only disconnect your own integration", status=403)
 
+    if purge and integ.provider in ("gmail", "gcal"):
+        from app.models.timeline import Event
+
+        target_uid_str = str(integ.user_id or user_id)
+        stmt_evs = select(Event).where(
+            Event.org_id == org_id,
+            Event.source.in_(("gmail", "gcal")),
+        )
+        evs = (await session.execute(stmt_evs)).scalars().all()
+        for ev in evs:
+            ev_user_id = str((ev.raw or {}).get("user_id") or "")
+            if ev_user_id == target_uid_str or (not ev_user_id and ev.source == integ.provider):
+                await session.delete(ev)
+
     integ.status = "disconnected"
+    await session.flush()
     return Ack(ok=True)
 
 
