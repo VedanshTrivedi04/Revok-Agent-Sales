@@ -40,6 +40,7 @@
 | POST | `/api/v1/admin/evals/run` | E Admin Console | Vedansh | P6 | real | superadmin |
 | GET | `/api/v1/admin/flags` | E Admin Console | Vedansh | P5 | real | superadmin |
 | PUT | `/api/v1/admin/flags` | E Admin Console | Vedansh | P5 | real | superadmin |
+| GET | `/api/v1/admin/data-health` | E Admin Console | Rajwardhan | P6 | real | superadmin |
 | GET | `/api/v1/api-keys` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
 | POST | `/api/v1/api-keys` | B5 Usage Data | Vedansh | P1 | real | apikeys:manage |
 | DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |

@@ -34,7 +34,7 @@ services:
       redis: { condition: service_healthy }
     environment:
       APP_ENV: staging
-      MOCK_API: "true"
+      MOCK_API: "false"
       REAL_ROUTERS: ${REAL_ROUTERS:-me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log,stream,integrations,oauth,field_mapping,ingest,accounts,entity_reviews,slack,admin,runs,today,findings,rules}
       SEED_ON_START: "true"
       DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/revops

@@ -50,3 +50,19 @@ async def execute_card_task(session: AsyncSession, org_id: UUID, card_id: str) -
     from app.executor.core import run_execute_card
 
     return await run_execute_card(org_id, UUID(card_id))
+
+
+@celery_app.task(name="maintenance.purge_deleted_org", queue="default")
+def purge_deleted_org_task(org_id: str, force: bool = False) -> dict[str, int]:
+    """Purge soft-deleted organization using admin role."""
+    import asyncio
+    from uuid import UUID
+
+    from app.db.session import admin_session
+    from app.services.identity import purge_organization
+
+    async def _purge() -> dict[str, int]:
+        async with admin_session() as s:
+            return await purge_organization(s, UUID(org_id), force=force)
+
+    return asyncio.run(_purge())

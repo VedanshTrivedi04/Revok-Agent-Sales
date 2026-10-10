@@ -312,6 +312,19 @@ async def patch_current_org(
         org.settings = current_settings
         changes["settings"] = current_settings
 
+    # V6-01: Side effects for schedule and internal domains
+    if body.timezone is not None or (
+        body.settings and "nightly_hour" in body.settings.model_dump(exclude_unset=True)
+    ):
+        changes["schedule_recomputed"] = {
+            "timezone": org.timezone,
+            "nightly_hour": org.settings.get("nightly_hour", 2),
+        }
+
+    if body.primary_domain is not None or body.extra_domains is not None:
+        changes["internal_domains_updated"] = True
+        changes["internal_domains_note"] = "Applies to new data"
+
     if changes:
         await decision_log.log(
             s,
@@ -335,6 +348,9 @@ async def patch_current_org(
 async def delete_current_org(
     s: AsyncSession, org_id: UUID, body: OrgDeleteIn, actor_id: UUID
 ) -> Ack:
+    from app.models.brain import AgentRun
+    from app.models.integrations import Integration
+
     org = await s.get(Organization, org_id)
     if org is None or org.status == "deleted":
         raise AppError("not_found", "Organization not found")
@@ -346,6 +362,30 @@ async def delete_current_org(
     org.status = "deleted"
     org.deleted_at = utcnow()
 
+    # V6-01: Revoke provider tokens
+    from app.models.integrations import OAuthToken
+
+    integ_stmt = select(Integration).where(Integration.org_id == org_id)
+    integs = (await s.execute(integ_stmt)).scalars().all()
+    for integ in integs:
+        integ.status = "disconnected"
+
+    token_stmt = select(OAuthToken).where(OAuthToken.org_id == org_id)
+    tokens = (await s.execute(token_stmt)).scalars().all()
+    for tok in tokens:
+        tok.access_token_enc = b""
+        tok.refresh_token_enc = b""
+
+    # V6-01: Stop active/pending jobs for the deleted organization
+    runs_stmt = select(AgentRun).where(
+        AgentRun.org_id == org_id,
+        AgentRun.status.in_(["pending", "running"]),
+    )
+    for run in (await s.execute(runs_stmt)).scalars().all():
+        run.status = "failed"
+        run.error = "Organization deleted"
+        run.finished_at = utcnow()
+
     await decision_log.log(
         s,
         org_id=org_id,
@@ -354,8 +394,49 @@ async def delete_current_org(
         event="org.deleted",
         entity_type="org",
         entity_id=org_id,
-        data={"name": org.name},
+        data={"name": org.name, "revoked_integrations": len(integs)},
     )
     await publish(org_id, "org.deleted", {"org_id": str(org_id)})
     await s.flush()
     return Ack(ok=True)
+
+
+async def purge_organization(
+    s: AsyncSession, org_id: UUID, *, force: bool = False
+) -> dict[str, int]:
+    """Purge soft-deleted organization older than 30 days (or if force=True).
+
+    Deletes all rows across all tenant tables in topological order with the admin role.
+    """
+    from datetime import timedelta
+
+    import structlog
+    from sqlalchemy import delete
+
+    from app.db.base import Base
+
+    log = structlog.get_logger()
+
+    org = await s.get(Organization, org_id)
+    if org is None:
+        raise AppError("not_found", "Organization not found")
+    if org.status != "deleted":
+        raise AppError("conflict", "Only deleted organizations can be purged")
+    if not force:
+        if not org.deleted_at or (utcnow() - org.deleted_at) < timedelta(days=30):
+            raise AppError("conflict", "Organization has not passed the 30-day retention period")
+
+    deleted_counts: dict[str, int] = {}
+    for table in reversed(Base.metadata.sorted_tables):
+        if "org_id" in table.c:
+            del_stmt = delete(table).where(table.c.org_id == org_id)
+            res = await s.execute(del_stmt)
+            deleted_counts[table.name] = int(getattr(res, "rowcount", 0) or 0)
+        elif table.name == "organizations":
+            del_stmt = delete(table).where(table.c.id == org_id)
+            res = await s.execute(del_stmt)
+            deleted_counts[table.name] = int(getattr(res, "rowcount", 0) or 0)
+
+    log.info("org.purged", org_id=str(org_id), deleted_counts=deleted_counts)
+    await s.flush()
+    return deleted_counts

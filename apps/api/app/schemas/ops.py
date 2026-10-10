@@ -134,3 +134,11 @@ class FlagPutIn(BaseModel):
     key: str
     default: bool | None = None
     per_org: dict[str, bool] | None = None
+
+
+class DataHealthOut(BaseModel):
+    accounts_missing_renewal_date: int
+    unmapped_owners: int
+    orphan_events: int
+    contacts_without_account: int
+    details: dict[str, Any] = {}

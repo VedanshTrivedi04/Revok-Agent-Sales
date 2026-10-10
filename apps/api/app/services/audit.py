@@ -271,12 +271,73 @@ async def export_decision_log(
     user_id: UUID,
     export_in: LogExportIn,
 ) -> LogExportOut:
-    """Start an export job for decision log records."""
+    """Start an export job for decision log records (CSV or JSON)."""
+    import csv
+    import io
+    import json
+
+    from app.utils.redis import get_redis
+
     job_id = uuid4()
+    stmt = select(DecisionLog).where(DecisionLog.org_id == org_id)
+    if export_in.from_:
+        stmt = stmt.where(DecisionLog.ts >= export_in.from_)
+    if export_in.to:
+        stmt = stmt.where(DecisionLog.ts <= export_in.to)
+    stmt = stmt.order_by(DecisionLog.id.asc())
+
+    rows = (await s.execute(stmt)).scalars().all()
+    fmt = (export_in.format or "csv").lower()
+
+    if fmt == "csv":
+        out = io.StringIO()
+        writer = csv.writer(out)
+        writer.writerow(
+            ["id", "ts", "actor_type", "actor_id", "event", "entity_type", "entity_id", "prev_hash", "hash"]
+        )
+        for r in rows:
+            writer.writerow(
+                [
+                    r.id,
+                    r.ts.isoformat(),
+                    r.actor_type,
+                    r.actor_id or "",
+                    r.event,
+                    r.entity_type,
+                    str(r.entity_id or ""),
+                    r.prev_hash,
+                    r.hash,
+                ]
+            )
+        payload = out.getvalue()
+    else:
+        records = [
+            {
+                "id": r.id,
+                "ts": r.ts.isoformat(),
+                "actor_type": r.actor_type,
+                "actor_id": r.actor_id,
+                "event": r.event,
+                "entity_type": r.entity_type,
+                "entity_id": str(r.entity_id) if r.entity_id else None,
+                "prev_hash": r.prev_hash,
+                "hash": r.hash,
+                "data": r.data,
+            }
+            for r in rows
+        ]
+        payload = json.dumps(records, indent=2)
+
+    try:
+        r_client = await get_redis()
+        await r_client.setex(f"log_export:{org_id}:{job_id}", 3600, payload)
+    except Exception:
+        pass
+
     return LogExportOut(
         job_id=job_id,
         status="done",
-        download_url=f"/api/v1/log/export/{job_id}?format={export_in.format}",
+        download_url=f"/api/v1/log/export/{job_id}?format={fmt}",
     )
 
 

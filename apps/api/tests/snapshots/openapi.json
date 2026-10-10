@@ -1608,6 +1608,40 @@
     "title": "CsvJobOut",
     "type": "object"
    },
+   "DataHealthOut": {
+    "properties": {
+     "accounts_missing_renewal_date": {
+      "title": "Accounts Missing Renewal Date",
+      "type": "integer"
+     },
+     "contacts_without_account": {
+      "title": "Contacts Without Account",
+      "type": "integer"
+     },
+     "details": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Details",
+      "type": "object"
+     },
+     "orphan_events": {
+      "title": "Orphan Events",
+      "type": "integer"
+     },
+     "unmapped_owners": {
+      "title": "Unmapped Owners",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "accounts_missing_renewal_date",
+     "unmapped_owners",
+     "orphan_events",
+     "contacts_without_account"
+    ],
+    "title": "DataHealthOut",
+    "type": "object"
+   },
    "DealOut": {
     "properties": {
      "amount": {
@@ -6873,6 +6907,28 @@
     "summary": "Revert an executed action (409 revert_conflict if the value changed).",
     "tags": [
      "C4 Action Card"
+    ]
+   }
+  },
+  "/api/v1/admin/data-health": {
+   "get": {
+    "description": "System-wide data health metrics.",
+    "operationId": "data_health",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DataHealthOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "System-wide data health metrics.",
+    "tags": [
+     "E Admin Console"
     ]
    }
   },

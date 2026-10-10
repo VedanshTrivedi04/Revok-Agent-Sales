@@ -45,17 +45,25 @@ async def test_null_extractor_returns_no_signals() -> None:
 
 
 def test_external_mode_switches_implementations(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("AI_MODE", "external")
-    get_settings.cache_clear()
-    assert isinstance(reg.get_explainer(), ExternalPending)
-    assert isinstance(reg.get_action_planner(), ExternalPending)
+    try:
+        monkeypatch.setenv("AI_MODE", "external")
+        get_settings.cache_clear()
+        assert isinstance(reg.get_explainer(), ExternalPending)
+        assert isinstance(reg.get_action_planner(), ExternalPending)
+    finally:
+        monkeypatch.undo()
+        get_settings.cache_clear()
 
 
 def test_invalid_ai_mode_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("AI_MODE", "magic")
-    get_settings.cache_clear()
-    with pytest.raises(ValidationError):
-        get_settings()
+    try:
+        monkeypatch.setenv("AI_MODE", "magic")
+        get_settings.cache_clear()
+        with pytest.raises(ValidationError):
+            get_settings()
+    finally:
+        monkeypatch.undo()
+        get_settings.cache_clear()
 
 
 def test_override_hook_for_tests_and_adapters() -> None:

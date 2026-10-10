@@ -2,8 +2,12 @@
 
 from app.config import get_settings
 from app.ports import ActionPlanner, Explainer, SignalExtractor
+from app.ports.external import (
+    ExternalActionPlanner,
+    ExternalExplainer,
+    ExternalSignalExtractor,
+)
 from app.ports.template import (
-    ExternalPending,
     NullSignalExtractor,
     TemplateActionPlanner,
     TemplateExplainer,
@@ -24,16 +28,22 @@ def clear_overrides() -> None:
 def get_signal_extractor() -> SignalExtractor:
     if "signal_extractor" in _overrides:
         return _overrides["signal_extractor"]  # type: ignore[return-value]
-    return ExternalPending() if get_settings().ai_mode == "external" else NullSignalExtractor()
+    if get_settings().ai_mode == "external":
+        return ExternalSignalExtractor()
+    return NullSignalExtractor()
 
 
 def get_explainer() -> Explainer:
     if "explainer" in _overrides:
         return _overrides["explainer"]  # type: ignore[return-value]
-    return ExternalPending() if get_settings().ai_mode == "external" else TemplateExplainer()
+    if get_settings().ai_mode == "external":
+        return ExternalExplainer()
+    return TemplateExplainer()
 
 
 def get_action_planner() -> ActionPlanner:
     if "action_planner" in _overrides:
         return _overrides["action_planner"]  # type: ignore[return-value]
-    return ExternalPending() if get_settings().ai_mode == "external" else TemplateActionPlanner()
+    if get_settings().ai_mode == "external":
+        return ExternalActionPlanner()
+    return TemplateActionPlanner()

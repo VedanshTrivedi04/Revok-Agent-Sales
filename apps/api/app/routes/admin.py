@@ -9,6 +9,7 @@ from app.schemas.ops import (
     AdminJobOut,
     AdminOrgDetail,
     AdminOrgOut,
+    DataHealthOut,
     EvalRunIn,
     EvalSummary,
     FlagOut,
@@ -139,6 +140,14 @@ async def put_flag(body: FlagPutIn) -> FlagOut:
     raise NotImplementedError
 
 
+@endpoint(
+    "GET", "/admin/data-health", group="admin", page=PAGE, owner="R", phase=6, access="superadmin"
+)
+async def data_health() -> DataHealthOut:
+    """System-wide data health metrics."""
+    raise NotImplementedError
+
+
 # ---------------------------------------------------------------------------
 # Real Handlers
 # ---------------------------------------------------------------------------
@@ -202,3 +211,8 @@ async def list_flags_real(request: Request, **_: Any) -> list[FlagOut]:
 @real("put_flag")
 async def put_flag_real(request: Request, body: FlagPutIn, **_: Any) -> FlagOut:
     return await admin_service.put_flag(body)
+
+
+@real("data_health")
+async def data_health_real(request: Request, **_: Any) -> DataHealthOut:
+    return await admin_service.get_data_health()

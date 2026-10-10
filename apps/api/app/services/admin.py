@@ -29,6 +29,7 @@ from app.schemas.ops import (
     AdminJobOut,
     AdminOrgDetail,
     AdminOrgOut,
+    DataHealthOut,
     EvalRunIn,
     EvalSummary,
     FlagOut,
@@ -318,3 +319,38 @@ async def put_flag(body: FlagPutIn) -> FlagOut:
 
         await s.flush()
         return FlagOut(key=flag.key, default=flag.default, per_org=flag.per_org or {})
+
+
+async def get_data_health() -> DataHealthOut:
+    """Compute data health metrics across all organizations using admin session."""
+    from app.models.timeline import Contact, Event
+
+    async with admin_session() as s:
+        # Accounts missing renewal date
+        stmt_missing_renewal = select(func.count(Account.id)).where(Account.renewal_date.is_(None))
+        missing_renewal = (await s.execute(stmt_missing_renewal)).scalar() or 0
+
+        # Unmapped owners
+        stmt_unmapped_owners = select(func.count(Account.id)).where(Account.owner_user_id.is_(None))
+        unmapped_owners = (await s.execute(stmt_unmapped_owners)).scalar() or 0
+
+        # Orphan events
+        stmt_orphan_events = select(func.count(Event.id)).where(Event.account_id.is_(None))
+        orphan_events = (await s.execute(stmt_orphan_events)).scalar() or 0
+
+        # Contacts without account
+        stmt_contacts_no_acc = select(func.count(Contact.id)).where(Contact.account_id.is_(None))
+        contacts_without_account = (await s.execute(stmt_contacts_no_acc)).scalar() or 0
+
+        return DataHealthOut(
+            accounts_missing_renewal_date=missing_renewal,
+            unmapped_owners=unmapped_owners,
+            orphan_events=orphan_events,
+            contacts_without_account=contacts_without_account,
+            details={
+                "missing_renewal_count": missing_renewal,
+                "unmapped_owners_count": unmapped_owners,
+                "orphan_events_count": orphan_events,
+                "contacts_without_account_count": contacts_without_account,
+            },
+        )
