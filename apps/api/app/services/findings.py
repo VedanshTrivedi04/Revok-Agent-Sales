@@ -131,7 +131,6 @@ async def upsert_finding(
             "severity": existing.severity,
             "priority_score": float(existing.priority_score),
             "claims": existing.claims,
-            "score_breakdown": score_breakdown,
         }
 
         if is_snoozed and not severity_increased:
@@ -145,6 +144,7 @@ async def upsert_finding(
             existing.categories = list({h.category for h in hits})
             existing.last_seen_at = ctx.now
             existing.previous_snapshot = previous_snapshot
+            existing.score_breakdown = score_breakdown
         else:
             # Return/stay open
             existing.status = "open"
@@ -164,6 +164,7 @@ async def upsert_finding(
             existing.value_at_stake = ctx.arr  # type: ignore[assignment]
             existing.agent_run_id = agent_run_id
             existing.previous_snapshot = previous_snapshot
+            existing.score_breakdown = score_breakdown
 
         target_finding = existing
         await record_decision(
@@ -230,7 +231,7 @@ async def upsert_finding(
             model=explanation.model,
             prompt_version=explanation.prompt_version,
             agent_run_id=agent_run_id,
-            previous_snapshot={"score_breakdown": score_breakdown},
+            score_breakdown=score_breakdown,
         )
         session.add(new_finding)
         await session.flush()
@@ -661,6 +662,7 @@ async def get_finding_detail_service(
     ]
 
     return FindingDetail(
+        score_breakdown=finding.score_breakdown,
         id=finding.id,
         account_id=finding.account_id,
         type=finding.type,

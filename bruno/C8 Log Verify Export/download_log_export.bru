@@ -1,0 +1,20 @@
+meta {
+  name: download_log_export
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/log/export/6bb1863a-8259-578f-841a-bcf5c8c1bc3e/download
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Download a finished log export (CSV or JSON; available for 1 hour).
+  Page: C8 Log Verify & Export | Owner: V | Phase: P2 | Access: data:export
+}

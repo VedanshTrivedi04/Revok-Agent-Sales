@@ -73,6 +73,7 @@
 | GET | `/api/v1/log/{entry_id}` | C8 Log Detail (Why Replay) | Vedansh | P2 | real | any |
 | POST | `/api/v1/log/export` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
 | GET | `/api/v1/log/export/{job_id}` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
+| GET | `/api/v1/log/export/{job_id}/download` | C8 Log Verify & Export | Vedansh | P2 | real | data:export |
 | GET | `/api/v1/me` | A1 Auth & Profile | Vedansh | P1 | real | any |
 | PATCH | `/api/v1/me` | D1 Profile & Notifications | Vedansh | P1 | real | any |
 | GET | `/api/v1/members` | D5 Members & Invites | Vedansh | P1 | real | any |

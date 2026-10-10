@@ -5,6 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.deps import CurrentMembership, invalidate_membership
+from app.decision_log_events import MEMBER_ROLE_CHANGED
 from app.models.integrations import Integration
 from app.models.tenancy import Membership, User
 from app.permissions import Role
@@ -92,6 +93,7 @@ async def patch_member(
         if active_owners <= 1:
             raise AppError("last_owner_required", "Cannot demote or disable the last active owner")
 
+    previous_role = target.role
     changes: dict[str, Any] = {}
     if body.role is not None:
         target.role = body.role
@@ -106,9 +108,24 @@ async def patch_member(
         target.slack_user_id = body.slack_user_id
         changes["slack_user_id"] = body.slack_user_id
 
+    if body.status == "disabled":
+        changes["cards_reassigned"] = await reassign_open_cards(
+            s, org_id, target.user_id, actor.user_id
+        )
     await s.flush()
     await invalidate_membership(target.user_id, org_id)
 
+    if "role" in changes:
+        await decision_log.log(
+            s,
+            org_id=org_id,
+            actor_type="user",
+            actor_id=actor.user_id,
+            event=MEMBER_ROLE_CHANGED,
+            entity_type="member",
+            entity_id=target.id,
+            data={"from": previous_role, "to": body.role},
+        )
     if changes:
         await decision_log.log(
             s,
@@ -161,6 +178,65 @@ async def patch_member(
     )
 
 
+async def reassign_open_cards(
+    s: AsyncSession, org_id: UUID, leaving_user_id: UUID, actor_user_id: UUID
+) -> int:
+    """Hand a leaving/disabled member's open cards to the account owner (or leave them
+    unassigned so managers pick them up) and disconnect their personal integrations."""
+    from app.models.actions import ActionCard
+    from app.models.integrations import Integration, OAuthToken
+    from app.models.timeline import Account
+
+    cards = (
+        (
+            await s.execute(
+                select(ActionCard).where(
+                    ActionCard.org_id == org_id,
+                    ActionCard.assignee_user_id == leaving_user_id,
+                    ActionCard.status.in_(["proposed", "pending_approval"]),
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    for card in cards:
+        owner = await s.scalar(select(Account.owner_user_id).where(Account.id == card.account_id))
+        card.assignee_user_id = owner if owner and owner != leaving_user_id else None
+        await decision_log.log(
+            s,
+            org_id=org_id,
+            actor_type="user",
+            actor_id=actor_user_id,
+            event="card.assigned",
+            entity_type="action_card",
+            entity_id=card.id,
+            account_id=card.account_id,
+            data={"reason": "member_removed", "from": str(leaving_user_id), "to": str(owner or "")},
+        )
+    personal = (
+        (
+            await s.execute(
+                select(Integration).where(
+                    Integration.org_id == org_id,
+                    Integration.user_id == leaving_user_id,
+                    Integration.status != "disconnected",
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    for integ in personal:
+        integ.status = "disconnected"
+        for tok in (
+            await s.execute(select(OAuthToken).where(OAuthToken.integration_id == integ.id))
+        ).scalars():
+            tok.access_token_enc = b""
+            tok.refresh_token_enc = None
+    return len(cards)
+
+
 async def remove_member(
     s: AsyncSession,
     org_id: UUID,
@@ -192,6 +268,7 @@ async def remove_member(
 
     user_id = target.user_id
     role = target.role
+    reassigned = await reassign_open_cards(s, org_id, user_id, actor.user_id)
     await s.delete(target)
     await s.flush()
 
@@ -205,7 +282,7 @@ async def remove_member(
         event="member.removed",
         entity_type="member",
         entity_id=member_id,
-        data={"user_id": str(user_id), "role": role},
+        data={"user_id": str(user_id), "role": role, "cards_reassigned": reassigned},
     )
     await publish(org_id, "member.updated", {"member_id": str(member_id), "deleted": True})
     return Ack(ok=True)

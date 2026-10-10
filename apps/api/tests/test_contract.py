@@ -165,7 +165,7 @@ def test_internal_openapi_is_separate() -> None:
     assert len(paths) == 7 and all(p.startswith("/v1/orgs/{org}") for p in paths)
 
 
-async def test_internal_api_requires_key_and_is_501_until_p6() -> None:
+async def test_internal_api_requires_the_internal_key() -> None:
     async with _client(create_app()) as c:
         r = await c.get(f"/internal/v1/orgs/{D.ORG_ID}/events/pending-extraction")
         assert r.status_code == 401
@@ -173,7 +173,7 @@ async def test_internal_api_requires_key_and_is_501_until_p6() -> None:
             f"/internal/v1/orgs/{D.ORG_ID}/events/pending-extraction",
             headers={"X-Internal-Key": get_settings().internal_api_key},
         )
-        assert r.status_code == 501 and r.json()["error"]["code"] == "not_implemented"
+        assert r.status_code == 200 and r.json() == {"events": []}  # implemented in Phase 6
     async with _client(create_app()) as c:
         assert (
             "/v1/orgs/{org}/accounts/{account_id}/context"
@@ -377,7 +377,10 @@ async def test_mock_mode_still_enforces_auth_and_roles(mock_env: None, seeded: S
                 headers=auth(seeded, "member"),
             )
         ).status_code == 403
-        assert (await c.get(f"{V1}/admin/orgs", headers=auth(seeded, "admin"))).status_code in {403, 404}
+        assert (await c.get(f"{V1}/admin/orgs", headers=auth(seeded, "admin"))).status_code in {
+            403,
+            404,
+        }
 
 
 async def test_mock_auth_can_be_disabled(mock_env: None, monkeypatch: pytest.MonkeyPatch) -> None:

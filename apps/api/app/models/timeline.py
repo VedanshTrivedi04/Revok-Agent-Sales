@@ -47,6 +47,7 @@ class Account(Base, IdMixin, TimestampMixin):
             "ix_accounts_org_id_priority_score", "org_id", text("priority_score DESC NULLS LAST")
         ),
         Index("ix_accounts_domains", "domains", postgresql_using="gin"),
+        Index("ix_accounts_name_trgm", text("lower(name) gin_trgm_ops"), postgresql_using="gin"),
     )
 
     org_id: Mapped[UUID] = tenant_fk()

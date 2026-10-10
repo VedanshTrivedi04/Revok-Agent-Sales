@@ -5,6 +5,7 @@ import io
 import json
 from collections.abc import Sequence
 from datetime import date, datetime, timedelta
+from typing import Any
 from uuid import UUID, uuid4
 
 from sqlalchemy import select
@@ -49,6 +50,79 @@ async def resolve_accounts_map(
             mapping[(key, ktype)] = resolved[lookup_key]
 
     return mapping
+
+
+ROLLUP_MARK = "rollup_daily_max_days"
+MAX_CSV_BYTES = 10 * 1024 * 1024
+MAX_CSV_ROWS = 100_000
+REJECTED_SAMPLE = 20
+
+
+async def _rollup_daily_to_weekly(
+    session: AsyncSession, org_id: UUID, weeks: set[tuple[UUID, date]], source: str
+) -> None:
+    """Derive weekly snapshots from pushed daily rows (Monday-based weeks).
+
+    Distinct users cannot be derived from daily counts, so the weekly value is the MAX of the
+    daily active_users (an approximation marked by `rollup_daily_max_days` in key_events).
+    A weekly row that was pushed directly is never overwritten.
+    """
+    for account_id, monday in weeks:
+        days = (
+            (
+                await session.execute(
+                    select(UsageSnapshot).where(
+                        UsageSnapshot.org_id == org_id,
+                        UsageSnapshot.account_id == account_id,
+                        UsageSnapshot.granularity == "day",
+                        UsageSnapshot.period_start >= monday,
+                        UsageSnapshot.period_start <= monday + timedelta(days=6),
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        if not days:
+            continue
+        weekly = (
+            await session.execute(
+                select(UsageSnapshot)
+                .where(
+                    UsageSnapshot.org_id == org_id,
+                    UsageSnapshot.account_id == account_id,
+                    UsageSnapshot.granularity == "week",
+                    UsageSnapshot.period_start == monday,
+                )
+                .with_for_update()
+            )
+        ).scalar_one_or_none()
+        if weekly is not None and ROLLUP_MARK not in (weekly.key_events or {}):
+            continue  # a real weekly value wins over an approximation
+        seats = [d.seats_used for d in days if d.seats_used is not None]
+        logins = [d.logins for d in days if d.logins is not None]
+        values: dict[str, Any] = {
+            "period_end": monday + timedelta(days=6),
+            "active_users": max(d.active_users for d in days),
+            "seats_used": max(seats) if seats else None,
+            "logins": sum(logins) if logins else None,
+            "key_events": {ROLLUP_MARK: len(days)},
+            "source": source,
+        }
+        if weekly is None:
+            session.add(
+                UsageSnapshot(
+                    org_id=org_id,
+                    account_id=account_id,
+                    period_start=monday,
+                    granularity="week",
+                    **values,
+                )
+            )
+        else:
+            for k, v in values.items():
+                setattr(weekly, k, v)
+    await session.flush()
 
 
 async def ingest_usage_service(
@@ -164,6 +238,16 @@ async def ingest_usage_service(
             existing.updated_at = now_dt
 
     await session.flush()
+    await _rollup_daily_to_weekly(
+        session,
+        org_id,
+        {
+            (account_id, row.period_start - timedelta(days=row.period_start.weekday()))
+            for _, account_id, row in accepted_rows
+            if row.granularity == "day"
+        },
+        source,
+    )
     return UsageIngestOut(
         accepted=len(accepted_rows),
         rejected=rejected,
@@ -176,6 +260,8 @@ async def create_csv_job(
     file_bytes: bytes,
     mapping_raw: str,
 ) -> CsvJobOut:
+    if len(file_bytes) > MAX_CSV_BYTES:
+        raise AppError("payload_too_large", "CSV exceeds the 10 MB limit", status=413)
     try:
         mapping_dict = json.loads(mapping_raw)
         mapping = CsvMappingIn(**mapping_dict)
@@ -194,11 +280,21 @@ async def create_csv_job(
     parse_errors: list[UsageRejected] = []
 
     for idx, row_dict in enumerate(reader):
+        if idx >= MAX_CSV_ROWS:
+            raise AppError(
+                "payload_too_large", f"CSV has more than {MAX_CSV_ROWS:,} rows", status=413
+            )
+        reason = "invalid_row"
         try:
-            account_key = row_dict.get(mapping.account_key, "").strip()
-            period_str = row_dict.get(mapping.period_start, "").strip()
+            account_key = (row_dict.get(mapping.account_key) or "").strip()
+            if not account_key:
+                reason = "missing_account_key"
+                raise ValueError(reason)
+            reason = "invalid_date"
+            period_str = (row_dict.get(mapping.period_start) or "").strip()
             p_start = date.fromisoformat(period_str)
-            active_u = int(row_dict.get(mapping.active_users, 0))
+            reason = "invalid_number"
+            active_u = int(row_dict.get(mapping.active_users) or 0)
             seats = (
                 int(row_dict[mapping.seats_used])
                 if mapping.seats_used and row_dict.get(mapping.seats_used)
@@ -222,40 +318,37 @@ async def create_csv_job(
                 )
             )
         except Exception:
-            parse_errors.append(UsageRejected(index=idx, reason="invalid_date"))
+            parse_errors.append(UsageRejected(index=idx, reason=reason))
 
     result = await ingest_usage_service(session, org_id, rows, source="csv")
     all_errors = parse_errors + result.rejected
-
     job_data = {
         "job_id": str(job_id),
         "status": "done",
         "progress": 1.0,
+        "processed": len(rows) + len(parse_errors),
         "accepted": result.accepted,
-        "errors": [e.model_dump() for e in all_errors],
+        "rejected_count": len(all_errors),
+        "errors": [e.model_dump() for e in all_errors[:REJECTED_SAMPLE]],
     }
     await redis.set(job_key, json.dumps(job_data), ex=86400)
-
-    return CsvJobOut(
-        job_id=job_id,
-        status="done",
-        progress=1.0,
-        accepted=result.accepted,
-        errors=all_errors,
-    )
+    return _job_from_dict(job_data)
 
 
-async def get_csv_job(org_id: UUID, job_id: UUID) -> CsvJobOut:
-    redis = get_redis()
-    job_key = f"csv_job:{org_id}:{job_id}"
-    raw = await redis.get(job_key)
-    if raw is None:
-        raise AppError("not_found", "CSV job not found", status=404)
-    data = json.loads(raw)
+def _job_from_dict(data: dict[str, Any]) -> CsvJobOut:
     return CsvJobOut(
         job_id=UUID(data["job_id"]),
         status=data["status"],
         progress=data["progress"],
+        processed=data.get("processed", 0),
         accepted=data["accepted"],
+        rejected_count=data.get("rejected_count", len(data.get("errors", []))),
         errors=[UsageRejected(**e) for e in data.get("errors", [])],
     )
+
+
+async def get_csv_job(org_id: UUID, job_id: UUID) -> CsvJobOut:
+    raw = await get_redis().get(f"csv_job:{org_id}:{job_id}")
+    if raw is None:
+        raise AppError("not_found", "CSV job not found", status=404)
+    return _job_from_dict(json.loads(raw))

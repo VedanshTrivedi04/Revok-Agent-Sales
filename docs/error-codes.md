@@ -25,6 +25,7 @@ Every error uses the envelope `{"error": {"code", "message", "details"}}`. Forei
 | `last_owner_required` | 409 | An organization must keep at least one owner. |
 | `revert_conflict` | 409 | The value changed after execution; revert would overwrite newer data. |
 | `stale_preview` | 409 | The CRM value changed since the preview was generated. |
+| `payload_too_large` | 413 | The upload exceeds the size or row limit. |
 | `idempotency_key_reuse` | 422 | This Idempotency-Key was already used with a different request. |
 | `recipient_not_allowed` | 422 | An email recipient is not in the account's contact allowlist. |
 | `validation_error` | 422 | The request body or parameters failed validation. |

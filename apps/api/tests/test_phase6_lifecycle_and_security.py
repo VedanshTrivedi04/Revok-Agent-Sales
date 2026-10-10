@@ -12,10 +12,9 @@ Verifies:
 from __future__ import annotations
 
 from collections.abc import Callable
-from datetime import date, datetime, timedelta, timezone
+from datetime import timedelta
 from decimal import Decimal
-from typing import Any
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 from httpx import AsyncClient
@@ -25,13 +24,12 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from app.config import get_settings
 from app.db.base import Base
 from app.db.session import admin_session, org_session
-from app.models.actions import ActionCard
 from app.models.audit import DecisionLog
 from app.models.brain import AgentRun, Finding
 from app.models.integrations import Integration, OAuthToken
-from app.models.tenancy import Organization, User
-from app.models.timeline import Account, Contact, Event
-from app.services.identity import delete_current_org, patch_current_org, purge_organization
+from app.models.tenancy import Organization
+from app.models.timeline import Account, Contact
+from app.services.identity import purge_organization
 from app.utils.time import utcnow
 from tests.helpers import SeededOrg
 
@@ -207,7 +205,9 @@ async def test_purge_organization_leaves_zero_rows(
             if "org_id" in table.c:
                 stmt = select(table).where(table.c.org_id == org_id)
                 rows = (await s.execute(stmt)).all()
-                assert len(rows) == 0, f"Table {table.name} still has {len(rows)} rows for org_id {org_id}"
+                assert len(rows) == 0, (
+                    f"Table {table.name} still has {len(rows)} rows for org_id {org_id}"
+                )
             elif table.name == "organizations":
                 stmt = select(table).where(table.c.id == org_id)
                 rows = (await s.execute(stmt)).all()
@@ -260,9 +260,7 @@ async def test_admin_data_health_endpoint(
     assert isinstance(data["accounts_missing_renewal_date"], int)
 
 
-async def test_security_checklist_items(
-    org_a: SeededOrg
-) -> None:
+async def test_security_checklist_items(org_a: SeededOrg) -> None:
     """Validate critical items from backenddeveloper.md section 12."""
     from app.observability import scrub_processor
 

@@ -8,7 +8,7 @@ from app.contract import endpoint, real
 from app.db.session import org_session
 from app.permissions import Action
 from app.schemas.integrations import CsvJobOut, UsageIngestOut, UsageRowIn
-from app.services.usage import create_csv_job, get_csv_job, ingest_usage_service
+from app.services.usage import MAX_CSV_BYTES, create_csv_job, get_csv_job, ingest_usage_service
 
 PAGE = "B5 Usage Data"
 
@@ -66,7 +66,7 @@ async def upload_usage_csv_real(
 ) -> CsvJobOut:
     claims = get_claims(request)
     m = await current_membership(claims)
-    content = await file.read()
+    content = await file.read(MAX_CSV_BYTES + 1)  # bounded read; > 10 MB is rejected by the service
     async with org_session(m.org_id) as session:
         return await create_csv_job(session, m.org_id, content, mapping)
 

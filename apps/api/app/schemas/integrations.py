@@ -119,8 +119,10 @@ class CsvJobOut(BaseModel):
     job_id: UUID
     status: Literal["queued", "running", "done", "failed"]
     progress: float = 0.0
+    processed: int = 0
     accepted: int = 0
-    errors: list[UsageRejected] = []
+    rejected_count: int = 0
+    errors: list[UsageRejected] = []  # first 20 rejected rows
 
 
 class OAuthCallbackOut(BaseModel):

@@ -846,6 +846,16 @@ def m_export(request: Request, body: Any, **_: Any) -> Any:
     return job
 
 
+@mock("download_log_export")
+def m_download_export(request: Request, job_id: str, **_: Any) -> Any:
+    from fastapi.responses import Response
+
+    rows = ["id,ts,actor_type,event"] + [
+        f"{e['id']},{e['ts']},{e['actor_type']},{e['event']}" for e in store().d["log"]
+    ]
+    return Response(chr(10).join(rows), media_type="text/csv")
+
+
 @mock("get_log_export")
 def m_get_export(request: Request, job_id: str, **_: Any) -> Any:
     job = store().flags_state.get(f"export:{job_id}")

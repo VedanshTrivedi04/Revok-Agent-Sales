@@ -44,6 +44,7 @@ ERROR_CODES: dict[str, tuple[int, str]] = {
     "validation_error": (422, "The request body or parameters failed validation."),
     "recipient_not_allowed": (422, "An email recipient is not in the account's contact allowlist."),
     "rate_limited": (429, "Too many requests; retry after the Retry-After header."),
+    "payload_too_large": (413, "The upload exceeds the size or row limit."),
     "internal_error": (500, "Unexpected server error."),
     "not_implemented": (501, "The endpoint is part of the contract but not built yet."),
     "provider_error": (502, "An upstream provider (HubSpot, Google, Slack) returned an error."),

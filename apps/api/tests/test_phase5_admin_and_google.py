@@ -7,14 +7,13 @@ from __future__ import annotations
 import base64
 import email
 from collections.abc import Callable
-from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID, uuid4
 
 import httpx
 import pytest
-from httpx import ASGITransport, AsyncClient
-from sqlalchemy import select, text
+from httpx import AsyncClient
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.config import get_settings
@@ -26,19 +25,18 @@ from app.connectors.google.writes import (
 from app.connectors.http import HttpClient
 from app.db.session import admin_session, org_session
 from app.executor.revert import revert_card
-from app.main import create_app
 from app.models.actions import ActionCard
 from app.models.audit import FailedJob, FeatureFlag
 from app.models.brain import Finding
 from app.models.integrations import Integration
-from app.models.tenancy import Organization, User
+from app.models.tenancy import Organization
 from app.models.timeline import Account, Contact
 from app.schemas.action_payloads import EmailDraftPayload, MeetingRequestPayload
 from app.services.payload_validator import validate_card_payload
 from app.utils.errors import AppError, FatalError
 from app.utils.redis import get_redis
 from app.utils.time import utcnow
-from tests.helpers import SeededOrg, bearer, mint_jwt
+from tests.helpers import SeededOrg
 
 
 def make_test_google_ctx(handler: Any, org_id: UUID | None = None) -> ConnCtx:
@@ -65,7 +63,6 @@ def phase5_env(monkeypatch: pytest.MonkeyPatch) -> None:
         "admin,me,action_cards,findings,rules,runs,integrations,accounts,timeline,entity_reviews,notifications,stream,auth,onboarding,field_mapping,usage,api_keys,today,log,autonomy,invites,members,orgs",
     )
     get_settings.cache_clear()
-
 
 
 # =====================================================================
@@ -334,7 +331,9 @@ async def test_calendar_meeting_handler_respects_feature_flag(
     async with admin_session() as s:
         flag = await s.get(FeatureFlag, "meeting_request")
         if flag is None:
-            flag = FeatureFlag(key="meeting_request", default=False, per_org={str(org_a.org_id): True})
+            flag = FeatureFlag(
+                key="meeting_request", default=False, per_org={str(org_a.org_id): True}
+            )
             s.add(flag)
         else:
             flag.per_org = {str(org_a.org_id): True}

@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.deps import invalidate_membership
 from app.db.session import admin_session
+from app.decision_log_events import MEMBER_INVITED
 from app.models.tenancy import Invite, Membership, Organization, User
 from app.schemas.identity import Ack, InviteAcceptOut, InviteCreateIn, InviteOut
 from app.services import decision_log
@@ -78,7 +79,7 @@ async def create_invite(
         org_id=org_id,
         actor_type="user",
         actor_id=invited_by,
-        event="invite.created",
+        event=MEMBER_INVITED,
         entity_type="member",
         entity_id=invite.id,
         data={"email": str(body.email), "role": body.role},

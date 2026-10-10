@@ -14,23 +14,19 @@ Covers:
 from __future__ import annotations
 
 from collections.abc import Callable
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Any
 from uuid import UUID, uuid4
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import event, select, text
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.config import get_settings
 from app.db.session import org_session
 from app.models.actions import ActionCard
-from app.models.audit import DecisionLog
-from app.models.brain import Finding, FindingEvidence, Rule, RuleHit
-from app.models.timeline import Account, Contact, Deal, Event, UsageSnapshot
-from app.schemas.accounts import TodayResponse
+from app.models.brain import Finding, FindingEvidence, RuleHit
+from app.models.timeline import Account
 from app.services import decision_log
 from app.services.findings import compute_finding_diff
 from app.utils.time import utcnow
@@ -322,9 +318,7 @@ async def test_today_endpoint_member_vs_manager_default_owner(
             session, org_id, "Manager Account Today", manager_user, arr=120000.0
         )
 
-        await _create_finding(
-            session, org_id, acc_member.id, "Member Finding", priority_score=92.0
-        )
+        await _create_finding(session, org_id, acc_member.id, "Member Finding", priority_score=92.0)
         await _create_finding(
             session, org_id, acc_manager.id, "Manager Finding", priority_score=88.0
         )
@@ -484,7 +478,12 @@ async def test_today_endpoint_pending_cards_and_flags(
             title="Check In Call",
             rationale="Test",
             evidence_keys=[],
-            payload={"title": "Check In Call", "owner_crm_id": "123", "due_date": "2026-11-01", "associate": []},
+            payload={
+                "title": "Check In Call",
+                "owner_crm_id": "123",
+                "due_date": "2026-11-01",
+                "associate": [],
+            },
             idempotency_key=f"card-test-{uuid4()}",
         )
         # 1 executed card (should not be counted in pending_cards)

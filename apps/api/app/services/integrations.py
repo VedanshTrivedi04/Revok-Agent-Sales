@@ -3,6 +3,7 @@
 from typing import Any
 from uuid import UUID
 
+import structlog
 from fastapi.responses import RedirectResponse
 from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +14,8 @@ from app.connectors.base import OAuthConnector, TokenSet
 from app.connectors.ctx import ConnCtx
 from app.connectors.hubspot.client import HubSpotConnector
 from app.db.session import org_session
-from app.models.integrations import Integration, SyncRun
+from app.decision_log_events import INTEGRATION_CONNECTED, INTEGRATION_DISCONNECTED
+from app.models.integrations import Integration, OAuthToken, SyncRun
 from app.permissions import Role
 from app.schemas.identity import Ack
 from app.schemas.integrations import (
@@ -23,6 +25,8 @@ from app.schemas.integrations import (
     SyncRunOut,
     SyncTriggerOut,
 )
+from app.services import decision_log
+from app.services.provider_revoke import revoke_provider_tokens
 from app.utils.errors import AppError
 from app.utils.oauth_state import consume_state, create_state
 from app.utils.redis import get_redis
@@ -102,6 +106,9 @@ async def connect_integration_service(
     return ConnectOut(authorize_url=auth_url)
 
 
+log = structlog.get_logger()
+
+
 async def oauth_callback_service(
     provider: str, code: str, state: str, error: str | None = None
 ) -> RedirectResponse:
@@ -136,8 +143,9 @@ async def oauth_callback_service(
     ext_label: str = f"{provider.capitalize()} Connected"
     ext_id: str | None = None
 
+    # 1) Upsert the integration and COMMIT it first: the token rows (written through ConnCtx in
+    #    their own transaction) have a foreign key to it and could not see an uncommitted row.
     async with org_session(oauth_state.org_id) as session:
-        # Check existing integration
         stmt = select(Integration).where(
             Integration.org_id == oauth_state.org_id,
             Integration.provider == provider,
@@ -163,7 +171,6 @@ async def oauth_callback_service(
                 cursor={},
             )
             session.add(existing)
-            await session.flush()
         else:
             existing.status = "connected"
             existing.external_account_id = ext_id
@@ -171,49 +178,53 @@ async def oauth_callback_service(
             existing.scopes = connector.scopes if hasattr(connector, "scopes") else existing.scopes
             existing.error_count = 0
             existing.last_error = None
-            await session.flush()
-
+        await session.flush()
         integration_id = existing.id
-        ctx = ConnCtx(
-            oauth_state.org_id,
-            integration_id,
-            provider,
-            user_id=user_id,
-        )
-        await ctx.store_tokens(tokens)
-
-        if provider in ("gmail", "gcal"):
-            try:
-                get_email_fn = getattr(connector, "get_user_email", None)
-                if callable(get_email_fn):
-                    user_email = await get_email_fn(ctx)
-                    if user_email:
-                        existing.external_account_label = user_email
-                        existing.external_account_id = user_email
-                        await session.flush()
-            except Exception:
-                pass
-
-        # Enqueue initial sync run
-        initial_run = SyncRun(
+        await decision_log.log(
+            session,
             org_id=oauth_state.org_id,
-            integration_id=integration_id,
-            status="running",
-            stats={},
+            actor_type="user",
+            actor_id=oauth_state.user_id,
+            event=INTEGRATION_CONNECTED,
+            entity_type="integration",
+            entity_id=integration_id,
+            data={"provider": provider, "scope_level": scope_level},
         )
-        session.add(initial_run)
 
+    # 2) Encrypted tokens (own transaction), then the account label for Google users.
+    ctx = ConnCtx(oauth_state.org_id, integration_id, provider, user_id=user_id)
+    await ctx.store_tokens(tokens)
+    if provider in ("gmail", "gcal"):
         try:
-            if provider == "hubspot":
-                from app.workers.tasks_sync import sync_hubspot
-
-                sync_hubspot.delay(str(oauth_state.org_id), str(integration_id))
-            elif provider in ("gmail", "gcal"):
-                from app.workers.tasks_sync import sync_google
-
-                sync_google.delay(str(oauth_state.org_id), str(integration_id))
+            get_email_fn = getattr(connector, "get_user_email", None)
+            user_email = await get_email_fn(ctx) if callable(get_email_fn) else None
+            if user_email:
+                async with org_session(oauth_state.org_id) as session:
+                    integ = await session.get(Integration, integration_id)
+                    if integ is not None:
+                        integ.external_account_label = user_email
+                        integ.external_account_id = user_email
         except Exception:
             pass
+
+    # 3) First sync run, enqueued only after it is committed.
+    async with org_session(oauth_state.org_id) as session:
+        session.add(
+            SyncRun(
+                org_id=oauth_state.org_id, integration_id=integration_id, status="running", stats={}
+            )
+        )
+    try:
+        if provider == "hubspot":
+            from app.workers.tasks_sync import sync_hubspot
+
+            sync_hubspot.delay(str(oauth_state.org_id), str(integration_id))
+        elif provider in ("gmail", "gcal"):
+            from app.workers.tasks_sync import sync_google
+
+            sync_google.delay(str(oauth_state.org_id), str(integration_id))
+    except Exception as exc:  # broker down: the hourly dispatcher will pick the integration up
+        log.warning("initial_sync_enqueue_failed", provider=provider, error=type(exc).__name__)
 
     return RedirectResponse(f"{redirect_base}?connected={provider}", status_code=302)
 
@@ -323,8 +334,24 @@ async def disconnect_integration_service(
             if ev_user_id == target_uid_str or (not ev_user_id and ev.source == integ.provider):
                 await session.delete(ev)
 
+    revoked = await revoke_provider_tokens(org_id, integ.id, integ.provider)
+    for tok in (
+        await session.execute(select(OAuthToken).where(OAuthToken.integration_id == integ.id))
+    ).scalars():
+        tok.access_token_enc = b""
+        tok.refresh_token_enc = None
     integ.status = "disconnected"
     await session.flush()
+    await decision_log.log(
+        session,
+        org_id=org_id,
+        actor_type="user",
+        actor_id=user_id,
+        event=INTEGRATION_DISCONNECTED,
+        entity_type="integration",
+        entity_id=integ.id,
+        data={"provider": integ.provider, "provider_revoked": revoked},
+    )
     return Ack(ok=True)
 
 
@@ -442,6 +469,14 @@ async def record_sync_failure_service(
         integ.error_count += 1
         integ.last_error = error_message
         integ.status = "error"
-        if integ.error_count >= 3:
-            # Trigger notification + SSE sync.updated stub
-            pass
+        await session.flush()
+        if integ.error_count == 3:  # notify admins once, when the failure streak reaches 3
+            from app.services.notification_hooks import on_integration_error
+
+            await on_integration_error(
+                session, org_id=org_id, provider=integ.provider, error=error_message
+            )
+        else:
+            from app.utils.events import publish
+
+            await publish(org_id, "sync.updated", {"provider": integ.provider, "status": "error"})

@@ -13,9 +13,8 @@ Verifies:
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import date
 from decimal import Decimal
-from typing import Any
 from uuid import UUID, uuid4
 
 import pytest
@@ -25,8 +24,8 @@ from sqlalchemy import select
 from app.config import get_settings
 from app.db.session import org_session
 from app.models.actions import ActionCard
-from app.models.brain import AgentRun, Finding, FindingEvidence, RuleHit, Signal
-from app.models.timeline import Account, Contact, Deal, Event, UsageSnapshot
+from app.models.brain import AgentRun, Finding, FindingEvidence, Signal
+from app.models.timeline import Account, Contact, Deal, Event
 from app.utils.time import utcnow
 from tests.helpers import SeededOrg
 
@@ -41,9 +40,7 @@ def phase6_env(monkeypatch: pytest.MonkeyPatch) -> None:
     get_settings.cache_clear()
 
 
-async def test_internal_key_required_and_validated(
-    client: AsyncClient, org_a: SeededOrg
-) -> None:
+async def test_internal_key_required_and_validated(client: AsyncClient, org_a: SeededOrg) -> None:
     org_id = org_a.org_id
     fake_acc = uuid4()
     url = f"/internal/v1/orgs/{org_id}/accounts/{fake_acc}/context"
@@ -59,9 +56,7 @@ async def test_internal_key_required_and_validated(
     assert res.json()["error"]["code"] == "unauthenticated"
 
 
-async def test_get_account_context_and_contacts(
-    client: AsyncClient, org_a: SeededOrg
-) -> None:
+async def test_get_account_context_and_contacts(client: AsyncClient, org_a: SeededOrg) -> None:
     org_id = org_a.org_id
     internal_key = get_settings().internal_api_key
     headers = {"X-Internal-Key": internal_key}
@@ -277,9 +272,7 @@ async def test_pending_extraction_and_signals_ingest_quote_substring(
         assert saved_sigs[0].kind == "competitor_mention"
 
 
-async def test_save_explanation_evidence_validation(
-    client: AsyncClient, org_a: SeededOrg
-) -> None:
+async def test_save_explanation_evidence_validation(client: AsyncClient, org_a: SeededOrg) -> None:
     org_id = org_a.org_id
     internal_key = get_settings().internal_api_key
     headers = {"X-Internal-Key": internal_key}
@@ -492,9 +485,7 @@ async def test_save_proposals_allowlist_banned_phrases_and_tier_policy(
         assert card.type == "crm_task"
 
 
-async def test_run_status_reporting(
-    client: AsyncClient, org_a: SeededOrg
-) -> None:
+async def test_run_status_reporting(client: AsyncClient, org_a: SeededOrg) -> None:
     org_id = org_a.org_id
     internal_key = get_settings().internal_api_key
     headers = {"X-Internal-Key": internal_key}

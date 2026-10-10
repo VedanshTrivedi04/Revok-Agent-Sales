@@ -10,11 +10,11 @@ Tests:
 
 import json
 import time
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 
@@ -32,7 +32,7 @@ from app.services.scoring import (
 )
 
 CASES_DIR = Path(__file__).resolve().parent / "golden" / "cases"
-FIXED_NOW = datetime(2026, 10, 10, 3, 30, 0, tzinfo=timezone.utc)
+FIXED_NOW = datetime(2026, 10, 10, 3, 30, 0, tzinfo=UTC)
 
 
 def load_golden_case(case_name: str) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -92,9 +92,7 @@ def run_pipeline(ctx: AccountContext) -> dict[str, Any]:
     evidence_items = build_evidence(ctx, active_hits, contradictions)
 
     evidence_sources = {e.source for e in evidence_items if e.source}
-    has_high_signal = any(
-        float(s.get("confidence", 0.0)) >= 0.85 for s in ctx.signals_30d
-    )
+    has_high_signal = any(float(s.get("confidence", 0.0)) >= 0.85 for s in ctx.signals_30d)
     conf_val, conf_label = compute_evidence_confidence(
         sources=evidence_sources,
         has_high_signal=has_high_signal,
@@ -210,7 +208,9 @@ def test_golden_case_idempotency(case_name: str) -> None:
     assert res1["score_breakdown"] == res2["score_breakdown"]
     assert res1["contradictions"] == res2["contradictions"]
     assert res1["unknowns"] == res2["unknowns"]
-    assert [e.evidence_key for e in res1["evidence_items"]] == [e.evidence_key for e in res2["evidence_items"]]
+    assert [e.evidence_key for e in res1["evidence_items"]] == [
+        e.evidence_key for e in res2["evidence_items"]
+    ]
 
 
 @pytest.mark.golden

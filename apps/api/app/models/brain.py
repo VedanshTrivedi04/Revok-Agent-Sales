@@ -156,6 +156,7 @@ class Finding(Base, IdMixin, TimestampMixin):
     model: Mapped[str | None] = mapped_column(Text)
     prompt_version: Mapped[str | None] = mapped_column(Text)
     previous_snapshot: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    score_breakdown: Mapped[dict[str, Any] | None] = mapped_column(JSONB)  # priority tooltip
 
 
 class FindingEvidence(Base, IdMixin):

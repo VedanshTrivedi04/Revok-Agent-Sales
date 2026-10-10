@@ -1,0 +1,13 @@
+"""Canonical decision_log event names (backenddeveloper.md section 4.6). Use these constants."""
+
+FINDING_CREATED = "finding.created"
+FINDING_UPDATED = "finding.updated"
+CARD_PROPOSED = "card.proposed"
+CARD_AUTO_APPROVED = "card.auto_approved"
+CARD_BLOCKED = "card.blocked"
+INTEGRATION_CONNECTED = "integration.connected"
+INTEGRATION_DISCONNECTED = "integration.disconnected"
+MEMBER_INVITED = "member.invited"
+MEMBER_ROLE_CHANGED = "member.role_changed"
+MEMBER_UPDATED = "member.updated"
+DATA_EXPORTED = "data.exported"

@@ -28,6 +28,7 @@ from app.schemas.cards import (
     LogVerifyOut,
     PayloadDiff,
 )
+from app.services import decision_log
 from app.services.decision_log import verify_chain
 from app.utils.errors import AppError
 from app.utils.pagination import OrderKey, Page, PageParams, paginate
@@ -264,6 +265,14 @@ async def verify_decision_log(
     return LogVerifyOut(ok=res.ok, checked=res.checked, first_bad_id=res.first_bad_id)
 
 
+EXPORT_TTL_SECONDS = 3600
+EXPORT_MAX_ROWS = 100_000
+
+
+def _export_key(org_id: UUID, job_id: UUID) -> str:
+    return f"log_export:{org_id}:{job_id}"
+
+
 async def export_decision_log(
     s: AsyncSession,
     *,
@@ -271,11 +280,17 @@ async def export_decision_log(
     user_id: UUID,
     export_in: LogExportIn,
 ) -> LogExportOut:
-    """Start an export job for decision log records (CSV or JSON)."""
+    """Build a CSV/JSON export of the decision log (<= 100k rows) and keep it for 1 hour.
+
+    The file is stored in Redis under an unguessable job id and served by
+    GET /log/export/{job_id}/download (org-scoped, DATA_EXPORT permission). Exporting is itself
+    audited (`data.exported`).
+    """
     import csv
     import io
     import json
 
+    from app.decision_log_events import DATA_EXPORTED
     from app.utils.redis import get_redis
 
     job_id = uuid4()
@@ -284,82 +299,100 @@ async def export_decision_log(
         stmt = stmt.where(DecisionLog.ts >= export_in.from_)
     if export_in.to:
         stmt = stmt.where(DecisionLog.ts <= export_in.to)
-    stmt = stmt.order_by(DecisionLog.id.asc())
-
-    rows = (await s.execute(stmt)).scalars().all()
+    rows = list(
+        (await s.execute(stmt.order_by(DecisionLog.id.asc()).limit(EXPORT_MAX_ROWS + 1)))
+        .scalars()
+        .all()
+    )
+    truncated = len(rows) > EXPORT_MAX_ROWS
+    rows = rows[:EXPORT_MAX_ROWS]
     fmt = (export_in.format or "csv").lower()
 
     if fmt == "csv":
         out = io.StringIO()
         writer = csv.writer(out)
         writer.writerow(
-            [
-                "id",
-                "ts",
-                "actor_type",
-                "actor_id",
-                "event",
-                "entity_type",
-                "entity_id",
-                "prev_hash",
-                "hash",
-            ]
-        )
+            ["id", "ts", "actor_type", "actor_id", "event", "entity_type", "entity_id",
+             "account_id", "prev_hash", "hash"]
+        )  # fmt: skip
         for r in rows:
             writer.writerow(
-                [
-                    r.id,
-                    r.ts.isoformat(),
-                    r.actor_type,
-                    r.actor_id or "",
-                    r.event,
-                    r.entity_type,
-                    str(r.entity_id or ""),
-                    r.prev_hash,
-                    r.hash,
-                ]
-            )
-        payload = out.getvalue()
+                [r.id, r.ts.isoformat(), r.actor_type, r.actor_id or "", r.event, r.entity_type,
+                 str(r.entity_id or ""), str(r.account_id or ""), r.prev_hash, r.hash]
+            )  # fmt: skip
+        payload, content_type = out.getvalue(), "text/csv"
     else:
-        records = [
+        payload = json.dumps(
+            [
+                {
+                    "id": r.id, "ts": r.ts.isoformat(), "actor_type": r.actor_type,
+                    "actor_id": r.actor_id, "event": r.event, "entity_type": r.entity_type,
+                    "entity_id": str(r.entity_id) if r.entity_id else None,
+                    "account_id": str(r.account_id) if r.account_id else None,
+                    "prev_hash": r.prev_hash, "hash": r.hash, "data": r.data,
+                }
+                for r in rows
+            ],
+            indent=2,
+        )  # fmt: skip
+        content_type = "application/json"
+
+    await get_redis().setex(
+        _export_key(org_id, job_id),
+        EXPORT_TTL_SECONDS,
+        json.dumps(
             {
-                "id": r.id,
-                "ts": r.ts.isoformat(),
-                "actor_type": r.actor_type,
-                "actor_id": r.actor_id,
-                "event": r.event,
-                "entity_type": r.entity_type,
-                "entity_id": str(r.entity_id) if r.entity_id else None,
-                "prev_hash": r.prev_hash,
-                "hash": r.hash,
-                "data": r.data,
+                "format": fmt,
+                "content_type": content_type,
+                "payload": payload,
+                "rows": len(rows),
+                "truncated": truncated,
             }
-            for r in rows
-        ]
-        payload = json.dumps(records, indent=2)
-
-    try:
-        r_client = await get_redis()
-        await r_client.setex(f"log_export:{org_id}:{job_id}", 3600, payload)
-    except Exception:
-        pass
-
+        ),
+    )
+    await decision_log.log(
+        s,
+        org_id=org_id,
+        actor_type="user",
+        actor_id=user_id,
+        event=DATA_EXPORTED,
+        entity_type="org",
+        entity_id=org_id,
+        data={"format": fmt, "rows": len(rows), "truncated": truncated, "job_id": str(job_id)},
+    )
     return LogExportOut(
         job_id=job_id,
         status="done",
-        download_url=f"/api/v1/log/export/{job_id}?format={fmt}",
+        download_url=f"/api/v1/log/export/{job_id}/download",
     )
 
 
-async def get_export_status(s: AsyncSession, *, org_id: UUID, job_id: str) -> LogExportOut:
-    """Get status of an export job."""
+async def _load_export(org_id: UUID, job_id: str) -> tuple[UUID, dict[str, Any]]:
+    import json
+
+    from app.utils.redis import get_redis
+
     try:
         jid = UUID(job_id)
     except ValueError as e:
-        raise AppError("bad_request", f"Invalid job UUID: {job_id}") from e
+        raise AppError("bad_request", f"Invalid job id: {job_id}") from e
+    raw = await get_redis().get(_export_key(org_id, jid))
+    if raw is None:
+        raise AppError("not_found", "Export not found or expired")
+    data: dict[str, Any] = json.loads(raw)
+    return jid, data
 
+
+async def get_export_status(s: AsyncSession, *, org_id: UUID, job_id: str) -> LogExportOut:
+    """Status of an export job (404 once expired or for another tenant's job)."""
+    jid, _ = await _load_export(org_id, job_id)
     return LogExportOut(
-        job_id=jid,
-        status="done",
-        download_url=f"/api/v1/log/export/{job_id}",
+        job_id=jid, status="done", download_url=f"/api/v1/log/export/{jid}/download"
     )
+
+
+async def download_export(org_id: UUID, job_id: str) -> tuple[str, str, str]:
+    """(content, content_type, filename) of a finished export."""
+    jid, data = await _load_export(org_id, job_id)
+    ext = "csv" if data["format"] == "csv" else "json"
+    return data["payload"], data["content_type"], f"decision-log-{jid}.{ext}"

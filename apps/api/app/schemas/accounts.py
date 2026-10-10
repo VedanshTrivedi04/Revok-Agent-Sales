@@ -240,6 +240,7 @@ class FindingDetail(BaseModel):
     prompt_version: str | None = None
     dismissed_reason: str | None = None
     snoozed_until: datetime | None = None
+    score_breakdown: dict[str, Any] | None = None  # severity/urgency/value/confidence/freshness
 
 
 class DismissIn(BaseModel):

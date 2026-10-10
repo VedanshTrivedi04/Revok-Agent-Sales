@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Annotated, Any
 
 from fastapi import Depends, Query, Request
+from fastapi.responses import Response
 
 from app.auth.deps import current_membership, get_claims
 from app.contract import endpoint, real
@@ -83,6 +84,21 @@ async def get_log_export(job_id: str) -> LogExportOut:
     raise NotImplementedError
 
 
+@endpoint(
+    "GET",
+    "/log/export/{job_id}/download",
+    group="log",
+    page="C8 Log Verify & Export",
+    owner="V",
+    phase=2,
+    access=Action.DATA_EXPORT,
+    response_class=Response,
+)
+async def download_log_export(job_id: str) -> Response:
+    """Download a finished log export (CSV or JSON; available for 1 hour)."""
+    raise NotImplementedError
+
+
 @real("list_log")
 async def list_log_real(
     request: Request,
@@ -143,3 +159,18 @@ async def get_log_export_real(request: Request, job_id: str, **_: Any) -> LogExp
     m = await current_membership(claims)
     async with org_session(m.org_id) as s:
         return await audit_service.get_export_status(s, org_id=m.org_id, job_id=job_id)
+
+
+@real("download_log_export")
+async def download_log_export_real(request: Request, job_id: str, **_: Any) -> Response:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    content, content_type, filename = await audit_service.download_export(m.org_id, job_id)
+    return Response(
+        content,
+        media_type=content_type,
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+        },
+    )

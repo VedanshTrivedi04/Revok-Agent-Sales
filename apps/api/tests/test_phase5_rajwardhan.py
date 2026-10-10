@@ -25,7 +25,7 @@ import base64
 import hashlib
 import json
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
@@ -479,18 +479,17 @@ async def test_gmail_sync_idempotent_resync(
 
     monkeypatch.setattr("app.connectors.google.gmail_sync.ConnCtx", MockConnCtx)
 
-    import hashlib
-    from app.utils.canonical import canonical_json
-
     clean_text = clean_email_body(fixtures["msg_external_valid"]["payload"])
     c_hash = hashlib.sha256(
-        canonical_json({
-            "type": "email_in",
-            "thread_id": "thread_ext_1",
-            "occurred_at": datetime.fromtimestamp(1773003600, tz=UTC).isoformat(),
-            "title": "Feedback on proposal",
-            "body_text": clean_text,
-        }).encode()
+        canonical_json(
+            {
+                "type": "email_in",
+                "thread_id": "thread_ext_1",
+                "occurred_at": datetime.fromtimestamp(1773003600, tz=UTC).isoformat(),
+                "title": "Feedback on proposal",
+                "body_text": clean_text,
+            }
+        ).encode()
     ).hexdigest()
 
     existing_event = Event(
@@ -544,9 +543,7 @@ async def test_sync_resumes_after_crash_with_cursor_checkpoint(
             if "/history?" in url:
                 resp.status_code = 200
                 resp.json.return_value = {
-                    "history": [
-                        {"messagesAdded": [{"message": {"id": "msg_external_valid"}}]}
-                    ],
+                    "history": [{"messagesAdded": [{"message": {"id": "msg_external_valid"}}]}],
                     "historyId": "102",
                 }
             elif "/messages/msg_external_valid" in url:

@@ -1585,10 +1585,20 @@
       "title": "Job Id",
       "type": "string"
      },
+     "processed": {
+      "default": 0,
+      "title": "Processed",
+      "type": "integer"
+     },
      "progress": {
       "default": 0.0,
       "title": "Progress",
       "type": "number"
+     },
+     "rejected_count": {
+      "default": 0,
+      "title": "Rejected Count",
+      "type": "integer"
      },
      "status": {
       "enum": [
@@ -2492,6 +2502,18 @@
       },
       "title": "Rule Hits",
       "type": "array"
+     },
+     "score_breakdown": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Score Breakdown"
      },
      "severity": {
       "enum": [
@@ -9065,6 +9087,42 @@
      }
     },
     "summary": "Export job status and download URL.",
+    "tags": [
+     "C8 Log Verify & Export"
+    ]
+   }
+  },
+  "/api/v1/log/export/{job_id}/download": {
+   "get": {
+    "description": "Download a finished log export (CSV or JSON; available for 1 hour).",
+    "operationId": "download_log_export",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Download a finished log export (CSV or JSON; available for 1 hour).",
     "tags": [
      "C8 Log Verify & Export"
     ]
