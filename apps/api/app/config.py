@@ -11,9 +11,9 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     sentry_dsn: str = ""
 
-    database_url: str = "postgresql+asyncpg://app:app@localhost:5432/revops"
-    database_admin_url: str = "postgresql+asyncpg://admin:admin@localhost:5432/revops"
-    database_migrator_url: str = "postgresql+psycopg://owner:owner@localhost:5432/revops"
+    database_url: str = "postgresql+asyncpg://app:app@localhost:5433/revops"
+    database_admin_url: str = "postgresql+asyncpg://admin:admin@localhost:5433/revops"
+    database_migrator_url: str = "postgresql+psycopg://owner:owner@localhost:5433/revops"
     redis_url: str = "redis://localhost:6379/0"
 
     api_jwt_secret: str = "dev-only-change-me-dev-only-change-me-dev-only-change-me"
