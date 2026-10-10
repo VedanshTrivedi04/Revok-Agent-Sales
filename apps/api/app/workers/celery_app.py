@@ -46,10 +46,19 @@ celery_app.conf.update(
     broker_connection_retry_on_startup=True,
     task_serializer="json",
     accept_content=["json"],
-    imports=("app.workers.tasks_maintenance", "app.executor", "app.workers.tasks_sync"),
+    imports=(
+        "app.workers.tasks_maintenance",
+        "app.executor",
+        "app.workers.tasks_sync",
+        "app.workers.tasks_slack",
+    ),
     beat_schedule={
         "hourly-hubspot-sync": {
             "task": "sync.hourly_dispatch",
+            "schedule": 3600.0,
+        },
+        "daily-digest-fanout": {
+            "task": "notify.daily_digest_fanout",
             "schedule": 3600.0,
         },
     },

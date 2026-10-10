@@ -200,7 +200,22 @@ async def fail_execution(
         data={"error": error[:500]},
     )
 
+    try:
+        from app.services.notification_hooks import on_execution_failed
+
+        await on_execution_failed(
+            s,
+            org_id=org_id,
+            card_id=card_id,
+            card_title=card.title,
+            error=error,
+            actor_id=card.decided_by,
+        )
+    except Exception as e:
+        log.warning("on_execution_failed_notify_error", error=str(e))
+
     return card
+
 
 
 async def _next_attempt_number(s: AsyncSession, org_id: UUID, card_id: UUID) -> int:

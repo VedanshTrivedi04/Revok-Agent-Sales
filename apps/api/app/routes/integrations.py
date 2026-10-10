@@ -268,3 +268,12 @@ async def preview_field_mapping_real(request: Request, **_: Any) -> list[FieldMa
     m = await current_membership(claims)
     async with org_session(m.org_id) as session:
         return await get_field_mapping_preview_service(session, m.org_id)
+
+
+@real("list_slack_users")
+async def list_slack_users_real(request: Request, **_: Any) -> list[SlackUserOut]:
+    from app.services.slack import list_slack_users_service
+
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    return await list_slack_users_service(m.org_id)

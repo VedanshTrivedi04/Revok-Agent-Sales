@@ -60,7 +60,7 @@
 | POST | `/api/v1/integrations/{provider}/connect` | B2 HubSpot & Integrations | Rajwardhan | P1 | real | connect:own |
 | GET | `/api/v1/oauth/{provider}/callback` | B2 HubSpot & Integrations | Rajwardhan | P1 | real | public |
 | GET | `/api/v1/integrations/hubspot/properties` | B4 Field Mapping | Rajwardhan | P1 | real | integrations:manage |
-| GET | `/api/v1/integrations/slack/users` | B6 Slack | Vedansh | P4 | mock | integrations:manage |
+| GET | `/api/v1/integrations/slack/users` | B6 Slack | Vedansh | P4 | real | integrations:manage |
 | POST | `/api/v1/integrations/{integration_id}/sync` | D6 Integrations | Rajwardhan | P2 | real | connect:own |
 | DELETE | `/api/v1/integrations/{integration_id}` | D6 Integrations | Rajwardhan | P2 | real | connect:own |
 | GET | `/api/v1/integrations/{integration_id}/sync-runs` | D6 Integrations | Rajwardhan | P2 | real | integrations:manage |
@@ -76,6 +76,7 @@
 | PATCH | `/api/v1/me` | D1 Profile & Notifications | Vedansh | P1 | real | any |
 | GET | `/api/v1/members` | D5 Members & Invites | Vedansh | P1 | real | any |
 | PATCH | `/api/v1/members/{member_id}` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
+| PUT | `/api/v1/members/{member_id}` | D5 Members & Invites | Vedansh | P4 | real | members:manage |
 | DELETE | `/api/v1/members/{member_id}` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
 | POST | `/api/v1/invites` | B7 Invite Teammates | Vedansh | P1 | real | members:manage |
 | GET | `/api/v1/invites` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
@@ -93,9 +94,9 @@
 | POST | `/api/v1/rules/{key}/preview` | D8 Rules | Rajwardhan | P4 | mock | rules:edit |
 | GET | `/api/v1/runs` | C10 Agent Runs | Rajwardhan | P3 | mock | runs:view |
 | GET | `/api/v1/runs/{run_id}` | C10 Agent Runs | Rajwardhan | P3 | mock | runs:view |
-| POST | `/api/v1/slack/events` | F Slack | Vedansh | P4 | mock | public |
-| POST | `/api/v1/slack/interactions` | F Slack | Vedansh | P4 | mock | public |
-| GET | `/api/v1/slack/oauth/callback` | B6 Slack | Vedansh | P4 | mock | public |
+| POST | `/api/v1/slack/events` | F Slack | Vedansh | P4 | real | public |
+| POST | `/api/v1/slack/interactions` | F Slack | Vedansh | P4 | real | public |
+| GET | `/api/v1/slack/oauth/callback` | B6 Slack | Vedansh | P4 | real | public |
 | GET | `/api/v1/stream` | Realtime (SSE) | Vedansh | P3 | real | any |
 
 ## Internal AI API (`/internal`, own OpenAPI at `/internal/openapi.json`, header `X-Internal-Key`)

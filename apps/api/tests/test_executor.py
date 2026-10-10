@@ -38,6 +38,16 @@ from app.utils.events import publish
 from app.utils.time import utcnow
 from tests.helpers import SeededOrg
 
+@pytest.fixture
+def engine(owner_engine: AsyncEngine) -> AsyncEngine:
+    return owner_engine
+
+
+@pytest.fixture
+def seeded_org(org_a: SeededOrg) -> SeededOrg:
+    return org_a
+
+
 # =====================================================================
 # Fixtures and Helpers
 # =====================================================================
@@ -182,7 +192,14 @@ async def test_run_execute_card_find_existing_skips_apply(
             title="Task",
             rationale="Test",
             evidence_keys=[],
-            payload={"title": "Task 1", "body": "Details", "priority": "HIGH"},
+            payload={
+                "title": "Task 1",
+                "body": "Details",
+                "due_date": "2026-10-20",
+                "owner_crm_id": "rep_1",
+                "priority": "HIGH",
+                "associate": [{"object": "company", "id": "1"}],
+            },
             idempotency_key="key-idem-3",
         )
         s.add(card)
@@ -221,7 +238,14 @@ async def test_run_execute_card_fatal_error_marks_card_failed(
             title="Task",
             rationale="Test",
             evidence_keys=[],
-            payload={"title": "Task 1", "body": "Details", "priority": "HIGH"},
+            payload={
+                "title": "Task 1",
+                "body": "Details",
+                "due_date": "2026-10-20",
+                "owner_crm_id": "rep_1",
+                "priority": "HIGH",
+                "associate": [{"object": "company", "id": "1"}],
+            },
             idempotency_key="key-idem-4",
         )
         s.add(card)
@@ -255,9 +279,13 @@ def make_test_ctx(handler: Any) -> ConnCtx:
         org_id=uuid4(),
         integration_id=uuid4(),
         provider="hubspot",
-        client=client,
-        key_id="test",
+        http=client,
     )
+
+    async def _mock_token() -> str:
+        return "mock-token"
+
+    ctx.access_token = _mock_token  # type: ignore[method-assign]
     return ctx
 
 
@@ -282,6 +310,7 @@ async def test_hubspot_task_handler_creates_task_with_associations() -> None:
         title="Check renewal status",
         body="Call account owner and verify renewal",
         due_date=date(2026, 12, 1),
+        owner_crm_id="rep_99",
         priority="HIGH",
         associate=[CrmRef(object="company", id="comp_99")],
     )
@@ -563,6 +592,7 @@ async def test_template_action_planner_high_risk_proposals(
         account={"id": str(uuid4()), "name": "Big Corp", "crm_id": "c1", "owner_name": "Bob"},
         contacts=[{"name": "Alice Lead", "email": "alice@bigcorp.com"}],
         evidence_keys=["signal_drop_usage", "signal_no_login"],
+        rule_keys=["rule_risk_drop"],
     )
 
     proposals = await planner.plan(ctx)
@@ -593,6 +623,7 @@ async def test_template_action_planner_expansion_proposals(
         account={"id": str(uuid4()), "name": "Grow Corp", "owner_name": "Sarah"},
         contacts=[{"name": "David VP", "email": "david@growcorp.com"}],
         evidence_keys=["signal_seat_cap"],
+        rule_keys=["rule_seat_cap"],
     )
 
     proposals = await planner.plan(ctx)

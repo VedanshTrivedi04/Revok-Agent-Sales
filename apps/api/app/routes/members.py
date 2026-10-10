@@ -45,6 +45,20 @@ async def patch_member(member_id: UUID, body: MemberPatchIn) -> MemberOut:
 
 
 @endpoint(
+    "PUT",
+    "/members/{member_id}",
+    group="members",
+    page=PAGE,
+    owner="V",
+    phase=4,
+    access=Action.MANAGE_MEMBERS,
+)
+async def put_member(member_id: UUID, body: MemberPatchIn) -> MemberOut:
+    """Change role, status, CRM owner id or Slack link via PUT (admin)."""
+    raise NotImplementedError
+
+
+@endpoint(
     "DELETE",
     "/members/{member_id}",
     group="members",
@@ -125,6 +139,13 @@ async def patch_member_real(
     m = await current_membership(claims)
     async with org_session(m.org_id) as s:
         return await members_service.patch_member(s, m.org_id, member_id, body, m)
+
+
+@real("put_member")
+async def put_member_real(
+    request: Request, member_id: UUID, body: MemberPatchIn, **kwargs: Any
+) -> MemberOut:
+    return await patch_member_real(request, member_id=member_id, body=body, **kwargs)
 
 
 @real("remove_member")

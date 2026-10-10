@@ -30,6 +30,7 @@ class TokenSet(BaseModel):
     refresh_token: str | None = None
     expires_at: datetime | None = None
     token_type: str = "Bearer"
+    raw: dict[str, Any] = {}
 
     def __repr__(self) -> str:  # never print secrets
         return f"TokenSet(expires_at={self.expires_at!r}, token_type={self.token_type!r})"

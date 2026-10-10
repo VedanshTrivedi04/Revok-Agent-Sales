@@ -45,15 +45,18 @@ IDEM_PROP = "revops_card_id"
 
 
 async def _hs_get(ctx: ConnCtx, path: str, **kwargs: Any) -> Any:
-    return await ctx.request("GET", f"{HS_BASE}{path}", **kwargs)
+    resp = await ctx.request("GET", f"{HS_BASE}{path}", **kwargs)
+    return resp.json() if hasattr(resp, "json") else resp
 
 
 async def _hs_post(ctx: ConnCtx, path: str, json: Any) -> Any:
-    return await ctx.request("POST", f"{HS_BASE}{path}", json=json)
+    resp = await ctx.request("POST", f"{HS_BASE}{path}", json=json)
+    return resp.json() if hasattr(resp, "json") else resp
 
 
 async def _hs_patch(ctx: ConnCtx, path: str, json: Any) -> Any:
-    return await ctx.request("PATCH", f"{HS_BASE}{path}", json=json)
+    resp = await ctx.request("PATCH", f"{HS_BASE}{path}", json=json)
+    return resp.json() if hasattr(resp, "json") else resp
 
 
 async def _hs_delete(ctx: ConnCtx, path: str) -> Any:

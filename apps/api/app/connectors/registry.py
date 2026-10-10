@@ -33,6 +33,12 @@ def get(provider: str) -> Connector:
         gc_cal = GCalConnector()
         register(gc_cal)
         return gc_cal
+    if provider == "slack":
+        from app.connectors.slack.client import SlackConnector
+
+        sc = SlackConnector()
+        register(sc)
+        return sc
 
     raise AppError("bad_request", f"No connector registered for provider {provider!r}")
 

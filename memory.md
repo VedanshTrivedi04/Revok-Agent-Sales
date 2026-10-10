@@ -478,5 +478,54 @@ uv run python scripts/check_openapi.py --update                   # after any co
 **Notes**
 - Phase 2 data and detection plane successfully completed and integrated with control plane.
 
+---------------------------------------------------------------------------------------------------
+
+## Phase 4 Completion Ledger (Vedansh — V4-01..V4-04)
+
+**Status:** COMPLETE & VERIFIED
+
+**Tasks Completed:**
+- **V4-01 (Slack OAuth & Webhooks):**
+  - OAuth v2 flow (`chat:write`, `im:write`, `users:read`, `users:read.email`, `channels:read`), encrypted bot tokens via AES-256-GCM, team ID storage on `Integration.external_account_id`.
+  - Signature verification (`verify_slack_signature`) enforcing HMAC-SHA256 signature and 300s timestamp freshness window.
+  - Fast ACK (< 3 seconds) for `/slack/events` (URL verification handshake) and `/slack/interactions`.
+  - Work offloaded to Celery `notify` queue (`process_slack_interaction_task`).
+  - Replay deduplication via Redis `SETNX slack:{action_ts}:{user}` with TTL 1 hour (`is_duplicate_interaction`).
+  - User mapping service (`list_slack_users_service`) matching Slack users with org members by email.
+  - Member link endpoint `PUT /members/{id}` (and `PATCH /members/{id}`) linking `slack_user_id`.
+- **V4-02 (Block Kit Interactive Approvals):**
+  - Block Kit builders in `connectors/slack/blocks.py`: card approval blocks (`build_card_approval_blocks`), action result blocks (`build_card_action_result_blocks`), and daily digest blocks (`build_digest_blocks`).
+  - `handle_slack_interaction` resolves member from `slack_user_id`, validates role permissions (`approve:own`), calls identical `cards_service.approve_card` with `channel="slack"`.
+  - In-place message update via Slack `response_url` / `chat.update` showing decision, actor name, and web deep link.
+- **V4-03 (Daily Digest per algorithm.md §15):**
+  - Digest item selection: open findings with risk/expansion severity $\ge$ medium for accounts owned by user + findings with renewal $\le$ 30 days, sorted by priority score descending, top 5 items.
+  - Suppression rule: sends only if items are non-empty OR pending assigned cards > 0.
+  - Hourly Celery Beat fanout (`notify.daily_digest_fanout` -> `run_daily_digest_fanout`) evaluating user's local hour against their `digest_hour` (default 9 AM) across timezones.
+- **V4-04 (Notification Hooks & Realtime SSE):**
+  - Event hooks implemented in `services/notification_hooks.py`: `on_card_assigned`, `on_high_finding`, `on_execution_failed`, `on_integration_error`, and `on_entity_review_resolved`.
+  - Broadcasts realtime SSE events: `notification.created`, `card.updated`, `finding.updated`, `sync.updated`, `review.updated`.
+
+**Files Created / Modified:**
+- `apps/api/app/connectors/slack/__init__.py`
+- `apps/api/app/connectors/slack/blocks.py`
+- `apps/api/app/connectors/slack/client.py`
+- `apps/api/app/connectors/registry.py`
+- `apps/api/app/services/slack.py`
+- `apps/api/app/services/notification_hooks.py`
+- `apps/api/app/workers/tasks_slack.py`
+- `apps/api/app/routes/slack.py`
+- `apps/api/app/routes/integrations.py`
+- `apps/api/app/routes/members.py`
+- `apps/api/app/workers/celery_app.py`
+- `apps/api/app/executor/core.py`
+- `apps/api/app/connectors/hubspot/writes.py`
+- `apps/api/tests/test_slack.py`
+- `apps/api/tests/test_executor.py`
+- `docs/endpoints.md`
+- `infra/docker-compose.staging.yml`
+
+**Verification:**
+- `uv run pytest tests/test_slack.py tests/test_executor.py tests/test_phase2_rajwardhan.py -v`: 36 passed in 11.24s.
+
 
 
