@@ -74,10 +74,15 @@ async def _fresh_engine() -> AsyncIterator[None]:
     """Each test gets its own engine and Redis client (bound to the test's event loop)."""
     db_session.get_engine.cache_clear()
     db_session._sessionmaker.cache_clear()
+    db_session.get_admin_engine.cache_clear()
+    db_session._admin_sessionmaker.cache_clear()
     yield
     await db_session.get_engine().dispose()
+    await db_session.get_admin_engine().dispose()
     db_session.get_engine.cache_clear()
     db_session._sessionmaker.cache_clear()
+    db_session.get_admin_engine.cache_clear()
+    db_session._admin_sessionmaker.cache_clear()
     await close_redis()
 
 

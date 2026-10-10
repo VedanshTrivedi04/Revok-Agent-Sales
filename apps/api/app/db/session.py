@@ -33,12 +33,18 @@ async def org_session(org_id: UUID) -> AsyncIterator[AsyncSession]:
         yield s
 
 
+@lru_cache
+def get_admin_engine() -> AsyncEngine:
+    return create_async_engine(get_settings().database_admin_url, pool_pre_ping=True)
+
+
+@lru_cache
+def _admin_sessionmaker() -> async_sessionmaker[AsyncSession]:
+    return async_sessionmaker(get_admin_engine(), expire_on_commit=False)
+
+
 @asynccontextmanager
 async def admin_session() -> AsyncIterator[AsyncSession]:
     """BYPASSRLS session. Only /admin routers and platform jobs may use this."""
-    engine = create_async_engine(get_settings().database_admin_url)
-    try:
-        async with async_sessionmaker(engine, expire_on_commit=False)() as s, s.begin():
-            yield s
-    finally:
-        await engine.dispose()
+    async with _admin_sessionmaker()() as s, s.begin():
+        yield s

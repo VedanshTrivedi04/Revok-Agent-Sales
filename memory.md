@@ -1,8 +1,8 @@
-# memory.md — RevOps Agent backend: full project memory (end of Phase 0)
+# memory.md — RevOps Agent backend: full project memory (end of Phase 1)
 
 > Purpose: one file that carries *all* context so any person or AI session can resume without re-deriving
-> anything. Written at the end of Phase 0 by Claude Code for **Vedansh** (backend owner of the base and the
-> control plane). Last verified: 407 tests passing, ruff + mypy (strict) clean, `alembic check` clean.
+> anything. Written at the end of Phase 0 and updated at the end of Phase 1 by Claude Code for **Vedansh** (backend owner of the base and the
+> control plane). Last verified: 430 tests passing, ruff + mypy (strict) clean, `alembic check` clean.
 > If this file and the code disagree, the code wins; fix this file. Update it at the end of every phase.
 
 ---------------------------------------------------------------------------------------------------
@@ -110,6 +110,18 @@ apps/api/
 | V0-20 | 80aca60 | README, conventions.md, deploy-staging.md, Bruno collection generator |
 | V0-21 | 1d37d51 | `docs/handoff-p0.md` (agenda + notes). The live sessions themselves are **not** held |
 
+### Phase 1 (Identity & Control Plane Base, Vedansh: V1-01..V1-07)
+
+| Task | Result |
+|---|---|
+| V1-01 | `GET/PATCH /me` (user, cross-org memberships via `admin_session`, current org, permissions matrix from `permissions.py`, feature flags, onboarding state, notification_prefs) |
+| V1-02 | `POST /orgs` (atomic transaction: org + owner membership + 4 default autonomy_policies + field_mappings stub + `org.created` decision_log) · `GET/PATCH/DELETE /orgs/current` (soft delete with name confirmation) |
+| V1-03 | Members: `GET /members` (keyset pagination), `PATCH/DELETE /members/{id}` (rules: cannot demote/delete last owner, admin cannot change owner, only owner transfers ownership; invalidates Redis membership cache and publishes `member.updated` SSE event) |
+| V1-04 | Invites: `POST /invites`, `GET /invites`, `DELETE /invites/{id}`, `POST /invites/accept` (32-byte secure token stored as sha256, `EmailSender` interface with Console/Smtp/Resend, email match required, 7-day expiry, 3/day rate limit) |
+| V1-05 | API keys: `GET/POST/DELETE /api-keys` (`rk_live_<random>` returned once, prefix + sha256 stored, scopes, `api_key_auth` dependency for key-based routes) |
+| V1-06 | Notifications: `notify(...)` helper with SSE Redis broadcast, `GET /notifications` (cursor pagination, unread filter), `POST /notifications/read` |
+| V1-07 | Router switch: `REAL_ROUTERS=me,orgs,members,invites,api_keys,notifications` in staging compose; 23 tests in `tests/test_identity.py`; table-driven permission matrix per role x endpoint; docs/endpoints.md updated |
+
 ## 5. Architecture as built (details a new session needs)
 
 ### 5.1 Database and tenancy
@@ -123,11 +135,11 @@ apps/api/
   after a transaction-local `set_config`, the setting reads as `''`, and `''::uuid` would error). FORCE RLS on all.
 - `decision_log`: `id` identity PK, hash chain per org; `app` role has INSERT+SELECT only (UPDATE/DELETE/TRUNCATE
   revoked); `admin` keeps DELETE only (30-day org purge); a trigger blocks UPDATE for *every* role (tests bypass it
-  with `SET LOCAL session_replication_role = replica` as the superuser to simulate tampering).
+  with `SET LOCAL session_replication_role = replica` as the superuser to simulate tampering). Entity types constrained by
+  `ck_decision_log_entity_type_valid` to `'finding', 'action_card', 'integration', 'rule', 'policy', 'member', 'org'`.
 - Integrations unique index uses `coalesce(user_id, nil-uuid)`. `notification_prefs` default JSON contains colons
   → escaped as `\:` inside `sa.text()` (hand-edited in the migration).
-- **Open schema issue:** `memberships` is strictly RLS-scoped, so `GET /me` cannot list a user's *other* orgs;
-  needs an additive policy/security-definer function (planned V1-01).
+- **Cross-org memberships & invites:** `memberships` is strictly RLS-scoped; `get_user_memberships` and `accept_invite` use `admin_session()` (role `admin` with `BYPASSRLS`), preserving tenant isolation for all tenant endpoints without modifying table-level policies.
 
 ### 5.2 Auth and permissions
 - Service JWT HS256 (`API_JWT_SECRET`, `aud=revops-api`); the token's `role` claim is **ignored**; role comes from
@@ -247,9 +259,8 @@ apps/api/
 8. `staging` dev passwords for `app`/`admin` roles come from `init.sql`; fine only because Postgres is unpublished.
 9. Phase 2 tables `outcomes`/`edit_feedback` exist but are unused.
 
-## 8. Known gaps / risks (carry into Phase 1+)
+## 8. Known gaps / risks (carry into Phase 2+)
 
-- `GET /me` cross-org memberships (RLS) and **API-key authentication** for `/ingest/*` — V1-01 / V1-05.
 - Rate limiting available but not wired onto routes; idempotency fails open on Redis outage.
 - `tests/test_rls.py` generates rows under `session_replication_role=replica`; new tables with exotic column
   types need a generator branch in `_value()`.
@@ -258,16 +269,15 @@ apps/api/
 - CI workflow untested on GitHub; no remote repo; no public staging; session recordings pending.
 - `0001` migration is large (~730 lines) and hand-edited in two places (citext extension, escaped colons).
 
-## 9. Next steps (Phase 1 — Identity, V1-01…07; see backend-plan.md §6 and vedanshhandover §4)
+## 9. Next steps (Phase 2 — Cards, Autonomy policies, State machine; see backend-plan.md §6 and vedanshhandover §4)
 
-V1-01 `GET/PATCH /me` real + cross-org membership lookup · `POST /orgs` (org + owner + autonomy defaults + field
-mapping stub + `org.created` log, in one transaction) · members (last-owner protection, admin can't touch owner,
-only owner transfers ownership, invalidate membership cache + publish `member.updated`) · invites (32-byte token,
-sha256, `EmailSender` with Smtp/Resend/Console, 7-day expiry, resend ≤3/day) · API keys (`rk_live_…`, show once,
-sha256 + prefix, key auth dependency used by ingest) · notifications service + endpoints. Then Phase 2 cards:
-`services/cards.py` is the **only** code allowed to change `status` (state machine table in vedanshhandover §4;
-`SELECT … FOR UPDATE`, log in the same transaction, SSE publish, 202 on approve with `execute_card` enqueue).
-Rajwardhan's first PR (real `GET /integrations`) closes the Phase 0 gate. Template to copy: `routes/me.py::get_me_real`.
+Phase 1 (V1-01..V1-07) is COMPLETE and verified.
+Phase 2 (Vedansh: V2-01..V2-06):
+- `services/cards.py` is the **only** code allowed to change `status` (state machine table in vedanshhandover §4;
+  `SELECT … FOR UPDATE`, log in the same transaction, SSE publish, 202 on approve with `execute_card` enqueue).
+- Autonomy policies: `GET/PUT /autonomy/{action_type}` (default policies seeded in org creation).
+- Action cards routes: `GET /cards`, `GET /cards/{id}`, `POST /cards/{id}/approve`, `POST /cards/{id}/dismiss`, etc.
+- Decision log verification and hash chaining for all card actions.
 
 ## 10. How to resume quickly
 

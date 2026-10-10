@@ -40,9 +40,9 @@
 | POST | `/api/v1/admin/evals/run` | E Admin Console | Vedansh | P6 | mock | superadmin |
 | GET | `/api/v1/admin/flags` | E Admin Console | Vedansh | P5 | mock | superadmin |
 | PUT | `/api/v1/admin/flags` | E Admin Console | Vedansh | P5 | mock | superadmin |
-| GET | `/api/v1/api-keys` | D10 API Keys | Vedansh | P1 | mock | apikeys:manage |
-| POST | `/api/v1/api-keys` | B5 Usage Data | Vedansh | P1 | mock | apikeys:manage |
-| DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | mock | apikeys:manage |
+| GET | `/api/v1/api-keys` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
+| POST | `/api/v1/api-keys` | B5 Usage Data | Vedansh | P1 | real | apikeys:manage |
+| DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
 | GET | `/api/v1/autonomy` | D9 Autonomy | Vedansh | P2 | mock | any |
 | PUT | `/api/v1/autonomy/{action_type}` | D9 Autonomy | Vedansh | P2 | mock | autonomy:edit |
 | GET | `/api/v1/entity-reviews` | C9 Entity Review | Rajwardhan | P2 | mock | review:view |
@@ -72,21 +72,21 @@
 | POST | `/api/v1/log/export` | C8 Log Verify & Export | Vedansh | P2 | mock | data:export |
 | GET | `/api/v1/log/export/{job_id}` | C8 Log Verify & Export | Vedansh | P2 | mock | data:export |
 | GET | `/api/v1/me` | A1 Auth & Profile | Vedansh | P1 | real | any |
-| PATCH | `/api/v1/me` | D1 Profile & Notifications | Vedansh | P1 | mock | any |
-| GET | `/api/v1/members` | D5 Members & Invites | Vedansh | P1 | mock | any |
-| PATCH | `/api/v1/members/{member_id}` | D5 Members & Invites | Vedansh | P1 | mock | members:manage |
-| DELETE | `/api/v1/members/{member_id}` | D5 Members & Invites | Vedansh | P1 | mock | members:manage |
-| POST | `/api/v1/invites` | B7 Invite Teammates | Vedansh | P1 | mock | members:manage |
-| GET | `/api/v1/invites` | D5 Members & Invites | Vedansh | P1 | mock | members:manage |
-| DELETE | `/api/v1/invites/{invite_id}` | D5 Members & Invites | Vedansh | P1 | mock | members:manage |
-| POST | `/api/v1/invites/accept` | A5 Accept Invite | Vedansh | P1 | mock | user |
-| GET | `/api/v1/notifications` | C11 Notifications | Vedansh | P1 | mock | any |
-| POST | `/api/v1/notifications/read` | C11 Notifications | Vedansh | P1 | mock | any |
-| POST | `/api/v1/orgs` | B1 Organization | Vedansh | P1 | mock | user |
-| GET | `/api/v1/orgs/current` | D4 General Settings | Vedansh | P1 | mock | any |
-| PATCH | `/api/v1/orgs/current` | D4 General Settings | Vedansh | P1 | mock | members:manage |
-| DELETE | `/api/v1/orgs/current` | D11 Data & Deletion | Vedansh | P6 | mock | org:delete |
-| GET | `/api/v1/orgs/current/onboarding` | B8 First Sync | Vedansh | P3 | mock | any |
+| PATCH | `/api/v1/me` | D1 Profile & Notifications | Vedansh | P1 | real | any |
+| GET | `/api/v1/members` | D5 Members & Invites | Vedansh | P1 | real | any |
+| PATCH | `/api/v1/members/{member_id}` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
+| DELETE | `/api/v1/members/{member_id}` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
+| POST | `/api/v1/invites` | B7 Invite Teammates | Vedansh | P1 | real | members:manage |
+| GET | `/api/v1/invites` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
+| DELETE | `/api/v1/invites/{invite_id}` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
+| POST | `/api/v1/invites/accept` | A5 Accept Invite | Vedansh | P1 | real | user |
+| GET | `/api/v1/notifications` | C11 Notifications | Vedansh | P1 | real | any |
+| POST | `/api/v1/notifications/read` | C11 Notifications | Vedansh | P1 | real | any |
+| POST | `/api/v1/orgs` | B1 Organization | Vedansh | P1 | real | user |
+| GET | `/api/v1/orgs/current` | D4 General Settings | Vedansh | P1 | real | any |
+| PATCH | `/api/v1/orgs/current` | D4 General Settings | Vedansh | P1 | real | members:manage |
+| DELETE | `/api/v1/orgs/current` | D11 Data & Deletion | Vedansh | P6 | real | org:delete |
+| GET | `/api/v1/orgs/current/onboarding` | B8 First Sync | Vedansh | P3 | real | any |
 | GET | `/api/v1/rules` | D8 Rules | Rajwardhan | P4 | mock | rules:edit |
 | PUT | `/api/v1/rules/{key}` | D8 Rules | Rajwardhan | P4 | mock | rules:edit |
 | POST | `/api/v1/rules/{key}/preview` | D8 Rules | Rajwardhan | P4 | mock | rules:edit |

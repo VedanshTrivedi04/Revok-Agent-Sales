@@ -104,8 +104,12 @@ def resolve_mode(
 
 
 def _access_dependencies(access: Access, enforce: bool) -> list[Any]:
-    if not enforce or access in ("public", "api_key"):
+    if not enforce or access == "public":
         return []
+    if access == "api_key":
+        from app.auth.deps import api_key_auth
+
+        return [Depends(api_key_auth)]
     if access == "any":
         return [Depends(current_membership)]
     if access == "user":

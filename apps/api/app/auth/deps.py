@@ -139,3 +139,37 @@ async def require_superadmin(claims: Annotated[Claims, Depends(get_claims)]) -> 
     if not flag:
         raise AppError("forbidden", "Superadmin only", 403)
     return CurrentUser(id=claims.user_id, email=claims.email)
+
+
+@dataclass(frozen=True)
+class ApiKeyContext:
+    org_id: UUID
+    scopes: list[str]
+
+
+async def api_key_auth(request: Request) -> ApiKeyContext:
+    """Authenticates API keys via Authorization: Bearer rk_live_... or X-API-Key."""
+    from app.config import get_settings
+    from app.services.api_keys import verify_api_key
+
+    auth_header = request.headers.get("authorization", "")
+    key = ""
+    if auth_header.lower().startswith("bearer "):
+        key = auth_header[7:].strip()
+    elif "x-api-key" in request.headers:
+        key = request.headers["x-api-key"].strip()
+
+    if not key:
+        raise AppError(
+            "unauthenticated", "Missing API key in Authorization or X-API-Key header", 401
+        )
+
+    settings = get_settings()
+    if settings.mock_api and key.startswith("rk_"):
+        demo_org = UUID("0ff871dd-5dba-5118-a723-4611c0bb2120")
+        structlog.contextvars.bind_contextvars(org_id=str(demo_org))
+        return ApiKeyContext(org_id=demo_org, scopes=["ingest:usage"])
+
+    org_id, scopes = await verify_api_key(key)
+    structlog.contextvars.bind_contextvars(org_id=str(org_id))
+    return ApiKeyContext(org_id=org_id, scopes=scopes)

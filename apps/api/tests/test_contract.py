@@ -185,7 +185,7 @@ def test_non_mock_mode_unimplemented_is_501_and_real_me_stays_real() -> None:
     from app.contract import resolve_mode
 
     s = get_settings()
-    assert resolve_mode("members", "list_members", s) == "501"
+    assert resolve_mode("autonomy", "get_autonomy", s) == "501"
     assert resolve_mode("me", "get_me", s) == "real"
 
 

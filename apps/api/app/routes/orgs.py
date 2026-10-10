@@ -1,4 +1,10 @@
-from app.contract import endpoint
+from typing import Any
+
+from fastapi import Request
+
+from app.auth.deps import current_membership, get_claims
+from app.contract import endpoint, real
+from app.db.session import org_session
 from app.permissions import Action
 from app.schemas.identity import (
     Ack,
@@ -8,6 +14,7 @@ from app.schemas.identity import (
     OrgDetail,
     OrgPatchIn,
 )
+from app.services import identity as identity_service
 
 PAGE = "B1 Organization"
 
@@ -48,3 +55,43 @@ async def delete_current_org(body: OrgDeleteIn) -> Ack:
 async def get_onboarding() -> OnboardingOut:
     """Onboarding steps and whether the first findings are ready."""
     raise NotImplementedError
+
+
+@real("create_org")
+async def create_org_real(request: Request, body: OrgCreateIn, **_: Any) -> OrgDetail:
+    claims = get_claims(request)
+    return await identity_service.create_org(claims.user_id, claims.email, body)
+
+
+@real("get_current_org")
+async def get_current_org_real(request: Request, **_: Any) -> OrgDetail:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await identity_service.get_current_org(s, m.org_id)
+
+
+@real("patch_current_org")
+async def patch_current_org_real(request: Request, body: OrgPatchIn, **_: Any) -> OrgDetail:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await identity_service.patch_current_org(s, m.org_id, body, claims.user_id)
+
+
+@real("delete_current_org")
+async def delete_current_org_real(request: Request, body: OrgDeleteIn, **_: Any) -> Ack:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        return await identity_service.delete_current_org(s, m.org_id, body, claims.user_id)
+
+
+@real("get_onboarding")
+async def get_onboarding_real(request: Request, **_: Any) -> OnboardingOut:
+    claims = get_claims(request)
+    m = await current_membership(claims)
+    async with org_session(m.org_id) as s:
+        org = await identity_service.get_current_org(s, m.org_id)
+        assert org.onboarding is not None
+        return org.onboarding
