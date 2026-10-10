@@ -11,7 +11,7 @@ concurrency:
 
 defaults:
   run:
-    working-directory: apps/api
+    working-directory: revops-agent/apps/api
 
 jobs:
   lint-and-types:
@@ -75,7 +75,7 @@ jobs:
       - name: No breaking changes vs main
         if: github.event_name == 'pull_request'
         run: |
-          git show origin/${{ github.base_ref }}:apps/api/tests/snapshots/openapi.json > /tmp/base-openapi.json || { echo "no base snapshot yet"; exit 0; }
+          git show origin/${{ github.base_ref }}:revops-agent/apps/api/tests/snapshots/openapi.json > /tmp/base-openapi.json || { echo "no base snapshot yet"; exit 0; }
           uv run python scripts/check_openapi.py --base /tmp/base-openapi.json
       - name: Generated docs are current
         run: |

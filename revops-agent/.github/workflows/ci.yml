@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: apps/api
+
+jobs:
+  lint-and-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy app
+
+  migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: owner, POSTGRES_PASSWORD: owner, POSTGRES_DB: revops }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U owner -d revops" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_MIGRATOR_URL: postgresql+psycopg://owner:owner@localhost:5432/revops
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - name: Create roles
+        run: PGPASSWORD=owner psql -h localhost -U owner -d revops -f ../../infra/db/init.sql
+      - run: uv run alembic upgrade head
+      - name: Models and migrations agree
+        run: uv run alembic check
+      - name: Downgrade is clean
+        run: uv run alembic downgrade base && uv run alembic upgrade head
+
+  tests:
+    runs-on: ubuntu-latest   # Docker is available: tests start Postgres/Redis via testcontainers
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - name: Tests with coverage gate
+        run: uv run pytest -q --cov=app --cov-report=term-missing:skip-covered --cov-fail-under=${COVERAGE_MIN}
+        env:
+          COVERAGE_MIN: "70"
+
+  openapi-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - name: Snapshot matches the code (update it in the same PR)
+        run: uv run python scripts/check_openapi.py
+      - name: No breaking changes vs main
+        if: github.event_name == 'pull_request'
+        run: |
+          git show origin/${{ github.base_ref }}:apps/api/tests/snapshots/openapi.json > /tmp/base-openapi.json || { echo "no base snapshot yet"; exit 0; }
+          uv run python scripts/check_openapi.py --base /tmp/base-openapi.json
+      - name: Generated docs are current
+        run: |
+          PYTHONPATH=. uv run python scripts/gen_endpoints.py
+          PYTHONPATH=. uv run python scripts/gen_error_codes.py
+          PYTHONPATH=. uv run python scripts/gen_mocks.py
+          git diff --exit-code -- ../../docs ../api/app/mocks
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Known vulnerabilities in locked runtime dependencies
+        run: |
+          uv export --frozen --no-dev --no-hashes --no-emit-project > /tmp/requirements.txt
+          uvx pip-audit -r /tmp/requirements.txt --strict
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: . } }
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  api-fuzz:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+    env:
+      MOCK_API: "true"
+      MOCK_AUTH: "false"
+      RATE_LIMIT_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - name: Start API (mock mode)
+        run: |
+          uv run uvicorn app.main:app --port 8000 &
+          for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
+      - name: Schemathesis (no 5xx, responses match the schema)
+        run: >
+          uv run schemathesis run http://localhost:8000/openapi.json
+          --checks not_a_server_error,response_schema_conformance
+          --max-examples 15 --exclude-path-regex "^/api/v1/(stream|oauth/)"
