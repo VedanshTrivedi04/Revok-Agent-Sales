@@ -48,6 +48,7 @@ services:
       WEB_URL: ${WEB_URL:-http://localhost:3000}
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8080}
       SENTRY_DSN: ${SENTRY_DSN:-}
+      REAL_ROUTERS: ${REAL_ROUTERS:-integrations,oauth,field_mapping,ingest}
     ports:
       - "${API_PORT:-8080}:8000"
     healthcheck:

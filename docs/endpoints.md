@@ -53,19 +53,20 @@
 | POST | `/api/v1/findings/{finding_id}/snooze` | C2 Finding Detail | Rajwardhan | P3 | mock | approve:own |
 | POST | `/api/v1/findings/{finding_id}/reopen` | C2 Finding Detail | Rajwardhan | P3 | mock | approve:own |
 | POST | `/api/v1/findings/{finding_id}/feedback` | C2 Finding Detail | Rajwardhan | P3 | mock | any |
-| POST | `/api/v1/ingest/usage` | B5 Usage Data | Rajwardhan | P1 | mock | api_key |
-| POST | `/api/v1/ingest/usage/csv` | B5 Usage Data | Rajwardhan | P1 | mock | integrations:manage |
-| GET | `/api/v1/ingest/usage/csv/{job_id}` | B5 Usage Data | Rajwardhan | P1 | mock | integrations:manage |
-| GET | `/api/v1/integrations` | B2 HubSpot & Integrations | Rajwardhan | P1 | mock | any |
-| POST | `/api/v1/integrations/{provider}/connect` | B2 HubSpot & Integrations | Rajwardhan | P1 | mock | connect:own |
-| GET | `/api/v1/oauth/{provider}/callback` | B2 HubSpot & Integrations | Rajwardhan | P1 | mock | public |
-| GET | `/api/v1/integrations/hubspot/properties` | B4 Field Mapping | Rajwardhan | P1 | mock | integrations:manage |
+| POST | `/api/v1/ingest/usage` | B5 Usage Data | Rajwardhan | P1 | real | api_key |
+| POST | `/api/v1/ingest/usage/csv` | B5 Usage Data | Rajwardhan | P1 | real | integrations:manage |
+| GET | `/api/v1/ingest/usage/csv/{job_id}` | B5 Usage Data | Rajwardhan | P1 | real | integrations:manage |
+| GET | `/api/v1/integrations` | B2 HubSpot & Integrations | Rajwardhan | P1 | real | any |
+| POST | `/api/v1/integrations/{provider}/connect` | B2 HubSpot & Integrations | Rajwardhan | P1 | real | connect:own |
+| GET | `/api/v1/oauth/{provider}/callback` | B2 HubSpot & Integrations | Rajwardhan | P1 | real | public |
+| GET | `/api/v1/integrations/hubspot/properties` | B4 Field Mapping | Rajwardhan | P1 | real | integrations:manage |
 | GET | `/api/v1/integrations/slack/users` | B6 Slack | Vedansh | P4 | mock | integrations:manage |
-| POST | `/api/v1/integrations/{integration_id}/sync` | D6 Integrations | Rajwardhan | P2 | mock | connect:own |
-| DELETE | `/api/v1/integrations/{integration_id}` | D6 Integrations | Rajwardhan | P2 | mock | connect:own |
-| GET | `/api/v1/integrations/{integration_id}/sync-runs` | D6 Integrations | Rajwardhan | P2 | mock | integrations:manage |
-| GET | `/api/v1/field-mapping` | D7 Field Mapping | Rajwardhan | P1 | mock | any |
-| PUT | `/api/v1/field-mapping` | B4 Field Mapping | Rajwardhan | P1 | mock | mapping:edit |
+| POST | `/api/v1/integrations/{integration_id}/sync` | D6 Integrations | Rajwardhan | P2 | real | connect:own |
+| DELETE | `/api/v1/integrations/{integration_id}` | D6 Integrations | Rajwardhan | P2 | real | connect:own |
+| GET | `/api/v1/integrations/{integration_id}/sync-runs` | D6 Integrations | Rajwardhan | P2 | real | integrations:manage |
+| GET | `/api/v1/field-mapping` | D7 Field Mapping | Rajwardhan | P1 | real | any |
+| PUT | `/api/v1/field-mapping` | B4 Field Mapping | Rajwardhan | P1 | real | mapping:edit |
+| GET | `/api/v1/field-mapping/preview` | B4 Field Mapping | Rajwardhan | P1 | real | any |
 | GET | `/api/v1/log` | C7 Decision Log | Vedansh | P2 | mock | any |
 | GET | `/api/v1/log/verify` | C8 Log Verify & Export | Vedansh | P2 | mock | data:export |
 | GET | `/api/v1/log/{entry_id}` | C8 Log Detail (Why Replay) | Vedansh | P2 | mock | any |

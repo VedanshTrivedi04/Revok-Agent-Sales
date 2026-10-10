@@ -64,6 +64,16 @@ class FieldMappingOut(FieldMappingBody):
     updated_by: UUID | None = None
 
 
+class FieldMappingPreviewItem(BaseModel):
+    account_id: UUID | None = None
+    company_name: str
+    renewal_date: date | None = None
+    arr: float | None = None
+    seats: int | None = None
+    crm_health: str | None = None
+    raw_properties: dict[str, Any] = {}
+
+
 class SlackUserOut(BaseModel):
     slack_user_id: str
     name: str
