@@ -45,7 +45,7 @@
   **Never provided:** `portals-and-impact.md` (page mapping taken from backend-plan §7).
 - Layout:
 ```
-agent.md, memory.md, Makefile, .env.example, .github/workflows/ci.yml, bruno/ (88 generated requests)
+agent.md, memory.md, Makefile, .env.example, .github/workflows/ci.yml, bruno/ (85 generated requests + env files)
 docs/   spec, systemdesign, algorithm, thinking, research, *developer.md, handovers, task.md, skill.md, superpower.md
         + generated/own: endpoints.md, error-codes.md, conventions.md, deploy-staging.md, handoff-p0.md
 infra/  docker-compose.yml (dev), docker-compose.staging.yml, Caddyfile, .env.staging.example, db/init.sql
@@ -53,14 +53,14 @@ apps/api/
   app/ main.py config.py contract.py middleware.py observability.py permissions.py internal_app.py
        auth/{jwt,deps}.py  db/{base,session,rls}.py  models/{tenancy,integrations,timeline,brain,actions,audit,_h}.py
        schemas/{common,identity,integrations,accounts,cards,ops,internal,action_payloads}.py
-       routes/ (19 files, contract stubs)  services/decision_log.py  workers/{celery_app,tasks_maintenance}.py
+       routes/ (19 modules, contract stubs)  services/decision_log.py  workers/{celery_app,tasks_maintenance}.py
        connectors/{base,registry,ctx,http,fake}.py  ports/{__init__,types,template,registry}.py
        mocks/{data.py,handlers.py,*.json}  utils/{errors,ids,time,redis,pagination,ratelimit,locks,canonical,
        crypto,oauth_state,idempotency}.py
   migrations/versions/{0001_initial_schema,0002_rls}.py
   scripts/ seed_demo.py mint_jwt.py gen_endpoints.py gen_error_codes.py gen_mocks.py gen_bruno.py
            check_openapi.py entrypoint.sh
-  tests/  (25 files, snapshots/openapi*.json, fixtures/hubspot/companies.json)  Dockerfile  README.md
+  tests/  (17 test modules + helpers/factories/contracts, snapshots/openapi*.json, fixtures/hubspot/companies.json)  Dockerfile  README.md
 ```
 
 ## 3. Environment facts and gotchas (Windows 11 dev machine)
@@ -97,7 +97,7 @@ apps/api/
 | V0-07 | a5073fe | `permissions.py` single table-driven matrix; 85-case role×action test (done before V0-06 because deps need it) |
 | V0-06 | d3dd610 | HS256 service JWT (sub/org_id/aud/exp, 30 s leeway), deps with Redis 60 s membership cache + `invalidate_membership`, `require_role/owner_or_role/permission`, `require_superadmin`, real `GET /me` |
 | V0-08 | 2d9005a | error registry, cursor pagination, Idempotency-Key middleware, request-id + access log, log/Sentry scrubbers, Lua token-bucket rate limit |
-| V0-09 + V0-10 | fcd72d9 | **both in one commit**: contract-first routing for ~99 endpoints, 8 schema modules, separate internal AI API (7 endpoints), mock mode with stateful handlers + JSON fixtures, `docs/endpoints.md` |
+| V0-09 + V0-10 | fcd72d9 | **both in one commit**: contract-first routing for 85 public endpoints (+2 health, +7 internal AI), 8 schema modules, separate internal AI API (7 endpoints), mock mode with stateful handlers + JSON fixtures, `docs/endpoints.md` |
 | V0-11 | 966c17c | Celery app, 5 queues, `@tenant_task`, TenantTask (autoretry/backoff/acks_late), `failed_jobs` dead-letter, Redis `lock()` |
 | V0-12 | e6be28a | `services/decision_log.log()` + `verify_chain()`, canonical JSON, advisory lock; tamper/delete/forge tests; 100 concurrent inserts |
 | V0-13 | 4092ecb | AES-256-GCM `crypto` (key ids, rotation, AAD), signed single-use `oauth_state`, idempotency-key builders |
