@@ -1,0 +1,71 @@
+# Staging (mock mode): API + Postgres + Redis (+ Caddy for HTTPS when the `https` profile is on).
+#   cp infra/.env.staging.example infra/.env.staging   # then edit secrets/domain
+#   docker compose -f infra/docker-compose.staging.yml --env-file infra/.env.staging up -d --build
+#   add `--profile https` on a VM with a public domain (Caddy gets the certificate automatically)
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: owner
+      POSTGRES_PASSWORD: ${DB_OWNER_PASSWORD:?set DB_OWNER_PASSWORD}
+      POSTGRES_DB: revops
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U owner -d revops"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  api:
+    build: ../apps/api
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      APP_ENV: staging
+      MOCK_API: "true"
+      MOCK_AUTH: ${MOCK_AUTH:-true}
+      SEED_ON_START: "true"
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/revops
+      DATABASE_ADMIN_URL: postgresql+asyncpg://admin:admin@postgres:5432/revops
+      DATABASE_MIGRATOR_URL: postgresql+psycopg://owner:${DB_OWNER_PASSWORD}@postgres:5432/revops
+      REDIS_URL: redis://redis:6379/0
+      API_JWT_SECRET: ${API_JWT_SECRET:?set API_JWT_SECRET (shared with the web app)}
+      API_JWT_AUDIENCE: revops-api
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:?set INTERNAL_API_KEY}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      WEB_URL: ${WEB_URL:-http://localhost:3000}
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8080}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+    ports:
+      - "${API_PORT:-8080}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+  caddy:
+    image: caddy:2
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on: [api]
+    environment:
+      STAGING_DOMAIN: ${STAGING_DOMAIN:-localhost}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+volumes:
+  pgdata:
+  caddy_data:

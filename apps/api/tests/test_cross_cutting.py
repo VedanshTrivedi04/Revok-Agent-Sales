@@ -293,3 +293,20 @@ async def test_rate_limit_dependency_returns_429_with_retry_after() -> None:
     assert codes == [200, 200, 429]
     assert last.json()["error"]["code"] == "rate_limited"
     assert int(last.headers["retry-after"]) >= 1
+
+
+async def test_cors_preflight_allows_web_origin_only(client: AsyncClient) -> None:
+    ok = await client.options(
+        "/api/v1/me",
+        headers={"Origin": "http://localhost:3000", "Access-Control-Request-Method": "GET",
+                 "Access-Control-Request-Headers": "authorization,idempotency-key"},
+    )  # fmt: skip
+    assert (
+        ok.status_code == 200
+        and ok.headers["access-control-allow-origin"] == "http://localhost:3000"
+    )
+    bad = await client.options(
+        "/api/v1/me",
+        headers={"Origin": "https://evil.example.com", "Access-Control-Request-Method": "GET"},
+    )
+    assert "access-control-allow-origin" not in bad.headers

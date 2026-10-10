@@ -3,6 +3,7 @@ from typing import Any
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -67,6 +68,22 @@ def create_app() -> FastAPI:
     # Outermost first: request id wraps everything; idempotency sits inside it.
     app.add_middleware(IdempotencyMiddleware)
     app.add_middleware(RequestIdMiddleware)
+    origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+    app.add_middleware(  # outermost: preflight is answered before auth/idempotency
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=[
+            "Authorization",
+            "Content-Type",
+            "Idempotency-Key",
+            "X-Request-ID",
+            "X-Mock-Error",
+            "X-Mock-Empty",
+        ],
+        expose_headers=["X-Request-ID", "Idempotent-Replayed", "Retry-After"],
+        max_age=600,
+    )
     return app
 
 

@@ -1,0 +1,6 @@
+{$STAGING_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy api:8000 {
+		flush_interval -1   # keep SSE (/api/v1/stream) unbuffered
+	}
+}
