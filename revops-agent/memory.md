@@ -1278,17 +1278,24 @@ uv run python scripts/check_openapi.py --update                   # after any co
 ### 19.2 Help assistant (Work portal, `/help`)
 - Permission `assistant:ask` (Owner, Admin, Manager). Frontend action `view:assistant`.
 - `GET /assistant/catalog`, `POST /assistant/ask` (`app/routes/assistant.py`, page tag `C12 Help`).
-- `app/services/assistant.py`: 7 catalog questions (high-risk accounts, new risk findings,
-  renewals due, pending approvals, expansion opportunities, decisions summary, quiet accounts).
+- `app/services/assistant.py`: 8 catalog questions (high-risk accounts, risk history, new risk
+  findings, renewals due, pending approvals, expansion opportunities, decisions summary, quiet
+  accounts).
   Typed text -> `plan_question` (keywords, English + common Hinglish words, numbers for score /
   days / top N) -> one fixed read-only query in `org_session` -> answer text from the numbers.
   No model. Unmatched text returns `status: "unsupported"` with the catalog as suggestions.
 - "Risk score" = priority score of an account's open risk findings (highest counts).
 - Mock mode: `app/mocks/assistant.py` reuses the planner and answer text over the fixture store.
 - Tests: `tests/test_assistant.py`, `frontend/e2e/help.spec.ts`.
-- Not built: daily score history (a "last N days" question counts findings first seen in the
-  window at today's score), a model-based planner for free text, RAG over emails/notes, and an
-  audit table of questions asked.
+- Score history: migration `0008`, table `account_score_history` (model `AccountScoreDay`, RLS),
+  one row per account per UTC day, upserted by `app/services/score_history.py::record_score_day`
+  at the end of every account run (best effort, in a savepoint). The `risk_history` question
+  ("accounts at 80+ in the last 5 days") reads it together with today's live scores and states how
+  many days of the window have a recorded score. Without the table (database not migrated) it
+  answers from live scores only. History starts with the first run after `0008` is applied;
+  nothing is backfilled. Neon still needs `alembic upgrade head` for `0008`.
+- Not built: a model-based planner for free text, RAG over emails/notes, and an audit table of
+  questions asked.
 - `NEXT_DIST_DIR` (set to `.next-e2e` by `playwright.config.ts`) keeps the E2E build out of `.next`.
 
 ### 19.3 Known failing test (not caused by 19.2)

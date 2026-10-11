@@ -155,6 +155,8 @@ of them or typed text. A typed question is matched by keywords to a catalog ques
 (`app/services/assistant.py::plan_question`), that question runs one fixed read-only query in the
 tenant session, and the answer text is built from the query's numbers. No model is involved, and a
 question that matches nothing is answered with the list of questions that can be asked.
+"In the last N days" risk questions read `account_score_history`: one row per account per UTC day
+with its highest open risk and expansion score, written at the end of each account run.
 
 ## 6. Operations and delivery
 

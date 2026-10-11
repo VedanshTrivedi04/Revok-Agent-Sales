@@ -2649,6 +2649,8 @@ export interface components {
             as_of: string;
             /** Basis */
             basis?: string | null;
+            /** Interpreted As */
+            interpreted_as?: string | null;
             /**
              * Params
              * @default {}

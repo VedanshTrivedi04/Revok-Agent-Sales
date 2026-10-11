@@ -16,7 +16,9 @@ from datetime import date, datetime, timedelta
 from typing import Any
 from uuid import UUID
 
+import structlog
 from sqlalchemy import distinct, func, or_, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.actions import ActionCard
@@ -42,6 +44,7 @@ from app.services.analytics import (
 from app.utils.errors import AppError
 from app.utils.time import utcnow
 
+log = structlog.get_logger()
 Params = dict[ParamKey, int]
 
 
@@ -276,21 +279,29 @@ async def _risk_history(s: AsyncSession, org_id: UUID, p: Params, now: datetime)
     today = now.date()
     start = today - timedelta(days=p["days"])
     day = AccountScoreDay
-    peaks = {
-        account_id: _f(score)
-        for account_id, score in await s.execute(
-            select(day.account_id, func.max(day.risk_score))
-            .where(day.org_id == org_id, day.day >= start, day.risk_score >= p["min_score"])
-            .group_by(day.account_id)
-        )
-    }
+    peaks: dict[UUID, float] = {}
+    first_day: date | None = None
+    try:
+        # In a savepoint: a database that has no history yet (not migrated) still gets an answer
+        # from today's live scores, and the answer says no earlier day is covered.
+        async with s.begin_nested():
+            peaks = {
+                account_id: _f(score)
+                for account_id, score in await s.execute(
+                    select(day.account_id, func.max(day.risk_score))
+                    .where(day.org_id == org_id, day.day >= start, day.risk_score >= p["min_score"])
+                    .group_by(day.account_id)
+                )
+            }
+            first_day = (
+                await s.execute(select(func.min(day.day)).where(day.org_id == org_id))
+            ).scalar_one()
+    except SQLAlchemyError as exc:
+        log.warning("score_history_unavailable", error=type(exc).__name__)
     current = {
         account_id: _f(score)
         for account_id, score in await s.execute(_open_risk(org_id, p["min_score"]))
     }
-    first_day = (
-        await s.execute(select(func.min(day.day)).where(day.org_id == org_id))
-    ).scalar_one()
     ids = peaks.keys() | current.keys()
     records: list[dict[str, Any]] = []
     if ids:
@@ -781,6 +792,7 @@ def compose(plan: Plan, facts: Facts, currency: str, now: datetime) -> Assistant
         status="answered",
         question_id=plan.question_id,
         params=plan.params,
+        interpreted_as=_BY_ID[plan.question_id].template.format(**plan.params),
         text=text,
         basis=basis,
         rows=rows,

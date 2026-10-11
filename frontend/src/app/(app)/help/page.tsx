@@ -151,6 +151,12 @@ function TurnView({
 
       {answer && (
         <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-3">
+          {/* A typed question is matched to a catalog question: show which one was answered. */}
+          {turn.body.question && answer.interpreted_as && (
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Answered as: <span className="font-medium">{answer.interpreted_as}</span>
+            </p>
+          )}
           <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed">{answer.text}</p>
           <AnswerRows answer={answer} />
           {answer.suggestions.length > 0 && (

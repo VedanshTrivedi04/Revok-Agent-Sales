@@ -16,6 +16,7 @@ from zoneinfo import ZoneInfo
 
 import structlog
 from sqlalchemy import delete, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import admin_session, org_session
@@ -483,8 +484,13 @@ async def _run_steps(
         ]
     await finish("actions", t0, {"cards": cards})
 
-    # Today's score snapshot (what "in the last N days" questions are answered from)
-    await record_score_day(session, org_id, account_id, now)
+    # Today's score snapshot (what "in the last N days" questions are answered from). Best effort,
+    # in a savepoint: a run's findings and cards must not be lost because the snapshot failed.
+    try:
+        async with session.begin_nested():
+            await record_score_day(session, org_id, account_id, now)
+    except SQLAlchemyError as exc:
+        log.warning("score_day_not_recorded", account_id=str(account_id), error=type(exc).__name__)
 
     # Complete AgentRun
     account.last_run_at = now

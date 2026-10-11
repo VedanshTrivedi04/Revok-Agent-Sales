@@ -186,6 +186,9 @@ async def test_the_example_question_is_answered_from_score_history(
     data = await _ask(c, question="last 5 days me kitne accounts 80% above risk par hai")
     assert data["question_id"] == "risk_history"
     assert data["params"] == {"days": 5, "min_score": 80, "limit": 10}
+    assert data["interpreted_as"] == (
+        "Which accounts had a risk score of 80 or higher in the last 5 days?"
+    )
     assert data["text"] == (
         "2 accounts had a risk score of 80 or higher at some point in the last 5 days, "
         "with USD 140,000 in ARR between them. 1 still does today."
@@ -218,6 +221,17 @@ async def test_history_says_how_many_days_it_covers(client_as: ClientAs, org_a: 
     data = await _ask(client_as("manager"), question_id="risk_history")
     assert data["total"] == 1 and data["rows"][0]["detail"].startswith("Peak risk score 81.0")
     assert "Daily scores exist for 2 of the last 7 days" in data["basis"]
+
+
+async def test_history_question_still_answers_without_the_history_table(
+    client_as: ClientAs, org_a: SeededOrg, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A database that is not migrated yet answers from today's live scores and says so."""
+    await _seed(org_a)
+    monkeypatch.setattr(AccountScoreDay.__table__, "name", "no_such_score_table")
+    data = await _ask(client_as("manager"), question_id="risk_history", params={"days": 5})
+    assert [r["title"] for r in data["rows"]] == ["Alpha"]  # only what is above 80 right now
+    assert "Daily scores exist for 0 of the last 5 days" in data["basis"]
 
 
 async def test_new_risk_findings_in_a_window(client_as: ClientAs, org_a: SeededOrg) -> None:

@@ -6,13 +6,13 @@ the order, the sequence numbers, the data and the failure path are part of the c
 
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import timedelta
 from decimal import Decimal
 from typing import Any
 from uuid import UUID, uuid4
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from app.config import get_settings
 from app.db.session import org_session
@@ -154,3 +154,25 @@ async def test_a_debounced_run_is_reported_as_skipped(
     steps = [d for t, d in events if t == "run.step"]
     assert [(d["step"], d["status"]) for d in steps] == [("trigger", "skipped")]
     assert "within the last hour" in steps[0]["detail"]
+
+
+async def test_a_failing_score_snapshot_does_not_fail_the_run(
+    org_a: SeededOrg, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A database without the score-history table (not migrated yet) still completes its runs."""
+    from app.workers import tasks_run
+
+    async def missing_table(session: Any, *_: Any) -> None:
+        await session.execute(text("SELECT 1 FROM no_such_score_table"))
+
+    monkeypatch.setattr(tasks_run, "record_score_day", missing_table)
+    org = org_a.org_id
+    acc = await _account(org, renewal_date=utcnow().date() + timedelta(days=20), arr=Decimal("84000"), crm_health="Green")  # fmt: skip
+    _capture(monkeypatch)
+
+    out = await tasks_run.run_account_task.async_fn(None, org, str(acc), "manual", None, None)
+
+    async with org_session(org) as s:
+        run = (await s.execute(select(AgentRun).where(AgentRun.id == UUID(out["agent_run_id"])))).scalar_one()  # fmt: skip
+        findings = (await s.execute(select(Finding).where(Finding.account_id == acc))).scalars().all()  # fmt: skip
+    assert run.status == "completed" and len(findings) >= 1

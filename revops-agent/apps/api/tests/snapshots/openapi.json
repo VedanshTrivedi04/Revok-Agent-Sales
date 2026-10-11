@@ -1741,6 +1741,17 @@
       ],
       "title": "Basis"
      },
+     "interpreted_as": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Interpreted As"
+     },
      "params": {
       "additionalProperties": {
        "type": "integer"

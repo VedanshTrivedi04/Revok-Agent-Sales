@@ -58,6 +58,7 @@ class AssistantAnswer(BaseModel):
     status: Literal["answered", "unsupported"]
     question_id: str | None = None
     params: dict[ParamKey, int] = {}  # the values the answer was computed with
+    interpreted_as: str | None = None  # the catalog question, with those values, that was answered
     text: str
     basis: str | None = None  # how the numbers were worked out
     rows: list[AnswerRow] = []

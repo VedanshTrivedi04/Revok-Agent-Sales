@@ -17,7 +17,8 @@ test("a Manager asks the Help assistant and gets answers from the workspace data
   await page.getByLabel("Your question").fill("what is pending for approval?");
   await page.getByRole("button", { name: "Ask" }).click();
   const second = page.getByRole("article").nth(1);
-  await expect(second.getByText(/waiting for approval/i)).toBeVisible();
+  await expect(second.getByText("Answered as: What is waiting for approval?")).toBeVisible();
+  await expect(second.getByText(/waiting for approval\.|nothing is waiting/i)).toBeVisible();
 
   // something it cannot answer is said plainly, with what can be asked instead
   await page.getByLabel("Your question").fill("what is the weather today");
