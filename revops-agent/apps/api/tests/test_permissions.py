@@ -33,6 +33,7 @@ MATRIX: dict[Action, tuple[str, str, str, str, str]] = {
     Action.VIEW_ENTITY_REVIEW: (Y, Y, Y, N, N),
     Action.VIEW_RUNS: (Y, Y, Y, N, N),
     Action.VIEW_ANALYTICS: (Y, Y, N, N, N),
+    Action.ASK_ASSISTANT: (Y, Y, Y, N, N),
 }
 ROLES = [Role.OWNER, Role.ADMIN, Role.MANAGER, Role.MEMBER, Role.VIEWER]
 

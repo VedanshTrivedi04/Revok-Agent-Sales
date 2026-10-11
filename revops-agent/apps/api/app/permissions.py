@@ -33,12 +33,15 @@ class Action(StrEnum):
     VIEW_ENTITY_REVIEW = "review:view"
     VIEW_RUNS = "runs:view"
     VIEW_ANALYTICS = "analytics:view"  # Control portal: org-wide analytics
+    ASK_ASSISTANT = "assistant:ask"  # Help: plain-language questions about the org's data
 
 
 A = Action
 _VIEW_ALL = {A.VIEW_ACCOUNTS, A.CONNECT_OWN}
 _APPROVER = {A.APPROVE_OWN, A.EDIT_CARD, A.REVERT, A.RUN_NOW}
-_MANAGER = _VIEW_ALL | _APPROVER | {A.APPROVE_ANY, A.EDIT_RULES, A.VIEW_ENTITY_REVIEW, A.VIEW_RUNS}
+_MANAGER = _VIEW_ALL | _APPROVER | {
+    A.APPROVE_ANY, A.EDIT_RULES, A.VIEW_ENTITY_REVIEW, A.VIEW_RUNS, A.ASK_ASSISTANT,
+}  # fmt: skip
 _ADMIN = _MANAGER | {
     A.MANAGE_INTEGRATIONS, A.EDIT_FIELD_MAPPING, A.EDIT_AUTONOMY,
     A.MANAGE_MEMBERS, A.API_KEYS, A.DATA_EXPORT, A.VIEW_ANALYTICS,
