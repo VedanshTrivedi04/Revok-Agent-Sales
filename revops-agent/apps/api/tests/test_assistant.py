@@ -5,12 +5,17 @@ from collections.abc import Callable
 from datetime import timedelta
 from decimal import Decimal
 from typing import Any
+from uuid import uuid4
 
 import pytest
 from httpx import AsyncClient
+from sqlalchemy import select
 
 from app.contract import V1
+from app.db.session import org_session
+from app.models.timeline import AccountScoreDay
 from app.services.assistant import QUESTIONS, catalog, plan_question
+from app.services.score_history import record_score_day
 from app.utils.time import utcnow
 from tests.factories import AccountFactory, CardFactory, FindingFactory, persist
 from tests.helpers import SeededOrg
@@ -83,7 +88,13 @@ async def _seed(org: SeededOrg) -> dict[str, Any]:
             created_at=now - timedelta(days=3),
         ),
     ]  # fmt: skip
-    await persist(o, a, b, c, d, *findings, *cards)
+    # recorded daily scores: Beta peaked above 80 three days ago (and higher ten days ago)
+    history = [
+        AccountScoreDay(id=uuid4(), org_id=o, account_id=acc.id, day=today - timedelta(days=ago),
+                        risk_score=Decimal(score))
+        for acc, ago, score in ((a, 1, "82"), (b, 3, "88"), (b, 10, "95"), (d, 1, "99"))
+    ]  # fmt: skip
+    await persist(o, a, b, c, d, *findings, *cards, *history)
     return {"a": a, "b": b, "c": c, "d": d, "pending": cards[-1], "f_alpha": f_alpha}
 
 
@@ -99,7 +110,7 @@ async def _ask(client: AsyncClient, **body: Any) -> Any:
     [
         (
             "last 5 days me kitne accounts 80% above risk par hai",
-            "new_risk_findings",
+            "risk_history",
             {"days": 5, "min_score": 80},
         ),
         ("Which accounts are at risk?", "high_risk_accounts", {"min_score": 0}),
@@ -107,6 +118,7 @@ async def _ask(client: AsyncClient, **body: Any) -> Any:
         ("kitne accounts 60 se upar risk par hain", "high_risk_accounts", {"min_score": 60}),
         ("top 3 risky accounts", "high_risk_accounts", {"min_score": 0, "limit": 3}),
         ("any new churn risk this week?", "new_risk_findings", {"days": 7, "min_score": 0}),
+        ("which accounts were at risk this month", "risk_history", {"days": 30, "min_score": 0}),
         ("renewals in the next 2 weeks", "renewals_due", {"days": 14}),
         ("at-risk renewals this quarter", "renewals_due", {"days": 90}),
         ("what is pending for approval", "pending_approvals", {}),
@@ -166,19 +178,86 @@ async def test_high_risk_accounts_counts_only_open_risk_on_active_accounts(
     assert "2 accounts have a risk score of 50 or higher" in lower["text"]
 
 
-async def test_the_example_question_in_plain_words(client_as: ClientAs, org_a: SeededOrg) -> None:
+async def test_the_example_question_is_answered_from_score_history(
+    client_as: ClientAs, org_a: SeededOrg
+) -> None:
+    ids = await _seed(org_a)
+    c = client_as("manager")
+    data = await _ask(c, question="last 5 days me kitne accounts 80% above risk par hai")
+    assert data["question_id"] == "risk_history"
+    assert data["params"] == {"days": 5, "min_score": 80, "limit": 10}
+    assert data["text"] == (
+        "2 accounts had a risk score of 80 or higher at some point in the last 5 days, "
+        "with USD 140,000 in ARR between them. 1 still does today."
+    )
+    # Alpha is above 80 now; Beta was three days ago and is not any more; churned Delta is left out
+    assert [(r["title"], r["detail"]) for r in data["rows"]] == [
+        ("Alpha", "Peak risk score 90.0 · now 90.0 · ARR USD 100,000"),
+        ("Beta", "Peak risk score 88.0 · now below 80 · ARR USD 40,000"),
+    ]
+    assert data["rows"][1]["account_id"] == str(ids["b"].id)
+    assert "not covered" not in data["basis"]  # history reaches back past the window
+
+    shorter = await _ask(c, question_id="risk_history", params={"days": 2})
+    assert [r["title"] for r in shorter["rows"]] == ["Alpha"]
+    older = await _ask(c, question_id="risk_history", params={"days": 30, "min_score": 92})
+    assert older["text"] == (
+        "1 account had a risk score of 92 or higher at some point in the last 30 days, "
+        "with USD 40,000 in ARR between them. 0 still do today."
+    )
+    assert older["rows"][0]["detail"].startswith("Peak risk score 95.0 · now below 92")
+
+
+async def test_history_says_how_many_days_it_covers(client_as: ClientAs, org_a: SeededOrg) -> None:
+    o, today = org_a.org_id, utcnow().date()
+    a = AccountFactory.build(org_id=o, name="Alpha")
+    await persist(
+        o, a, AccountScoreDay(id=uuid4(), org_id=o, account_id=a.id, day=today - timedelta(days=1),
+                              risk_score=Decimal("81")),
+    )  # fmt: skip
+    data = await _ask(client_as("manager"), question_id="risk_history")
+    assert data["total"] == 1 and data["rows"][0]["detail"].startswith("Peak risk score 81.0")
+    assert "Daily scores exist for 2 of the last 7 days" in data["basis"]
+
+
+async def test_new_risk_findings_in_a_window(client_as: ClientAs, org_a: SeededOrg) -> None:
     ids = await _seed(org_a)
     data = await _ask(
-        client_as("manager"), question="last 5 days me kitne accounts 80% above risk par hai"
+        client_as("manager"), question="any new risk findings above 80 in the last 5 days?"
     )
     assert data["question_id"] == "new_risk_findings"
-    assert data["params"] == {"days": 5, "min_score": 80, "limit": 10}
     assert data["text"] == (
         "2 new risk findings with a risk score of 80 or higher appeared in the last 5 days, "
         "across 2 accounts. 1 is still open."
     )
     assert data["rows"][0]["finding_id"] == str(ids["f_alpha"].id)
-    assert "score history is not stored" in data["basis"]
+
+
+async def test_score_day_is_recorded_once_per_day_and_updated(org_a: SeededOrg) -> None:
+    ids = await _seed(org_a)
+    o, now = org_a.org_id, utcnow()
+
+    async def today_rows(account_id: Any) -> list[tuple[Any, Any]]:
+        async with org_session(o) as s:
+            rows = await s.execute(
+                select(AccountScoreDay.risk_score, AccountScoreDay.expansion_score).where(
+                    AccountScoreDay.account_id == account_id, AccountScoreDay.day == now.date()
+                )
+            )
+            return [(r[0], r[1]) for r in rows]
+
+    async with org_session(o) as s:
+        await record_score_day(s, o, ids["a"].id, now)
+        await record_score_day(s, o, ids["c"].id, now)
+    assert await today_rows(ids["a"].id) == [(Decimal("90.00"), Decimal("55.00"))]
+    assert await today_rows(ids["c"].id) == [(None, None)]  # analysed, nothing open
+
+    async with org_session(o) as s:
+        ids["f_alpha"].priority_score = Decimal("70")
+        await s.merge(ids["f_alpha"])
+        await s.flush()
+        await record_score_day(s, o, ids["a"].id, now)
+    assert await today_rows(ids["a"].id) == [(Decimal("70.00"), Decimal("55.00"))]
 
 
 async def test_renewals_pending_expansion_decisions_and_quiet(
@@ -225,6 +304,11 @@ async def test_no_data_is_said_plainly(client_as: ClientAs) -> None:
     assert (await _ask(c, question_id="pending_approvals"))["text"] == (
         "Nothing is waiting for approval."
     )
+    history = await _ask(c, question_id="risk_history")
+    assert history["text"] == (
+        "No active account had a risk score of 80 or higher in the last 7 days."
+    )
+    assert "Daily scores exist for 0 of the last 7 days" in history["basis"]
 
 
 async def test_unsupported_question_lists_what_can_be_asked(client_as: ClientAs) -> None:

@@ -21,7 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.actions import ActionCard
 from app.models.brain import Finding
-from app.models.timeline import Account
+from app.models.timeline import Account, AccountScoreDay
 from app.schemas.assistant import (
     AnswerRow,
     AssistantAnswer,
@@ -68,6 +68,11 @@ QUESTIONS: tuple[Question, ...] = (
         "high_risk_accounts",
         "Which accounts have a risk score of {min_score} or higher?",
         (_min_score(80), _LIMIT),
+    ),
+    Question(
+        "risk_history",
+        "Which accounts had a risk score of {min_score} or higher in the last {days} days?",
+        (_days(7), _min_score(80), _LIMIT),
     ),
     Question(
         "new_risk_findings",
@@ -190,7 +195,10 @@ def plan_question(question: str) -> Plan | None:
     if intent == "risk":
         # "which accounts are at risk" names no threshold: count every open risk finding
         given["min_score"] = int(next(g for g in score.groups() if g)) if score else 0
-        intent = "new_risk_findings" if days is not None or _NEW.search(text) else "high_risk_accounts"  # fmt: skip
+        if _NEW.search(text):
+            intent = "new_risk_findings"
+        else:
+            intent = "risk_history" if days is not None else "high_risk_accounts"
     q = _BY_ID[intent]
     return Plan(q.id, _resolve_params(q, given, clamp=True))
 
@@ -221,18 +229,22 @@ def _active(org_id: UUID) -> tuple[Any, ...]:
     return (Account.org_id == org_id, Account.status == "active")
 
 
-async def _high_risk_accounts(s: AsyncSession, org_id: UUID, p: Params, now: datetime) -> Facts:
-    top = (
+def _open_risk(org_id: UUID, min_score: int) -> Any:
+    """Per account: its highest open risk finding at or above `min_score`, as of now."""
+    return (
         select(Finding.account_id, func.max(Finding.priority_score).label("score"))
         .where(
             Finding.org_id == org_id,
             Finding.type == "risk",
             Finding.status.in_(OPEN_FINDINGS),
-            Finding.priority_score >= p["min_score"],
+            Finding.priority_score >= min_score,
         )
         .group_by(Finding.account_id)
-        .subquery()
     )
+
+
+async def _high_risk_accounts(s: AsyncSession, org_id: UUID, p: Params, now: datetime) -> Facts:
+    top = _open_risk(org_id, p["min_score"]).subquery()
     on = top.c.account_id == Account.id
     total, arr = (
         await s.execute(
@@ -256,6 +268,59 @@ async def _high_risk_accounts(s: AsyncSession, org_id: UUID, p: Params, now: dat
             {"account_id": r[0], "name": r[1], "arr": r[2], "renewal_date": r[3], "score": r[4]}
             for r in rows
         ],
+    )
+
+
+async def _risk_history(s: AsyncSession, org_id: UUID, p: Params, now: datetime) -> Facts:
+    """Accounts at or above the score on any recorded day of the window, or right now."""
+    today = now.date()
+    start = today - timedelta(days=p["days"])
+    day = AccountScoreDay
+    peaks = {
+        account_id: _f(score)
+        for account_id, score in await s.execute(
+            select(day.account_id, func.max(day.risk_score))
+            .where(day.org_id == org_id, day.day >= start, day.risk_score >= p["min_score"])
+            .group_by(day.account_id)
+        )
+    }
+    current = {
+        account_id: _f(score)
+        for account_id, score in await s.execute(_open_risk(org_id, p["min_score"]))
+    }
+    first_day = (
+        await s.execute(select(func.min(day.day)).where(day.org_id == org_id))
+    ).scalar_one()
+    ids = peaks.keys() | current.keys()
+    records: list[dict[str, Any]] = []
+    if ids:
+        rows = await s.execute(
+            select(Account.id, Account.name, Account.arr).where(
+                *_active(org_id), Account.id.in_(ids)
+            )
+        )
+        records = [
+            {
+                "account_id": r[0],
+                "name": r[1],
+                "arr": r[2],
+                "peak": max(peaks.get(r[0], 0.0), current.get(r[0], 0.0)),
+                "current": current.get(r[0]),
+            }
+            for r in rows
+        ]
+    records.sort(key=lambda r: (-r["peak"], r["name"]))
+    return Facts(
+        len(records),
+        {
+            "arr": sum(_f(r["arr"]) for r in records),
+            "still": sum(1 for r in records if r["current"] is not None),
+            # days of the window that have a recorded score (history starts when the first run did)
+            "covered_days": (
+                min(p["days"], (today - max(first_day, start)).days + 1) if first_day else 0
+            ),
+        },
+        records[: p["limit"]],
     )
 
 
@@ -435,6 +500,7 @@ async def _quiet_accounts(s: AsyncSession, org_id: UUID, p: Params, now: datetim
 
 _GATHER: dict[str, Gather] = {
     "high_risk_accounts": _high_risk_accounts,
+    "risk_history": _risk_history,
     "new_risk_findings": _new_risk_findings,
     "renewals_due": _renewals_due,
     "pending_approvals": _pending_approvals,
@@ -500,6 +566,43 @@ def _say_high_risk_accounts(f: Facts, p: Params, cur: str, today: date) -> Said:
     return text, basis, rows
 
 
+def _say_risk_history(f: Facts, p: Params, cur: str, today: date) -> Said:
+    clause = _score_clause(p["min_score"])
+    window = f"in the last {_n(p['days'], 'day')}"
+    if f.total == 0:
+        text = f"No active account had {clause} {window}."
+    else:
+        still = f.numbers["still"]
+        text = f"{_n(f.total, 'account')} had {clause} at some point {window}"
+        arr = f.numbers["arr"]
+        text += f", with {_money(cur, arr)} in ARR between them. " if arr else ". "
+        text += f"{int(still)} still {_verb(still, 'does', 'do')} today."
+    below = f"now below {p['min_score']}" if p["min_score"] > 0 else "no open risk finding now"
+    rows = [
+        AnswerRow(
+            title=r["name"],
+            detail=_parts(
+                f"Peak risk score {r['peak']:.1f}",
+                f"now {r['current']:.1f}" if r["current"] is not None else below,
+                _arr(cur, r["arr"]),
+            ),
+            account_id=r["account_id"],
+        )
+        for r in f.records
+    ]
+    basis = (
+        "Uses the risk score recorded on each day an account was analysed (its highest open risk "
+        "finding that day), together with today's live scores."
+    )
+    covered = int(f.numbers["covered_days"])
+    if covered < p["days"]:
+        basis += (
+            f" Daily scores exist for {covered} of the last {_n(p['days'], 'day')}; "
+            "the earlier days are not covered."
+        )
+    return text, basis, rows
+
+
 def _say_new_risk_findings(f: Facts, p: Params, cur: str, today: date) -> Said:
     window = f"in the last {_n(p['days'], 'day')}"
     scored = f" with a risk score of {p['min_score']} or higher" if p["min_score"] > 0 else ""
@@ -526,8 +629,8 @@ def _say_new_risk_findings(f: Facts, p: Params, cur: str, today: date) -> Said:
         for r in f.records
     ]
     basis = (
-        "Counts risk findings first seen in the window, at their current score. Daily score "
-        "history is not stored, so how a score moved inside the window is not considered."
+        "Counts risk findings first seen in the window, at their current score. For accounts "
+        "that were above a score on any day of the window, ask which accounts had that score."
     )
     return text, basis, rows
 
@@ -662,6 +765,7 @@ def _say_quiet_accounts(f: Facts, p: Params, cur: str, today: date) -> Said:
 
 _SAY: dict[str, Say] = {
     "high_risk_accounts": _say_high_risk_accounts,
+    "risk_history": _say_risk_history,
     "new_risk_findings": _say_new_risk_findings,
     "renewals_due": _say_renewals_due,
     "pending_approvals": _say_pending_approvals,

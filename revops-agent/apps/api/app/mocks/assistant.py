@@ -34,7 +34,7 @@ def _facts(plan: svc.Plan, now: datetime) -> svc.Facts:
     since = now - timedelta(days=p.get("days", 0))
     open_risk = [f for f in findings if f["type"] == "risk" and f["status"] in OPEN_FINDINGS]
 
-    if plan.question_id == "high_risk_accounts":
+    if plan.question_id in ("high_risk_accounts", "risk_history"):
         best: dict[str, float] = {}
         for f in open_risk:
             if f["priority_score"] >= p["min_score"]:
@@ -42,6 +42,18 @@ def _facts(plan: svc.Plan, now: datetime) -> svc.Facts:
         hit = sorted(
             (a for a in accounts if a["id"] in best), key=lambda a: (-best[a["id"]], a["name"])
         )
+        if plan.question_id == "risk_history":  # the fixture store keeps no history: today only
+            return svc.Facts(
+                len(hit),
+                {"arr": sum(a.get("arr") or 0 for a in hit), "still": len(hit), "covered_days": 1},
+                [
+                    {
+                        "account_id": a["id"], "name": a["name"], "arr": a.get("arr"),
+                        "peak": best[a["id"]], "current": best[a["id"]],
+                    }
+                    for a in hit[:limit]
+                ],
+            )  # fmt: skip
         return svc.Facts(
             len(hit),
             {"arr": sum(a.get("arr") or 0 for a in hit)},

@@ -33,6 +33,7 @@ from app.schemas.accounts import Claim, EvidenceOut
 from app.services import ai_client
 from app.services.context import build_context, fetch_rows
 from app.services.findings import upsert_finding
+from app.services.score_history import record_score_day
 from app.services.scoring import (
     compute_compound_severity,
     compute_evidence_confidence,
@@ -481,6 +482,9 @@ async def _run_steps(
             for c in card_rows
         ]
     await finish("actions", t0, {"cards": cards})
+
+    # Today's score snapshot (what "in the last N days" questions are answered from)
+    await record_score_day(session, org_id, account_id, now)
 
     # Complete AgentRun
     account.last_run_at = now

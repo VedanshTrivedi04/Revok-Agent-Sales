@@ -17,9 +17,10 @@ from sqlalchemy import select
 from app.config import get_settings
 from app.db.session import org_session
 from app.models.brain import AgentRun, Finding
-from app.models.timeline import Account
+from app.models.timeline import Account, AccountScoreDay
 from app.services import ai_client
 from app.services.runs import get_run_service
+from app.utils.time import utcnow
 from tests.helpers import SeededOrg
 
 
@@ -55,7 +56,7 @@ async def test_run_publishes_every_step_in_order_with_its_real_data(
     from app.workers import tasks_run
 
     org = org_a.org_id
-    acc = await _account(org, renewal_date=date.today() + timedelta(days=20), arr=Decimal("84000"), crm_health="Green")  # fmt: skip
+    acc = await _account(org, renewal_date=utcnow().date() + timedelta(days=20), arr=Decimal("84000"), crm_health="Green")  # fmt: skip
     events = _capture(monkeypatch)
 
     out = await tasks_run.run_account_task.async_fn(None, org, str(acc), "manual", None, None)
@@ -94,6 +95,9 @@ async def test_run_publishes_every_step_in_order_with_its_real_data(
     async with org_session(org) as s:
         detail = await get_run_service(s, org, UUID(run_id))
         finding = (await s.execute(select(Finding).where(Finding.account_id == acc, Finding.type == "risk"))).scalar_one()  # fmt: skip
+        scored = (await s.execute(select(AccountScoreDay).where(AccountScoreDay.account_id == acc))).scalar_one()  # fmt: skip
+    # the run left today's score behind for "in the last N days" questions
+    assert (scored.day, scored.risk_score) == (utcnow().date(), finding.priority_score)
     persisted = {st.name: st for st in detail.steps}
     assert list(persisted) == ["trigger", "context", "rules", "evidence", "scoring", "explain", "findings", "actions"]  # fmt: skip
     assert persisted["context"].data == by_step["context"]["data"]

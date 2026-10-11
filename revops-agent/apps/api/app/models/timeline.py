@@ -174,6 +174,23 @@ class UsageSnapshot(Base, IdMixin, TimestampMixin):
     source: Mapped[str] = mapped_column(Text, nullable=False)
 
 
+class AccountScoreDay(Base, IdMixin, TimestampMixin):
+    """An account's highest open risk / expansion priority on one UTC day, as of its last analysis
+    that day. None = no open finding of that type."""
+
+    __tablename__ = "account_score_history"
+    __table_args__ = (
+        UniqueConstraint("org_id", "account_id", "day", name="uq_account_score_history_day"),
+        Index("ix_account_score_history_org_id_day", "org_id", "day"),
+    )
+
+    org_id: Mapped[UUID] = tenant_fk()
+    account_id: Mapped[UUID] = uuid_fk("accounts.id")
+    day: Mapped[date] = mapped_column(Date, nullable=False)
+    risk_score: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
+    expansion_score: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
+
+
 class EntityMatchReview(Base, IdMixin, TimestampMixin):
     __tablename__ = "entity_match_reviews"
     __table_args__ = (enum_ck("status", ("open", "resolved", "ignored")),)
