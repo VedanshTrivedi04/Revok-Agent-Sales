@@ -6,6 +6,7 @@ from app.routes import (  # noqa: F401
     admin,
     analytics,
     api_keys,
+    assistant,
     auth,
     autonomy,
     entity_reviews,

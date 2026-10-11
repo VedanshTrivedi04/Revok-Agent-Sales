@@ -89,6 +89,7 @@ BODIES: dict[str, Any] = {
     "resolve_entity_review": {"ignore": True}, "mark_notifications_read": {"all": True},
     "run_evals": {"suite": "smoke"}, "put_flag": {"key": "email_send", "default": True},
     "slack_events": {"type": "url_verification", "challenge": "abc"}, "slack_interactions": {"type": "block_actions"},
+    "assistant_ask": {"question_id": "high_risk_accounts"},
 }  # fmt: skip
 PATH_OVERRIDES: dict[str, dict[str, Any]] = {
     "revert_card": {"card_id": D.CARD_IDS["acme_task"]},

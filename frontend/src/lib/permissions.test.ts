@@ -21,6 +21,7 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
     "apikeys:manage",
     "data:export",
     "analytics:view",
+    "assistant:ask",
     "org:delete",
   ];
 
@@ -37,6 +38,7 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
     "rules:edit",
     "review:view",
     "runs:view",
+    "assistant:ask",
   ];
 
   const MEMBER_PERMISSIONS = [
@@ -49,6 +51,16 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
   ];
 
   const VIEWER_PERMISSIONS = ["view:accounts", "connect:own"];
+
+  describe("Help assistant", () => {
+    it("is offered to Manager and above, never to Member or Viewer", () => {
+      expect(checkPermission(OWNER_PERMISSIONS, {}, "view:assistant")).toBe(true);
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:assistant")).toBe(true);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:assistant")).toBe(true);
+      expect(checkPermission(MEMBER_PERMISSIONS, {}, "view:assistant")).toBe(false);
+      expect(checkPermission(VIEWER_PERMISSIONS, {}, "view:assistant")).toBe(false);
+    });
+  });
 
   describe("Owner Role", () => {
     it("can perform everything including transfer ownership and delete workspace", () => {

@@ -764,6 +764,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/assistant/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Answer a question from the organization's own data (manager+). Read-only.
+         * @description Answer a question from the organization's own data (manager+). Read-only.
+         */
+        post: operations["assistant_ask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assistant/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Questions the assistant can answer, with their adjustable values (manager+).
+         * @description Questions the assistant can answer, with their adjustable values (manager+).
+         */
+        get: operations["assistant_catalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/admin/login": {
         parameters: {
             query?: never;
@@ -2524,6 +2564,22 @@ export interface components {
              */
             start: string;
         };
+        /**
+         * AnswerRow
+         * @description A record behind the answer; the ids let the UI link to it.
+         */
+        AnswerRow: {
+            /** Account Id */
+            account_id?: string | null;
+            /** Card Id */
+            card_id?: string | null;
+            /** Detail */
+            detail?: string | null;
+            /** Finding Id */
+            finding_id?: string | null;
+            /** Title */
+            title: string;
+        };
         /** ApiKeyCreateIn */
         ApiKeyCreateIn: {
             /** Name */
@@ -2583,6 +2639,97 @@ export interface components {
             revoked_at?: string | null;
             /** Scopes */
             scopes: string[];
+        };
+        /** AssistantAnswer */
+        AssistantAnswer: {
+            /**
+             * As Of
+             * Format: date-time
+             */
+            as_of: string;
+            /** Basis */
+            basis?: string | null;
+            /**
+             * Params
+             * @default {}
+             */
+            params: {
+                [key: string]: number;
+            };
+            /** Question Id */
+            question_id?: string | null;
+            /**
+             * Rows
+             * @default []
+             */
+            rows: components["schemas"]["AnswerRow"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "answered" | "unsupported";
+            /**
+             * Suggestions
+             * @default []
+             */
+            suggestions: components["schemas"]["AssistantQuestion"][];
+            /** Text */
+            text: string;
+            /**
+             * Total
+             * @default 0
+             */
+            total: number;
+        };
+        /**
+         * AssistantAskIn
+         * @description Either a typed question, or a catalog question by id (optionally with its values changed).
+         */
+        AssistantAskIn: {
+            /**
+             * Params
+             * @default {}
+             */
+            params: {
+                [key: string]: number;
+            };
+            /** Question */
+            question?: string | null;
+            /** Question Id */
+            question_id?: string | null;
+        };
+        /** AssistantCatalog */
+        AssistantCatalog: {
+            /** Questions */
+            questions: components["schemas"]["AssistantQuestion"][];
+        };
+        /**
+         * AssistantParam
+         * @description One adjustable value of a question, with the range the API accepts.
+         */
+        AssistantParam: {
+            /** Default */
+            default: number;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "min_score" | "days" | "limit";
+            /** Label */
+            label: string;
+            /** Max */
+            max: number;
+            /** Min */
+            min: number;
+        };
+        /** AssistantQuestion */
+        AssistantQuestion: {
+            /** Id */
+            id: string;
+            /** Params */
+            params: components["schemas"]["AssistantParam"][];
+            /** Text */
+            text: string;
         };
         /**
          * AuthSession
@@ -4693,7 +4840,7 @@ export interface components {
              * Data
              * @default {}
              */
-            data?: {
+            data: {
                 [key: string]: unknown;
             };
             /** Detail */
@@ -6461,6 +6608,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    assistant_ask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssistantAskIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantAnswer"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    assistant_catalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantCatalog"];
                 };
             };
         };

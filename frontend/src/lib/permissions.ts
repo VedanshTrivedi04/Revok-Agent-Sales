@@ -18,6 +18,7 @@ export type AppAction =
   | "view:control"
   | "view:analytics"
   | "view:rules"
+  | "view:assistant"
   | "view:settings_profile"
   | "view:settings_connections"
   | "view:settings_notifications"
@@ -105,6 +106,10 @@ export function checkPermission(
     case "view:rules":
     case "view:settings_rules":
       return permSet.has("rules:edit");
+
+    // Help: plain-language questions about the workspace's data
+    case "view:assistant":
+      return permSet.has("assistant:ask");
 
     // Personal settings (Work portal)
     case "view:settings_profile":

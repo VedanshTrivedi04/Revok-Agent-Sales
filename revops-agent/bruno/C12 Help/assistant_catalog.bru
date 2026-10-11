@@ -1,0 +1,20 @@
+meta {
+  name: assistant_catalog
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/assistant/catalog
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Questions the assistant can answer, with their adjustable values (manager+).
+  Page: C12 Help | Owner: V | Phase: P8 | Access: assistant:ask
+}

@@ -26,6 +26,7 @@ export const queryKeys = {
   apiKeys: () => ["api-keys"] as const,
   outcomes: () => ["outcomes"] as const,
   analytics: (view: string, query = "") => ["analytics", view, query] as const,
+  assistantCatalog: () => ["assistant", "catalog"] as const,
 };
 
 /**

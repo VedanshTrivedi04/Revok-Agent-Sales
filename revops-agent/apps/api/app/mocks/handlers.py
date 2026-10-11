@@ -1215,6 +1215,7 @@ def m_put_flag(request: Request, body: Any, **_: Any) -> Any:
 
 
 from app.mocks import analytics as _analytics  # noqa: E402,F401  (registers /analytics mocks)
+from app.mocks import assistant as _assistant  # noqa: E402,F401  (registers /assistant mocks)
 
 
 @mock("admin_analytics")

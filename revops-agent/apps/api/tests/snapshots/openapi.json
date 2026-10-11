@@ -572,6 +572,140 @@
     "title": "Ack",
     "type": "object"
    },
+   "ActivityPoint": {
+    "properties": {
+     "cards_approved": {
+      "title": "Cards Approved",
+      "type": "integer"
+     },
+     "cards_executed": {
+      "title": "Cards Executed",
+      "type": "integer"
+     },
+     "cards_failed": {
+      "title": "Cards Failed",
+      "type": "integer"
+     },
+     "cards_proposed": {
+      "title": "Cards Proposed",
+      "type": "integer"
+     },
+     "cards_rejected": {
+      "title": "Cards Rejected",
+      "type": "integer"
+     },
+     "date": {
+      "format": "date",
+      "title": "Date",
+      "type": "string"
+     },
+     "findings_created": {
+      "title": "Findings Created",
+      "type": "integer"
+     },
+     "runs_completed": {
+      "title": "Runs Completed",
+      "type": "integer"
+     },
+     "runs_failed": {
+      "title": "Runs Failed",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "date",
+     "findings_created",
+     "cards_proposed",
+     "cards_approved",
+     "cards_rejected",
+     "cards_executed",
+     "cards_failed",
+     "runs_completed",
+     "runs_failed"
+    ],
+    "title": "ActivityPoint",
+    "type": "object"
+   },
+   "AdminAnalytics": {
+    "properties": {
+     "activity": {
+      "items": {
+       "$ref": "#/components/schemas/ActivityPoint"
+      },
+      "title": "Activity",
+      "type": "array"
+     },
+     "decisions": {
+      "$ref": "#/components/schemas/DecisionStats"
+     },
+     "funnel": {
+      "$ref": "#/components/schemas/CardFunnel"
+     },
+     "growth": {
+      "items": {
+       "$ref": "#/components/schemas/GrowthPoint"
+      },
+      "title": "Growth",
+      "type": "array"
+     },
+     "integrations": {
+      "items": {
+       "$ref": "#/components/schemas/IntegrationHealth"
+      },
+      "title": "Integrations",
+      "type": "array"
+     },
+     "open_findings": {
+      "items": {
+       "$ref": "#/components/schemas/FindingCount"
+      },
+      "title": "Open Findings",
+      "type": "array"
+     },
+     "orgs": {
+      "items": {
+       "$ref": "#/components/schemas/OrgActivity"
+      },
+      "title": "Orgs",
+      "type": "array"
+     },
+     "period": {
+      "$ref": "#/components/schemas/AdminPeriod"
+     },
+     "rules": {
+      "items": {
+       "$ref": "#/components/schemas/RuleCount"
+      },
+      "title": "Rules",
+      "type": "array"
+     },
+     "sync": {
+      "items": {
+       "$ref": "#/components/schemas/SyncPoint"
+      },
+      "title": "Sync",
+      "type": "array"
+     },
+     "totals": {
+      "$ref": "#/components/schemas/AdminTotals"
+     }
+    },
+    "required": [
+     "period",
+     "totals",
+     "growth",
+     "activity",
+     "funnel",
+     "decisions",
+     "open_findings",
+     "integrations",
+     "sync",
+     "rules",
+     "orgs"
+    ],
+    "title": "AdminAnalytics",
+    "type": "object"
+   },
    "AdminJobOut": {
     "properties": {
      "error": {
@@ -938,6 +1072,503 @@
     "title": "AdminOrgOut",
     "type": "object"
    },
+   "AdminPeriod": {
+    "properties": {
+     "days": {
+      "title": "Days",
+      "type": "integer"
+     },
+     "end": {
+      "format": "date",
+      "title": "End",
+      "type": "string"
+     },
+     "start": {
+      "format": "date",
+      "title": "Start",
+      "type": "string"
+     }
+    },
+    "required": [
+     "days",
+     "start",
+     "end"
+    ],
+    "title": "AdminPeriod",
+    "type": "object"
+   },
+   "AdminTotals": {
+    "properties": {
+     "accounts": {
+      "title": "Accounts",
+      "type": "integer"
+     },
+     "active_memberships": {
+      "title": "Active Memberships",
+      "type": "integer"
+     },
+     "connected_integrations": {
+      "title": "Connected Integrations",
+      "type": "integer"
+     },
+     "failed_jobs": {
+      "title": "Failed Jobs",
+      "type": "integer"
+     },
+     "integrations_needing_attention": {
+      "title": "Integrations Needing Attention",
+      "type": "integer"
+     },
+     "open_findings": {
+      "title": "Open Findings",
+      "type": "integer"
+     },
+     "orgs_active": {
+      "title": "Orgs Active",
+      "type": "integer"
+     },
+     "orgs_suspended": {
+      "title": "Orgs Suspended",
+      "type": "integer"
+     },
+     "pending_cards": {
+      "title": "Pending Cards",
+      "type": "integer"
+     },
+     "users": {
+      "title": "Users",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "orgs_active",
+     "orgs_suspended",
+     "users",
+     "active_memberships",
+     "accounts",
+     "open_findings",
+     "pending_cards",
+     "connected_integrations",
+     "integrations_needing_attention",
+     "failed_jobs"
+    ],
+    "title": "AdminTotals",
+    "type": "object"
+   },
+   "AnalyticsAutomation": {
+    "properties": {
+     "by_tier": {
+      "items": {
+       "$ref": "#/components/schemas/TierRow"
+      },
+      "title": "By Tier",
+      "type": "array"
+     },
+     "by_type": {
+      "items": {
+       "$ref": "#/components/schemas/CardTypeRow"
+      },
+      "title": "By Type",
+      "type": "array"
+     },
+     "channels": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "Channels",
+      "type": "array"
+     },
+     "rejection_reasons": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "Rejection Reasons",
+      "type": "array"
+     },
+     "totals": {
+      "$ref": "#/components/schemas/AutomationTotals"
+     },
+     "trend": {
+      "items": {
+       "$ref": "#/components/schemas/DecisionsWeek"
+      },
+      "title": "Trend",
+      "type": "array"
+     },
+     "window": {
+      "$ref": "#/components/schemas/AnalyticsWindow"
+     }
+    },
+    "required": [
+     "window",
+     "totals",
+     "by_type",
+     "by_tier",
+     "channels",
+     "rejection_reasons",
+     "trend"
+    ],
+    "title": "AnalyticsAutomation",
+    "type": "object"
+   },
+   "AnalyticsDataHealth": {
+    "properties": {
+     "coverage": {
+      "items": {
+       "$ref": "#/components/schemas/CoverageRow"
+      },
+      "title": "Coverage",
+      "type": "array"
+     },
+     "integrations": {
+      "items": {
+       "$ref": "#/components/schemas/IntegrationHealthRow"
+      },
+      "title": "Integrations",
+      "type": "array"
+     },
+     "matching": {
+      "$ref": "#/components/schemas/EventMatching"
+     },
+     "runs": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "Runs",
+      "type": "array"
+     },
+     "sync_trend": {
+      "items": {
+       "$ref": "#/components/schemas/SyncDay"
+      },
+      "title": "Sync Trend",
+      "type": "array"
+     },
+     "window": {
+      "$ref": "#/components/schemas/AnalyticsWindow"
+     }
+    },
+    "required": [
+     "window",
+     "integrations",
+     "sync_trend",
+     "coverage",
+     "matching",
+     "runs"
+    ],
+    "title": "AnalyticsDataHealth",
+    "type": "object"
+   },
+   "AnalyticsFindings": {
+    "properties": {
+     "by_category": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "By Category",
+      "type": "array"
+     },
+     "by_rule": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "By Rule",
+      "type": "array"
+     },
+     "by_status": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "By Status",
+      "type": "array"
+     },
+     "by_type": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "By Type",
+      "type": "array"
+     },
+     "dismissed_reasons": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "Dismissed Reasons",
+      "type": "array"
+     },
+     "total": {
+      "title": "Total",
+      "type": "integer"
+     },
+     "trend": {
+      "items": {
+       "$ref": "#/components/schemas/SeverityWeek"
+      },
+      "title": "Trend",
+      "type": "array"
+     },
+     "window": {
+      "$ref": "#/components/schemas/AnalyticsWindow"
+     }
+    },
+    "required": [
+     "window",
+     "total",
+     "trend",
+     "by_rule",
+     "by_category",
+     "by_status",
+     "by_type",
+     "dismissed_reasons"
+    ],
+    "title": "AnalyticsFindings",
+    "type": "object"
+   },
+   "AnalyticsOverview": {
+    "properties": {
+     "currency": {
+      "title": "Currency",
+      "type": "string"
+     },
+     "decisions_trend": {
+      "items": {
+       "$ref": "#/components/schemas/DecisionsWeek"
+      },
+      "title": "Decisions Trend",
+      "type": "array"
+     },
+     "findings_trend": {
+      "items": {
+       "$ref": "#/components/schemas/FindingsWeek"
+      },
+      "title": "Findings Trend",
+      "type": "array"
+     },
+     "kpis": {
+      "$ref": "#/components/schemas/OverviewKpis"
+     },
+     "risk_levels": {
+      "items": {
+       "$ref": "#/components/schemas/CountSlice"
+      },
+      "title": "Risk Levels",
+      "type": "array"
+     },
+     "window": {
+      "$ref": "#/components/schemas/AnalyticsWindow"
+     }
+    },
+    "required": [
+     "window",
+     "currency",
+     "kpis",
+     "findings_trend",
+     "decisions_trend",
+     "risk_levels"
+    ],
+    "title": "AnalyticsOverview",
+    "type": "object"
+   },
+   "AnalyticsPipeline": {
+    "properties": {
+     "currency": {
+      "title": "Currency",
+      "type": "string"
+     },
+     "deal_types": {
+      "items": {
+       "$ref": "#/components/schemas/DealTypeRow"
+      },
+      "title": "Deal Types",
+      "type": "array"
+     },
+     "renewals": {
+      "items": {
+       "$ref": "#/components/schemas/RenewalMonth"
+      },
+      "title": "Renewals",
+      "type": "array"
+     },
+     "stages": {
+      "items": {
+       "$ref": "#/components/schemas/StageRow"
+      },
+      "title": "Stages",
+      "type": "array"
+     },
+     "totals": {
+      "$ref": "#/components/schemas/PipelineTotals"
+     },
+     "window": {
+      "$ref": "#/components/schemas/AnalyticsWindow"
+     }
+    },
+    "required": [
+     "window",
+     "currency",
+     "totals",
+     "stages",
+     "deal_types",
+     "renewals"
+    ],
+    "title": "AnalyticsPipeline",
+    "type": "object"
+   },
+   "AnalyticsRisk": {
+    "properties": {
+     "bubbles": {
+      "items": {
+       "$ref": "#/components/schemas/RiskBubble"
+      },
+      "title": "Bubbles",
+      "type": "array"
+     },
+     "categories": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Categories",
+      "type": "array"
+     },
+     "currency": {
+      "title": "Currency",
+      "type": "string"
+     },
+     "heatmap": {
+      "items": {
+       "$ref": "#/components/schemas/HeatRow"
+      },
+      "title": "Heatmap",
+      "type": "array"
+     },
+     "risk_levels": {
+      "items": {
+       "$ref": "#/components/schemas/RiskLevelRow"
+      },
+      "title": "Risk Levels",
+      "type": "array"
+     }
+    },
+    "required": [
+     "currency",
+     "categories",
+     "heatmap",
+     "bubbles",
+     "risk_levels"
+    ],
+    "title": "AnalyticsRisk",
+    "type": "object"
+   },
+   "AnalyticsTeam": {
+    "properties": {
+     "currency": {
+      "title": "Currency",
+      "type": "string"
+     },
+     "members": {
+      "items": {
+       "$ref": "#/components/schemas/TeamMemberRow"
+      },
+      "title": "Members",
+      "type": "array"
+     },
+     "unassigned": {
+      "$ref": "#/components/schemas/Unassigned"
+     },
+     "window": {
+      "$ref": "#/components/schemas/AnalyticsWindow"
+     }
+    },
+    "required": [
+     "window",
+     "currency",
+     "members",
+     "unassigned"
+    ],
+    "title": "AnalyticsTeam",
+    "type": "object"
+   },
+   "AnalyticsWindow": {
+    "properties": {
+     "end": {
+      "format": "date",
+      "title": "End",
+      "type": "string"
+     },
+     "start": {
+      "format": "date",
+      "title": "Start",
+      "type": "string"
+     }
+    },
+    "required": [
+     "start",
+     "end"
+    ],
+    "title": "AnalyticsWindow",
+    "type": "object"
+   },
+   "AnswerRow": {
+    "description": "A record behind the answer; the ids let the UI link to it.",
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "card_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Card Id"
+     },
+     "detail": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Detail"
+     },
+     "finding_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finding Id"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     }
+    },
+    "required": [
+     "title"
+    ],
+    "title": "AnswerRow",
+    "type": "object"
+   },
    "ApiKeyCreateIn": {
     "properties": {
      "name": {
@@ -1092,9 +1723,227 @@
     "title": "ApiKeyOut",
     "type": "object"
    },
+   "AssistantAnswer": {
+    "properties": {
+     "as_of": {
+      "format": "date-time",
+      "title": "As Of",
+      "type": "string"
+     },
+     "basis": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Basis"
+     },
+     "params": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "default": {},
+      "propertyNames": {
+       "enum": [
+        "min_score",
+        "days",
+        "limit"
+       ]
+      },
+      "title": "Params",
+      "type": "object"
+     },
+     "question_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Question Id"
+     },
+     "rows": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/AnswerRow"
+      },
+      "title": "Rows",
+      "type": "array"
+     },
+     "status": {
+      "enum": [
+       "answered",
+       "unsupported"
+      ],
+      "title": "Status",
+      "type": "string"
+     },
+     "suggestions": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/AssistantQuestion"
+      },
+      "title": "Suggestions",
+      "type": "array"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     },
+     "total": {
+      "default": 0,
+      "title": "Total",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "status",
+     "text",
+     "as_of"
+    ],
+    "title": "AssistantAnswer",
+    "type": "object"
+   },
+   "AssistantAskIn": {
+    "description": "Either a typed question, or a catalog question by id (optionally with its values changed).",
+    "properties": {
+     "params": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "default": {},
+      "propertyNames": {
+       "enum": [
+        "min_score",
+        "days",
+        "limit"
+       ]
+      },
+      "title": "Params",
+      "type": "object"
+     },
+     "question": {
+      "anyOf": [
+       {
+        "maxLength": 500,
+        "minLength": 1,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Question"
+     },
+     "question_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Question Id"
+     }
+    },
+    "title": "AssistantAskIn",
+    "type": "object"
+   },
+   "AssistantCatalog": {
+    "properties": {
+     "questions": {
+      "items": {
+       "$ref": "#/components/schemas/AssistantQuestion"
+      },
+      "title": "Questions",
+      "type": "array"
+     }
+    },
+    "required": [
+     "questions"
+    ],
+    "title": "AssistantCatalog",
+    "type": "object"
+   },
+   "AssistantParam": {
+    "description": "One adjustable value of a question, with the range the API accepts.",
+    "properties": {
+     "default": {
+      "title": "Default",
+      "type": "integer"
+     },
+     "key": {
+      "enum": [
+       "min_score",
+       "days",
+       "limit"
+      ],
+      "title": "Key",
+      "type": "string"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "max": {
+      "title": "Max",
+      "type": "integer"
+     },
+     "min": {
+      "title": "Min",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "key",
+     "label",
+     "default",
+     "min",
+     "max"
+    ],
+    "title": "AssistantParam",
+    "type": "object"
+   },
+   "AssistantQuestion": {
+    "properties": {
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "params": {
+      "items": {
+       "$ref": "#/components/schemas/AssistantParam"
+      },
+      "title": "Params",
+      "type": "array"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "text",
+     "params"
+    ],
+    "title": "AssistantQuestion",
+    "type": "object"
+   },
    "AuthSession": {
     "description": "Identity resolved by the API after sign-in. The web tier turns it into a signed session\ncookie; the role here is informational (authorization always re-reads the DB membership).",
     "properties": {
+     "home": {
+      "default": "/today",
+      "title": "Home",
+      "type": "string"
+     },
      "is_superadmin": {
       "default": false,
       "title": "Is Superadmin",
@@ -1180,6 +2029,87 @@
      "email"
     ],
     "title": "AuthUser",
+    "type": "object"
+   },
+   "AutomationTotals": {
+    "properties": {
+     "approval_rate": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approval Rate"
+     },
+     "approved": {
+      "title": "Approved",
+      "type": "integer"
+     },
+     "edit_rate": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Edit Rate"
+     },
+     "edited": {
+      "title": "Edited",
+      "type": "integer"
+     },
+     "executed": {
+      "title": "Executed",
+      "type": "integer"
+     },
+     "expired": {
+      "title": "Expired",
+      "type": "integer"
+     },
+     "failed": {
+      "title": "Failed",
+      "type": "integer"
+     },
+     "median_decision_hours": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Median Decision Hours"
+     },
+     "proposed": {
+      "title": "Proposed",
+      "type": "integer"
+     },
+     "rejected": {
+      "title": "Rejected",
+      "type": "integer"
+     },
+     "reverted": {
+      "title": "Reverted",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "proposed",
+     "approved",
+     "rejected",
+     "edited",
+     "executed",
+     "failed",
+     "reverted",
+     "expired"
+    ],
+    "title": "AutomationTotals",
     "type": "object"
    },
    "AutonomyPolicyOut": {
@@ -1309,6 +2239,55 @@
      "user_id"
     ],
     "title": "CardAssignIn",
+    "type": "object"
+   },
+   "CardFunnel": {
+    "description": "Cards created in the period, by how far they got.",
+    "properties": {
+     "approved": {
+      "title": "Approved",
+      "type": "integer"
+     },
+     "decided": {
+      "title": "Decided",
+      "type": "integer"
+     },
+     "executed": {
+      "title": "Executed",
+      "type": "integer"
+     },
+     "expired": {
+      "title": "Expired",
+      "type": "integer"
+     },
+     "failed": {
+      "title": "Failed",
+      "type": "integer"
+     },
+     "proposed": {
+      "title": "Proposed",
+      "type": "integer"
+     },
+     "rejected": {
+      "title": "Rejected",
+      "type": "integer"
+     },
+     "reverted": {
+      "title": "Reverted",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "proposed",
+     "decided",
+     "approved",
+     "rejected",
+     "executed",
+     "failed",
+     "reverted",
+     "expired"
+    ],
+    "title": "CardFunnel",
     "type": "object"
    },
    "CardOut": {
@@ -1661,6 +2640,49 @@
     "title": "CardRejectIn",
     "type": "object"
    },
+   "CardTypeRow": {
+    "properties": {
+     "approved": {
+      "title": "Approved",
+      "type": "integer"
+     },
+     "edited": {
+      "title": "Edited",
+      "type": "integer"
+     },
+     "failed": {
+      "title": "Failed",
+      "type": "integer"
+     },
+     "rejected": {
+      "title": "Rejected",
+      "type": "integer"
+     },
+     "reverted": {
+      "title": "Reverted",
+      "type": "integer"
+     },
+     "total": {
+      "title": "Total",
+      "type": "integer"
+     },
+     "type": {
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "type",
+     "total",
+     "approved",
+     "rejected",
+     "edited",
+     "failed",
+     "reverted"
+    ],
+    "title": "CardTypeRow",
+    "type": "object"
+   },
    "ChangePasswordIn": {
     "properties": {
      "current_password": {
@@ -1816,6 +2838,56 @@
      "email"
     ],
     "title": "ContactOut",
+    "type": "object"
+   },
+   "CountSlice": {
+    "description": "One slice of a breakdown (status, rule, category, channel...).",
+    "properties": {
+     "count": {
+      "title": "Count",
+      "type": "integer"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     }
+    },
+    "required": [
+     "key",
+     "count"
+    ],
+    "title": "CountSlice",
+    "type": "object"
+   },
+   "CoverageRow": {
+    "properties": {
+     "covered": {
+      "title": "Covered",
+      "type": "integer"
+     },
+     "key": {
+      "enum": [
+       "arr",
+       "renewal_date",
+       "owner",
+       "contacts",
+       "usage_30d",
+       "activity_30d"
+      ],
+      "title": "Key",
+      "type": "string"
+     },
+     "total": {
+      "title": "Total",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "key",
+     "covered",
+     "total"
+    ],
+    "title": "CoverageRow",
     "type": "object"
    },
    "CrmPropertyOut": {
@@ -2047,6 +3119,118 @@
     "title": "DealOut",
     "type": "object"
    },
+   "DealTypeRow": {
+    "properties": {
+     "deal_type": {
+      "enum": [
+       "new",
+       "renewal",
+       "expansion",
+       "other"
+      ],
+      "title": "Deal Type",
+      "type": "string"
+     },
+     "lost_count": {
+      "title": "Lost Count",
+      "type": "integer"
+     },
+     "open_amount": {
+      "title": "Open Amount",
+      "type": "number"
+     },
+     "open_count": {
+      "title": "Open Count",
+      "type": "integer"
+     },
+     "won_amount": {
+      "title": "Won Amount",
+      "type": "number"
+     },
+     "won_count": {
+      "title": "Won Count",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "deal_type",
+     "open_count",
+     "open_amount",
+     "won_count",
+     "won_amount",
+     "lost_count"
+    ],
+    "title": "DealTypeRow",
+    "type": "object"
+   },
+   "DecisionStats": {
+    "properties": {
+     "approval_rate": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approval Rate"
+     },
+     "execution_success_rate": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Execution Success Rate"
+     },
+     "median_hours_to_decision": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Median Hours To Decision"
+     }
+    },
+    "title": "DecisionStats",
+    "type": "object"
+   },
+   "DecisionsWeek": {
+    "properties": {
+     "approved": {
+      "title": "Approved",
+      "type": "integer"
+     },
+     "edited": {
+      "title": "Edited",
+      "type": "integer"
+     },
+     "rejected": {
+      "title": "Rejected",
+      "type": "integer"
+     },
+     "week": {
+      "format": "date",
+      "title": "Week",
+      "type": "string"
+     }
+    },
+    "required": [
+     "week",
+     "approved",
+     "rejected",
+     "edited"
+    ],
+    "title": "DecisionsWeek",
+    "type": "object"
+   },
    "DismissIn": {
     "properties": {
      "note": {
@@ -2235,6 +3419,29 @@
      "ran_at"
     ],
     "title": "EvalSummary",
+    "type": "object"
+   },
+   "EventMatching": {
+    "properties": {
+     "events": {
+      "title": "Events",
+      "type": "integer"
+     },
+     "open_reviews": {
+      "title": "Open Reviews",
+      "type": "integer"
+     },
+     "unmatched": {
+      "title": "Unmatched",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "events",
+     "unmatched",
+     "open_reviews"
+    ],
+    "title": "EventMatching",
     "type": "object"
    },
    "EvidenceOut": {
@@ -2682,6 +3889,38 @@
     "title": "FieldMappingPreviewItem",
     "type": "object"
    },
+   "FindingCount": {
+    "properties": {
+     "count": {
+      "title": "Count",
+      "type": "integer"
+     },
+     "severity": {
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+     },
+     "type": {
+      "enum": [
+       "risk",
+       "expansion"
+      ],
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "type",
+     "severity",
+     "count"
+    ],
+    "title": "FindingCount",
+    "type": "object"
+   },
    "FindingDetail": {
     "properties": {
      "account_id": {
@@ -3019,6 +4258,30 @@
     "title": "FindingListItem",
     "type": "object"
    },
+   "FindingsWeek": {
+    "properties": {
+     "expansion": {
+      "title": "Expansion",
+      "type": "integer"
+     },
+     "risk": {
+      "title": "Risk",
+      "type": "integer"
+     },
+     "week": {
+      "format": "date",
+      "title": "Week",
+      "type": "string"
+     }
+    },
+    "required": [
+     "week",
+     "risk",
+     "expansion"
+    ],
+    "title": "FindingsWeek",
+    "type": "object"
+   },
    "FlagOut": {
     "properties": {
      "default": {
@@ -3083,6 +4346,30 @@
     "title": "FlagPutIn",
     "type": "object"
    },
+   "GrowthPoint": {
+    "properties": {
+     "date": {
+      "format": "date",
+      "title": "Date",
+      "type": "string"
+     },
+     "new_orgs": {
+      "title": "New Orgs",
+      "type": "integer"
+     },
+     "new_users": {
+      "title": "New Users",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "date",
+     "new_orgs",
+     "new_users"
+    ],
+    "title": "GrowthPoint",
+    "type": "object"
+   },
    "HTTPValidationError": {
     "properties": {
      "detail": {
@@ -3107,6 +4394,151 @@
      "status"
     ],
     "title": "HealthOut",
+    "type": "object"
+   },
+   "HeatCell": {
+    "properties": {
+     "category": {
+      "title": "Category",
+      "type": "string"
+     },
+     "findings": {
+      "title": "Findings",
+      "type": "integer"
+     },
+     "top_severity": {
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Top Severity",
+      "type": "string"
+     }
+    },
+    "required": [
+     "category",
+     "findings",
+     "top_severity"
+    ],
+    "title": "HeatCell",
+    "type": "object"
+   },
+   "HeatRow": {
+    "properties": {
+     "account_id": {
+      "format": "uuid",
+      "title": "Account Id",
+      "type": "string"
+     },
+     "account_name": {
+      "title": "Account Name",
+      "type": "string"
+     },
+     "arr": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr"
+     },
+     "cells": {
+      "items": {
+       "$ref": "#/components/schemas/HeatCell"
+      },
+      "title": "Cells",
+      "type": "array"
+     },
+     "priority_score": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Priority Score"
+     }
+    },
+    "required": [
+     "account_id",
+     "account_name",
+     "cells"
+    ],
+    "title": "HeatRow",
+    "type": "object"
+   },
+   "IntegrationHealth": {
+    "properties": {
+     "connected": {
+      "title": "Connected",
+      "type": "integer"
+     },
+     "disconnected": {
+      "title": "Disconnected",
+      "type": "integer"
+     },
+     "needs_attention": {
+      "title": "Needs Attention",
+      "type": "integer"
+     },
+     "provider": {
+      "title": "Provider",
+      "type": "string"
+     }
+    },
+    "required": [
+     "provider",
+     "connected",
+     "needs_attention",
+     "disconnected"
+    ],
+    "title": "IntegrationHealth",
+    "type": "object"
+   },
+   "IntegrationHealthRow": {
+    "properties": {
+     "count": {
+      "title": "Count",
+      "type": "integer"
+     },
+     "errors": {
+      "title": "Errors",
+      "type": "integer"
+     },
+     "last_success_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Success At"
+     },
+     "provider": {
+      "title": "Provider",
+      "type": "string"
+     },
+     "status": {
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "provider",
+     "status",
+     "count",
+     "errors"
+    ],
+    "title": "IntegrationHealthRow",
     "type": "object"
    },
    "IntegrationOut": {
@@ -3869,6 +5301,11 @@
       "title": "Flags",
       "type": "object"
      },
+     "home": {
+      "default": "/today",
+      "title": "Home",
+      "type": "string"
+     },
      "invitable_roles": {
       "default": [],
       "items": {
@@ -3909,6 +5346,18 @@
        "type": "string"
       },
       "title": "Permissions",
+      "type": "array"
+     },
+     "portals": {
+      "default": [],
+      "items": {
+       "enum": [
+        "control",
+        "work"
+       ],
+       "type": "string"
+      },
+      "title": "Portals",
       "type": "array"
      },
      "role": {
@@ -4500,6 +5949,67 @@
     "title": "OpenFindingRef",
     "type": "object"
    },
+   "OrgActivity": {
+    "properties": {
+     "accounts": {
+      "title": "Accounts",
+      "type": "integer"
+     },
+     "cards_decided": {
+      "title": "Cards Decided",
+      "type": "integer"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "last_activity_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Activity At"
+     },
+     "members": {
+      "title": "Members",
+      "type": "integer"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "open_findings": {
+      "title": "Open Findings",
+      "type": "integer"
+     },
+     "status": {
+      "enum": [
+       "active",
+       "suspended",
+       "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "status",
+     "members",
+     "accounts",
+     "open_findings",
+     "cards_decided"
+    ],
+    "title": "OrgActivity",
+    "type": "object"
+   },
    "OrgCreateIn": {
     "properties": {
      "currency": {
@@ -4745,6 +6255,64 @@
      }
     },
     "title": "OrgSettings",
+    "type": "object"
+   },
+   "OverviewKpis": {
+    "properties": {
+     "accounts_at_risk": {
+      "title": "Accounts At Risk",
+      "type": "integer"
+     },
+     "accounts_total": {
+      "title": "Accounts Total",
+      "type": "integer"
+     },
+     "arr_at_risk": {
+      "title": "Arr At Risk",
+      "type": "number"
+     },
+     "arr_total": {
+      "title": "Arr Total",
+      "type": "number"
+     },
+     "expansion_value": {
+      "title": "Expansion Value",
+      "type": "number"
+     },
+     "open_findings": {
+      "title": "Open Findings",
+      "type": "integer"
+     },
+     "open_high_findings": {
+      "title": "Open High Findings",
+      "type": "integer"
+     },
+     "pending_approvals": {
+      "title": "Pending Approvals",
+      "type": "integer"
+     },
+     "renewals_due_90d": {
+      "title": "Renewals Due 90D",
+      "type": "integer"
+     },
+     "renewals_due_90d_arr": {
+      "title": "Renewals Due 90D Arr",
+      "type": "number"
+     }
+    },
+    "required": [
+     "accounts_total",
+     "accounts_at_risk",
+     "arr_total",
+     "arr_at_risk",
+     "open_findings",
+     "open_high_findings",
+     "pending_approvals",
+     "expansion_value",
+     "renewals_due_90d",
+     "renewals_due_90d_arr"
+    ],
+    "title": "OverviewKpis",
     "type": "object"
    },
    "OwnerRef": {
@@ -5125,6 +6693,55 @@
     "title": "PayloadDiff",
     "type": "object"
    },
+   "PipelineTotals": {
+    "properties": {
+     "lost_amount": {
+      "title": "Lost Amount",
+      "type": "number"
+     },
+     "lost_count": {
+      "title": "Lost Count",
+      "type": "integer"
+     },
+     "open_amount": {
+      "title": "Open Amount",
+      "type": "number"
+     },
+     "open_count": {
+      "title": "Open Count",
+      "type": "integer"
+     },
+     "win_rate": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Win Rate"
+     },
+     "won_amount": {
+      "title": "Won Amount",
+      "type": "number"
+     },
+     "won_count": {
+      "title": "Won Count",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "open_count",
+     "open_amount",
+     "won_count",
+     "won_amount",
+     "lost_count",
+     "lost_amount"
+    ],
+    "title": "PipelineTotals",
+    "type": "object"
+   },
    "PreviewChange": {
     "properties": {
      "after": {
@@ -5200,6 +6817,143 @@
      "checks"
     ],
     "title": "ReadyOut",
+    "type": "object"
+   },
+   "RenewalMonth": {
+    "properties": {
+     "arr": {
+      "title": "Arr",
+      "type": "number"
+     },
+     "at_risk_arr": {
+      "title": "At Risk Arr",
+      "type": "number"
+     },
+     "count": {
+      "title": "Count",
+      "type": "integer"
+     },
+     "month": {
+      "format": "date",
+      "title": "Month",
+      "type": "string"
+     }
+    },
+    "required": [
+     "month",
+     "count",
+     "arr",
+     "at_risk_arr"
+    ],
+    "title": "RenewalMonth",
+    "type": "object"
+   },
+   "RiskBubble": {
+    "properties": {
+     "account_id": {
+      "format": "uuid",
+      "title": "Account Id",
+      "type": "string"
+     },
+     "account_name": {
+      "title": "Account Name",
+      "type": "string"
+     },
+     "arr": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Arr"
+     },
+     "open_findings": {
+      "title": "Open Findings",
+      "type": "integer"
+     },
+     "priority_score": {
+      "title": "Priority Score",
+      "type": "number"
+     },
+     "renewal_in_days": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Renewal In Days"
+     },
+     "risk_level": {
+      "anyOf": [
+       {
+        "enum": [
+         "high",
+         "medium",
+         "low"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Risk Level"
+     }
+    },
+    "required": [
+     "account_id",
+     "account_name",
+     "priority_score",
+     "open_findings"
+    ],
+    "title": "RiskBubble",
+    "type": "object"
+   },
+   "RiskLevelRow": {
+    "properties": {
+     "arr": {
+      "title": "Arr",
+      "type": "number"
+     },
+     "count": {
+      "title": "Count",
+      "type": "integer"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     }
+    },
+    "required": [
+     "key",
+     "count",
+     "arr"
+    ],
+    "title": "RiskLevelRow",
+    "type": "object"
+   },
+   "RuleCount": {
+    "properties": {
+     "hits": {
+      "title": "Hits",
+      "type": "integer"
+     },
+     "rule_key": {
+      "title": "Rule Key",
+      "type": "string"
+     }
+    },
+    "required": [
+     "rule_key",
+     "hits"
+    ],
+    "title": "RuleCount",
     "type": "object"
    },
    "RuleHitOut": {
@@ -5621,6 +7375,12 @@
    },
    "RunStep": {
     "properties": {
+     "data": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Data",
+      "type": "object"
+     },
      "detail": {
       "anyOf": [
        {
@@ -5698,6 +7458,35 @@
      "password"
     ],
     "title": "SetPasswordIn",
+    "type": "object"
+   },
+   "SeverityWeek": {
+    "properties": {
+     "high": {
+      "title": "High",
+      "type": "integer"
+     },
+     "low": {
+      "title": "Low",
+      "type": "integer"
+     },
+     "medium": {
+      "title": "Medium",
+      "type": "integer"
+     },
+     "week": {
+      "format": "date",
+      "title": "Week",
+      "type": "string"
+     }
+    },
+    "required": [
+     "week",
+     "high",
+     "medium",
+     "low"
+    ],
+    "title": "SeverityWeek",
     "type": "object"
    },
    "SignupIn": {
@@ -5811,6 +7600,87 @@
     "title": "SnoozeIn",
     "type": "object"
    },
+   "StageRow": {
+    "properties": {
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "open_amount": {
+      "title": "Open Amount",
+      "type": "number"
+     },
+     "open_count": {
+      "title": "Open Count",
+      "type": "integer"
+     },
+     "stage": {
+      "title": "Stage",
+      "type": "string"
+     }
+    },
+    "required": [
+     "stage",
+     "label",
+     "open_count",
+     "open_amount"
+    ],
+    "title": "StageRow",
+    "type": "object"
+   },
+   "SyncDay": {
+    "properties": {
+     "day": {
+      "format": "date",
+      "title": "Day",
+      "type": "string"
+     },
+     "failed": {
+      "title": "Failed",
+      "type": "integer"
+     },
+     "partial": {
+      "title": "Partial",
+      "type": "integer"
+     },
+     "success": {
+      "title": "Success",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "day",
+     "success",
+     "partial",
+     "failed"
+    ],
+    "title": "SyncDay",
+    "type": "object"
+   },
+   "SyncPoint": {
+    "properties": {
+     "date": {
+      "format": "date",
+      "title": "Date",
+      "type": "string"
+     },
+     "failed": {
+      "title": "Failed",
+      "type": "integer"
+     },
+     "success": {
+      "title": "Success",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "date",
+     "success",
+     "failed"
+    ],
+    "title": "SyncPoint",
+    "type": "object"
+   },
    "SyncRunOut": {
     "properties": {
      "error": {
@@ -5897,6 +7767,99 @@
      "sync_run_id"
     ],
     "title": "SyncTriggerOut",
+    "type": "object"
+   },
+   "TeamMemberRow": {
+    "properties": {
+     "accounts_owned": {
+      "title": "Accounts Owned",
+      "type": "integer"
+     },
+     "approved": {
+      "title": "Approved",
+      "type": "integer"
+     },
+     "arr_owned": {
+      "title": "Arr Owned",
+      "type": "number"
+     },
+     "median_decision_hours": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Median Decision Hours"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "open_findings": {
+      "title": "Open Findings",
+      "type": "integer"
+     },
+     "pending_cards": {
+      "title": "Pending Cards",
+      "type": "integer"
+     },
+     "rejected": {
+      "title": "Rejected",
+      "type": "integer"
+     },
+     "role": {
+      "title": "Role",
+      "type": "string"
+     },
+     "user_id": {
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "user_id",
+     "name",
+     "role",
+     "accounts_owned",
+     "arr_owned",
+     "open_findings",
+     "pending_cards",
+     "approved",
+     "rejected"
+    ],
+    "title": "TeamMemberRow",
+    "type": "object"
+   },
+   "TierRow": {
+    "properties": {
+     "approved": {
+      "title": "Approved",
+      "type": "integer"
+     },
+     "rejected": {
+      "title": "Rejected",
+      "type": "integer"
+     },
+     "tier": {
+      "title": "Tier",
+      "type": "integer"
+     },
+     "total": {
+      "title": "Total",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "tier",
+     "total",
+     "approved",
+     "rejected"
+    ],
+    "title": "TierRow",
     "type": "object"
    },
    "TimelineEvent": {
@@ -6172,6 +8135,24 @@
      "evidence_ids"
     ],
     "title": "TopReason",
+    "type": "object"
+   },
+   "Unassigned": {
+    "properties": {
+     "accounts": {
+      "title": "Accounts",
+      "type": "integer"
+     },
+     "arr": {
+      "title": "Arr",
+      "type": "number"
+     }
+    },
+    "required": [
+     "accounts",
+     "arr"
+    ],
+    "title": "Unassigned",
     "type": "object"
    },
    "UsageIngestOut": {
@@ -7497,6 +9478,52 @@
     ]
    }
   },
+  "/api/v1/admin/analytics": {
+   "get": {
+    "description": "Platform-wide growth, activity, approval funnel and integration health (counts only).",
+    "operationId": "admin_analytics",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "days",
+      "required": false,
+      "schema": {
+       "default": 30,
+       "maximum": 365,
+       "minimum": 7,
+       "title": "Days",
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AdminAnalytics"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Platform-wide growth, activity, approval funnel and integration health (counts only).",
+    "tags": [
+     "E Admin Console"
+    ]
+   }
+  },
   "/api/v1/admin/data-health": {
    "get": {
     "description": "System-wide data health metrics.",
@@ -8081,6 +10108,567 @@
     ]
    }
   },
+  "/api/v1/analytics/automation": {
+   "get": {
+    "description": "How proposed actions were decided: approval, edit, failure and revert rates (admin+).",
+    "operationId": "analytics_automation",
+    "parameters": [
+     {
+      "description": "First day (default: 90 days ago)",
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "First day (default: 90 days ago)",
+       "title": "From"
+      }
+     },
+     {
+      "description": "Last day (default: today, UTC)",
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Last day (default: today, UTC)",
+       "title": "To"
+      }
+     },
+     {
+      "description": "Only accounts owned by this user",
+      "in": "query",
+      "name": "owner_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only accounts owned by this user",
+       "title": "Owner Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyticsAutomation"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "How proposed actions were decided: approval, edit, failure and revert rates (admin+).",
+    "tags": [
+     "G1 Control Analytics"
+    ]
+   }
+  },
+  "/api/v1/analytics/data-health": {
+   "get": {
+    "description": "Integration status, sync history, field coverage and event matching (admin+).",
+    "operationId": "analytics_data_health",
+    "parameters": [
+     {
+      "description": "First day (default: 90 days ago)",
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "First day (default: 90 days ago)",
+       "title": "From"
+      }
+     },
+     {
+      "description": "Last day (default: today, UTC)",
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Last day (default: today, UTC)",
+       "title": "To"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyticsDataHealth"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Integration status, sync history, field coverage and event matching (admin+).",
+    "tags": [
+     "G1 Control Analytics"
+    ]
+   }
+  },
+  "/api/v1/analytics/findings": {
+   "get": {
+    "description": "New findings over time, by severity, rule, category and status (admin+).",
+    "operationId": "analytics_findings",
+    "parameters": [
+     {
+      "description": "First day (default: 90 days ago)",
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "First day (default: 90 days ago)",
+       "title": "From"
+      }
+     },
+     {
+      "description": "Last day (default: today, UTC)",
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Last day (default: today, UTC)",
+       "title": "To"
+      }
+     },
+     {
+      "description": "Only accounts owned by this user",
+      "in": "query",
+      "name": "owner_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only accounts owned by this user",
+       "title": "Owner Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyticsFindings"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "New findings over time, by severity, rule, category and status (admin+).",
+    "tags": [
+     "G1 Control Analytics"
+    ]
+   }
+  },
+  "/api/v1/analytics/overview": {
+   "get": {
+    "description": "Headline KPIs and trends for the whole organization (admin+).",
+    "operationId": "analytics_overview",
+    "parameters": [
+     {
+      "description": "First day (default: 90 days ago)",
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "First day (default: 90 days ago)",
+       "title": "From"
+      }
+     },
+     {
+      "description": "Last day (default: today, UTC)",
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Last day (default: today, UTC)",
+       "title": "To"
+      }
+     },
+     {
+      "description": "Only accounts owned by this user",
+      "in": "query",
+      "name": "owner_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only accounts owned by this user",
+       "title": "Owner Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyticsOverview"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Headline KPIs and trends for the whole organization (admin+).",
+    "tags": [
+     "G1 Control Analytics"
+    ]
+   }
+  },
+  "/api/v1/analytics/pipeline": {
+   "get": {
+    "description": "Open pipeline by stage and type, win rate, and the renewal calendar (admin+).",
+    "operationId": "analytics_pipeline",
+    "parameters": [
+     {
+      "description": "First day (default: 90 days ago)",
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "First day (default: 90 days ago)",
+       "title": "From"
+      }
+     },
+     {
+      "description": "Last day (default: today, UTC)",
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Last day (default: today, UTC)",
+       "title": "To"
+      }
+     },
+     {
+      "description": "Only accounts owned by this user",
+      "in": "query",
+      "name": "owner_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only accounts owned by this user",
+       "title": "Owner Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyticsPipeline"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Open pipeline by stage and type, win rate, and the renewal calendar (admin+).",
+    "tags": [
+     "G1 Control Analytics"
+    ]
+   }
+  },
+  "/api/v1/analytics/risk": {
+   "get": {
+    "description": "Risk heatmap (account x category) and the ARR vs priority map (admin+).",
+    "operationId": "analytics_risk",
+    "parameters": [
+     {
+      "description": "Only accounts owned by this user",
+      "in": "query",
+      "name": "owner_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only accounts owned by this user",
+       "title": "Owner Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyticsRisk"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Risk heatmap (account x category) and the ARR vs priority map (admin+).",
+    "tags": [
+     "G1 Control Analytics"
+    ]
+   }
+  },
+  "/api/v1/analytics/team": {
+   "get": {
+    "description": "Per-person book of business, backlog and decision speed (admin+).",
+    "operationId": "analytics_team",
+    "parameters": [
+     {
+      "description": "First day (default: 90 days ago)",
+      "in": "query",
+      "name": "from",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "First day (default: 90 days ago)",
+       "title": "From"
+      }
+     },
+     {
+      "description": "Last day (default: today, UTC)",
+      "in": "query",
+      "name": "to",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "date",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Last day (default: today, UTC)",
+       "title": "To"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyticsTeam"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Per-person book of business, backlog and decision speed (admin+).",
+    "tags": [
+     "G1 Control Analytics"
+    ]
+   }
+  },
   "/api/v1/api-keys": {
    "get": {
     "description": "List API keys (prefix only).",
@@ -8188,6 +10776,70 @@
     "summary": "Revoke an API key.",
     "tags": [
      "D10 API Keys"
+    ]
+   }
+  },
+  "/api/v1/assistant/ask": {
+   "post": {
+    "description": "Answer a question from the organization's own data (manager+). Read-only.",
+    "operationId": "assistant_ask",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AssistantAskIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AssistantAnswer"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Answer a question from the organization's own data (manager+). Read-only.",
+    "tags": [
+     "C12 Help"
+    ]
+   }
+  },
+  "/api/v1/assistant/catalog": {
+   "get": {
+    "description": "Questions the assistant can answer, with their adjustable values (manager+).",
+    "operationId": "assistant_catalog",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AssistantCatalog"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Questions the assistant can answer, with their adjustable values (manager+).",
+    "tags": [
+     "C12 Help"
     ]
    }
   },

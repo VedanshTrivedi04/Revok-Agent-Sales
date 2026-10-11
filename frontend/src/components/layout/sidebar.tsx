@@ -30,6 +30,7 @@ import {
   Shield,
   Database,
   Building,
+  LifeBuoy,
 } from "lucide-react";
 import { useMe } from "../../lib/auth/session-context";
 
@@ -248,7 +249,10 @@ export function Sidebar() {
     },
     {
       title: "Personal",
-      items: [{ name: "My Settings", href: "/settings/profile", match: "/settings", icon: SlidersHorizontal, action: "view:settings_profile" }],
+      items: [
+        { name: "My Settings", href: "/settings/profile", match: "/settings", icon: SlidersHorizontal, action: "view:settings_profile" },
+        { name: "Help", href: "/help", icon: LifeBuoy, action: "view:assistant" },
+      ],
     },
   ];
 

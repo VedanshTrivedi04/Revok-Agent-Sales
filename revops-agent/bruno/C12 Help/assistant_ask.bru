@@ -1,0 +1,20 @@
+meta {
+  name: assistant_ask
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/assistant/ask
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Answer a question from the organization's own data (manager+). Read-only.
+  Page: C12 Help | Owner: V | Phase: P8 | Access: assistant:ask
+}
