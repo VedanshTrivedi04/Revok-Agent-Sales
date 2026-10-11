@@ -102,16 +102,19 @@ export default function ReviewPage() {
   return (
     <PermissionGuard action="view:review">
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2ECE5] dark:border-slate-800">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Welcome, {me?.user?.name || "Olivia"}!
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-[#111C18] dark:text-slate-100 mt-0.5">
               Entity Match Review
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Resolve ambiguous company domains, sender emails, and CRM accounts. Resolving auto-associates future telemetry.
             </p>
           </div>
-          <div className="text-xs text-slate-500 font-mono">
+          <div className="text-xs text-[#0D3B36] bg-[#EAF5EE] border border-[#CFE7D6] px-3 py-1 rounded-full font-mono font-semibold">
             {reviews.length} pending reviews
           </div>
         </div>
@@ -147,12 +150,12 @@ export default function ReviewPage() {
               return (
                 <div
                   key={rev.id}
-                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-4"
+                  className="rounded-2xl border border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 hover:border-[#0D3B36]/50 transition-all duration-200"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                        <span className="text-xs font-bold text-[#111C18] dark:text-slate-100">
                           {rev.event_title ?? "Untitled activity"}
                         </span>
                       </div>
@@ -166,7 +169,7 @@ export default function ReviewPage() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="pt-3 border-t border-[#EDF2EE] dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                         Match with:
@@ -179,7 +182,7 @@ export default function ReviewPage() {
                             [rev.id]: e.target.value,
                           })
                         }
-                        className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E]"
+                        className="px-3 py-1.5 text-xs rounded-xl border border-[#DEE5E1] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0D3B36] focus:border-[#0D3B36]"
                       >
                         {candidates.length === 0 ? (
                           <option value="">No candidates found</option>
@@ -198,7 +201,7 @@ export default function ReviewPage() {
                         type="button"
                         onClick={() => ignoreMutation.mutate(rev.id)}
                         disabled={ignoreMutation.isPending}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition-all"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-[#DEE5E1] bg-white hover:bg-[#EBF3EF] hover:border-[#0D3B36] hover:text-[#0D3B36] text-slate-700 shadow-2xs transition-all"
                       >
                         <X className="w-3.5 h-3.5 text-slate-400" />
                         <span>Ignore</span>
@@ -214,7 +217,7 @@ export default function ReviewPage() {
                             addDomain: true,
                           })
                         }
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] hover:bg-[#0E2C22] text-white disabled:opacity-50 shadow-xs transition-all cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#0D3B36] hover:bg-[#082925] text-white disabled:opacity-50 shadow-xs transition-all cursor-pointer"
                       >
                         <Globe className="w-3.5 h-3.5" />
                         <span>Apply &amp; Add Domain</span>

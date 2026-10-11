@@ -2,36 +2,36 @@
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
-  /* Base Surfaces (Matching Landing Page Warm Cream & Obsidian) */
-  --bg-app: #faf9f5;
+  /* Base Surfaces (Matching Bankio Greenish-White / Gray Palette) */
+  --bg-app: #f2f5f3;
   --bg-card: #ffffff;
-  --bg-card-hover: #f7f6f0;
+  --bg-card-hover: #f8faf9;
   --bg-elevated: #ffffff;
-  --bg-muted: #f2efe9;
-  --bg-sidebar: #080c11;
-  --bg-sidebar-hover: #101e17;
+  --bg-muted: #ebf2ee;
+  --bg-sidebar: #ffffff;
+  --bg-sidebar-hover: #ebf3ef;
 
   /* Text & Contrast */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
+  --text-primary: #111c18;
+  --text-secondary: #4a5854;
+  --text-muted: #74837e;
   --text-on-dark: #f8fafc;
   --text-on-dark-muted: #94a3b8;
 
   /* Borders & Dividers */
-  --border-subtle: #e6e3dc;
-  --border-medium: #cbd5e1;
-  --border-focus: #10b981;
+  --border-subtle: #e2ece5;
+  --border-medium: #cfded4;
+  --border-focus: #0d3b36;
 
-  /* Brand / Interactive (Forest Green #143C2E & Emerald #10B981 Aesthetic) */
-  --brand-forest: #143c2e;
-  --brand-forest-dark: #0e2c22;
-  --brand-forest-light: #1c5240;
+  /* Brand / Interactive (Exact Bankio Pine Green #0D3B36 Aesthetic) */
+  --brand-forest: #0d3b36;
+  --brand-forest-dark: #082925;
+  --brand-forest-light: #144d47;
   --brand-lime: #10b981;
   --brand-lime-hover: #059669;
-  --brand-lime-muted: #ecfdf5;
-  --primary: #143c2e;
-  --primary-hover: #0e2c22;
+  --brand-lime-muted: #eaf5ee;
+  --primary: #0d3b36;
+  --primary-hover: #082925;
   --primary-fg: #ffffff;
 
   /* Severity Tokens */

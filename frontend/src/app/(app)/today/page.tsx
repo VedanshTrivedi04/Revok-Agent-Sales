@@ -73,15 +73,18 @@ export default function TodayPage() {
     <PermissionGuard action="view:today">
       <div className="space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2ECE5] dark:border-slate-800">
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Welcome, {me?.user?.name || "Olivia"}!
+            </div>
+            <div className="flex items-center gap-2 mt-0.5">
+              <h1 className="text-2xl font-bold tracking-tight text-[#111C18] dark:text-white">
                 Today&apos;s Revenue Priorities
               </h1>
               {readOnly && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
-                  <Eye className="w-3 h-3 text-[#143C2E] dark:text-emerald-400" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF5EE] dark:bg-emerald-950/40 text-[#0D3B36] dark:text-emerald-300 border border-[#CFE7D6] dark:border-emerald-800/60">
+                  <Eye className="w-3 h-3 text-[#0D3B36] dark:text-emerald-400" />
                   <span>Read-only view</span>
                 </span>
               )}
@@ -93,14 +96,14 @@ export default function TodayPage() {
 
           <div className="flex items-center gap-3">
             {/* Owner Scope Selector */}
-            <div className="inline-flex rounded-xl p-1 bg-slate-200/60 dark:bg-slate-900 border border-slate-200/40 dark:border-slate-800 text-xs font-semibold">
+            <div className="inline-flex rounded-xl p-1 bg-[#E8EFEA] dark:bg-slate-900 border border-[#D5E2D9] dark:border-slate-800 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setOwnerScope("me")}
                 className={`px-3 py-1 rounded-lg transition-all ${
                   ownerScope === "me"
-                    ? "bg-[#143C2E] dark:bg-emerald-600 text-white shadow-2xs"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    ? "bg-[#0D3B36] text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-[#0D3B36] dark:hover:text-white"
                 }`}
               >
                 Assigned to Me
@@ -110,8 +113,8 @@ export default function TodayPage() {
                 onClick={() => setOwnerScope("all")}
                 className={`px-3 py-1 rounded-lg transition-all ${
                   ownerScope === "all"
-                    ? "bg-[#143C2E] dark:bg-emerald-600 text-white shadow-2xs"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    ? "bg-[#0D3B36] text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-[#0D3B36] dark:hover:text-white"
                 }`}
               >
                 Everyone
@@ -181,7 +184,7 @@ export default function TodayPage() {
               return (
                 <div
                   key={item.finding_id || index}
-                  className="rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#0D1522] p-5 sm:p-6 shadow-2xs space-y-4 hover:border-emerald-300/80 dark:hover:border-emerald-500/40 transition-all"
+                  className="rounded-2xl border border-[#E2ECE5] dark:border-slate-800/80 bg-white dark:bg-[#0D1522] p-5 sm:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 hover:border-[#0D3B36]/50 dark:hover:border-emerald-500/40 hover:shadow-md transition-all duration-200"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="space-y-1.5">
@@ -191,13 +194,13 @@ export default function TodayPage() {
                         </span>
                         <Link
                           href={`/accounts/${account.id}`}
-                          className="font-bold text-sm text-slate-900 dark:text-white hover:text-[#143C2E] dark:hover:text-emerald-400 inline-flex items-center gap-1 transition-colors"
+                          className="font-bold text-sm text-[#111C18] dark:text-white hover:text-[#0D3B36] dark:hover:text-emerald-400 inline-flex items-center gap-1 transition-colors"
                         >
                           <span>{account.name}</span>
                           <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
                         </Link>
                         {isExpansion ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60 shadow-2xs">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EAF5EE] dark:bg-emerald-950/40 text-[#0D3B36] dark:text-emerald-300 border border-[#CFE7D6] dark:border-emerald-800/60 shadow-2xs">
                             Expansion Opportunity
                           </span>
                         ) : (
@@ -246,7 +249,7 @@ export default function TodayPage() {
 
                   {/* Top reasons & evidence chips */}
                   {item.top_reasons && item.top_reasons.length > 0 && (
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-2">
+                    <div className="pt-2 border-t border-[#EAEFEA] dark:border-slate-800 flex flex-wrap items-center gap-2">
                       <span className="text-[11px] font-semibold text-slate-400 uppercase font-mono">
                         Evidence:
                       </span>
@@ -264,7 +267,7 @@ export default function TodayPage() {
                   )}
 
                   {/* Action & Permission row */}
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="pt-3 border-t border-[#EAEFEA] dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-4 text-xs text-slate-500">
                       <span>
                         Pending Action Cards:{" "}
@@ -275,7 +278,7 @@ export default function TodayPage() {
                       {item.finding_id && (
                         <Link
                           href={`/findings/${item.finding_id}`}
-                          className="text-[#143C2E] hover:underline inline-flex items-center gap-1 font-semibold"
+                          className="text-[#0D3B36] hover:underline inline-flex items-center gap-1 font-semibold"
                         >
                           View Finding <ArrowRight className="w-3 h-3" />
                         </Link>
@@ -294,7 +297,7 @@ export default function TodayPage() {
                                 title: item.title,
                               })
                             }
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-2xs transition-all"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-[#DEE5E1] dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-[#EBF3EF] hover:border-[#0D3B36] hover:text-[#0D3B36] text-slate-700 dark:text-slate-200 shadow-2xs transition-all"
                           >
                             <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                             <span>Snooze</span>
@@ -313,9 +316,9 @@ export default function TodayPage() {
                                 title: item.title,
                               })
                             }
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-rose-200/90 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/40 hover:bg-rose-100/60 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 shadow-2xs transition-all"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-rose-200 dark:border-rose-900/60 bg-white hover:bg-rose-50 text-rose-600 dark:text-rose-300 shadow-2xs transition-all"
                           >
-                            <Ban className="w-3.5 h-3.5" />
+                            <Ban className="w-3.5 h-3.5 text-rose-500" />
                             <span>Dismiss</span>
                           </button>
                         </CanAct>
@@ -325,7 +328,7 @@ export default function TodayPage() {
                       <CanAct action="approve:card" entity={account}>
                         <Link
                           href="/inbox"
-                          className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-xs transition-all"
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#0D3B36] hover:bg-[#082925] text-white shadow-xs transition-all"
                         >
                           Review &amp; Approve
                         </Link>

@@ -36,7 +36,7 @@ export function FilterBar({
   return (
     <div
       className={clsx(
-        "flex flex-wrap items-center justify-between gap-3 p-2 rounded-2xl bg-white dark:bg-[#0D1522] border border-slate-200/90 dark:border-slate-800 shadow-2xs",
+        "flex flex-wrap items-center justify-between gap-3 p-2 rounded-2xl bg-white dark:bg-[#0D1522] border border-[#E2ECE5] dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)]",
         className
       )}
     >
@@ -51,7 +51,7 @@ export function FilterBar({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#143C2E]/20 dark:focus:ring-emerald-500/20 focus:border-[#143C2E] dark:focus:border-emerald-500"
+            className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl border border-[#DEE5E1] dark:border-slate-700 bg-[#F5F8F6] dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#0D3B36] focus:border-[#0D3B36] transition-all"
           />
         </div>
       </div>
@@ -66,10 +66,10 @@ export function FilterBar({
                 type="button"
                 onClick={() => onFilterSelect(filter.value)}
                 className={clsx(
-                  "px-3 py-1 text-xs font-semibold rounded-xl transition-all whitespace-nowrap",
+                  "px-3 py-1 text-xs font-semibold rounded-xl transition-all whitespace-nowrap border",
                   isSelected
-                    ? "bg-[#143C2E] dark:bg-emerald-600 text-white shadow-2xs"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700"
+                    ? "bg-[#0D3B36] text-white border-[#0D3B36] shadow-xs"
+                    : "bg-[#F0F5F2] dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-transparent hover:bg-[#EBF3EF] hover:text-[#0D3B36] hover:border-[#D0E2D7] dark:hover:bg-slate-700"
                 )}
               >
                 {filter.label}

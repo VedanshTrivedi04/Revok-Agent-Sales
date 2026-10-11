@@ -174,19 +174,19 @@ export default function AccountDetailPage({
         </div>
 
         {/* Account 360 Header */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 border border-[#E2ECE5] dark:border-slate-800 rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                <h1 className="text-2xl font-bold tracking-tight text-[#111C18] dark:text-slate-100">
                   {account.name}
                 </h1>
                 {account.risk_level && <SeverityBadge severity={account.risk_level} />}
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border border-[#DEE5E1] dark:border-slate-700 bg-[#F5F8F6] dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                   {account.status}
                 </span>
                 {account.plan_name && (
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-[#143C2E] dark:text-emerald-300 font-semibold">
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border border-[#CFE7D6] dark:border-emerald-800 bg-[#EAF5EE] dark:bg-emerald-950/40 text-[#0D3B36] dark:text-emerald-300 font-semibold">
                     {account.plan_name}
                   </span>
                 )}
@@ -211,7 +211,7 @@ export default function AccountDetailPage({
                     href={account.crm_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1 text-[#143C2E] hover:underline font-semibold"
+                    className="flex items-center gap-1 text-[#0D3B36] hover:underline font-semibold"
                   >
                     <span>CRM Record</span>
                     <ExternalLink className="w-3 h-3" />
@@ -227,7 +227,7 @@ export default function AccountDetailPage({
                   type="button"
                   onClick={() => runMutation.mutate()}
                   disabled={runMutation.isPending}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-[#143C2E] text-white hover:bg-[#0E2C22] rounded-xl font-semibold disabled:opacity-50 transition-all shadow-xs"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#0D3B36] text-white hover:bg-[#082925] disabled:opacity-50 transition-all shadow-xs"
                 >
                   <Play className="w-3.5 h-3.5 fill-current" />
                   {runMutation.isPending ? "Queuing analysis..." : "Run analysis now"}
@@ -237,7 +237,7 @@ export default function AccountDetailPage({
           </div>
 
           {/* Key Metrics Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#EDF2EE] dark:border-slate-800 text-xs">
             <div>
               <span className="text-slate-500 dark:text-slate-400 block font-medium mb-1">
                 Annual Contract Value (ARR)
@@ -285,14 +285,14 @@ export default function AccountDetailPage({
         <AccountAgentFlow accountId={accountId} onActual={setActualFlow} onShown={setShownFlow} />
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 text-xs font-semibold">
+        <div className="flex border-b border-[#E2ECE5] dark:border-slate-800 gap-6 text-xs font-semibold">
           <button
             type="button"
             onClick={() => setActiveTab("overview")}
             className={`pb-3 transition-colors ${
               activeTab === "overview"
-                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                ? "border-b-2 border-[#0D3B36] text-[#0D3B36] font-bold"
+                : "text-slate-500 hover:text-[#0D3B36] dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             Overview & Telemetry
@@ -302,8 +302,8 @@ export default function AccountDetailPage({
             onClick={() => setActiveTab("brain")}
             className={`pb-3 transition-colors ${
               activeTab === "brain"
-                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                ? "border-b-2 border-[#0D3B36] text-[#0D3B36] font-bold"
+                : "text-slate-500 hover:text-[#0D3B36] dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             Agent Brain
@@ -313,8 +313,8 @@ export default function AccountDetailPage({
             onClick={() => setActiveTab("findings")}
             className={`pb-3 transition-colors ${
               activeTab === "findings"
-                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                ? "border-b-2 border-[#0D3B36] text-[#0D3B36] font-bold"
+                : "text-slate-500 hover:text-[#0D3B36] dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             Active Findings ({account.open_findings.length})

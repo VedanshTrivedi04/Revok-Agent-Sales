@@ -19,8 +19,8 @@ html {
 }
 
 body {
-  background-color: #faf9f5;
-  color: #111827;
+  background-color: #f2f5f3;
+  color: #111c18;
   font-family: var(--font-display);
   min-height: 100vh;
   transition: background-color 0.15s ease, color 0.15s ease;
@@ -39,7 +39,7 @@ html.dark body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f0eb;
+  background: #eaf1ed;
 }
 
 .dark ::-webkit-scrollbar-track {

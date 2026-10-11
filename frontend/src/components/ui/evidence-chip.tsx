@@ -50,14 +50,14 @@ export function EvidenceChip({ evidence, className }: EvidenceChipProps) {
         }}
         className={clsx(
           "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-mono font-medium border transition-all shadow-2xs",
-          "bg-emerald-50/70 hover:bg-emerald-100/70 border-emerald-200/80 text-slate-800 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40 dark:border-emerald-800/60 dark:text-emerald-300",
-          "focus-visible:ring-2 focus-visible:ring-[#143C2E]/20 dark:focus-visible:ring-emerald-500/20",
+          "bg-[#EAF5EE] hover:bg-[#D9EDE0] border-[#CFE7D6] hover:border-[#0D3B36] text-slate-800 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40 dark:border-emerald-800/60 dark:text-emerald-300",
+          "focus-visible:ring-2 focus-visible:ring-[#0D3B36]/20 dark:focus-visible:ring-emerald-500/20",
           className
         )}
         title={evidence.label}
         aria-expanded={isOpen}
       >
-        <span className="font-bold text-[#143C2E] dark:text-emerald-400">[{evidence.key}]</span>
+        <span className="font-bold text-[#0D3B36] dark:text-emerald-400">[{evidence.key}]</span>
         {getSourceIcon(evidence.source)}
         <span className="truncate max-w-[140px] font-sans font-normal">{evidence.label}</span>
       </button>
@@ -69,9 +69,9 @@ export function EvidenceChip({ evidence, className }: EvidenceChipProps) {
             onClick={() => setIsOpen(false)}
             aria-hidden="true"
           />
-          <div className="absolute left-0 top-full mt-1.5 z-50 w-72 rounded-2xl p-3.5 bg-white dark:bg-[#0D1522] border border-slate-200/90 dark:border-slate-800 shadow-xl text-xs space-y-2">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-1.5">
-              <span className="font-mono font-bold text-[#143C2E] dark:text-emerald-400">
+          <div className="absolute left-0 top-full mt-1.5 z-50 w-72 rounded-2xl p-3.5 bg-white dark:bg-[#0D1522] border border-[#E2ECE5] dark:border-slate-800 shadow-xl text-xs space-y-2">
+            <div className="flex items-center justify-between border-b border-[#EAEFEA] dark:border-slate-800 pb-1.5">
+              <span className="font-mono font-bold text-[#0D3B36] dark:text-emerald-400">
                 Evidence [{evidence.key}]
               </span>
               <span className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 font-mono">

@@ -76,12 +76,12 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
 
   return (
     <aside
-      className="w-64 flex-shrink-0 flex flex-col border-r border-slate-800/80 bg-[#080C11] text-slate-100 h-full select-none"
+      className="w-64 flex-shrink-0 flex flex-col border-r border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-[#080C11] text-slate-800 dark:text-slate-100 h-full select-none shadow-[1px_0_0_0_#E2ECE5] dark:shadow-none"
       aria-label="Main Navigation"
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 bg-[#080C11] flex-shrink-0">
-        <Link href={home} className="flex items-center gap-2.5 font-bold tracking-tight text-white group">
+      <div className="h-16 flex items-center justify-between px-5 border-b border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-[#080C11] flex-shrink-0">
+        <Link href={home} className="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
           <img
             src="/secondary logo.png"
             alt="Revora"
@@ -89,9 +89,14 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
           />
           <div>
             <img
+              src="/pr name.png"
+              alt="Revora"
+              className="h-4.5 w-auto object-contain block dark:hidden"
+            />
+            <img
               src="/sc name.png"
               alt="Revora"
-              className="h-4.5 w-auto object-contain"
+              className="h-4.5 w-auto object-contain hidden dark:block"
             />
             <div className="text-[10px] text-slate-400 font-mono tracking-wider mt-0.5 uppercase">
               {activeRole || "workspace"}
@@ -103,7 +108,7 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
       {/* Portal switcher: only for people who may enter both portals */}
       {portals.length > 1 && (
         <div className="px-3 pt-3 flex-shrink-0">
-          <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-900/90 border border-slate-800/80 p-1" role="group" aria-label="Portal">
+          <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#F0F5F2] dark:bg-slate-900/90 border border-[#DEE7E1] dark:border-slate-800/80 p-1" role="group" aria-label="Portal">
             {portals.map((p) => (
               <Link
                 key={p}
@@ -111,7 +116,7 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
                 aria-current={p === portal ? "page" : undefined}
                 className={clsx(
                   "rounded-lg px-2 py-1.5 text-center text-[11px] font-semibold transition-all",
-                  p === portal ? "bg-[#143C2E] text-white shadow-xs ring-1 ring-emerald-500/30" : "text-slate-400 hover:text-white"
+                  p === portal ? "bg-[#0D3B36] text-white shadow-xs" : "text-slate-500 hover:text-[#0D3B36] dark:text-slate-400 dark:hover:text-white"
                 )}
               >
                 {PORTALS[p].label}
@@ -125,7 +130,7 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
       <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
         {visible.map((section) => (
           <div key={section.title} className="space-y-1">
-            <div className="px-3 pb-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider font-mono">
+            <div className="px-3 pb-1 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider font-mono">
               {section.title}
             </div>
 
@@ -140,17 +145,17 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
                   key={item.name}
                   href={item.href}
                   className={clsx(
-                    "flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group",
+                    "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group border",
                     isActive
-                      ? "bg-[#143C2E] text-white font-semibold shadow-xs ring-1 ring-emerald-500/30"
-                      : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+                      ? "bg-[#0D3B36] text-white font-semibold shadow-xs border-[#0D3B36] ring-1 ring-[#0D3B36]/20"
+                      : "border-transparent text-slate-600 dark:text-slate-300 hover:bg-[#EBF3EF] hover:text-[#0D3B36] hover:border-[#D0E2D7] dark:hover:bg-slate-800/60 dark:hover:text-white"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       className={clsx(
                         "w-4 h-4 transition-colors",
-                        isActive ? "text-emerald-400" : "text-slate-400 group-hover:text-slate-200"
+                        isActive ? "text-white" : "text-slate-400 group-hover:text-[#0D3B36] dark:group-hover:text-slate-200"
                       )}
                       aria-hidden="true"
                     />
@@ -161,7 +166,7 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
                     <span
                       className={clsx(
                         "px-1.5 py-0.5 text-[10px] font-mono rounded-full font-bold",
-                        isActive ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-slate-800 text-slate-300"
+                        isActive ? "bg-white/20 text-white" : "bg-[#E5EFE8] text-[#0D3B36] dark:bg-slate-800 dark:text-slate-300"
                       )}
                     >
                       {item.badge}
@@ -175,9 +180,9 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
       </nav>
 
       {/* User Status / Footer */}
-      <div className="p-3 border-t border-slate-800/80 bg-[#06090D] flex-shrink-0">
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-900/90 border border-slate-800/80 text-xs">
-          <div className="w-6 h-6 rounded-full bg-emerald-950/80 border border-emerald-600/40 text-emerald-300 flex items-center justify-center font-bold text-[10px] flex-shrink-0">
+      <div className="p-3 border-t border-[#E2ECE5] dark:border-slate-800/80 bg-white dark:bg-[#06090D] flex-shrink-0">
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#F5F8F6] dark:bg-slate-900/90 border border-[#E2ECE5] dark:border-slate-800/80 text-xs">
+          <div className="w-6 h-6 rounded-full bg-[#0D3B36] dark:bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] flex-shrink-0 shadow-2xs">
             {me?.user?.name
               ? me.user.name.charAt(0).toUpperCase()
               : me?.user?.email
@@ -185,14 +190,14 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
               : "U"}
           </div>
           <div className="overflow-hidden flex-1 min-w-0">
-            <div className="text-[11px] font-semibold text-slate-200 truncate">
+            <div className="text-[11px] font-semibold text-slate-900 dark:text-slate-200 truncate">
               {isLoading ? (
-                <span className="inline-block w-20 h-3 bg-slate-800 animate-pulse rounded" />
+                <span className="inline-block w-20 h-3 bg-slate-200 animate-pulse rounded" />
               ) : (
                 me?.user?.name || me?.user?.email || "Signed in"
               )}
             </div>
-            <div className="text-[10px] text-emerald-400 truncate capitalize font-mono font-medium">
+            <div className="text-[10px] text-[#0D3B36] dark:text-emerald-400 truncate capitalize font-mono font-medium">
               Role: {me?.role || activeRole || "—"}
             </div>
           </div>

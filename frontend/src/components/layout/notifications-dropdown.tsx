@@ -125,13 +125,13 @@ export function NotificationsDropdown() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-visible:ring-2 focus-visible:ring-[#143C2E]"
+        className="relative w-9 h-9 rounded-full border border-[#DEE5E1] dark:border-slate-800 bg-white dark:bg-[#0D1522] text-slate-600 dark:text-slate-400 hover:text-[#0D3B36] hover:border-[#0D3B36] hover:bg-[#F2F7F4] dark:hover:bg-slate-800/80 transition-all flex items-center justify-center shadow-2xs"
         aria-label={`Notifications (${unreadCount} unread)`}
         aria-expanded={isOpen}
       >
         <Bell className="w-4 h-4" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-rose-600 text-[10px] font-bold text-white flex items-center justify-center font-mono">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-[10px] font-bold text-white flex items-center justify-center font-mono shadow-xs">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -141,7 +141,7 @@ export function NotificationsDropdown() {
         <div
           role="region"
           aria-label="Notifications panel"
-          className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl z-50 overflow-hidden text-xs"
+          className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white dark:bg-[#0D1522] border border-[#E2ECE5] dark:border-slate-800 shadow-xl z-50 overflow-hidden text-xs"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">

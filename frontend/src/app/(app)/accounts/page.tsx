@@ -47,16 +47,19 @@ export default function AccountsPage() {
   return (
     <PermissionGuard action="view:accounts">
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2ECE5] dark:border-slate-800">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Welcome, {me?.user?.name || "Olivia"}!
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-[#111C18] dark:text-white mt-0.5">
               Accounts Directory
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Monitored customer accounts, contract values, usage trends, and active risk findings.
             </p>
           </div>
-          <div role="group" aria-label="View" className="inline-flex rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#0D1522] p-1 shadow-2xs text-xs font-semibold self-start">
+          <div role="group" aria-label="View" className="inline-flex rounded-xl border border-[#DEE5E1] dark:border-slate-800 bg-white dark:bg-[#0D1522] p-1 shadow-2xs text-xs font-semibold self-start">
             {([["map", "Map", LayoutGrid], ["list", "List", List]] as const).map(([key, label, Icon]) => (
               <button
                 key={key}
@@ -64,7 +67,7 @@ export default function AccountsPage() {
                 onClick={() => setView(key)}
                 aria-pressed={view === key}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  view === key ? "bg-[#143C2E] dark:bg-emerald-600 text-white shadow-2xs font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  view === key ? "bg-[#0D3B36] text-white shadow-xs font-semibold" : "text-slate-600 dark:text-slate-400 hover:text-[#0D3B36] dark:hover:text-white"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" aria-hidden="true" />
@@ -121,34 +124,34 @@ export default function AccountsPage() {
 
         {/* Dynamic Table */}
         {listMode && !isLoading && !error && accounts.length > 0 && (
-          <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+          <div className="overflow-hidden rounded-2xl border border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 font-mono uppercase text-[10px]">
+              <thead className="bg-[#0D3B36] text-white font-mono uppercase text-[11px] tracking-wider">
                 <tr>
-                  <th className="p-3.5 pl-4">Account</th>
-                  <th className="p-3.5">ARR</th>
-                  <th className="p-3.5">Seats</th>
-                  <th className="p-3.5">Renewal Date</th>
-                  <th className="p-3.5">Risk Level</th>
-                  <th className="p-3.5">Predicted Churn</th>
-                  <th className="p-3.5 text-right pr-4">Action</th>
+                  <th className="p-3.5 pl-4 text-white font-semibold">Account</th>
+                  <th className="p-3.5 text-white font-semibold">ARR</th>
+                  <th className="p-3.5 text-white font-semibold">Seats</th>
+                  <th className="p-3.5 text-white font-semibold">Renewal Date</th>
+                  <th className="p-3.5 text-white font-semibold">Risk Level</th>
+                  <th className="p-3.5 text-white font-semibold">Predicted Churn</th>
+                  <th className="p-3.5 text-right pr-4 text-white font-semibold">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-[#EDF2EE] dark:divide-slate-800">
                 {accounts.map((acc: AccountListItem) => (
                   <tr
                     key={acc.id}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+                    className="hover:bg-[#F2F7F4] dark:hover:bg-slate-800/40 transition-colors"
                   >
                     <td className="p-3.5 pl-4">
-                      <div className="font-semibold text-slate-900 dark:text-slate-100">
+                      <div className="font-semibold text-[#111C18] dark:text-slate-100">
                         {acc.name}
                       </div>
                       <div className="text-[11px] text-slate-400 font-mono">
                         {acc.domains?.[0] || "—"}
                       </div>
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-3.5 font-medium text-slate-900 dark:text-slate-100">
                       <MoneyText
                         amount={acc.arr}
                         currency={me?.org?.currency || "USD"}
@@ -157,7 +160,7 @@ export default function AccountsPage() {
                     <td className="p-3.5 font-mono text-slate-600 dark:text-slate-400">
                       {acc.seats_purchased ? `${acc.seats_purchased} seats` : "—"}
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-3.5 text-slate-700 dark:text-slate-300">
                       <DateText date={acc.renewal_date} />
                     </td>
                     <td className="p-3.5">
@@ -173,7 +176,7 @@ export default function AccountsPage() {
                     <td className="p-3.5 text-right pr-4">
                       <Link
                         href={`/accounts/${acc.id}`}
-                        className="text-[#143C2E] font-semibold inline-flex items-center gap-1 hover:underline"
+                        className="text-[#0D3B36] dark:text-emerald-400 font-semibold inline-flex items-center gap-1 hover:underline"
                       >
                         <span>View 360</span>
                         <ChevronRight className="w-3.5 h-3.5" />

@@ -66,7 +66,7 @@ function QuestionChips({
           type="button"
           disabled={disabled}
           onClick={() => onPick(q)}
-          className="px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-700 dark:text-slate-200 hover:border-blue-500 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-blue-500 text-left"
+          className="px-3 py-1.5 rounded-full border border-[#E2ECE5] bg-white text-xs text-[#111C18] hover:border-[#0D3B36] hover:text-[#0D3B36] hover:bg-[#EBF3EF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#0D3B36] text-left"
         >
           {q.text}
         </button>
@@ -143,19 +143,19 @@ function TurnView({
   return (
     <article className="space-y-2">
       <div className="flex justify-end">
-        <p className="max-w-[85%] px-3 py-2 rounded-xl rounded-br-sm bg-blue-600 text-white text-xs">
+        <p className="max-w-[85%] px-3.5 py-2.5 rounded-2xl rounded-br-sm bg-[#0D3B36] text-white text-xs font-medium">
           {turn.asked}
         </p>
       </div>
 
       {!answer && !turn.error && (
         <div
-          className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2"
+          className="p-4 rounded-2xl border border-[#E2ECE5] bg-white space-y-2"
           role="status"
           aria-label={`${ASSISTANT_NAME} is looking up the answer`}
         >
-          <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
-          <div className="h-3 w-1/3 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
+          <div className="h-3 w-2/3 rounded bg-[#EBF2EE] animate-pulse" />
+          <div className="h-3 w-1/3 rounded bg-[#EBF2EE] animate-pulse" />
         </div>
       )}
 
@@ -168,9 +168,9 @@ function TurnView({
       )}
 
       {answer && (
-        <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-3">
+        <div className="p-5 rounded-2xl border border-[#E2ECE5] bg-white shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <div className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider font-mono">
+            <div className="text-[10px] font-semibold text-[#0D3B36] uppercase tracking-wider font-mono">
               {ASSISTANT_NAME}
             </div>
 
@@ -179,7 +179,7 @@ function TurnView({
               <button
                 type="button"
                 onClick={onStopSpeaking}
-                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 transition-colors"
                 title="Stop speaking"
               >
                 <span className="flex h-1.5 w-1.5 relative">
@@ -193,10 +193,10 @@ function TurnView({
               <button
                 type="button"
                 onClick={() => onSpeak(answer.text, turn.id)}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium text-[#6A7B76] hover:text-[#0D3B36] hover:bg-[#EBF3EF] transition-colors"
                 title="Read aloud"
               >
-                <Volume2 className="w-3.5 h-3.5" />
+                <Volume2 className="w-3.5 h-3.5 text-[#0D3B36]" />
                 <span>Speak</span>
               </button>
             )}
@@ -204,17 +204,17 @@ function TurnView({
 
           {/* A typed question is matched to a catalog question: show which one was answered. */}
           {turn.body.question && answer.interpreted_as && (
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Answered as: <span className="font-medium">{answer.interpreted_as}</span>
+            <p className="text-[11px] text-[#6A7B76]">
+              Answered as: <span className="font-medium text-[#111C18]">{answer.interpreted_as}</span>
             </p>
           )}
-          <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed">{answer.text}</p>
+          <p className="text-sm text-[#111C18] leading-relaxed">{answer.text}</p>
           <AnswerRows answer={answer} />
           {answer.suggestions.length > 0 && (
             <QuestionChips questions={answer.suggestions} onPick={onPick} />
           )}
           {answer.status === "answered" && (
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-[#6A7B76]">
               {answer.basis} As of <DateText date={answer.as_of} formatStr="MMM d, yyyy HH:mm" />{" "}
               UTC.
             </p>
@@ -327,15 +327,15 @@ export default function AssistantPage() {
     <PermissionGuard action="view:assistant">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header with Assistant title, Indian Language Selector and Voice Controls */}
-        <div className="pb-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+        <div className="pb-4 border-b border-[#E2ECE5] flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-[#111C18] flex items-center gap-2">
               {ASSISTANT_NAME}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#EAF5EE] text-[#0D3B36] border border-[#CDE1D6]">
                 Voice Enabled
               </span>
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-[#6A7B76] mt-1">
               Ask {ASSISTANT_NAME} about accounts, risk, renewals and approvals in your language.
             </p>
           </div>
@@ -344,12 +344,12 @@ export default function AssistantPage() {
           <div className="flex items-center gap-2">
             {/* Indian Language Selector */}
             <div className="relative inline-flex items-center">
-              <Globe className="w-3.5 h-3.5 absolute left-2.5 text-slate-400 pointer-events-none" />
+              <Globe className="w-3.5 h-3.5 absolute left-2.5 text-[#6A7B76] pointer-events-none" />
               <select
                 aria-label="Select Indian Language"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="pl-8 pr-7 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-700 dark:text-slate-200 font-medium hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer appearance-none transition-colors"
+                className="pl-8 pr-7 py-1.5 rounded-xl border border-[#E2ECE5] bg-white text-xs text-[#111C18] font-medium hover:border-[#0D3B36] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D3B36] cursor-pointer appearance-none transition-colors"
               >
                 {INDIAN_LANGUAGES.map((lang) => (
                   <option key={lang.code} value={lang.code}>
@@ -358,7 +358,7 @@ export default function AssistantPage() {
                 ))}
               </select>
               <ChevronRight
-                className="w-3.5 h-3.5 absolute right-2 text-slate-400 pointer-events-none rotate-90"
+                className="w-3.5 h-3.5 absolute right-2 text-[#6A7B76] pointer-events-none rotate-90"
                 aria-hidden="true"
               />
             </div>
@@ -367,16 +367,16 @@ export default function AssistantPage() {
             <button
               type="button"
               onClick={toggleAutoSpeak}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${
                 autoSpeak
-                  ? "border-blue-200 dark:border-blue-800 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300"
-                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400"
+                  ? "border-[#0D3B36] bg-[#EAF5EE] text-[#0D3B36]"
+                  : "border-[#E2ECE5] bg-white text-[#6A7B76] hover:border-[#0D3B36] hover:text-[#0D3B36]"
               }`}
               title={autoSpeak ? "Voice answers: Enabled" : "Voice answers: Muted"}
             >
               {autoSpeak ? (
                 <>
-                  <Volume2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  <Volume2 className="w-3.5 h-3.5 text-[#0D3B36]" />
                   <span>Voice: On</span>
                 </>
               ) : (
@@ -406,13 +406,13 @@ export default function AssistantPage() {
 
         {/* Voice Error Banner */}
         {speechError && (
-          <div className="p-3 rounded-lg border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/50 text-xs text-rose-700 dark:text-rose-300 flex items-center justify-between">
+          <div className="p-3 rounded-xl border border-rose-200 bg-rose-50 text-xs text-rose-700 flex items-center justify-between">
             <span>{speechError}</span>
           </div>
         )}
 
         {/* Input Box with Voice & Send */}
-        <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-4">
+        <div className="p-4 rounded-2xl border border-[#E2ECE5] bg-white shadow-xs space-y-4">
           <form onSubmit={submit} className="flex items-center gap-2">
             <label htmlFor="assistant-question" className="sr-only">
               Your question
@@ -429,10 +429,10 @@ export default function AssistantPage() {
                   ? `Listening in ${currentLangObj.label}... Speak now`
                   : `Ask in ${currentLangObj.label} (or English), or use the mic`
               }
-              className={`flex-1 min-w-0 px-3 py-2 rounded-lg border text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors ${
+              className={`flex-1 min-w-0 px-3.5 py-2 rounded-xl border text-xs text-[#111C18] placeholder:text-[#8E9F9A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D3B36] transition-colors ${
                 isListening
-                  ? "border-rose-400 dark:border-rose-500 bg-rose-50/40 dark:bg-rose-950/20"
-                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950"
+                  ? "border-rose-400 bg-rose-50/40"
+                  : "border-[#E2ECE5] bg-[#F5F8F6]"
               }`}
             />
 
@@ -447,10 +447,10 @@ export default function AssistantPage() {
                     ? "Stop listening"
                     : `Click to speak (${currentLangObj.label})`
                 }
-                className={`relative inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-rose-500 ${
+                className={`relative inline-flex items-center justify-center w-9 h-9 rounded-xl transition-colors focus-visible:ring-2 focus-visible:ring-rose-500 ${
                   isListening
-                    ? "bg-rose-600 text-white hover:bg-rose-700 ring-4 ring-rose-200 dark:ring-rose-950 animate-pulse"
-                    : "border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-400"
+                    ? "bg-rose-600 text-white hover:bg-rose-700 ring-4 ring-rose-200 animate-pulse"
+                    : "border border-[#E2ECE5] bg-white text-[#6A7B76] hover:text-[#0D3B36] hover:border-[#0D3B36] hover:bg-[#EBF3EF]"
                 }`}
               >
                 {isListening ? (
@@ -466,7 +466,7 @@ export default function AssistantPage() {
               type="submit"
               disabled={!draft.trim() || isListening}
               aria-label="Ask"
-              className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#0D3B36] text-white hover:bg-[#124B45] transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#0D3B36]"
             >
               <ArrowUp className="w-4 h-4" aria-hidden="true" />
             </button>
@@ -474,7 +474,7 @@ export default function AssistantPage() {
 
           {/* Catalog questions chips */}
           <div className="space-y-2">
-            <h2 className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
+            <h2 className="text-[10px] font-semibold text-[#6A7B76] uppercase tracking-wider font-mono">
               Questions you can ask
             </h2>
 
@@ -483,7 +483,7 @@ export default function AssistantPage() {
                 {[40, 56, 48, 36].map((w) => (
                   <div
                     key={w}
-                    className="h-7 rounded-full bg-slate-200 dark:bg-slate-800 animate-pulse"
+                    className="h-7 rounded-full bg-[#EBF2EE] animate-pulse"
                     style={{ width: `${w * 4}px` }}
                   />
                 ))}

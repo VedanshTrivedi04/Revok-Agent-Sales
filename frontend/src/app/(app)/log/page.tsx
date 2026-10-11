@@ -49,9 +49,12 @@ export default function LogPage() {
   return (
     <PermissionGuard action="view:log">
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2ECE5] dark:border-slate-800">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Welcome, {me?.user?.name || "Olivia"}!
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-[#111C18] dark:text-slate-100 mt-0.5">
               Decision & Audit Log
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -65,9 +68,9 @@ export default function LogPage() {
                 type="button"
                 onClick={() => void verifyLog()}
                 disabled={verifying}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-[#DEE5E1] dark:border-slate-700 hover:bg-[#EBF3EF] hover:border-[#0D3B36] hover:text-[#0D3B36] bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#0D3B36] dark:text-green-400" />
                 <span>{verifying ? "Verifying..." : "Verify integrity"}</span>
               </button>
             </Can>
@@ -77,7 +80,7 @@ export default function LogPage() {
                 type="button"
                 onClick={() => void exportLog("csv")}
                 disabled={exporting}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] hover:bg-[#0E2C22] text-white transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#0D3B36] hover:bg-[#082925] text-white transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>{exporting ? "Exporting..." : "Export log"}</span>
@@ -127,18 +130,18 @@ export default function LogPage() {
 
         {/* Dynamic Table */}
         {!isLoading && !error && logs.length > 0 && (
-          <div className="overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+          <div className="overflow-hidden rounded-2xl border border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 font-mono uppercase text-[10px]">
+              <thead className="bg-[#0D3B36] text-white font-mono uppercase text-[11px] tracking-wider">
                 <tr>
-                  <th className="p-3.5 pl-4">Timestamp</th>
-                  <th className="p-3.5">Actor</th>
-                  <th className="p-3.5">Event</th>
-                  <th className="p-3.5">Entity</th>
-                  <th className="p-3.5">Description</th>
+                  <th className="p-3.5 pl-4 text-white font-semibold">Timestamp</th>
+                  <th className="p-3.5 text-white font-semibold">Actor</th>
+                  <th className="p-3.5 text-white font-semibold">Event</th>
+                  <th className="p-3.5 text-white font-semibold">Entity</th>
+                  <th className="p-3.5 text-white font-semibold">Description</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-[#EDF2EE] dark:divide-slate-800">
                 {logs.map((item: LogEntryOut) => {
                   const isMyAction =
                     Boolean(me?.user?.id && item.actor_id === me.user.id) ||

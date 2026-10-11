@@ -15,12 +15,12 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
 
   useEffect(() => {
     try {
-      const saved = (localStorage.getItem("revora_theme") as Theme) || "system";
+      const saved = (localStorage.getItem("revora_theme") as Theme) || "light";
       setThemeState(saved);
     } catch {
       // Ignore localStorage access failures
