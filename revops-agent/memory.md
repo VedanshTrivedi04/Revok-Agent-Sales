@@ -1258,3 +1258,39 @@ uv run python scripts/check_openapi.py --update                   # after any co
   - Delta Signal Extraction: LLM signal extraction only runs on un-analyzed records (`signals_extracted_at IS NULL`).
   - Self-Hosted vLLM: Continuous batching and PagedAttention on self-hosted Qwen ~9B GPU instances handle overnight workloads across tens of thousands of accounts predictably without third-party API rate limits.
 
+
+## 19. Where agent responses come from, and the Help assistant (2026-10-12)
+
+### 19.1 State of AI in the code (corrects sections 1, 5.5 and 15, which predate `apps/ai`)
+- `D:\CDGI2026\apps\ai` (commit `139d075`) is the AI service: a LangGraph run per account, a
+  self-hosted Qwen3.5-9B behind vLLM (OpenAI-compatible, schema-forced JSON), validators for
+  citations, quotes, numbers and injection, eval suites, and LightGBM churn/expansion models
+  (trained on SYNTHETIC data, see `apps/ai/models/*/model_card.json`).
+- `app/ports/external.py` no longer exists. `app/ports/registry.py` always returns the template
+  implementations; with `AI_MODE=external` + `AI_SERVICE_URL` the backend additionally asks the AI
+  service (`app/services/ai_client.py`, `app/workers/tasks_ai.py`) to replace the template
+  explanation and redraft pending cards through `/internal/v1`.
+- `apps/api/.env` has `AI_MODE=template` and no `AI_SERVICE_URL`, and `apps/ai/.env` does not
+  exist: explanations and cards shown today are rule text and fixed templates, not model output.
+  A finding's `model` / `prompt_version` says which (`template` / `template@1` vs the model name).
+- In template mode `NullSignalExtractor` returns nothing, so signal rules R06/R07/R11/X03 never fire.
+
+### 19.2 Help assistant (Work portal, `/help`)
+- Permission `assistant:ask` (Owner, Admin, Manager). Frontend action `view:assistant`.
+- `GET /assistant/catalog`, `POST /assistant/ask` (`app/routes/assistant.py`, page tag `C12 Help`).
+- `app/services/assistant.py`: 7 catalog questions (high-risk accounts, new risk findings,
+  renewals due, pending approvals, expansion opportunities, decisions summary, quiet accounts).
+  Typed text -> `plan_question` (keywords, English + common Hinglish words, numbers for score /
+  days / top N) -> one fixed read-only query in `org_session` -> answer text from the numbers.
+  No model. Unmatched text returns `status: "unsupported"` with the catalog as suggestions.
+- "Risk score" = priority score of an account's open risk findings (highest counts).
+- Mock mode: `app/mocks/assistant.py` reuses the planner and answer text over the fixture store.
+- Tests: `tests/test_assistant.py`, `frontend/e2e/help.spec.ts`.
+- Not built: daily score history (a "last N days" question counts findings first seen in the
+  window at today's score), a model-based planner for free text, RAG over emails/notes, and an
+  audit table of questions asked.
+- `NEXT_DIST_DIR` (set to `.next-e2e` by `playwright.config.ts`) keeps the E2E build out of `.next`.
+
+### 19.3 Known failing test (not caused by 19.2)
+- `tests/test_contract.py::test_internal_api_requires_the_internal_key` expects `{"events": []}`
+  but `/internal/v1/.../events/pending-extraction` now also returns `org_name`.
