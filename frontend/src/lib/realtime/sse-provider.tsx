@@ -81,6 +81,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
           updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.integrations() });
           queryClient.invalidateQueries({ queryKey: queryKeys.accounts() });
+          queryClient.invalidateQueries({ queryKey: queryKeys.today() });
         });
 
         es.addEventListener("notification.created", (event: MessageEvent) => {
@@ -106,6 +107,9 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
           updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.me() });
           queryClient.invalidateQueries({ queryKey: queryKeys.org() });
+          queryClient.invalidateQueries({ queryKey: queryKeys.fieldMapping() });
+          queryClient.invalidateQueries({ queryKey: queryKeys.rules() });
+          queryClient.invalidateQueries({ queryKey: queryKeys.autonomy() });
         });
 
         es.addEventListener("review.updated", (event: MessageEvent) => {
@@ -136,8 +140,42 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
 
     connect();
 
+    // Tab visibility handling: if tab hidden > 5 minutes, close SSE; reconnect and invalidate on return
+    let hiddenTimer: NodeJS.Timeout | null = null;
+    const handleVisibilityChange = () => {
+      if (typeof document === "undefined") return;
+      if (document.hidden) {
+        hiddenTimer = setTimeout(() => {
+          if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+            eventSourceRef.current = null;
+            setIsConnected(false);
+          }
+        }, 5 * 60 * 1000); // 5 minutes
+      } else {
+        if (hiddenTimer) {
+          clearTimeout(hiddenTimer);
+          hiddenTimer = null;
+        }
+        if (!eventSourceRef.current && !isCancelled) {
+          queryClient.invalidateQueries();
+          connect();
+        }
+      }
+    };
+
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
+
     return () => {
       isCancelled = true;
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      }
+      if (hiddenTimer) {
+        clearTimeout(hiddenTimer);
+      }
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }

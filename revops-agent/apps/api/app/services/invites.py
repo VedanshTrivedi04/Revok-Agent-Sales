@@ -10,7 +10,14 @@ from app.auth.deps import invalidate_membership
 from app.db.session import admin_session
 from app.decision_log_events import MEMBER_INVITED
 from app.models.tenancy import Invite, Membership, Organization, User
-from app.schemas.identity import Ack, InviteAcceptOut, InviteCreateIn, InviteOut
+from app.permissions import Role, can_invite
+from app.schemas.identity import (
+    Ack,
+    InviteAcceptOut,
+    InviteCreateIn,
+    InviteOut,
+    InvitePreviewOut,
+)
 from app.services import decision_log
 from app.services.email import get_email_sender
 from app.utils.errors import AppError
@@ -20,8 +27,20 @@ from app.utils.time import utcnow
 
 
 async def create_invite(
-    s: AsyncSession, org_id: UUID, body: InviteCreateIn, invited_by: UUID
+    s: AsyncSession,
+    org_id: UUID,
+    body: InviteCreateIn,
+    invited_by: UUID,
+    inviter_role: Role | str,
 ) -> InviteOut:
+    # Hierarchy: Owner invites Admin/Manager/Member/Viewer, Admin invites Manager/Member/Viewer.
+    # Everyone else cannot invite, and Owner is never granted by invite.
+    if not can_invite(inviter_role, body.role):
+        raise AppError(
+            "forbidden",
+            f"A {inviter_role} cannot invite someone as {body.role}",
+        )
+
     # Check if already an active member
     existing_member = (
         await s.execute(
@@ -139,6 +158,38 @@ async def revoke_invite(s: AsyncSession, org_id: UUID, invite_id: UUID, actor_id
         data={"email": email, "role": role},
     )
     return Ack(ok=True)
+
+
+async def preview_invite(token: str) -> InvitePreviewOut:
+    """What the invite link is for, shown before sign-in. Anyone holding the token already has the
+    invitation email, so the invited address is returned; nothing else about the org is exposed."""
+    token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
+    async with admin_session() as s:
+        row = (
+            await s.execute(
+                select(Invite, Organization.name, User.name)
+                .join(Organization, Organization.id == Invite.org_id)
+                .outerjoin(User, User.id == Invite.invited_by)
+                .where(Invite.token_hash == token_hash, Organization.status != "deleted")
+            )
+        ).first()
+    if row is None:
+        raise AppError("not_found", "Invite not found or invalid token")
+    invite, org_name, inviter_name = row
+    if invite.accepted_at is not None:
+        state = "used"
+    elif invite.expires_at < utcnow():
+        state = "expired"
+    else:
+        state = "active"
+    return InvitePreviewOut(
+        org_name=org_name,
+        role=invite.role,
+        email=str(invite.email),
+        invited_by_name=inviter_name,
+        expires_at=invite.expires_at,
+        status=state,
+    )
 
 
 async def accept_invite(user_id: UUID, user_email: str | None, token: str) -> InviteAcceptOut:

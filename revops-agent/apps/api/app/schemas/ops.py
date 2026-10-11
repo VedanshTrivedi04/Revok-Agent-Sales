@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 RunStatus = Literal["queued", "running", "waiting_approval", "completed", "failed", "skipped"]
 
@@ -89,6 +89,29 @@ class AdminOrgOut(BaseModel):
     open_findings: int = 0
     failed_jobs_24h: int = 0
     created_at: datetime
+
+
+class AdminOnboardIn(BaseModel):
+    """Platform team onboards a client: the workspace plus its first Owner."""
+
+    name: str = Field(min_length=2, max_length=120)
+    primary_domain: str | None = Field(default=None, max_length=253)
+    timezone: str = "Asia/Kolkata"
+    currency: str = Field(default="USD", min_length=3, max_length=3)
+    owner_email: EmailStr
+    owner_name: str = Field(min_length=2, max_length=80)
+    send_set_password_email: bool = True
+    generate_temporary_password: bool = False
+
+
+class AdminOnboardOut(BaseModel):
+    org: AdminOrgOut
+    owner_email: str
+    owner_created: bool  # False when the Owner already had an account
+    set_password_email_sent: bool
+    temporary_password: str | None = (
+        None  # shown exactly once; the Owner must change it at first login
+    )
 
 
 class AdminOrgDetail(AdminOrgOut):

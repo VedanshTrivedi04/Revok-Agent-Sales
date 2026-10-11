@@ -1,0 +1,20 @@
+meta {
+  name: onboard_client
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/admin/orgs
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Create a client workspace and its first Owner (set-password email and/or temporary password).
+  Page: E Admin Console | Owner: V | Phase: P6 | Access: superadmin
+}

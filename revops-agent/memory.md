@@ -895,7 +895,6 @@ uv run python scripts/check_openapi.py --update                   # after any co
 3. Rotate the Neon DB passwords (they were printed in a session transcript). Production needs `API_JWT_SECRET`/`SESSION_SECRET` set (32+ chars).
 4. Old magic-link pages `/auth/check-email` and `/auth/error` still exist but are unused; customer login has no link to `/admin/login`.
 5. Windows gotchas: use the Write tool for TS files (long Bash heredocs with apostrophes fail); never `rm -rf` a folder containing a node_modules junction; Next dev with a junctioned node_modules fails, for e2e use `distDir` override + `next build --webpack` + `next start` (and restore `next.config.ts`).
-
 ## 17. Interaction History
 
 ### 2026-10-11 08:30
@@ -1199,3 +1198,63 @@ uv run python scripts/check_openapi.py --update                   # after any co
 - `GET http://127.0.0.1:8000/api/v1/accounts`: Returns 6 seeded accounts.
 - Celery worker ready and receiving from 5 queues (`sync`, `agent`, `executor`, `notify`, `default`).
 - Celery beat actively running.
+
+
+## 18. System Architecture, End-to-End Portals Walkthrough, and Big Data Scalability Blueprint
+
+> Date: 2026-10-11. Contextual summary of the architectural walkthrough and big data / scale design synthesized for Vedansh.
+
+### 18.1 Problem Statement & Solution Principles
+- **Core Pain Point:** In B2B SaaS, customer health & churn signals are fragmented across CRM (deals/renewals), Gmail (churn discussions/sentiments), Calendar (stakeholder meetings/absence), and product telemetry (usage drops). CSMs manage 50–100 accounts and miss early churn warnings. Existing tools provide opaque, unhelpful "health scores" (e.g. "Score: 42"), while raw agentic AI tools risk uncontrolled, unverified CRM writes (leading to high cancellation rates per Gartner).
+- **Solution Strategy:** RevOps Agent operates as an **evidence-first, approval-native revenue intelligence platform**:
+  1. Unifies CRM, mail, calendar, and usage data into one normalized customer timeline per account.
+  2. Every AI claim must quote valid `evidence_ids` corresponding to real database events (enforced by `validator.py`).
+  3. Action tiering enforces human-in-the-loop: Tier 1 (safe/internal notifications) auto-executes; Tier 2 (external actions, drafts, CRM property modifications) interrupts and halts for explicit human approval via Web UI or Slack; Tier 3 (pricing, contracts, deletes) is blocked at code level.
+  4. Every decision is logged in an append-only, hash-chained `decision_log` with 1-click revert capability for CRM mutations.
+
+### 18.2 The 6 Portals (Surface Breakdown)
+- **Portal A: Public & Auth (`/login`, `/signup`, `/invite/*`):**
+  - NextAuth / Auth.js with scrypt email+password; mints short-lived (5-min) service JWT.
+  - Strict isolation: customer login and platform admin login are completely disjoint (`/login` rejects superadmin; `/admin/login` strictly for platform operators).
+- **Portal B: Onboarding (`/onboarding/*`):**
+  - Stepper wizard: `B1` Workspace creation -> `B2` HubSpot CRM OAuth -> `B3` Google Workspace (Gmail read-only + Calendar) -> `B4` CRM field mapping (standardizing renewal dates, ARR, health properties) -> `B5` Product usage ingestion (API key / CSV) -> `B6` Slack alerts channel -> `B7` Team member invites -> `B8` Live initial sync progress.
+- **Portal C: Main App Portal (`(app)`):**
+  - `C1 Today` (`/today`): Morning command center displaying a curated priority list (3–7 accounts needing urgent attention), filtered by persona (`assigned to me` for CSMs vs `all team accounts` for Managers).
+  - `C2 Finding Detail` (`/findings/[id]`): In-depth view of risk/expansion findings with clickable evidence badges linking directly to raw email snippets or timeline events, alongside explicit sections for unknowns and contradictions.
+  - `C3 Inbox & C4 Card Drawer` (`/inbox`): Action approval queue with editable drafts, one-click Approve, Reject (with feedback capture), or Snooze.
+  - `C5 Accounts & C6 Account Detail` (`/accounts/[id]`): 360-degree timeline combining emails, meetings, and CRM updates; telemetry graphs; and on-demand "Run Agent Now" trigger.
+  - `C7 Decision Log & C8 Why Replay` (`/log`): Append-only audit trail showing who approved what action, raw payload diffs, full reasoning replay, and 1-click CRM state reversal.
+  - `C9 Entity Review` (`/review`): Human-in-the-loop resolution queue for ambiguous emails/domains.
+  - `C10 Agent Runs` (`/runs`): Execution monitoring for background detection runs and LangGraph checkpoints.
+- **Portal D: Settings (`/settings/*`):**
+  - Personal (Profile, individual Gmail/Slack connections) and Workspace-wide (General, Members/RBAC, Integrations, Field Mapping, Rules Engine threshold tuning, Autonomy Policies, API keys, GDPR Data & Privacy export/deletion).
+- **Portal E: Platform Admin (`/admin/*`):**
+  - Superadmin cockpit with dark internal UI (`styles/tokens-admin.css`).
+  - Gated via `GET /admin/me` (`permissions[]: platform:admin|flags|jobs|orgs`). Zero customer content visibility (strict privacy boundary).
+  - Manages Tenant Orgs, Celery job queues, vLLM inference health, Prompt evals/regression benchmarks, and global feature flags.
+- **Portal F: Slack Interactive Surface:**
+  - Block Kit interactive notifications sent to rep/manager channels with `[Approve]`, `[Reject]`, and `[View Evidence in App]` deep-link buttons. 3-second fast ACK with background execution.
+
+### 18.3 Big Data Ingestion, Storage & Scalability Blueprint
+- **Delta / Incremental Ingestion (No Full Re-fetches):**
+  - HubSpot: Incremental sync querying `hs_lastmodifieddate > cursor` with a 1-minute overlap buffer.
+  - Gmail: `users.history.list` delta queries tracking Google `historyId` to ingest only newly arrived messages; 30-day fallback only if history expires.
+  - Google Calendar: Delta synchronization using `syncToken`.
+  - Telemetry: Micro-batched usage aggregates via `POST /api/v1/ingest/usage` or periodic CSV uploads into `usage_snapshots`.
+- **Database Optimization & Storage Management:**
+  - Content Trimming: HTML stripped; email and note bodies capped at 20 KB text; binary attachments dropped (referenced via source links only).
+  - Indexing: High-performance composite indexes `(org_id, account_id, occurred_at desc)` and `GIN(domains)` for instant timeline retrieval and domain resolution.
+  - Partitioning: Monthly range partitioning on the `events` table planned for >50M records to maintain index fit in memory.
+  - Tenant Isolation: Postgres Row Level Security (RLS) dynamically sets `app.org_id` per transaction.
+- **Distributed Queues & Worker Isolation:**
+  - Celery 5 + Redis architecture with dedicated, isolated queues:
+    - `sync`: I/O-bound connector fetching with rate-limiters (e.g. HubSpot 100 req/10s token bucket).
+    - `agent`: Rule evaluation and LangGraph reasoning execution.
+    - `executor`: Fast, idempotent external writes (HubSpot, Gmail drafts, Slack).
+    - `notify`: Scheduled Slack digests and high-priority alerts.
+  - Redis distributed locking (`sync:{org}:hubspot`, `run:{account}`) prevents concurrent write collisions.
+- **AI / LLM Cost and Throughput Scaling:**
+  - Code-First Filter: Deterministic Python rules engine screens 100% of accounts nightly; only the ~15–20% exhibiting concrete anomalies trigger LLM explanation and drafting. 80% normal accounts incur zero model costs.
+  - Delta Signal Extraction: LLM signal extraction only runs on un-analyzed records (`signals_extracted_at IS NULL`).
+  - Self-Hosted vLLM: Continuous batching and PagedAttention on self-hosted Qwen ~9B GPU instances handle overnight workloads across tens of thousands of accounts predictably without third-party API rate limits.
+

@@ -9,6 +9,8 @@ from app.schemas.identity import Ack
 from app.schemas.ops import (
     AdminJobOut,
     AdminMe,
+    AdminOnboardIn,
+    AdminOnboardOut,
     AdminOrgDetail,
     AdminOrgOut,
     DataHealthOut,
@@ -42,6 +44,21 @@ async def admin_me() -> AdminMe:
 @endpoint("GET", "/admin/orgs", group="admin", page=PAGE, owner="V", phase=5, access="superadmin")
 async def list_admin_orgs(page: Paging) -> Page[AdminOrgOut]:
     """All organizations: counts and statuses only, no customer content."""
+    raise NotImplementedError
+
+
+@endpoint(
+    "POST",
+    "/admin/orgs",
+    group="admin",
+    page=PAGE,
+    owner="V",
+    phase=6,
+    access="superadmin",
+    status_code=201,
+)
+async def onboard_client(body: AdminOnboardIn) -> AdminOnboardOut:
+    """Create a client workspace and its first Owner (set-password email and/or temporary password)."""
     raise NotImplementedError
 
 
@@ -182,6 +199,12 @@ async def list_admin_orgs_real(request: Request, page: PageParams, **_: Any) -> 
 @real("get_admin_org")
 async def get_admin_org_real(request: Request, org_id: UUID, **_: Any) -> AdminOrgDetail:
     return await admin_service.get_admin_org(org_id)
+
+
+@real("onboard_client")
+async def onboard_client_real(request: Request, body: AdminOnboardIn, **_: Any) -> AdminOnboardOut:
+    claims = get_claims(request)
+    return await admin_service.onboard_client(claims.user_id, body)
 
 
 @real("suspend_org")

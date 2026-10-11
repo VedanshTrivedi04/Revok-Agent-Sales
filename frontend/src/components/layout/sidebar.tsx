@@ -18,6 +18,10 @@ import {
 } from "lucide-react";
 import { useMe } from "../../lib/auth/session-context";
 
+import { useQuery } from "@tanstack/react-query";
+import { fetchApi } from "../../lib/api/client";
+import { queryKeys } from "../../lib/api/query-keys";
+
 interface NavItem {
   name: string;
   href: string;
@@ -26,25 +30,56 @@ interface NavItem {
   badge?: number | string;
 }
 
-const ALL_NAV_ITEMS: NavItem[] = [
-  { name: "Today", href: "/today", icon: CalendarDays, action: "view:today" },
-  { name: "Inbox", href: "/inbox", icon: Inbox, action: "view:inbox" },
-  { name: "Accounts", href: "/accounts", icon: Building2, action: "view:accounts" },
-  { name: "Decision Log", href: "/log", icon: ScrollText, action: "view:log" },
-  { name: "Outcomes", href: "/outcomes", icon: TrendingUp, action: "view:outcomes" },
-  // Role-gated items (Hidden for Viewer)
-  { name: "Review", href: "/review", icon: GitPullRequest, action: "view:review" },
-  { name: "Runs", href: "/runs", icon: Activity, action: "view:runs" },
-  { name: "Team", href: "/team", icon: Users2, action: "view:team" },
-  { name: "Settings", href: "/settings/profile", icon: SlidersHorizontal, action: "view:settings_profile" },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
   const { can, me, activeRole, isLoading } = useMe();
 
+  const { data: inboxData } = useQuery<{ items: unknown[] }>({
+    queryKey: queryKeys.inbox(),
+    queryFn: () => fetchApi<{ items: unknown[] }>("/action-cards?status=pending_approval&assignee=me"),
+    staleTime: 15 * 1000,
+  });
+
+  const { data: reviewData } = useQuery<{ items: unknown[] }>({
+    queryKey: queryKeys.entityReviews(),
+    queryFn: () => fetchApi<{ items: unknown[] }>("/entity-reviews"),
+    enabled: can("review:view"),
+    staleTime: 30 * 1000,
+  });
+
+  const inboxCount = inboxData?.items?.length || 0;
+  const reviewCount = reviewData?.items?.length || 0;
+
+  const canViewWorkspaceSettings = can("view:settings_general") || can("members:manage") || can("org:delete");
+  const settingsHref = canViewWorkspaceSettings ? "/settings/general" : "/settings/profile";
+
+  const allNavItems: NavItem[] = [
+    { name: "Today", href: "/today", icon: CalendarDays, action: "view:today" },
+    {
+      name: "Inbox",
+      href: "/inbox",
+      icon: Inbox,
+      action: "view:inbox",
+      badge: inboxCount > 0 ? inboxCount : undefined,
+    },
+    { name: "Accounts", href: "/accounts", icon: Building2, action: "view:accounts" },
+    { name: "Decision Log", href: "/log", icon: ScrollText, action: "view:log" },
+    { name: "Outcomes", href: "/outcomes", icon: TrendingUp, action: "view:outcomes" },
+    // Role-gated items (Hidden for Viewer)
+    {
+      name: "Review",
+      href: "/review",
+      icon: GitPullRequest,
+      action: "view:review",
+      badge: reviewCount > 0 ? reviewCount : undefined,
+    },
+    { name: "Runs", href: "/runs", icon: Activity, action: "view:runs" },
+    { name: "Team", href: "/team", icon: Users2, action: "view:team" },
+    { name: "Settings", href: settingsHref, icon: SlidersHorizontal, action: "view:settings_profile" },
+  ];
+
   // Filter items strictly using can(action) - hidden items are never rendered
-  const visibleNav = ALL_NAV_ITEMS.filter((item) => can(item.action));
+  const visibleNav = allNavItems.filter((item) => can(item.action));
 
   return (
     <aside

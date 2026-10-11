@@ -65,12 +65,32 @@ async def list_integrations_service(
     ]
 
 
+_ONBOARDING_STEP = {
+    "hubspot": "hubspot",
+    "gmail": "google",
+    "gcal": "google",
+    "slack": "slack",
+}
+
+
+def web_return_url(provider: str, return_to: str) -> str:
+    """Where the browser lands after the provider redirect: back in the onboarding step the user
+    came from, or in Settings. `?connected=` / `?error=` is appended by the caller."""
+    base = get_settings().web_url
+    if return_to == "onboarding":
+        return f"{base}/onboarding/{_ONBOARDING_STEP.get(provider, 'first-sync')}"
+    if provider in ("gmail", "gcal"):
+        return f"{base}/settings/connections"
+    return f"{base}/settings/integrations"
+
+
 async def connect_integration_service(
     org_id: UUID,
     user_id: UUID,
     provider: str,
     role: Role,
     session: AsyncSession | None = None,
+    return_to: str = "settings",
 ) -> ConnectOut:
     if provider in ("hubspot", "slack") and role not in (Role.OWNER, Role.ADMIN):
         raise AppError(
@@ -99,9 +119,12 @@ async def connect_integration_service(
     if not isinstance(connector, OAuthConnector):
         raise AppError("bad_request", f"Provider {provider} does not support OAuth")
 
-    state = create_state(org_id, user_id, provider)
+    state = create_state(org_id, user_id, provider, return_to=return_to)
     settings = get_settings()
-    redirect_uri = f"{settings.public_api_url}/api/v1/oauth/{provider}/callback"
+    # Slack installs through its own callback, which records the team id that incoming webhooks
+    # are resolved by; the generic callback would store a connection those webhooks cannot find.
+    callback = "slack/oauth" if provider == "slack" else f"oauth/{provider}"
+    redirect_uri = f"{settings.public_api_url}/api/v1/{callback}/callback"
     auth_url = connector.authorize_url(state=state, redirect_uri=redirect_uri)
     return ConnectOut(authorize_url=auth_url)
 
@@ -113,7 +136,7 @@ async def oauth_callback_service(
     provider: str, code: str, state: str, error: str | None = None
 ) -> RedirectResponse:
     settings = get_settings()
-    redirect_base = f"{settings.web_url}/settings/integrations"
+    redirect_base = web_return_url(provider, "settings")
 
     if error:
         return RedirectResponse(f"{redirect_base}?error={error}", status_code=302)
@@ -124,6 +147,7 @@ async def oauth_callback_service(
         return RedirectResponse(f"{redirect_base}?error={e.code}", status_code=302)
     except Exception:
         return RedirectResponse(f"{redirect_base}?error=invalid_state", status_code=302)
+    redirect_base = web_return_url(provider, oauth_state.return_to)
 
     connector = registry.get(provider)
     if not isinstance(connector, OAuthConnector):

@@ -5,18 +5,30 @@ client-chosen role: it returns the identity and default workspace, and every lat
 re-reads the membership role from the DB (see app/auth/deps.py).
 """
 
+import hashlib
+import secrets
 from datetime import timedelta
 from uuid import UUID
 
 import structlog
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.passwords import hash_password_async, verify_password_async
 from app.db.session import admin_session
-from app.models.tenancy import Membership, Organization, User
+from app.models.tenancy import Membership, Organization, PasswordToken, User
 from app.permissions import Role
-from app.schemas.identity import AuthSession, AuthUser, LoginIn, MeMembership, SignupIn
+from app.schemas.identity import (
+    Ack,
+    AuthSession,
+    AuthUser,
+    ChangePasswordIn,
+    LoginIn,
+    MeMembership,
+    SetPasswordIn,
+    SignupIn,
+)
 from app.utils.errors import AppError
 from app.utils.ids import new_id
 from app.utils.time import utcnow
@@ -26,6 +38,7 @@ log = structlog.get_logger()
 MAX_FAILED_ATTEMPTS = 5
 LOCK_MINUTES = 15
 NO_ORG = UUID(int=0)
+SET_PASSWORD_TTL = timedelta(days=7)
 _ROLE_RANK = {Role.OWNER: 0, Role.ADMIN: 1, Role.MANAGER: 2, Role.MEMBER: 3, Role.VIEWER: 4}
 
 
@@ -70,6 +83,7 @@ async def _session_for(user: User) -> AuthSession:
         is_superadmin=user.is_superadmin,
         memberships=memberships,
         needs_onboarding=not memberships and not user.is_superadmin,
+        must_change_password=user.must_change_password,
     )
 
 
@@ -155,3 +169,75 @@ async def signup(body: SignupIn) -> AuthSession:
     except IntegrityError as e:  # concurrent signup with the same email
         raise AppError("conflict", "An account with this email already exists") from e
     return await _session_for(user)
+
+
+def generate_temporary_password() -> str:
+    """16 random url-safe characters; always satisfies the 10+ character password policy."""
+    return secrets.token_urlsafe(12)
+
+
+async def issue_set_password_token(s: AsyncSession, user_id: UUID, created_by: UUID | None) -> str:
+    """Create a single-use set-password link token (7 days) and return the raw token. Earlier
+    unused tokens for the same user stop working."""
+    now = utcnow()
+    for old in (
+        await s.execute(
+            select(PasswordToken).where(
+                PasswordToken.user_id == user_id, PasswordToken.used_at.is_(None)
+            )
+        )
+    ).scalars():
+        old.used_at = now
+    raw = secrets.token_urlsafe(32)
+    s.add(
+        PasswordToken(
+            id=new_id(),
+            user_id=user_id,
+            token_hash=hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+            expires_at=now + SET_PASSWORD_TTL,
+            created_by=created_by,
+        )
+    )
+    await s.flush()
+    return raw
+
+
+async def set_password(body: SetPasswordIn) -> Ack:
+    """Redeem an emailed set-password link. Unknown, used and expired tokens are indistinguishable."""
+    token_hash = hashlib.sha256(body.token.encode("utf-8")).hexdigest()
+    password_hash = await hash_password_async(body.password)
+    now = utcnow()
+    async with admin_session() as s:
+        row = (
+            await s.execute(select(PasswordToken).where(PasswordToken.token_hash == token_hash))
+        ).scalar_one_or_none()
+        if row is None or row.used_at is not None or row.expires_at < now:
+            raise AppError("bad_request", "This link is invalid or has expired")
+        user = await s.get(User, row.user_id)
+        if user is None:
+            raise AppError("bad_request", "This link is invalid or has expired")
+        row.used_at = now
+        user.password_hash = password_hash
+        user.must_change_password = False
+        user.failed_login_count = 0
+        user.locked_until = None
+    return Ack(ok=True)
+
+
+async def change_password(user_id: UUID, body: ChangePasswordIn) -> Ack:
+    """Signed-in user changes their own password (also clears a temporary-password flag)."""
+    if body.new_password == body.current_password:
+        raise AppError("bad_request", "Choose a password you have not used before")
+    async with admin_session() as s:
+        user = await s.get(User, user_id)
+        stored = user.password_hash if user is not None else None
+    if user is None or not await verify_password_async(body.current_password, stored):
+        raise AppError("bad_request", "Your current password is incorrect")
+    new_hash = await hash_password_async(body.new_password)
+    async with admin_session() as s:
+        user = await s.get(User, user_id)
+        if user is None:
+            raise AppError("not_found", "User not found")
+        user.password_hash = new_hash
+        user.must_change_password = False
+    return Ack(ok=True)

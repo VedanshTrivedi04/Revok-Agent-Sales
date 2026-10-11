@@ -54,6 +54,23 @@ class User(Base, IdMixin, TimestampMixin):
         Integer, server_default=text("0"), nullable=False
     )
     locked_until: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
+    # True while the user is on a temporary password handed out by the platform team.
+    must_change_password: Mapped[bool] = mapped_column(
+        Boolean, server_default=text("false"), nullable=False
+    )
+
+
+class PasswordToken(Base, IdMixin, TimestampMixin):
+    """Single-use, emailed set-password link (client onboarding). Global like `users`; only the
+    sha256 of the token is stored."""
+
+    __tablename__ = "password_tokens"
+
+    user_id: Mapped[UUID] = uuid_fk("users.id")
+    token_hash: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    expires_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
+    created_by: Mapped[UUID | None] = uuid_fk("users.id", nullable=True, ondelete="SET NULL")
 
 
 class Membership(Base, IdMixin, TimestampMixin):

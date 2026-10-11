@@ -19,6 +19,7 @@ from sqlalchemy import String, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.jwt import Claims
+from app.auth.passwords import hash_password_async
 from app.config import get_settings
 from app.db.session import admin_session
 from app.models.audit import FailedJob, FeatureFlag
@@ -26,10 +27,12 @@ from app.models.brain import Finding
 from app.models.integrations import Integration
 from app.models.tenancy import Membership, Organization, User
 from app.models.timeline import Account
-from app.schemas.identity import Ack
+from app.schemas.identity import Ack, OrgCreateIn
 from app.schemas.ops import (
     AdminJobOut,
     AdminMe,
+    AdminOnboardIn,
+    AdminOnboardOut,
     AdminOrgDetail,
     AdminOrgOut,
     DataHealthOut,
@@ -39,8 +42,12 @@ from app.schemas.ops import (
     FlagPutIn,
     LlmHealthOut,
 )
-from app.services.identity import DEFAULT_FEATURE_FLAGS
+from app.services import decision_log
+from app.services.auth import generate_temporary_password, issue_set_password_token
+from app.services.email import get_email_sender
+from app.services.identity import DEFAULT_FEATURE_FLAGS, insert_org_with_owner
 from app.utils.errors import AppError
+from app.utils.ids import new_id
 from app.utils.pagination import OrderKey, Page, PageParams, paginate
 from app.utils.redis import get_redis
 from app.utils.time import utcnow
@@ -170,6 +177,88 @@ async def get_admin_org(org_id: UUID) -> AdminOrgDetail:
             integrations=integrations_out,
             recent_errors=recent_errors,
         )
+
+
+async def onboard_client(actor_id: UUID, body: AdminOnboardIn) -> AdminOnboardOut:
+    """Platform team creates a client workspace and its first Owner.
+
+    The superadmin never becomes a member. A brand-new Owner receives credentials by an emailed
+    set-password link, a one-time temporary password (forced change at first sign-in), or both.
+    An existing account is only given the Owner membership; its credentials are never touched.
+    """
+    email = body.owner_email.strip().lower()
+    org_id = new_id()
+    temp_password: str | None = None
+    set_password_token: str | None = None
+
+    async with admin_session() as s:
+        user = (await s.execute(select(User).where(User.email == email))).scalar_one_or_none()
+        if user is not None and user.is_superadmin:
+            raise AppError("conflict", "A platform operator account cannot own a client workspace")
+        created = user is None
+        if user is None:
+            if not (body.send_set_password_email or body.generate_temporary_password):
+                raise AppError(
+                    "bad_request",
+                    "Choose how the Owner receives credentials: set-password email, "
+                    "temporary password, or both",
+                )
+            user = User(id=new_id(), email=email, name=body.owner_name.strip())
+            if body.generate_temporary_password:
+                temp_password = generate_temporary_password()
+                user.password_hash = await hash_password_async(temp_password)
+                user.must_change_password = True
+            s.add(user)
+            await s.flush()
+            if body.send_set_password_email:
+                set_password_token = await issue_set_password_token(s, user.id, actor_id)
+
+        org = await insert_org_with_owner(
+            s,
+            org_id=org_id,
+            owner_user_id=user.id,
+            body=OrgCreateIn(
+                name=body.name.strip(),
+                primary_domain=body.primary_domain,
+                timezone=body.timezone,
+                currency=body.currency.upper(),
+            ),
+        )
+        await decision_log.log(
+            s,
+            org_id=org_id,
+            actor_type="system",
+            actor_id=None,
+            event="org.created",
+            entity_type="org",
+            entity_id=org_id,
+            data={"name": org.name, "onboarded_by": "platform"},
+        )
+        await s.flush()
+        out = await _build_admin_org_out(s, org)
+        owner_user_id = user.id
+        org_name = org.name
+
+    email_sent = False
+    if set_password_token is not None:
+        await get_email_sender().send_set_password(
+            to_email=email, org_name=org_name, token=set_password_token
+        )
+        email_sent = True
+    log.info(
+        "client_onboarded",
+        org_id=str(org_id),
+        owner_user_id=str(owner_user_id),
+        owner_created=created,
+        temporary_password_issued=temp_password is not None,
+    )
+    return AdminOnboardOut(
+        org=out,
+        owner_email=email,
+        owner_created=created,
+        set_password_email_sent=email_sent,
+        temporary_password=temp_password,
+    )
 
 
 async def suspend_org(org_id: UUID) -> AdminOrgOut:

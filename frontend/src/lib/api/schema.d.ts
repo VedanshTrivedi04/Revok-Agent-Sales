@@ -456,6 +456,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Signed-in platform operator, platform permissions and the environment label.
+         * @description Signed-in platform operator, platform permissions and the environment label.
+         */
+        get: operations["admin_me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/orgs": {
         parameters: {
             query?: never;
@@ -469,7 +489,11 @@ export interface paths {
          */
         get: operations["list_admin_orgs"];
         put?: never;
-        post?: never;
+        /**
+         * Create a client workspace and its first Owner (set-password email and/or temporary password).
+         * @description Create a client workspace and its first Owner (set-password email and/or temporary password).
+         */
+        post: operations["onboard_client"];
         delete?: never;
         options?: never;
         head?: never;
@@ -580,6 +604,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/admin/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Platform Admin (superadmin) sign-in; separate from the customer portal sign-in.
+         * @description Platform Admin (superadmin) sign-in; separate from the customer portal sign-in.
+         */
+        post: operations["admin_login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change your own password; required after sign-in with a temporary password.
+         * @description Change your own password; required after sign-in with a temporary password.
+         */
+        post: operations["change_password"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -594,6 +658,26 @@ export interface paths {
          * @description Email + password sign-in; returns the identity and default workspace for the session.
          */
         post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/set-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Choose a password from the emailed one-time link (client onboarding).
+         * @description Choose a password from the emailed one-time link (client onboarding).
+         */
+        post: operations["set_password"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1108,6 +1192,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/invites/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Show what an invite link is for (workspace, role, inviter, expiry) before sign-in.
+         * @description Show what an invite link is for (workspace, role, inviter, expiry) before sign-in.
+         */
+        post: operations["preview_invite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/invites/{invite_id}": {
         parameters: {
             query?: never;
@@ -1568,6 +1672,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/runs/{run_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a new manual run for the account of a failed or skipped run (manager+).
+         * @description Start a new manual run for the account of a failed or skipped run (manager+).
+         */
+        post: operations["retry_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/slack/events": {
         parameters: {
             query?: never;
@@ -1891,6 +2015,74 @@ export interface components {
             /** Task Name */
             task_name: string;
         };
+        /**
+         * AdminMe
+         * @description Identity of the signed-in platform operator (superadmin) and the deployment label.
+         */
+        AdminMe: {
+            /** Email */
+            email: string;
+            /** Environment */
+            environment: string;
+            /** Name */
+            name?: string | null;
+            /** Permissions */
+            permissions: string[];
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
+        /**
+         * AdminOnboardIn
+         * @description Platform team onboards a client: the workspace plus its first Owner.
+         */
+        AdminOnboardIn: {
+            /**
+             * Currency
+             * @default USD
+             */
+            currency: string;
+            /**
+             * Generate Temporary Password
+             * @default false
+             */
+            generate_temporary_password: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Owner Email
+             * Format: email
+             */
+            owner_email: string;
+            /** Owner Name */
+            owner_name: string;
+            /** Primary Domain */
+            primary_domain?: string | null;
+            /**
+             * Send Set Password Email
+             * @default true
+             */
+            send_set_password_email: boolean;
+            /**
+             * Timezone
+             * @default Asia/Kolkata
+             */
+            timezone: string;
+        };
+        /** AdminOnboardOut */
+        AdminOnboardOut: {
+            org: components["schemas"]["AdminOrgOut"];
+            /** Owner Created */
+            owner_created: boolean;
+            /** Owner Email */
+            owner_email: string;
+            /** Set Password Email Sent */
+            set_password_email_sent: boolean;
+            /** Temporary Password */
+            temporary_password?: string | null;
+        };
         /** AdminOrgDetail */
         AdminOrgDetail: {
             /** Accounts */
@@ -2055,6 +2247,11 @@ export interface components {
              * @default []
              */
             memberships: components["schemas"]["MeMembership"][];
+            /**
+             * Must Change Password
+             * @default false
+             */
+            must_change_password: boolean;
             /**
              * Needs Onboarding
              * @default false
@@ -2263,6 +2460,13 @@ export interface components {
              * @enum {string}
              */
             reason: "wrong_action" | "wrong_content" | "not_now" | "already_done" | "other";
+        };
+        /** ChangePasswordIn */
+        ChangePasswordIn: {
+            /** Current Password */
+            current_password: string;
+            /** New Password */
+            new_password: string;
         };
         /** Claim */
         Claim: {
@@ -2901,6 +3105,35 @@ export interface components {
              */
             role: "owner" | "admin" | "manager" | "member" | "viewer";
         };
+        /** InvitePreviewIn */
+        InvitePreviewIn: {
+            /** Token */
+            token: string;
+        };
+        /** InvitePreviewOut */
+        InvitePreviewOut: {
+            /** Email */
+            email: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Invited By Name */
+            invited_by_name?: string | null;
+            /** Org Name */
+            org_name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "owner" | "admin" | "manager" | "member" | "viewer";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "active" | "expired" | "used";
+        };
         /** LlmHealthOut */
         LlmHealthOut: {
             /** Latency Ms */
@@ -3087,6 +3320,11 @@ export interface components {
             flags: {
                 [key: string]: boolean;
             };
+            /**
+             * Invitable Roles
+             * @default []
+             */
+            invitable_roles: ("owner" | "admin" | "manager" | "member" | "viewer")[];
             /** Memberships */
             memberships: components["schemas"]["MeMembership"][];
             onboarding?: components["schemas"]["OnboardingOut"] | null;
@@ -3111,6 +3349,11 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            /**
+             * Must Change Password
+             * @default false
+             */
+            must_change_password: boolean;
             /** Name */
             name?: string | null;
             /**
@@ -3709,6 +3952,13 @@ export interface components {
              * Format: uuid
              */
             agent_run_id: string;
+        };
+        /** SetPasswordIn */
+        SetPasswordIn: {
+            /** Password */
+            password: string;
+            /** Token */
+            token: string;
         };
         /** SignupIn */
         SignupIn: {
@@ -4820,6 +5070,26 @@ export interface operations {
             };
         };
     };
+    admin_me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminMe"];
+                };
+            };
+        };
+    };
     list_admin_orgs: {
         parameters: {
             query?: {
@@ -4839,6 +5109,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_AdminOrgOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    onboard_client: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminOnboardIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOnboardOut"];
                 };
             };
             /** @description Validation Error */
@@ -5029,6 +5332,72 @@ export interface operations {
             };
         };
     };
+    admin_login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_password: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangePasswordIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Ack"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     login: {
         parameters: {
             query?: never;
@@ -5049,6 +5418,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuthSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_password: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetPasswordIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Ack"];
                 };
             };
             /** @description Validation Error */
@@ -5756,7 +6158,9 @@ export interface operations {
     };
     connect_integration: {
         parameters: {
-            query?: never;
+            query?: {
+                return_to?: "settings" | "onboarding";
+            };
             header?: never;
             path: {
                 provider: "hubspot" | "gmail" | "gcal" | "slack" | "usage_api" | "usage_csv";
@@ -5870,6 +6274,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InviteAcceptOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_invite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvitePreviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitePreviewOut"];
                 };
             };
             /** @description Validation Error */
@@ -6705,6 +7142,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RunDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunTriggerOut"];
                 };
             };
             /** @description Validation Error */

@@ -2,11 +2,12 @@
 
 import React from "react";
 import { PermissionGuard } from "../../../../components/layout/permission-guard";
-import { useMe } from "../../../../lib/auth/session-context";
+import { useMe, useWorkScope } from "../../../../lib/auth/session-context";
 import { User, Shield } from "lucide-react";
 
 export default function ProfileSettingsPage() {
   const { me, activeRole, isLoading } = useMe();
+  const { readOnly } = useWorkScope();
 
   return (
     <PermissionGuard action="view:settings_profile">
@@ -46,7 +47,7 @@ export default function ProfileSettingsPage() {
             <div className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 capitalize">
               <Shield className="w-4 h-4 text-blue-500" />
               <span>{me?.role || activeRole}</span>
-              {(me?.role === "viewer" || (!me?.role && activeRole === "viewer")) && (
+              {readOnly && (
                 <span className="text-[10px] text-slate-400 ml-auto font-mono">Executive Read-Only</span>
               )}
             </div>

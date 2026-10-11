@@ -30,6 +30,7 @@
 | POST | `/api/v1/action-cards/{card_id}/retry` | C4 Action Card | Vedansh | P3 | real | approve:any |
 | GET | `/api/v1/admin/me` | E0 Admin login | Vedansh | P5 | real | superadmin |
 | GET | `/api/v1/admin/orgs` | E Admin Console | Vedansh | P5 | real | superadmin |
+| POST | `/api/v1/admin/orgs` | E Admin Console | Vedansh | P6 | real | superadmin |
 | GET | `/api/v1/admin/orgs/{org_id}` | E Admin Console | Vedansh | P5 | real | superadmin |
 | POST | `/api/v1/admin/orgs/{org_id}/suspend` | E Admin Console | Vedansh | P5 | real | superadmin |
 | POST | `/api/v1/admin/orgs/{org_id}/unsuspend` | E Admin Console | Vedansh | P5 | real | superadmin |
@@ -48,6 +49,8 @@
 | POST | `/api/v1/auth/login` | A2 Sign in | Vedansh | P1 | real | public |
 | POST | `/api/v1/auth/admin/login` | E0 Admin login | Vedansh | P5 | real | public |
 | POST | `/api/v1/auth/signup` | A3 Create account | Vedansh | P1 | real | public |
+| POST | `/api/v1/auth/set-password` | A6 Set password | Vedansh | P6 | real | public |
+| POST | `/api/v1/auth/change-password` | A6 Set password | Vedansh | P6 | real | user |
 | GET | `/api/v1/autonomy` | D9 Autonomy | Vedansh | P2 | real | any |
 | PUT | `/api/v1/autonomy/{action_type}` | D9 Autonomy | Vedansh | P2 | real | autonomy:edit |
 | GET | `/api/v1/entity-reviews` | C9 Entity Review | Rajwardhan | P2 | real | review:view |
@@ -88,6 +91,7 @@
 | GET | `/api/v1/invites` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
 | DELETE | `/api/v1/invites/{invite_id}` | D5 Members & Invites | Vedansh | P1 | real | members:manage |
 | POST | `/api/v1/invites/accept` | A5 Accept Invite | Vedansh | P1 | real | user |
+| POST | `/api/v1/invites/preview` | A5 Accept Invite | Vedansh | P6 | real | public |
 | GET | `/api/v1/notifications` | C11 Notifications | Vedansh | P1 | real | any |
 | POST | `/api/v1/notifications/read` | C11 Notifications | Vedansh | P1 | real | any |
 | POST | `/api/v1/orgs` | B1 Organization | Vedansh | P1 | real | user |
@@ -100,6 +104,7 @@
 | POST | `/api/v1/rules/{key}/preview` | D8 Rules | Rajwardhan | P4 | real | rules:edit |
 | POST | `/api/v1/rules/rerun` | D8 Rules | Rajwardhan | P4 | real | rules:edit |
 | GET | `/api/v1/runs` | C10 Agent Runs | Rajwardhan | P3 | real | runs:view |
+| POST | `/api/v1/runs/{run_id}/retry` | C10 Agent Runs | Rajwardhan | P6 | real | runs:view |
 | GET | `/api/v1/runs/{run_id}` | C10 Agent Runs | Rajwardhan | P3 | real | runs:view |
 | POST | `/api/v1/slack/events` | F Slack | Vedansh | P4 | real | public |
 | POST | `/api/v1/slack/interactions` | F Slack | Vedansh | P4 | real | public |

@@ -38,8 +38,9 @@ export default function CreateWorkspacePage() {
           currency,
         }),
       });
-      // The API proxy switched the session to the new workspace; boot the app fresh inside it.
-      window.location.assign("/today");
+      // The API proxy switched the session to the new workspace; boot the app fresh inside it and
+      // continue with the first integration.
+      window.location.assign("/onboarding/hubspot");
     } catch (err) {
       setErrorMsg(
         err instanceof ApiError ? err.message : "Could not create the workspace. Please try again."

@@ -22,6 +22,8 @@ export interface MeUser {
     alert_assigned: boolean;
     alert_failed: boolean;
   };
+  /** True while the user is on a temporary password handed out by the platform team. */
+  must_change_password?: boolean;
 }
 
 export interface MeMembership {
@@ -46,6 +48,9 @@ export interface MeResponse {
   role: "owner" | "admin" | "manager" | "member" | "viewer";
   permissions: string[];
   flags: Record<string, boolean>;
+  /** Roles this user may grant by invite (from the API; never derived from the role string). */
+  invitable_roles?: MeMembership["role"][];
+  slack_user_id?: string | null;
   onboarding?: {
     steps: Array<{ key: string; status: "todo" | "in_progress" | "done" | "skipped" }>;
     first_findings_ready: boolean;
@@ -65,7 +70,8 @@ interface SessionContextType {
 
 const SessionContext = createContext<SessionContextType | null>(null);
 
-const PUBLIC_PREFIXES = ["/login", "/signup", "/invite", "/auth"];
+// Pages that must render without a customer session (the 403 page is shown to platform operators).
+const PUBLIC_PREFIXES = ["/login", "/signup", "/invite", "/set-password", "/403"];
 // The Platform Admin portal has its own session (AdminSessionProvider); the customer `/me` never runs there.
 const isAdminPath = (pathname: string | null) => !!pathname && (pathname === "/admin" || pathname.startsWith("/admin/"));
 
@@ -95,11 +101,28 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     retry: (count, err) => !(err instanceof ApiError && err.status < 500) && count < 1,
   });
 
+  // Clear any legacy dev persona override a previous build left in localStorage.
+  useEffect(() => {
+    try {
+      localStorage.removeItem("revops_dev_persona");
+    } catch {
+      // storage unavailable
+    }
+  }, []);
+
   // Session expired or the user no longer exists: clear the cookie and go back to sign-in.
   const unauthenticated = error instanceof ApiError && error.status === 401;
   useEffect(() => {
     if (unauthenticated && !isPublicPath(pathname)) void endSession();
   }, [unauthenticated, pathname]);
+
+  // A temporary password must be replaced before using the app.
+  const mustChangePassword = me?.user.must_change_password === true;
+  useEffect(() => {
+    if (mustChangePassword && pathname !== "/change-password") {
+      window.location.replace("/change-password");
+    }
+  }, [mustChangePassword, pathname]);
 
   const can = useMemo(() => {
     return (action: AppAction | string, context?: PermissionContext): boolean => {
@@ -137,6 +160,20 @@ export function useCan() {
   return can;
 }
 
+/**
+ * Two questions the UI keeps asking, answered from `permissions[]` rather than a role name:
+ *  - readOnly: the user can look but not act (no approve rights at all)
+ *  - ownWorkOnly: the user acts only on their own accounts (approve:own without approve:any), so
+ *    lists default to "mine"
+ */
+export function useWorkScope() {
+  const { can, isLoading } = useMe();
+  return {
+    readOnly: !isLoading && !can("approve:own") && !can("approve:any"),
+    ownWorkOnly: can("approve:own") && !can("approve:any"),
+  };
+}
+
 export interface CanProps {
   action: AppAction | string;
   context?: PermissionContext;
@@ -155,3 +192,6 @@ export function Can({ action, context, fallback = null, children }: CanProps) {
   }
   return <>{children}</>;
 }
+
+export { useIsMine, useEntityOwnership, checkEntityOwnership } from "./use-is-mine";
+export { CanAct } from "../../components/layout/can-act";

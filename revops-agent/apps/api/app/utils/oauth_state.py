@@ -27,6 +27,7 @@ class OAuthState:
     user_id: UUID
     provider: str
     nonce: str
+    return_to: str = "settings"  # where the browser lands afterwards: "settings" | "onboarding"
 
 
 def _b64(b: bytes) -> str:
@@ -43,11 +44,23 @@ def _sign(payload: str) -> str:
     return _b64(hmac.new(key, payload.encode(), hashlib.sha256).digest())
 
 
-def create_state(org_id: UUID, user_id: UUID, provider: str, *, ttl: int = TTL_SECONDS) -> str:
+RETURN_TARGETS = ("settings", "onboarding")
+
+
+def create_state(
+    org_id: UUID,
+    user_id: UUID,
+    provider: str,
+    *,
+    ttl: int = TTL_SECONDS,
+    return_to: str = "settings",
+) -> str:
+    if return_to not in RETURN_TARGETS:
+        raise AppError("bad_request", "Unknown OAuth return target")
     payload = _b64(
         json.dumps(
             {"o": str(org_id), "u": str(user_id), "p": provider, "n": secrets.token_hex(12),
-             "x": int(time.time()) + ttl},
+             "x": int(time.time()) + ttl, "r": return_to},
             separators=(",", ":"),
         ).encode()
     )  # fmt: skip
@@ -65,7 +78,10 @@ async def consume_state(state: str, *, provider: str) -> OAuthState:
     try:
         data = json.loads(_unb64(payload))
         exp, nonce = int(data["x"]), str(data["n"])
-        result = OAuthState(UUID(data["o"]), UUID(data["u"]), str(data["p"]), nonce)
+        return_to = str(data.get("r", "settings"))
+        if return_to not in RETURN_TARGETS:
+            raise ValueError("bad return target")
+        result = OAuthState(UUID(data["o"]), UUID(data["u"]), str(data["p"]), nonce, return_to)
     except (ValueError, KeyError, TypeError) as e:
         raise _invalid() from e
     if exp < time.time():

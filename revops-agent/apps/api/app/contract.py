@@ -161,7 +161,14 @@ def _wrap(defn: EndpointDef) -> Callable[..., Any]:
 
 
 SENSITIVE_GROUPS = {"ingest", "oauth", "api_keys"}
-SENSITIVE_OPERATIONS = {"accept_invite", "create_invite", "create_org", "connect_integration"}
+SENSITIVE_OPERATIONS = {
+    "accept_invite",
+    "create_invite",
+    "create_org",
+    "connect_integration",
+    "change_password",
+    "onboard_client",
+}
 UNLIMITED_GROUPS = {"stream", "slack"}  # long-lived SSE; Slack webhooks are signature-verified
 
 

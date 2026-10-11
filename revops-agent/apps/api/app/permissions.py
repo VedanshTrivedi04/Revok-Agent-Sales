@@ -51,6 +51,29 @@ PERMISSIONS: dict[Role, frozenset[Action]] = {
     Role.VIEWER: frozenset(_VIEW_ALL),
 }
 
+# Who may invite whom. Owner is never invitable (ownership moves by transfer, not by invite);
+# Manager, Member and Viewer cannot invite at all (they lack `members:manage` as well).
+INVITABLE_ROLES: dict[Role, frozenset[Role]] = {
+    Role.OWNER: frozenset({Role.ADMIN, Role.MANAGER, Role.MEMBER, Role.VIEWER}),
+    Role.ADMIN: frozenset({Role.MANAGER, Role.MEMBER, Role.VIEWER}),
+}
+
+
+def invitable_roles_for(inviter: Role | str) -> list[str]:
+    try:
+        allowed = INVITABLE_ROLES.get(Role(inviter), frozenset())
+    except ValueError:
+        return []
+    return [r.value for r in Role if r in allowed]  # Role order: owner > viewer
+
+
+def can_invite(inviter: Role | str, invitee: Role | str) -> bool:
+    try:
+        return Role(invitee) in INVITABLE_ROLES.get(Role(inviter), frozenset())
+    except ValueError:
+        return False
+
+
 # For these actions a `member` may only act on resources they own (spec: "own").
 # The route layer cannot know ownership, so services call can(..., is_own=...).
 MEMBER_OWN_ONLY: frozenset[Action] = frozenset({A.APPROVE_OWN, A.EDIT_CARD, A.REVERT, A.RUN_NOW})

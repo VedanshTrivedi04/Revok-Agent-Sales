@@ -646,6 +646,107 @@
     "title": "AdminMe",
     "type": "object"
    },
+   "AdminOnboardIn": {
+    "description": "Platform team onboards a client: the workspace plus its first Owner.",
+    "properties": {
+     "currency": {
+      "default": "USD",
+      "maxLength": 3,
+      "minLength": 3,
+      "title": "Currency",
+      "type": "string"
+     },
+     "generate_temporary_password": {
+      "default": false,
+      "title": "Generate Temporary Password",
+      "type": "boolean"
+     },
+     "name": {
+      "maxLength": 120,
+      "minLength": 2,
+      "title": "Name",
+      "type": "string"
+     },
+     "owner_email": {
+      "format": "email",
+      "title": "Owner Email",
+      "type": "string"
+     },
+     "owner_name": {
+      "maxLength": 80,
+      "minLength": 2,
+      "title": "Owner Name",
+      "type": "string"
+     },
+     "primary_domain": {
+      "anyOf": [
+       {
+        "maxLength": 253,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Primary Domain"
+     },
+     "send_set_password_email": {
+      "default": true,
+      "title": "Send Set Password Email",
+      "type": "boolean"
+     },
+     "timezone": {
+      "default": "Asia/Kolkata",
+      "title": "Timezone",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name",
+     "owner_email",
+     "owner_name"
+    ],
+    "title": "AdminOnboardIn",
+    "type": "object"
+   },
+   "AdminOnboardOut": {
+    "properties": {
+     "org": {
+      "$ref": "#/components/schemas/AdminOrgOut"
+     },
+     "owner_created": {
+      "title": "Owner Created",
+      "type": "boolean"
+     },
+     "owner_email": {
+      "title": "Owner Email",
+      "type": "string"
+     },
+     "set_password_email_sent": {
+      "title": "Set Password Email Sent",
+      "type": "boolean"
+     },
+     "temporary_password": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Temporary Password"
+     }
+    },
+    "required": [
+     "org",
+     "owner_email",
+     "owner_created",
+     "set_password_email_sent"
+    ],
+    "title": "AdminOnboardOut",
+    "type": "object"
+   },
    "AdminOrgDetail": {
     "properties": {
      "accounts": {
@@ -976,6 +1077,11 @@
       },
       "title": "Memberships",
       "type": "array"
+     },
+     "must_change_password": {
+      "default": false,
+      "title": "Must Change Password",
+      "type": "boolean"
      },
      "needs_onboarding": {
       "default": false,
@@ -1523,6 +1629,28 @@
      "reason"
     ],
     "title": "CardRejectIn",
+    "type": "object"
+   },
+   "ChangePasswordIn": {
+    "properties": {
+     "current_password": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Current Password",
+      "type": "string"
+     },
+     "new_password": {
+      "maxLength": 128,
+      "minLength": 10,
+      "title": "New Password",
+      "type": "string"
+     }
+    },
+    "required": [
+     "current_password",
+     "new_password"
+    ],
+    "title": "ChangePasswordIn",
     "type": "object"
    },
    "Claim": {
@@ -3185,6 +3313,76 @@
     "title": "InviteOut",
     "type": "object"
    },
+   "InvitePreviewIn": {
+    "properties": {
+     "token": {
+      "title": "Token",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "title": "InvitePreviewIn",
+    "type": "object"
+   },
+   "InvitePreviewOut": {
+    "properties": {
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "expires_at": {
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+     },
+     "invited_by_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Invited By Name"
+     },
+     "org_name": {
+      "title": "Org Name",
+      "type": "string"
+     },
+     "role": {
+      "enum": [
+       "owner",
+       "admin",
+       "manager",
+       "member",
+       "viewer"
+      ],
+      "title": "Role",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "active",
+       "expired",
+       "used"
+      ],
+      "title": "Status",
+      "type": "string"
+     }
+    },
+    "required": [
+     "org_name",
+     "role",
+     "email",
+     "expires_at",
+     "status"
+    ],
+    "title": "InvitePreviewOut",
+    "type": "object"
+   },
    "LlmHealthOut": {
     "properties": {
      "latency_ms": {
@@ -3641,6 +3839,21 @@
       "title": "Flags",
       "type": "object"
      },
+     "invitable_roles": {
+      "default": [],
+      "items": {
+       "enum": [
+        "owner",
+        "admin",
+        "manager",
+        "member",
+        "viewer"
+       ],
+       "type": "string"
+      },
+      "title": "Invitable Roles",
+      "type": "array"
+     },
      "memberships": {
       "items": {
        "$ref": "#/components/schemas/MeMembership"
@@ -3714,6 +3927,11 @@
       "format": "uuid",
       "title": "Id",
       "type": "string"
+     },
+     "must_change_password": {
+      "default": false,
+      "title": "Must Change Password",
+      "type": "boolean"
      },
      "name": {
       "anyOf": [
@@ -5312,6 +5530,28 @@
      "agent_run_id"
     ],
     "title": "RunTriggerOut",
+    "type": "object"
+   },
+   "SetPasswordIn": {
+    "properties": {
+     "password": {
+      "maxLength": 128,
+      "minLength": 10,
+      "title": "Password",
+      "type": "string"
+     },
+     "token": {
+      "maxLength": 200,
+      "minLength": 10,
+      "title": "Token",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token",
+     "password"
+    ],
+    "title": "SetPasswordIn",
     "type": "object"
    },
    "SignupIn": {
@@ -7521,6 +7761,46 @@
     "tags": [
      "E Admin Console"
     ]
+   },
+   "post": {
+    "description": "Create a client workspace and its first Owner (set-password email and/or temporary password).",
+    "operationId": "onboard_client",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AdminOnboardIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AdminOnboardOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Create a client workspace and its first Owner (set-password email and/or temporary password).",
+    "tags": [
+     "E Admin Console"
+    ]
    }
   },
   "/api/v1/admin/orgs/{org_id}": {
@@ -7807,6 +8087,48 @@
     ]
    }
   },
+  "/api/v1/auth/change-password": {
+   "post": {
+    "description": "Change your own password; required after sign-in with a temporary password.",
+    "operationId": "change_password",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ChangePasswordIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Change your own password; required after sign-in with a temporary password.",
+    "tags": [
+     "A6 Set password"
+    ]
+   }
+  },
   "/api/v1/auth/login": {
    "post": {
     "description": "Email + password sign-in; returns the identity and default workspace for the session.",
@@ -7846,6 +8168,48 @@
     "summary": "Email + password sign-in; returns the identity and default workspace for the session.",
     "tags": [
      "A2 Sign in"
+    ]
+   }
+  },
+  "/api/v1/auth/set-password": {
+   "post": {
+    "description": "Choose a password from the emailed one-time link (client onboarding).",
+    "operationId": "set_password",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SetPasswordIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ack"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Choose a password from the emailed one-time link (client onboarding).",
+    "tags": [
+     "A6 Set password"
     ]
    }
   },
@@ -8972,6 +9336,20 @@
        "title": "Provider",
        "type": "string"
       }
+     },
+     {
+      "in": "query",
+      "name": "return_to",
+      "required": false,
+      "schema": {
+       "default": "settings",
+       "enum": [
+        "settings",
+        "onboarding"
+       ],
+       "title": "Return To",
+       "type": "string"
+      }
      }
     ],
     "responses": {
@@ -9141,6 +9519,48 @@
      }
     },
     "summary": "Accept an invite with the emailed token.",
+    "tags": [
+     "A5 Accept Invite"
+    ]
+   }
+  },
+  "/api/v1/invites/preview": {
+   "post": {
+    "description": "Show what an invite link is for (workspace, role, inviter, expiry) before sign-in.",
+    "operationId": "preview_invite",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/InvitePreviewIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/InvitePreviewOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Show what an invite link is for (workspace, role, inviter, expiry) before sign-in.",
     "tags": [
      "A5 Accept Invite"
     ]
@@ -10501,6 +10921,50 @@
      }
     },
     "summary": "Run steps, timings and trace link.",
+    "tags": [
+     "C10 Agent Runs"
+    ]
+   }
+  },
+  "/api/v1/runs/{run_id}/retry": {
+   "post": {
+    "description": "Start a new manual run for the account of a failed or skipped run (manager+).",
+    "operationId": "retry_run",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "run_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Run Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunTriggerOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Start a new manual run for the account of a failed or skipped run (manager+).",
     "tags": [
      "C10 Agent Runs"
     ]

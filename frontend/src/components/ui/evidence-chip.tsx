@@ -8,10 +8,10 @@ export interface EvidenceItem {
   key: string; // e.g. "E1"
   kind?: string; // "event", "usage", "deal", "contact", "rule_metric"
   label: string; // e.g. "Usage −38% in 4 weeks"
-  detail?: string;
-  source?: string; // "hubspot", "gmail", "gcal", "usage", "rule"
-  source_url?: string;
-  occurred_at?: string;
+  detail?: string | null;
+  source?: string | null; // "hubspot", "gmail", "gcal", "usage", "rule"
+  source_url?: string | null;
+  occurred_at?: string | null;
 }
 
 interface EvidenceChipProps {
@@ -22,7 +22,7 @@ interface EvidenceChipProps {
 export function EvidenceChip({ evidence, className }: EvidenceChipProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const getSourceIcon = (source?: string) => {
+  const getSourceIcon = (source?: string | null) => {
     switch (source?.toLowerCase()) {
       case "gmail":
       case "email":

@@ -7,8 +7,9 @@ from app.auth.deps import CurrentMembership
 from app.contract import endpoint, real
 from app.db.session import org_session
 from app.permissions import Action
+from app.schemas.accounts import RunTriggerOut
 from app.schemas.ops import RunDetail, RunOut, RunStatus
-from app.services.runs import get_run_service, list_runs_service
+from app.services.runs import get_run_service, list_runs_service, retry_run_service
 from app.utils.pagination import Page, PageParams, page_params
 
 PAGE = "C10 Agent Runs"
@@ -40,6 +41,27 @@ async def list_runs_real(
             account_id=account_id,
             status=status,
         )
+
+
+@endpoint(
+    "POST",
+    "/runs/{run_id}/retry",
+    group="runs",
+    page=PAGE,
+    owner="R",
+    phase=6,
+    access=Action.VIEW_RUNS,
+    status_code=202,
+)
+async def retry_run(run_id: UUID) -> RunTriggerOut:
+    """Start a new manual run for the account of a failed or skipped run (manager+)."""
+    raise NotImplementedError
+
+
+@real("retry_run")
+async def retry_run_real(run_id: UUID, membership: CurrentMembership) -> RunTriggerOut:
+    async with org_session(membership.org_id) as session:
+        return await retry_run_service(session, membership.org_id, membership.user_id, run_id)
 
 
 @endpoint(

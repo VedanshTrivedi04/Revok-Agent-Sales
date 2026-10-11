@@ -4,6 +4,34 @@
 
 ---
 
+## [Phase 7: Client onboarding] — 2026-10-11
+### Added
+- **`POST /admin/orgs`** (superadmin): create a client workspace and its first Owner. The operator
+  is never a member. Credentials: emailed one-time set-password link, a one-time temporary
+  password (returned once, never logged), or both. An existing account only gains the Owner role;
+  its password is never touched.
+- **`POST /auth/set-password`** (public, rate limited): redeem the emailed link (single use, 7 days).
+- **`POST /auth/change-password`** (signed in): required after a temporary password.
+- **`POST /invites/preview`** (public, rate limited): workspace, role, inviter, expiry and status
+  (`active` / `expired` / `used`) of an invite link before sign-in.
+- **`POST /runs/{run_id}/retry`** (manager+): new manual run for the account of a `failed` or
+  `skipped` run; `409 conflict` for any other state.
+- `POST /integrations/{provider}/connect?return_to=settings|onboarding`: where the browser lands
+  after the provider redirect (`/onboarding/<step>` or Settings). The OAuth state carries it.
+- `GET /me`: `user.must_change_password` and `invitable_roles` (the roles this user may invite).
+- `POST /auth/login` response: `must_change_password`.
+- Migration `0006`: `users.must_change_password`, table `password_tokens`.
+
+### Changed
+- **Invite hierarchy is enforced:** Owner invites Admin / Manager / Member / Viewer; Admin invites
+  Manager / Member / Viewer; nobody invites an Owner. Otherwise `403 forbidden`.
+- Slack connects through its own callback (`/api/v1/slack/oauth/callback`) so the workspace team id
+  that incoming webhooks are resolved by is recorded.
+- Email links now match the web routes: `/invite/{token}` and `/set-password?token=...`
+  (invite emails previously pointed at a route that does not exist).
+
+---
+
 ## [Phase 6: Harden & Hand-off] — Weeks 15–16
 ### Added
 - **Internal AI APIs (`/internal/v1/orgs/{org}/...`):**

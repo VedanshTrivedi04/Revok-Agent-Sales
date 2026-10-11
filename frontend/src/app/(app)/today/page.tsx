@@ -3,12 +3,13 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PermissionGuard } from "../../../components/layout/permission-guard";
-import { useMe, Can } from "../../../lib/auth/session-context";
+import { useMe, useWorkScope } from "../../../lib/auth/session-context";
+import { CanAct } from "../../../components/layout/can-act";
+import { checkEntityOwnership } from "../../../lib/auth/use-is-mine";
 import { fetchApi } from "../../../lib/api/client";
 import { queryKeys } from "../../../lib/api/query-keys";
 import type { components } from "../../../lib/api/schema";
 import { SeverityBadge, Severity } from "../../../components/ui/severity-badge";
-import { TierBadge, Tier } from "../../../components/ui/tier-badge";
 import { StatusBadge } from "../../../components/ui/status-badge";
 import { EvidenceChip } from "../../../components/ui/evidence-chip";
 import { MoneyText } from "../../../components/ui/money-text";
@@ -17,16 +18,30 @@ import { FilterBar } from "../../../components/ui/filter-bar";
 import { TableSkeleton } from "../../../components/ui/table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ErrorState } from "../../../components/ui/error-state";
-import { Eye, Lock, ArrowUpRight } from "lucide-react";
+import { SnoozeModal } from "../../../components/findings/snooze-modal";
+import { DismissModal } from "../../../components/findings/dismiss-modal";
+import { Eye, Clock, Ban, ArrowUpRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 type TodayResponse = components["schemas"]["TodayResponse"];
 type TodayItem = components["schemas"]["TodayItem"];
 
 export default function TodayPage() {
-  const { me, activeRole } = useMe();
+  const { me } = useMe();
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const { readOnly, ownWorkOnly } = useWorkScope();
+  const [ownerScope, setOwnerScope] = useState<"me" | "all">(ownWorkOnly ? "me" : "all");
+
+  // Modal states for Snooze and Dismiss
+  const [activeFindingToSnooze, setActiveFindingToSnooze] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+  const [activeFindingToDismiss, setActiveFindingToDismiss] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
   const { data, isLoading, error, refetch } = useQuery<TodayResponse>({
     queryKey: queryKeys.today(),
@@ -37,6 +52,12 @@ export default function TodayPage() {
   });
 
   const filteredItems = (data?.items || []).filter((item: TodayItem) => {
+    // Owner filter check
+    if (ownerScope === "me") {
+      const isMine = checkEntityOwnership(item.account, me) || checkEntityOwnership(item, me);
+      if (!isMine) return false;
+    }
+
     if (!search) return true;
     const q = search.toLowerCase();
     const nameMatch = item.account?.name?.toLowerCase().includes(q);
@@ -56,10 +77,10 @@ export default function TodayPage() {
               <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                 Today&apos;s Revenue Priorities
               </h1>
-              {activeRole === "viewer" && (
+              {readOnly && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-900">
                   <Eye className="w-3 h-3" />
-                  <span>Executive Viewer Mode</span>
+                  <span>Read-only view</span>
                 </span>
               )}
             </div>
@@ -68,12 +89,40 @@ export default function TodayPage() {
             </p>
           </div>
 
-          {data?.generated_at && (
-            <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
-              <span>Generated:</span>
-              <RelativeTime date={data.generated_at} />
+          <div className="flex items-center gap-3">
+            {/* Owner Scope Selector */}
+            <div className="inline-flex rounded-lg p-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setOwnerScope("me")}
+                className={`px-3 py-1 rounded-md transition-colors ${
+                  ownerScope === "me"
+                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs"
+                    : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
+                }`}
+              >
+                Assigned to Me
+              </button>
+              <button
+                type="button"
+                onClick={() => setOwnerScope("all")}
+                className={`px-3 py-1 rounded-md transition-colors ${
+                  ownerScope === "all"
+                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs"
+                    : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
+                }`}
+              >
+                Everyone
+              </button>
             </div>
-          )}
+
+            {data?.generated_at && (
+              <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 font-mono">
+                <span>Generated:</span>
+                <RelativeTime date={data.generated_at} />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Filter bar primitive */}
@@ -113,6 +162,8 @@ export default function TodayPage() {
             description={
               search
                 ? `No accounts matched your search for "${search}".`
+                : ownerScope === "me"
+                ? "You have no assigned accounts with active priority findings. Switch to 'Everyone' to see other workspace accounts."
                 : "All accounts are currently verified healthy. No active risk findings or pending approval cards."
             }
           />
@@ -150,10 +201,7 @@ export default function TodayPage() {
                         ) : (
                           <SeverityBadge severity={item.severity as Severity} />
                         )}
-                        <TierBadge tier={((account as { tier?: number })?.tier || 2) as Tier} />
-                        <StatusBadge
-                          status={item.pending_cards > 0 ? "pending_approval" : "executed"}
-                        />
+                        {item.pending_cards > 0 && <StatusBadge status="pending_approval" />}
                       </div>
 
                       <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -209,30 +257,71 @@ export default function TodayPage() {
 
                   {/* Action & Permission row */}
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="text-xs text-slate-500">
-                      Pending Action Cards:{" "}
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">
-                        {item.pending_cards} {item.pending_cards === 1 ? "card" : "cards"}
+                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                      <span>
+                        Pending Action Cards:{" "}
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">
+                          {item.pending_cards} {item.pending_cards === 1 ? "card" : "cards"}
+                        </span>
                       </span>
+                      {item.finding_id && (
+                        <Link
+                          href={`/findings/${item.finding_id}`}
+                          className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 font-medium"
+                        >
+                          View Finding <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Can
-                        action="approve:card"
-                        fallback={
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed">
-                            <Lock className="w-3.5 h-3.5 text-slate-400" />
-                            <span>Approve (Disabled in Viewer Mode)</span>
-                          </div>
-                        }
-                      >
+                      {/* Snooze Finding (Own rows for Member, any for Manager/Admin) */}
+                      {item.finding_id && (
+                        <CanAct action="snooze:finding" entity={account}>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActiveFindingToSnooze({
+                                id: item.finding_id!,
+                                title: item.title,
+                              })
+                            }
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+                          >
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
+                            <span>Snooze</span>
+                          </button>
+                        </CanAct>
+                      )}
+
+                      {/* Dismiss Finding (Own rows for Member, any for Manager/Admin) */}
+                      {item.finding_id && (
+                        <CanAct action="dismiss:finding" entity={account}>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActiveFindingToDismiss({
+                                id: item.finding_id!,
+                                title: item.title,
+                              })
+                            }
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-red-600 dark:text-red-400 transition-colors"
+                          >
+                            <Ban className="w-3.5 h-3.5" />
+                            <span>Dismiss</span>
+                          </button>
+                        </CanAct>
+                      )}
+
+                      {/* Review & Approve (Own rows for Member, any for Manager/Admin) */}
+                      <CanAct action="approve:card" entity={account}>
                         <Link
                           href="/inbox"
                           className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
                         >
                           Review &amp; Approve
                         </Link>
-                      </Can>
+                      </CanAct>
                     </div>
                   </div>
                 </div>
@@ -240,7 +329,30 @@ export default function TodayPage() {
             })}
           </div>
         )}
+
+        {/* Snooze Modal */}
+        {activeFindingToSnooze && (
+          <SnoozeModal
+            isOpen={Boolean(activeFindingToSnooze)}
+            findingId={activeFindingToSnooze.id}
+            findingTitle={activeFindingToSnooze.title}
+            onClose={() => setActiveFindingToSnooze(null)}
+            onSuccess={() => refetch()}
+          />
+        )}
+
+        {/* Dismiss Modal */}
+        {activeFindingToDismiss && (
+          <DismissModal
+            isOpen={Boolean(activeFindingToDismiss)}
+            findingId={activeFindingToDismiss.id}
+            findingTitle={activeFindingToDismiss.title}
+            onClose={() => setActiveFindingToDismiss(null)}
+            onSuccess={() => refetch()}
+          />
+        )}
       </div>
     </PermissionGuard>
   );
 }
+

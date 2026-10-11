@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.brain import AgentRun
 from app.models.timeline import Account
+from app.schemas.accounts import RunTriggerOut
 from app.schemas.ops import RunDetail, RunOut, RunStep
 from app.utils.errors import AppError
 from app.utils.pagination import OrderKey, Page, PageParams, paginate
@@ -110,3 +111,26 @@ async def get_run_service(
         prompt_versions=run.prompt_versions or {},
         trace_url=None,
     )
+
+
+async def retry_run_service(
+    session: AsyncSession,
+    org_id: UUID,
+    user_id: UUID,
+    run_id: UUID,
+) -> RunTriggerOut:
+    """Start a fresh manual run for the account of a failed or skipped run."""
+    from app.services.accounts import run_account_service
+
+    run = (
+        await session.execute(
+            select(AgentRun).where(AgentRun.id == run_id, AgentRun.org_id == org_id)
+        )
+    ).scalar_one_or_none()
+    if run is None:
+        raise AppError("not_found", "Agent run not found", status=404)
+    if run.status not in ("failed", "skipped"):
+        raise AppError("conflict", "Only failed or skipped runs can be retried")
+    if run.account_id is None:
+        raise AppError("bad_request", "This run has no account to retry")
+    return await run_account_service(session, org_id, user_id, run.account_id)

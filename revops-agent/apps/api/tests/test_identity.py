@@ -308,6 +308,7 @@ async def test_invite_accept_flow_and_replay_protection(
             org_a.org_id,
             InviteCreateIn(email="invited@example.com", role="manager"),
             org_a.users["admin"],
+            "admin",
         )
 
     # Find the token hash

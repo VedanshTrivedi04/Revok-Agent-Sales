@@ -1,0 +1,16 @@
+meta {
+  name: preview_invite
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/invites/preview
+  body: none
+  auth: none
+}
+
+docs {
+  Show what an invite link is for (workspace, role, inviter, expiry) before sign-in.
+  Page: A5 Accept Invite | Owner: V | Phase: P6 | Access: public
+}

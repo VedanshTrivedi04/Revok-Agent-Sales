@@ -13,6 +13,8 @@ from app.schemas.identity import (
     InviteAcceptOut,
     InviteCreateIn,
     InviteOut,
+    InvitePreviewIn,
+    InvitePreviewOut,
     MemberOut,
     MemberPatchIn,
 )
@@ -123,6 +125,25 @@ async def accept_invite(body: InviteAcceptIn) -> InviteAcceptOut:
     raise NotImplementedError
 
 
+@endpoint(
+    "POST",
+    "/invites/preview",
+    group="invites",
+    page="A5 Accept Invite",
+    owner="V",
+    phase=6,
+    access="public",
+)
+async def preview_invite(body: InvitePreviewIn) -> InvitePreviewOut:
+    """Show what an invite link is for (workspace, role, inviter, expiry) before sign-in."""
+    raise NotImplementedError
+
+
+@real("preview_invite")
+async def preview_invite_real(body: InvitePreviewIn, **_: Any) -> InvitePreviewOut:
+    return await invites_service.preview_invite(body.token)
+
+
 @real("list_members")
 async def list_members_real(request: Request, page: PageParams, **_: Any) -> Page[MemberOut]:
     claims = get_claims(request)
@@ -162,7 +183,7 @@ async def create_invite_real(request: Request, body: InviteCreateIn, **_: Any) -
     claims = get_claims(request)
     m = await current_membership(claims)
     async with org_session(m.org_id) as s:
-        return await invites_service.create_invite(s, m.org_id, body, claims.user_id)
+        return await invites_service.create_invite(s, m.org_id, body, claims.user_id, m.role)
 
 
 @real("list_invites")

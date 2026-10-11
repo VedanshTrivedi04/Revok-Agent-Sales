@@ -29,7 +29,7 @@ export function IntegrationBanner() {
   const { data } = useQuery<IntegrationsResponse>({
     queryKey: queryKeys.integrations(),
     queryFn: () =>
-      fetchApi<IntegrationsResponse>("/integrations").catch(() => ({ items: [] })),
+      fetchApi<IntegrationsResponse>("/integrations"),
   });
 
   const failedIntegration = (data?.items || []).find(

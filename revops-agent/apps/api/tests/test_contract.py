@@ -72,7 +72,10 @@ BODIES: dict[str, Any] = {
     "patch_me": {"name": "Priya M"}, "create_org": {"name": "New Co"},
     "patch_current_org": {"name": "Demo SaaS Inc"}, "delete_current_org": {"confirm": "Demo SaaS"},
     "patch_member": {"role": "manager"}, "put_member": {"role": "manager"}, "create_invite": {"email": "x@demo-saas.example.com", "role": "member"},
-    "accept_invite": {"token": "t"},
+    "accept_invite": {"token": "t"}, "preview_invite": {"token": "t"},
+    "set_password": {"token": "a-valid-token-value", "password": "a-long-password"},
+    "change_password": {"current_password": "any-password", "new_password": "a-long-password"},
+    "onboard_client": {"name": "New Client", "owner_email": "owner@newclient.example.com", "owner_name": "New Owner"},
     "admin_login": {"email": "sam@platform.revops.example.com", "password": "any-password"},
     "login": {"email": "olivia@demo-saas.example.com", "password": "any-password"},
     "signup": {"name": "New Person", "email": "new.person@example.com", "password": "a-long-password"}, "put_field_mapping": {"arr_property": "annualrevenue"},
@@ -90,6 +93,7 @@ BODIES: dict[str, Any] = {
 PATH_OVERRIDES: dict[str, dict[str, Any]] = {
     "revert_card": {"card_id": D.CARD_IDS["acme_task"]},
     "retry_card": {"card_id": D.CARD_IDS["initech_failed"]},
+    "retry_run": {"run_id": D.uid("run:4")},  # the failed run in the demo data
     "reopen_finding": {"finding_id": D.FINDING_IDS["initech_old"]},
 }
 QUERIES: dict[str, dict[str, str]] = {

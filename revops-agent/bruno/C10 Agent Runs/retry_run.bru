@@ -1,0 +1,20 @@
+meta {
+  name: retry_run
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/runs/d3a4821e-5b99-5453-a7b3-3d2a52ad4181/retry
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Start a new manual run for the account of a failed or skipped run (manager+).
+  Page: C10 Agent Runs | Owner: R | Phase: P6 | Access: runs:view
+}

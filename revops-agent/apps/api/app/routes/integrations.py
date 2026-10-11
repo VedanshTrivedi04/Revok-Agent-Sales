@@ -54,7 +54,10 @@ async def list_integrations() -> list[IntegrationOut]:
     phase=1,
     access=Action.CONNECT_OWN,
 )
-async def connect_integration(provider: Provider) -> ConnectOut:
+async def connect_integration(
+    provider: Provider,
+    return_to: Annotated[Literal["settings", "onboarding"], Query()] = "settings",
+) -> ConnectOut:
     """Start OAuth; returns the provider authorize URL (org-level providers need admin)."""
     raise NotImplementedError
 
@@ -198,7 +201,10 @@ async def list_integrations_real(request: Request, **_: Any) -> list[Integration
 async def connect_integration_real(request: Request, provider: str, **_: Any) -> ConnectOut:
     claims = get_claims(request)
     m = await current_membership(claims)
-    return await connect_integration_service(m.org_id, m.user_id, provider, m.role)
+    return_to = request.query_params.get("return_to", "settings")
+    return await connect_integration_service(
+        m.org_id, m.user_id, provider, m.role, return_to=return_to
+    )
 
 
 @real("oauth_callback")

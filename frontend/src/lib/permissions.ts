@@ -34,13 +34,34 @@ export type AppAction =
   | "dismiss:finding"
   | "snooze:finding"
   | "edit:rules"
+  | "rules:edit"
   | "manage:integrations"
+  | "integrations:manage"
   | "manage:members"
+  | "members:manage"
   | "manage:autonomy"
+  | "autonomy:edit"
   | "manage:field_mapping"
+  | "mapping:edit"
+  | "field_mapping:edit"
   | "manage:api_keys"
+  | "apikeys:manage"
   | "export:data"
-  | "delete:org";
+  | "data:export"
+  | "delete:org"
+  | "org:delete"
+  | "ownership:transfer"
+  | "log:verify"
+  | "log:export"
+  | "members:manage_owner"
+  | "role:manage_owner"
+  | "role:assign_owner"
+  | "assign:card"
+  | "assign"
+  | "model:view"
+  | "view:model"
+  | "run:retry"
+  | "runs:retry";
 
 export interface PermissionContext {
   isOwn?: boolean;
@@ -48,7 +69,7 @@ export interface PermissionContext {
 
 export function checkPermission(
   permissions: string[] = [],
-  flags: Record<string, boolean> = {},
+  _flags: Record<string, boolean> = {},
   action: AppAction | string,
   context?: PermissionContext
 ): boolean {
@@ -84,16 +105,16 @@ export function checkPermission(
 
     case "view:settings_general":
     case "view:settings_members":
-      return permSet.has("members:manage");
+      return permSet.has("members:manage") || permSet.has("rules:edit");
 
     case "view:settings_field_mapping":
-      return permSet.has("mapping:edit");
+      return permSet.has("mapping:edit") || permSet.has("rules:edit");
 
     case "view:settings_rules":
       return permSet.has("rules:edit");
 
     case "view:settings_autonomy":
-      return permSet.has("autonomy:edit");
+      return permSet.has("autonomy:edit") || permSet.has("rules:edit");
 
     case "view:settings_api_keys":
       return permSet.has("apikeys:manage");
@@ -108,13 +129,22 @@ export function checkPermission(
       if (context?.isOwn && permSet.has("approve:own")) return true;
       return false;
 
+    case "save:edits":
     case "edit:card":
       if (permSet.has("approve:any")) return true;
       if (context?.isOwn && permSet.has("edit:card")) return true;
       return false;
 
     case "revert:card":
-      if (permSet.has("approve:any") || permSet.has("revert")) return true;
+    case "revert":
+      if (permSet.has("approve:any")) return true;
+      if (context?.isOwn && permSet.has("revert")) return true;
+      return false;
+
+    case "retry:card":
+    case "retry":
+      if (permSet.has("approve:any")) return true;
+      if (context?.isOwn && permSet.has("approve:own")) return true;
       return false;
 
     case "run:now":
@@ -124,31 +154,69 @@ export function checkPermission(
 
     case "dismiss:finding":
     case "snooze:finding":
+    case "reopen:finding":
       return permSet.has("approve:any") || (Boolean(context?.isOwn) && permSet.has("approve:own"));
 
     case "edit:rules":
+    case "rules:edit":
       return permSet.has("rules:edit");
 
     case "manage:integrations":
+    case "integrations:manage":
       return permSet.has("integrations:manage");
 
     case "manage:members":
+    case "members:manage":
       return permSet.has("members:manage");
 
     case "manage:autonomy":
+    case "autonomy:edit":
       return permSet.has("autonomy:edit");
 
     case "manage:field_mapping":
+    case "mapping:edit":
+    case "field_mapping:edit":
       return permSet.has("mapping:edit");
 
     case "manage:api_keys":
+    case "apikeys:manage":
       return permSet.has("apikeys:manage");
 
     case "export:data":
+    case "data:export":
       return permSet.has("data:export");
 
     case "delete:org":
+    case "org:delete":
       return permSet.has("org:delete");
+
+    case "ownership:transfer":
+      // Backend defines org:delete as # delete org, transfer ownership (Role.OWNER only)
+      return permSet.has("org:delete");
+
+    case "log:verify":
+    case "log:export":
+      return permSet.has("data:export");
+
+    case "members:manage_owner":
+    case "role:manage_owner":
+    case "role:assign_owner":
+      // Only Owner has org:delete; Admin cannot change, demote, remove or assign the Owner role
+      return permSet.has("org:delete");
+
+    case "assign:card":
+    case "assign":
+      // Manager+ (approve:any) can assign any card
+      return permSet.has("approve:any");
+
+    case "model:view":
+    case "view:model":
+      // Manager+ can inspect AI model info, latency, and prompt metadata
+      return permSet.has("review:view") || permSet.has("rules:edit") || permSet.has("runs:view");
+
+    case "run:retry":
+    case "runs:retry":
+      return permSet.has("runs:view");
 
     default:
       // Direct raw permission string fallback

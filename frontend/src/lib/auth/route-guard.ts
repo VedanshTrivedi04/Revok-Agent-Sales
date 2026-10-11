@@ -25,7 +25,7 @@ export interface GuardInput {
 
 export const ADMIN_HOME = "/admin/orgs";
 export const ADMIN_LOGIN = "/admin/login";
-const CUSTOMER_PUBLIC = ["/login", "/signup", "/invite", "/auth"];
+const CUSTOMER_PUBLIC = ["/login", "/signup", "/invite", "/set-password"];
 const CUSTOMER_GUEST_ONLY = ["/login", "/signup"];
 
 function within(pathname: string, prefixes: string[]) {

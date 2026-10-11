@@ -22,7 +22,7 @@ from pydantic import ValidationError
 from app.auth.deps import current_membership, get_claims
 from app.config import get_settings
 from app.mocks import data as D
-from app.permissions import permissions_for
+from app.permissions import invitable_roles_for, permissions_for
 from app.schemas.action_payloads import ACTION_PAYLOADS
 from app.utils.errors import ERROR_CODES, AppError
 from app.utils.pagination import PageParams, decode_cursor, encode_cursor
@@ -167,6 +167,7 @@ async def _me(request: Request) -> dict[str, Any]:
                         {"org_id": D.OTHER_ORG_ID, "org_name": D.OTHER_ORG_NAME, "role": "viewer"}],
         "org": {k: org[k] for k in ("id", "name", "status", "plan", "timezone", "currency")},
         "role": a["role"], "permissions": permissions_for(a["role"]),
+        "invitable_roles": invitable_roles_for(a["role"]),
         "flags": {f["key"]: f["default"] for f in s["admin"]["flags"]},
         "onboarding": org["onboarding"],
     }  # fmt: skip
@@ -275,6 +276,31 @@ def m_accept_invite(request: Request, body: Any, **_: Any) -> Any:
     if body.token == "expired":
         raise AppError("bad_request", "Invite expired or already used")
     return {"org_id": D.ORG_ID, "role": "member"}
+
+
+@mock("set_password")
+def m_set_password(request: Request, body: Any, **_: Any) -> Any:
+    if body.token == "expired-token":
+        raise AppError("bad_request", "This link is invalid or has expired")
+    return {"ok": True, "detail": {}}
+
+
+@mock("change_password")
+def m_change_password(request: Request, body: Any, **_: Any) -> Any:
+    return {"ok": True, "detail": {}}
+
+
+@mock("preview_invite")
+def m_preview_invite(request: Request, body: Any, **_: Any) -> Any:
+    if body.token == "expired":
+        return {
+            "org_name": D.ORG_NAME, "role": "member", "email": "invitee@demo-saas.example.com",
+            "invited_by_name": None, "expires_at": "2026-10-01T00:00:00Z", "status": "expired",
+        }  # fmt: skip
+    return {
+        "org_name": D.ORG_NAME, "role": "member", "email": "invitee@demo-saas.example.com",
+        "invited_by_name": None, "expires_at": "2026-10-20T00:00:00Z", "status": "active",
+    }  # fmt: skip
 
 
 def _mock_auth_session(role: str, name: str, email: str) -> dict[str, Any]:
@@ -922,6 +948,16 @@ def m_runs(
     return page_of(items, page)
 
 
+@mock("retry_run")
+def m_retry_run(request: Request, run_id: Any, **_: Any) -> Any:
+    r = next((x for x in store().d["ops"]["runs"] if x["id"] == str(run_id)), None)
+    if r is None:
+        raise not_found("Run")
+    if r["status"] not in ("failed", "skipped"):
+        raise AppError("conflict", "Only failed or skipped runs can be retried")
+    return {"agent_run_id": str(uuid4())}
+
+
 @mock("get_run")
 def m_run_detail(request: Request, run_id: Any, **_: Any) -> Any:
     r = next((x for x in store().d["ops"]["runs"] if x["id"] == str(run_id)), None)
@@ -1071,6 +1107,22 @@ def m_admin_orgs(request: Request, page: PageParams, **_: Any) -> Any:
 def m_admin_org(request: Request, org_id: Any, **_: Any) -> Any:
     return {**_admin_org(org_id), "integrations": [{"provider": i["provider"], "status": i["status"]} for i in store().d["integrations"]["integrations"]],
             "recent_errors": ["usage_api: last batch had 12 rejected rows"]}  # fmt: skip
+
+
+@mock("onboard_client")
+def m_onboard_client(request: Request, body: Any, **_: Any) -> Any:
+    org = {
+        "id": str(uuid4()), "name": body.name, "status": "active", "plan": "pilot",
+        "members": 1, "accounts": 0, "last_sync_at": None, "open_findings": 0,
+        "failed_jobs_24h": 0, "created_at": "2026-10-11T00:00:00Z",
+    }  # fmt: skip
+    return {
+        "org": org,
+        "owner_email": str(body.owner_email).lower(),
+        "owner_created": True,
+        "set_password_email_sent": body.send_set_password_email,
+        "temporary_password": "mock-temp-password" if body.generate_temporary_password else None,
+    }
 
 
 @mock("suspend_org")

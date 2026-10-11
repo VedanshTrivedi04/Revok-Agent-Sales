@@ -35,6 +35,20 @@ describe("Platform Admin routes (/admin/*)", () => {
   });
 });
 
+describe("password pages", () => {
+  it("lets signed-out visitors use the emailed set-password link, even when signed in", () => {
+    expect(decideRoute({ pathname: "/set-password", search: "?token=abc", ...none })).toEqual(next);
+    expect(decideRoute({ pathname: "/set-password", ...customer })).toEqual(next);
+  });
+
+  it("requires a customer session for the forced password change", () => {
+    expect(decideRoute({ pathname: "/change-password", ...customer })).toEqual(next);
+    expect(decideRoute({ pathname: "/change-password", ...none })).toEqual(
+      to("/login?next=%2Fchange-password")
+    );
+  });
+});
+
 describe("customer routes", () => {
   it("lets customer sessions in", () => {
     for (const pathname of ["/today", "/accounts", "/settings/profile", "/inbox"]) {
@@ -56,7 +70,7 @@ describe("customer routes", () => {
   });
 
   it("keeps public pages public and bounces signed-in customers off /login and /signup", () => {
-    for (const pathname of ["/login", "/signup", "/invite/abc", "/auth/error"]) {
+    for (const pathname of ["/login", "/signup", "/invite/abc", "/set-password"]) {
       expect(decideRoute({ pathname, ...none })).toEqual(next);
     }
     expect(decideRoute({ pathname: "/login", ...customer })).toEqual(to("/today"));

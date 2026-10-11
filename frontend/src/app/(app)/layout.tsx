@@ -1,9 +1,19 @@
+"use client";
+
 import React from "react";
 import { Sidebar } from "../../components/layout/sidebar";
 import { Topbar } from "../../components/layout/topbar";
 import { IntegrationBanner } from "../../components/layout/integration-banner";
+import { OrgStatusNotice } from "../../components/layout/org-status-notice";
+import { useMe } from "../../lib/auth/session-context";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const { me, isLoading } = useMe();
+
+  if (!isLoading && me?.org && (me.org.status === "suspended" || me.org.status === "deleted")) {
+    return <OrgStatusNotice status={me.org.status} orgName={me.org.name} />;
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       {/* App Sidebar */}

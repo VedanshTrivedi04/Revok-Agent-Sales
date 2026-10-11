@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState, use } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNowStrict } from "date-fns";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   ShieldCheck,
   CheckCircle2,
@@ -24,6 +26,7 @@ import { ApiError } from "../../../../lib/api/error";
 import type { components } from "../../../../lib/api/schema";
 
 type InviteAcceptOut = components["schemas"]["InviteAcceptOut"];
+type InvitePreview = components["schemas"]["InvitePreviewOut"];
 
 interface InvitePageProps {
   params: Promise<{ token: string }>;
@@ -33,30 +36,30 @@ function InviteAcceptContent({ params }: InvitePageProps) {
   const resolvedParams = use(params);
   const token = resolvedParams.token;
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { me, isLoading: isSessionLoading, refetch: refetchSession } = useMe();
 
-  // URL query hints or fallback defaults
-  const queryOrg = searchParams.get("org") || "Acme Corporation";
-  const queryBy = searchParams.get("by") || "Workspace Administrator";
-  const queryRole = (searchParams.get("role") || "viewer") as
-    | "viewer"
-    | "member"
-    | "manager"
-    | "admin";
-  const queryEmail = searchParams.get("email");
-  const queryExpires = searchParams.get("expires") || "7 days";
+  // What this invite is for comes from the API (the token is the only thing in the URL).
+  const { data: preview, isLoading: isPreviewLoading, error: previewError } = useQuery<InvitePreview>({
+    queryKey: ["invite-preview", token],
+    queryFn: () =>
+      fetchApi<InvitePreview>("/invites/preview", { method: "POST", body: JSON.stringify({ token }) }),
+    retry: false,
+  });
+
+  const queryOrg = preview?.org_name ?? "this workspace";
+  const queryBy = preview?.invited_by_name ?? "a workspace admin";
+  const queryRole = (preview?.role ?? "member") as "viewer" | "member" | "manager" | "admin";
+  const queryEmail = preview?.email ?? null;
+  const queryExpires = preview
+    ? preview.status === "active"
+      ? formatDistanceToNowStrict(new Date(preview.expires_at))
+      : "an earlier date"
+    : "7 days";
 
   // State management: "active" | "expired" | "invalid" | "used" | "email_mismatch" | "success"
   const [state, setState] = useState<
     "active" | "expired" | "invalid" | "used" | "email_mismatch" | "success"
-  >(() => {
-    if (token === "expired") return "expired";
-    if (token === "invalid") return "invalid";
-    if (token === "used" || token === "already-accepted") return "used";
-    if (token === "mismatch") return "email_mismatch";
-    return "active";
-  });
+  >("active");
 
   const [isAccepting, setIsAccepting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -69,7 +72,18 @@ function InviteAcceptContent({ params }: InvitePageProps) {
       me.user.email.toLowerCase() !== queryEmail.toLowerCase()
   );
 
-  const effectiveState = isEmailMismatch && state !== "success" ? "email_mismatch" : state;
+  // The preview decides what the page can show before anyone clicks Accept.
+  const previewState: typeof state | null = previewError
+    ? "invalid"
+    : preview?.status === "expired"
+      ? "expired"
+      : preview?.status === "used"
+        ? "used"
+        : null;
+  const effectiveState =
+    state === "success"
+      ? state
+      : (previewState ?? (isEmailMismatch ? "email_mismatch" : state));
 
   // Handle invitation acceptance
   const handleAccept = async () => {
@@ -100,11 +114,8 @@ function InviteAcceptContent({ params }: InvitePageProps) {
 
       // Route after short success feedback
       setTimeout(() => {
-        if (role === "viewer") {
-          router.push("/today");
-        } else {
-          router.push("/today");
-        }
+        // Everyone connects their own Google account first, then lands on Today.
+        router.push("/onboarding/google");
       }, 1200);
     } catch (err: unknown) {
       if (err instanceof ApiError) {
@@ -139,7 +150,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
   };
 
   // 1. Loading Skeleton while session initial resolution occurs
-  if (isSessionLoading) {
+  if (isSessionLoading || isPreviewLoading) {
     return (
       <div className="bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-8 space-y-6 animate-pulse">
         <div className="h-6 w-32 bg-slate-200 dark:bg-emerald-900/40 rounded-full mx-auto" />

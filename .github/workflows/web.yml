@@ -1,0 +1,86 @@
+name: Web
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: frontend
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: API types match the backend contract (regenerate and commit if this fails)
+        run: |
+          npm run gen:api
+          git diff --exit-code -- src/lib/api/schema.d.ts
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - name: Production build
+        run: npx next build --webpack
+        env:
+          NEXT_PUBLIC_API_BASE: http://localhost:8000
+
+  e2e:
+    # Real browser, real API, real Postgres and Redis. Nothing is mocked.
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: owner, POSTGRES_PASSWORD: owner, POSTGRES_DB: revops }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U owner -d revops" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      E2E_DB_PORT: "5432"
+      E2E_REDIS_PORT: "6379"
+      DATABASE_MIGRATOR_URL: postgresql+psycopg://owner:owner@localhost:5432/revops
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install the API and create the database
+        working-directory: revops-agent/apps/api
+        run: |
+          uv sync --frozen
+          PGPASSWORD=owner psql -h localhost -U owner -d revops -f ../../infra/db/init.sql
+          uv run alembic upgrade head
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          CI: "true"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          retention-days: 7

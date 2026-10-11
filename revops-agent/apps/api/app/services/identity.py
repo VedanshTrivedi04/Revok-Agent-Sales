@@ -11,7 +11,7 @@ from app.models.brain import Finding
 from app.models.integrations import FieldMapping, Integration
 from app.models.tenancy import Membership, Organization, User
 from app.models.timeline import UsageSnapshot
-from app.permissions import Role, permissions_for
+from app.permissions import Role, invitable_roles_for, permissions_for
 from app.schemas.identity import (
     Ack,
     MeMembership,
@@ -175,6 +175,7 @@ async def get_me(s: AsyncSession, user_id: UUID, org_id: UUID, role: Role) -> Me
             avatar_url=u.avatar_url,
             timezone=ms.timezone,
             notification_prefs=NotificationPrefs(**ms.notification_prefs),
+            must_change_password=u.must_change_password,
         ),
         memberships=all_memberships,
         org=MeOrg(
@@ -188,6 +189,7 @@ async def get_me(s: AsyncSession, user_id: UUID, org_id: UUID, role: Role) -> Me
         role=role.value,
         permissions=permissions_for(role),
         flags=flags,
+        invitable_roles=invitable_roles_for(role),
         onboarding=onboarding,
     )
 
@@ -217,6 +219,41 @@ async def patch_me(
     return await get_me(s, user_id, org_id, role)
 
 
+async def insert_org_with_owner(
+    s: AsyncSession, *, org_id: UUID, owner_user_id: UUID, body: OrgCreateIn
+) -> Organization:
+    """Org row, its first Owner membership, default autonomy policies and an empty field mapping.
+    Shared by self-serve `POST /orgs` and platform client onboarding; the caller logs the event."""
+    org = Organization(
+        id=org_id,
+        name=body.name,
+        primary_domain=body.primary_domain,
+        extra_domains=[],
+        timezone=body.timezone,
+        currency=body.currency,
+        plan="pilot",
+        status="active",
+        settings={},
+    )
+    s.add(org)
+    await s.flush()
+
+    s.add(
+        Membership(
+            id=new_id(),
+            org_id=org_id,
+            user_id=owner_user_id,
+            role="owner",
+            status="active",
+            timezone=body.timezone,
+        )
+    )
+    for p in DEFAULT_AUTONOMY_POLICIES:
+        s.add(AutonomyPolicy(id=new_id(), org_id=org_id, **p))
+    s.add(FieldMapping(org_id=org_id))
+    return org
+
+
 async def create_org(user_id: UUID, user_email: str | None, body: OrgCreateIn) -> OrgDetail:
     """Creates org, owner membership, autonomy policies, and audit log in one transaction."""
     org_id = new_id()
@@ -230,34 +267,7 @@ async def create_org(user_id: UUID, user_email: str | None, body: OrgCreateIn) -
             s.add(u)
             await s.flush()
 
-        org = Organization(
-            id=org_id,
-            name=body.name,
-            primary_domain=body.primary_domain,
-            extra_domains=[],
-            timezone=body.timezone,
-            currency=body.currency,
-            plan="pilot",
-            status="active",
-            settings={},
-        )
-        s.add(org)
-        await s.flush()
-
-        membership = Membership(
-            id=new_id(),
-            org_id=org_id,
-            user_id=user_id,
-            role="owner",
-            status="active",
-            timezone=body.timezone,
-        )
-        s.add(membership)
-
-        for p in DEFAULT_AUTONOMY_POLICIES:
-            s.add(AutonomyPolicy(id=new_id(), org_id=org_id, **p))
-
-        s.add(FieldMapping(org_id=org_id))
+        org = await insert_org_with_owner(s, org_id=org_id, owner_user_id=user_id, body=body)
 
         await decision_log.log(
             s,

@@ -23,6 +23,7 @@ class MeUser(BaseModel):
     avatar_url: str | None = None
     timezone: str | None = None
     notification_prefs: NotificationPrefs = NotificationPrefs()
+    must_change_password: bool = False  # signed in with a temporary password
 
 
 class MeMembership(BaseModel):
@@ -57,6 +58,9 @@ class MeResponse(BaseModel):
     role: Role
     permissions: list[str]
     flags: dict[str, bool] = {}
+    # Roles this user may grant by invite (Owner: admin/manager/member/viewer, Admin: manager/
+    # member/viewer, everyone else: none). The UI offers exactly these and never infers it.
+    invitable_roles: list[Role] = []
     onboarding: OnboardingOut | None = None
 
 
@@ -144,6 +148,19 @@ class InviteAcceptIn(BaseModel):
     token: str
 
 
+class InvitePreviewIn(BaseModel):
+    token: str
+
+
+class InvitePreviewOut(BaseModel):
+    org_name: str
+    role: Role
+    email: str
+    invited_by_name: str | None = None
+    expires_at: datetime
+    status: Literal["active", "expired", "used"]
+
+
 class InviteAcceptOut(BaseModel):
     org_id: UUID
     role: Role
@@ -219,3 +236,15 @@ class AuthSession(BaseModel):
     is_superadmin: bool = False
     memberships: list[MeMembership] = []
     needs_onboarding: bool = False
+    # True while the user is on a temporary password and must choose their own before continuing.
+    must_change_password: bool = False
+
+
+class SetPasswordIn(BaseModel):
+    token: str = Field(min_length=10, max_length=200)
+    password: str = Field(min_length=10, max_length=128)
+
+
+class ChangePasswordIn(BaseModel):
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=10, max_length=128)

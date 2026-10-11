@@ -198,7 +198,9 @@ async def handle_slack_oauth_callback(code: str, state: str) -> RedirectResponse
 
     await publish(org_id, "sync.updated", {"provider": "slack", "status": "connected"})
 
-    redirect_url = f"{settings.web_url}/settings/integrations?connected=slack"
+    from app.services.integrations import web_return_url
+
+    redirect_url = f"{web_return_url('slack', oauth_state.return_to)}?connected=slack"
     return RedirectResponse(redirect_url, status_code=302)
 
 

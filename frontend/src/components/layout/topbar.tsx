@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  Bell,
   Search,
   ChevronDown,
   Building,
@@ -14,29 +13,25 @@ import {
 import { useMe } from "../../lib/auth/session-context";
 import Link from "next/link";
 
-import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "../../lib/api/client";
 import { handleApiErrorToast } from "../../lib/api/error";
-import { queryKeys } from "../../lib/api/query-keys";
+import { NotificationsDropdown } from "./notifications-dropdown";
 
 export function Topbar() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { me, activeRole, signOut, isLoading } = useMe();
   const [isOrgMenuOpen, setIsOrgMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-
-  const { data: notifData } = useQuery({
-    queryKey: queryKeys.notifications(),
-    queryFn: () =>
-      fetchApi<{ items: Array<{ id: string; read_at?: string | null }> }>("/notifications")
-        .catch(() => ({ items: [] })),
-  });
-  const unreadCount = (notifData?.items || []).filter((n) => !n.read_at).length;
 
   const switchOrg = async (orgId: string) => {
     setIsOrgMenuOpen(false);
     if (orgId === me?.org?.id) return;
     try {
       await fetchApi("/auth/switch-org", { method: "POST", body: JSON.stringify({ org_id: orgId }) });
+      queryClient.clear(); // per portals-and-impact.md §8: clear entire query cache on org switch
       window.location.assign("/today"); // fresh boot under the new workspace
     } catch (err) {
       handleApiErrorToast(err);
@@ -97,7 +92,7 @@ export function Topbar() {
         {/* Global Search button / ⌘K */}
         <button
           type="button"
-          onClick={() => {}}
+          onClick={() => router.push("/accounts")}
           className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-400 text-xs hover:border-slate-300 dark:hover:border-slate-600 transition-colors min-w-[220px]"
         >
           <Search className="w-3.5 h-3.5" />
@@ -108,32 +103,20 @@ export function Topbar() {
         </button>
       </div>
 
-      {/* Right: Role Switcher Pill + Notifications Bell + User Menu */}
+      {/* Right: Authenticated Role Badge + Notifications Bell + User Menu */}
       <div className="flex items-center gap-3">
-        {/* Signed-in role (read from GET /me; assigned by the workspace, not selectable here) */}
         {activeRole && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span className="text-[11px] font-medium text-slate-500 hidden md:inline">Role:</span>
+            <span className="text-[11px] font-medium text-slate-500 hidden sm:inline">Role:</span>
             <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 capitalize">
-              {activeRole || "—"}
+              {activeRole}
             </span>
           </div>
         )}
 
-        {/* Notifications Bell */}
-        <button
-          type="button"
-          className="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Notifications"
-        >
-          <Bell className="w-4 h-4" />
-          {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-[10px] font-bold text-white flex items-center justify-center">
-              {unreadCount}
-            </span>
-          )}
-        </button>
+        {/* Dynamic Notifications Dropdown Panel */}
+        <NotificationsDropdown />
 
         {/* User Menu */}
         <div className="relative">
