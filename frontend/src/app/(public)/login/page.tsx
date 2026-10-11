@@ -102,14 +102,38 @@ function LoginForm() {
   return (
     <div className="bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-7 sm:p-9 space-y-6">
       {/* Header Pill & Title */}
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/80 dark:border-lime-500/30">
-          <Sparkles className="w-3.5 h-3.5 text-[#0D3823] dark:text-[#CCFF00]" />
-          <span>Enterprise Portal</span>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="inline-flex items-center gap-2">
+            <img
+              src="/primary logo.png"
+              alt="Revora"
+              className="w-7 h-7 object-contain dark:hidden"
+            />
+            <img
+              src="/secondary logo.png"
+              alt="Revora"
+              className="w-7 h-7 object-contain hidden dark:inline-block"
+            />
+            <img
+              src="/pr name.png"
+              alt="Revora"
+              className="h-6 w-auto object-contain dark:hidden"
+            />
+            <img
+              src="/sc name.png"
+              alt="Revora"
+              className="h-6 w-auto object-contain hidden dark:inline-block"
+            />
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/80 dark:border-lime-500/30">
+            <Sparkles className="w-3.5 h-3.5 text-[#0D3823] dark:text-[#CCFF00]" />
+            <span>Enterprise Portal</span>
+          </div>
         </div>
 
         <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          Sign in to RevOps Agent
+          Sign in to Revora
         </h1>
         <p className="text-xs text-slate-500 dark:text-slate-400">
           Evidence-first, approval-native revenue intelligence.

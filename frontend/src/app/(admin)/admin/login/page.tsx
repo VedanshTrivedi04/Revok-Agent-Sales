@@ -58,10 +58,24 @@ export default function AdminLoginPage() {
     <main className="flex min-h-screen items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md space-y-6 rounded-3xl border border-[var(--adm-border)] bg-[var(--adm-surface)] p-7 shadow-2xl sm:p-9">
         <div className="space-y-3">
-          <InternalBadge />
+          <div className="flex items-center justify-between">
+            <div className="inline-flex items-center gap-2">
+              <img
+                src="/secondary logo.png"
+                alt="Revora"
+                className="w-7 h-7 object-contain"
+              />
+              <img
+                src="/sc name.png"
+                alt="Revora"
+                className="h-6 w-auto object-contain"
+              />
+            </div>
+            <InternalBadge />
+          </div>
           <h1 className="text-2xl font-black tracking-tight">Platform Admin sign-in</h1>
           <p className="text-xs text-[var(--adm-text-muted)]">
-            For the RevOps Agent team only. Customers sign in on the customer portal.
+            For the Revora team only. Customers sign in on the customer portal.
           </p>
         </div>
 

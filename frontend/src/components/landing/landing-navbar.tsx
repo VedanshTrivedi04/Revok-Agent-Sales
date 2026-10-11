@@ -14,7 +14,7 @@ export function LandingNavbar() {
     <>
       <header className="sticky top-0 z-40 w-full bg-[#FAF9F5]/90 backdrop-blur-md border-b border-slate-200/60 transition-all">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-18">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
               <RevOpsLogo iconSize="w-7 h-7" textSize="text-lg" />

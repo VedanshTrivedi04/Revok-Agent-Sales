@@ -12,16 +12,16 @@ export function HeroSection() {
   const [requestAccessOpen, setRequestAccessOpen] = useState(false);
 
   return (
-    <section className="relative w-full pt-10 pb-20 md:pt-16 md:pb-28 overflow-hidden bg-[#FAF9F5]">
+    <section className="relative w-full pt-3 pb-12 sm:pt-4 sm:pb-14 md:pt-5 md:pb-16 overflow-hidden bg-[#FAF9F5]">
       {/* Background Graphic: Subtle Grid Pattern + Ambient Glow Meshes */}
       <div className="absolute inset-0 bg-grid-pattern opacity-60 pointer-events-none" />
-      <div className="absolute top-10 left-1/4 w-96 h-96 rounded-full bg-emerald-200/25 blur-3xl pointer-events-none" />
-      <div className="absolute top-40 right-10 w-[450px] h-[450px] rounded-full bg-teal-100/35 blur-3xl pointer-events-none" />
+      <div className="absolute top-6 left-1/4 w-96 h-96 rounded-full bg-emerald-200/25 blur-3xl pointer-events-none" />
+      <div className="absolute top-20 right-10 w-[450px] h-[450px] rounded-full bg-teal-100/35 blur-3xl pointer-events-none" />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           {/* Left Column: Typography & CTAs */}
-          <div className="lg:col-span-6 space-y-7 text-left">
+          <div className="lg:col-span-6 space-y-6 text-left">
             <ScrollReveal direction="down" delayMs={50}>
               {/* Eyebrow Pill */}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100/70 border border-emerald-300/60 shadow-2xs">
@@ -40,21 +40,8 @@ export function HeroSection() {
               <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-slate-900 tracking-[-0.03em] leading-[1.08]">
                 Know why <br />
                 revenue is at risk. <br />
-                <span className="relative inline-block text-[#143C2E]">
+                <span className="text-[#143C2E]">
                   Act before it&apos;s too late.
-                  <svg
-                    className="absolute -bottom-2 left-0 w-full h-3 text-emerald-500/70 overflow-visible"
-                    viewBox="0 0 300 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M 2 8 C 70 2, 190 12, 298 5"
-                      stroke="currentColor"
-                      strokeWidth="3.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
                 </span>
               </h1>
             </ScrollReveal>

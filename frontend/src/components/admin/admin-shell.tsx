@@ -84,15 +84,18 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         aria-label="Platform Admin navigation"
       >
         <div className="flex h-16 items-center gap-3 border-b border-[var(--adm-border)] px-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--adm-accent)] shadow-md">
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-4 bg-[var(--adm-accent-ink)] rounded-full" />
-              <span className="w-1.5 h-2.5 bg-[var(--adm-accent-ink)] rounded-full" />
-            </div>
-          </div>
-          <div className="leading-none">
-            <div className="text-sm font-black tracking-tight text-[var(--adm-text)]">RevOps Agent</div>
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-[var(--adm-accent)] font-bold">
+          <img
+            src="/secondary logo.png"
+            alt="Revora"
+            className="w-7 h-7 object-contain shrink-0"
+          />
+          <div>
+            <img
+              src="/sc name.png"
+              alt="Revora"
+              className="h-4 w-auto object-contain"
+            />
+            <div className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-[var(--adm-accent)] font-bold">
               Platform Admin
             </div>
           </div>

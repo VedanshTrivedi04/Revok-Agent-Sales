@@ -89,11 +89,17 @@ export function Sidebar() {
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800">
         <Link href="/today" className="flex items-center gap-2.5 font-bold tracking-tight text-white group">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-sm text-white shadow-lg shadow-blue-500/20 group-hover:bg-blue-500 transition-colors">
-            R
-          </div>
+          <img
+            src="/secondary logo.png"
+            alt="Revora"
+            className="w-7 h-7 object-contain group-hover:scale-105 transition-transform"
+          />
           <div>
-            <div className="text-sm font-bold tracking-tight text-white leading-none">RevOps Agent</div>
+            <img
+              src="/sc name.png"
+              alt="Revora"
+              className="h-4.5 w-auto object-contain"
+            />
             <div className="text-[10px] text-slate-400 font-mono tracking-wider mt-0.5 uppercase">
               {activeRole || "workspace"}
             </div>

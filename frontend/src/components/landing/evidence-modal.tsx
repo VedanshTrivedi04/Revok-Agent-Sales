@@ -74,7 +74,7 @@ export function EvidenceModal({
               </div>
               <div>
                 <h4 className="text-sm font-bold text-slate-900 mb-1">
-                  Agent Multi-Signal Synthesis
+                  Revora Multi-Signal Synthesis
                 </h4>
                 <p className="text-xs text-slate-700 leading-relaxed">
                   Acme Corporation is showing compounding churn signals across 4 disconnected systems. 

@@ -9,17 +9,26 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <header className="w-full border-b border-emerald-900/10 dark:border-emerald-500/10 bg-white/80 dark:bg-[#0A1A12]/80 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/login" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-[#0D3823] dark:bg-[#CCFF00] flex items-center justify-center font-black text-sm text-[#CCFF00] dark:text-[#0D3823] shadow-md shadow-emerald-950/20 group-hover:scale-105 transition-transform">
-              R
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white leading-none">
-                RevOps Agent
-              </span>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-800 dark:text-emerald-400 font-semibold mt-0.5">
-                Revenue Intelligence
-              </span>
-            </div>
+            <img
+              src="/primary logo.png"
+              alt="Revora"
+              className="w-8 h-8 object-contain dark:hidden"
+            />
+            <img
+              src="/secondary logo.png"
+              alt="Revora"
+              className="w-8 h-8 object-contain hidden dark:inline-block"
+            />
+            <img
+              src="/pr name.png"
+              alt="Revora"
+              className="h-7 w-auto object-contain dark:hidden"
+            />
+            <img
+              src="/sc name.png"
+              alt="Revora"
+              className="h-7 w-auto object-contain hidden dark:inline-block"
+            />
           </Link>
 
           <div className="flex items-center gap-3">
@@ -48,7 +57,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       {/* Public Footer */}
       <footer className="w-full py-4 border-t border-slate-200/80 dark:border-emerald-950 text-center text-xs text-slate-400 dark:text-slate-500">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>&copy; {new Date().getFullYear()} RevOps Agent Inc. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} Revora Inc. All rights reserved.</span>
           <div className="flex items-center gap-4 text-[11px]">
             <Link href="/login" className="hover:text-emerald-700 dark:hover:text-lime-400 transition-colors">
               Terms of Service

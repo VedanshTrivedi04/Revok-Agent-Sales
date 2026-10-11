@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import CircularText from "./CircularText";
 
 interface HeroImageProps {
   onCardClick?: (source: string) => void;
@@ -151,44 +152,7 @@ function AccentRays({
   );
 }
 
-// RevOps Dark Green Circular Gear / Cog Badge (Bottom-Left)
-function RevOpsGearBadge({ className = "w-14 h-14 sm:w-16 sm:h-16" }: { className?: string }) {
-  return (
-    <div className={`relative flex items-center justify-center select-none ${className}`}>
-      {/* Outer 16-Tooth Gear Rim in Dark Forest Green */}
-      <svg
-        className="w-full h-full text-[#143C2E] drop-shadow-xl animate-spin-veryslow"
-        viewBox="0 0 100 100"
-        fill="currentColor"
-      >
-        {/* Gear tooth profile */}
-        <path d="M 46 2 L 54 2 L 55 11 C 58 12 61 13 64 15 L 71 10 L 77 16 L 72 23 C 74 26 75 29 76 32 L 85 33 L 85 41 L 76 42 C 75 45 74 48 72 51 L 77 58 L 71 64 L 64 59 C 61 61 58 62 55 63 L 54 72 L 46 72 L 45 63 C 42 62 39 61 36 59 L 29 64 L 23 58 L 28 51 C 26 48 25 45 24 42 L 15 41 L 15 33 L 24 32 C 25 29 26 26 28 23 L 23 16 L 29 10 L 36 15 C 39 13 42 12 45 11 Z" transform="scale(1.28) translate(-11, -7)" />
-        {/* Inner solid circular hub */}
-        <circle cx="50" cy="50" r="37" fill="#143C2E" stroke="#22543D" strokeWidth="2.5" />
-        {/* Radial dial hash ticks */}
-        <circle
-          cx="50"
-          cy="50"
-          r="30"
-          fill="none"
-          stroke="#4ADE80"
-          strokeWidth="1.8"
-          strokeDasharray="2.5 3.5"
-          opacity="0.75"
-        />
-      </svg>
-      {/* Center Glowing RevOps Tri-circle Icon */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#4ADE80] drop-shadow-[0_0_8px_rgba(74,222,128,0.8)]" viewBox="0 0 24 24" fill="currentColor">
-          <circle cx="12" cy="6.5" r="3" />
-          <circle cx="6.5" cy="16.5" r="3" />
-          <circle cx="17.5" cy="16.5" r="3" />
-          <path d="M12 6.5 L6.5 16.5 M12 6.5 L17.5 16.5 M6.5 16.5 L17.5 16.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-        </svg>
-      </div>
-    </div>
-  );
-}
+
 
 // Two Glowing Lime-Green Sparkle Stars (Bottom-Right)
 function TwoGreenStars({ className = "w-11 h-11 sm:w-13 sm:h-13" }: { className?: string }) {
@@ -444,15 +408,33 @@ export function HeroImage({ onCardClick }: HeroImageProps) {
         </div>
 
         {/* ================================================================ */}
-        {/* 5. BOTTOM-LEFT: REVOPS GEAR EMBLEM                               */}
+        {/* 5. BOTTOM-LEFT: CIRCULAR TEXT EMBLEM                             */}
         {/* ================================================================ */}
         <div
           data-card="emblem"
           onClick={() => onCardClick?.("emblem")}
-          className="absolute bottom-[8%] left-[5%] z-25 cursor-pointer transition-transform duration-500 hover:rotate-12 hover:scale-105"
-          title="RevOps Revenue Intelligence Core"
+          className="absolute bottom-2 left-1 sm:bottom-4 sm:left-2 z-30 cursor-pointer transition-transform duration-300 hover:scale-105"
+          title="Autonomous RevOps Agent"
         >
-          <RevOpsGearBadge className="w-14 h-14 sm:w-16 sm:h-16" />
+          <div className="relative p-1.5 rounded-full bg-[#0D241A] shadow-xl shadow-emerald-950/40 border border-emerald-500/30 flex items-center justify-center">
+            <CircularText
+              text="Autonomous * RevOps * Agent * "
+              onHover="speedUp"
+              spinDuration={20}
+              radius={48}
+              fontSize={9.5}
+              textColor="#ffffff"
+              className="text-white"
+            >
+              <div className="w-11 h-11 rounded-full bg-[#143C2E] border border-emerald-400/40 shadow-inner flex items-center justify-center p-2.5">
+                <img
+                  src="/secondary logo.png"
+                  alt="Revora"
+                  className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]"
+                />
+              </div>
+            </CircularText>
+          </div>
         </div>
       </div>
     </div>

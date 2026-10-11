@@ -14,7 +14,7 @@ import { LandingFooter } from "../components/landing/landing-footer";
 import { ScrollProgressBar } from "../components/landing/scroll-reveal";
 
 export const metadata: Metadata = {
-  title: "RevOps Agent — Revenue Intelligence for Modern Teams",
+  title: "Revora — Revenue Intelligence for Modern Teams",
   description:
     "Know why revenue is at risk. Act before it's too late. Connect CRM activity, customer conversations, email, and product usage into one evidence-backed view of revenue risk.",
 };

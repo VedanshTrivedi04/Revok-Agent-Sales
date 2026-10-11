@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { X, CheckCircle, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
-import { RevOpsLogoIcon } from "./revops-logo";
+import { RevOpsLogo, RevOpsLogoIcon } from "./revops-logo";
 
 interface RequestAccessModalProps {
   isOpen: boolean;
@@ -60,15 +60,16 @@ export function RequestAccessModal({ isOpen, onClose }: RequestAccessModalProps)
           </div>
         ) : (
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <RevOpsLogoIcon className="w-6 h-6" />
-              <span className="text-xs uppercase tracking-wider font-semibold text-emerald-800">
-                Early Access Program
+            <div className="flex items-center gap-3 mb-3">
+              <RevOpsLogo iconSize="w-6 h-6" nameHeight="h-5" />
+              <span className="text-slate-300">·</span>
+              <span className="text-[11px] uppercase tracking-wider font-semibold text-emerald-800">
+                Early Access
               </span>
             </div>
 
             <h3 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">
-              Request access to RevOps Agent
+              Request access to Revora
             </h3>
             <p className="text-sm text-slate-600 mb-6 leading-relaxed">
               Experience evidence-backed revenue intelligence before early churn signals become lost renewals.

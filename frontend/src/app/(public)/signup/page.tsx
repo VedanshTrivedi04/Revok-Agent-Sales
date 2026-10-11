@@ -107,14 +107,38 @@ function SignupForm() {
   return (
     <div className="bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-7 sm:p-9 space-y-6">
       {/* Header Badge & Title */}
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/80 dark:border-lime-500/30">
-          <Sparkles className="w-3.5 h-3.5 text-[#0D3823] dark:text-[#CCFF00]" />
-          <span>{inviteToken ? "Accept Invitation" : "New Organization"}</span>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="inline-flex items-center gap-2">
+            <img
+              src="/primary logo.png"
+              alt="Revora"
+              className="w-7 h-7 object-contain dark:hidden"
+            />
+            <img
+              src="/secondary logo.png"
+              alt="Revora"
+              className="w-7 h-7 object-contain hidden dark:inline-block"
+            />
+            <img
+              src="/pr name.png"
+              alt="Revora"
+              className="h-6 w-auto object-contain dark:hidden"
+            />
+            <img
+              src="/sc name.png"
+              alt="Revora"
+              className="h-6 w-auto object-contain hidden dark:inline-block"
+            />
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/80 dark:border-lime-500/30">
+            <Sparkles className="w-3.5 h-3.5 text-[#0D3823] dark:text-[#CCFF00]" />
+            <span>{inviteToken ? "Accept Invitation" : "New Organization"}</span>
+          </div>
         </div>
 
         <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          {inviteToken ? "Create your account" : "Create your RevOps workspace"}
+          {inviteToken ? "Create your account" : "Create your Revora workspace"}
         </h1>
         <p className="text-xs text-slate-500 dark:text-slate-400">
           {inviteToken
@@ -276,7 +300,7 @@ function SignupForm() {
 
       {/* Terms & Privacy Notice */}
       <p className="text-[11px] text-center text-slate-400 dark:text-slate-500 leading-relaxed">
-        By continuing, you agree to RevOps Agent&apos;s{" "}
+        By continuing, you agree to Revora&apos;s{" "}
         <Link href="/login" className="underline hover:text-emerald-700 dark:hover:text-lime-400">
           Terms of Service
         </Link>{" "}

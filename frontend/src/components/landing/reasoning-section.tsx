@@ -35,7 +35,7 @@ export function ReasoningSection() {
 
             <ScrollReveal direction="up" delayMs={250}>
               <p className="text-[15px] sm:text-base text-slate-600 leading-relaxed max-w-md">
-                Instead of merely saying &ldquo;Acme is at risk&rdquo;, RevOps Agent connects the dots
+                Instead of merely saying &ldquo;Acme is at risk&rdquo;, Revora connects the dots
                 across your CRM, Gmail, product telemetry, and Gong calls to show you the exact evidence
                 behind every conclusion.
               </p>
@@ -99,7 +99,7 @@ export function ReasoningSection() {
             <ScrollReveal direction="up" delayMs={250} className="h-full">
               <div className="h-full rounded-2xl p-6 bg-[#F4F9F5] border-2 border-emerald-400/90 shadow-xl shadow-emerald-900/10 flex flex-col justify-between space-y-5 relative hover:scale-[1.01] transition-transform">
                 <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider">
-                  RevOps Agent
+                  Revora
                 </div>
 
                 <div className="space-y-3.5">

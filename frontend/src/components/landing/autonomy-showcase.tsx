@@ -42,7 +42,7 @@ export function AutonomyShowcase() {
       color: "amber",
       tagline: "High-leverage outreach & CRM mutations requiring 1-click human sign-off",
       description:
-        "Before any external communication or major deal attribute changes, RevOps Agent stages the action with a full diff preview. Approve via Web UI or directly inside Slack.",
+        "Before any external communication or major deal attribute changes, Revora stages the action with a full diff preview. Approve via Web UI or directly inside Slack.",
       examples: [
         "Draft customized re-engagement email from CSM inbox to departing champion's successor",
         "Update HubSpot deal stage to 'At Risk - Executive Escalation' and adjust pipeline forecast",
@@ -84,7 +84,7 @@ export function AutonomyShowcase() {
               Autonomy without anxiety. You set the rules.
             </h2>
             <p className="text-slate-600 text-[15px] sm:text-base leading-relaxed">
-              Unlike reckless AI bots that blast customer emails without oversight, RevOps Agent enforces
+              Unlike reckless AI bots that blast customer emails without oversight, Revora enforces
               strict organizational governance and verifiable human sign-off.
             </p>
           </div>
