@@ -44,6 +44,39 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 
 ## Interaction History
 
+### 2026-10-12 05:05
+
+**User Request**
+> Runtime ReferenceError: me is not defined at src/app/(app)/review/page.tsx (108:25) @ ReviewPage
+
+**Exploration**
+- Inspected `frontend/src/app/(app)/review/page.tsx` line 44 and 108.
+- Found that `ReviewPage` only destructured `{ can } = useMe()`, while line 108 referenced `me?.user?.name`.
+- Audited all other pages containing greeting banners (`today/page.tsx`, `outcomes/page.tsx`, `log/page.tsx`, `accounts/page.tsx`, `inbox/page.tsx`) to ensure `me` was properly destructured and defined. Confirmed all other pages correctly destructure `me`.
+
+**Work Done**
+- Updated `ReviewPage` in `frontend/src/app/(app)/review/page.tsx` to destructure `{ me, can } = useMe()`.
+
+**Files Changed**
+- `frontend/src/app/(app)/review/page.tsx`
+  - Destructured `me` from `useMe()` to resolve `ReferenceError: me is not defined`.
+
+**Verification**
+- Tested `http://localhost:3000/review` via Chrome DevTools MCP:
+  - Verified error overlay disappeared completely.
+  - Verified user greeting banner renders "Welcome, Adam Admin!".
+  - Verified entity review cards and candidate selectors load cleanly.
+  - Checked console messages: 0 runtime errors.
+
+**Git**
+- Branch: main
+- Commit: pending
+- Push: pending
+- Status: staged and pushed to origin/main
+
+**Notes**
+- All dashboard pages now consistently destructure `me` from `useMe()`.
+
 ### 2026-10-12 05:00
 
 **User Request**

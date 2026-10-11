@@ -41,7 +41,7 @@ function candidatesOf(rev: EntityReview): Candidate[] {
 }
 
 export default function ReviewPage() {
-  const { can } = useMe();
+  const { me, can } = useMe();
   const queryClient = useQueryClient();
   const [selectedCandidates, setSelectedCandidates] = useState<Record<string, string>>({});
 
