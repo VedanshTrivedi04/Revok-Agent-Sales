@@ -1,0 +1,67 @@
+{
+ "case_id": "non_english_signal",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-non_english_signal",
+  "name": "Casa Delta",
+  "domains": [
+   "casadelta.example.com"
+  ],
+  "arr": 42000.0,
+  "plan": "Team",
+  "seats_purchased": 40,
+  "renewal_date": "2027-01-18",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-non_english_signal-1",
+   "name": "Marta Casa",
+   "email": "marta@casadelta.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-non_english_signal-2",
+   "name": "Pablo Casa",
+   "email": "pablo@casadelta.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-non_english_signal",
+   "name": "Casa Delta renewal",
+   "stage_label": "Proposal",
+   "amount": 42000.0,
+   "close_date": "2027-01-18",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

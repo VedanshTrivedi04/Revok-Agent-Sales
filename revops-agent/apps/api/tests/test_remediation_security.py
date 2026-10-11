@@ -184,6 +184,7 @@ ADMIN_SESSION_ALLOWED = {
     "app/workers/celery_app.py": "failed_jobs dead letter (global table)",
     "app/workers/tasks_maintenance.py": "platform fan-out over active/deleted orgs",
     "app/workers/tasks_run.py": "platform fan-out over active orgs",
+    "app/workers/tasks_ai.py": "platform fan-out: orgs with unread events (ids only, no content)",
     "app/workers/tasks_slack.py": "platform fan-out for digests",
     "app/workers/tasks_sync.py": "platform fan-out over integrations",
 }

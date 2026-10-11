@@ -1,0 +1,42 @@
+{
+  "suite": "t2",
+  "tag": "live1",
+  "live": true,
+  "metrics": {
+    "live": true,
+    "flagged_cases": 19,
+    "raw_citation_validity": 0.9877,
+    "post_validator_citation_validity": 0.9524,
+    "number_fidelity_shown": 0.9322,
+    "fallback_rate": 0.0,
+    "latency_p50_ms": 22125,
+    "latency_p95_ms": 32891,
+    "per_case": {
+      "acme_high_risk": "ok",
+      "globex_expansion": "ok",
+      "initech_competitor": "ok",
+      "contradictory_positive": "ok",
+      "champion_left": "ok",
+      "champion_leaving_signal": "ok",
+      "competitor_pricing_multi": "ok",
+      "seat_underuse": "ok",
+      "single_threaded": "ok",
+      "no_next_step": "ok",
+      "negative_escalation": "ok",
+      "upgrade_intent_only": "ok",
+      "missing_renewal_date": "ok",
+      "stale_integration": "retried",
+      "non_english_signal": "ok",
+      "html_polluted_email": "ok",
+      "very_long_email": "ok",
+      "renewal_soon_no_plan": "ok",
+      "high_multi_category": "ok"
+    },
+    "gates": {
+      "raw_citation>=0.90": true,
+      "number_fidelity>=0.98": false,
+      "fallback<0.10": true,
+      "post==1.0": false
+    }
+  }
+}

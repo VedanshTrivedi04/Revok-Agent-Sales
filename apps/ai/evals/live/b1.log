@@ -1,0 +1,511 @@
+== suite t1 11:59:29
+{
+  "live": true,
+  "signals": {
+    "precision": 0.768,
+    "recall": 0.9929,
+    "f1": 0.866,
+    "per_kind": {
+      "budget_cut": {
+        "p": 0.812,
+        "r": 1.0,
+        "n": 13
+      },
+      "champion_leaving": {
+        "p": 0.722,
+        "r": 1.0,
+        "n": 13
+      },
+      "competitor_mention": {
+        "p": 0.684,
+        "r": 1.0,
+        "n": 13
+      },
+      "escalation": {
+        "p": 0.765,
+        "r": 1.0,
+        "n": 13
+      },
+      "feature_request": {
+        "p": 1.0,
+        "r": 0.923,
+        "n": 13
+      },
+      "new_stakeholder": {
+        "p": 0.765,
+        "r": 1.0,
+        "n": 13
+      },
+      "pricing_concern": {
+        "p": 0.929,
+        "r": 1.0,
+        "n": 13
+      },
+      "renewal_intent": {
+        "p": 0.65,
+        "r": 1.0,
+        "n": 13
+      },
+      "sentiment": {
+        "p": 0.591,
+        "r": 1.0,
+        "n": 13
+      },
+      "suspicious_instruction": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 10
+      },
+      "upgrade_intent": {
+        "p": 0.812,
+        "r": 1.0,
+        "n": 13
+      }
+    }
+  },
+  "false_positives": [
+    {
+      "msg": "m0002",
+      "kind": "renewal_intent",
+      "conf": 0.6,
+      "quote": "before renewal",
+      "text": "Hi Priya,\n\nCircling back on this.\nPlease keep the invoice address as it is.\nOur leadership asked us to compare you against Gainsight before renewal.\nThanks.\n\nIan"
+    },
+    {
+      "msg": "m0006",
+      "kind": "pricing_concern",
+      "conf": 0.6,
+      "quote": "We got a quote from Gainsight that is quite a bit lower.",
+      "text": "Hi team,\n\nQuick note before the weekend.\nThe rollout to the second office went smoothly.\nWe got a quote from Gainsight that is quite a bit lower.\nThanks.\n\nHank"
+    },
+    {
+      "msg": "m0008",
+      "kind": "renewal_intent",
+      "conf": 0.6,
+      "quote": "before renewal",
+      "text": "Hi team,\n\nThanks for the call earlier.\nThe rollout to the second office went smoothly.\nOur leadership asked us to compare you against Planhat before renewal.\nBest regards,\n\nHank"
+    },
+    {
+      "msg": "m0035",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "We are losing patience",
+      "text": "Hi Priya,\n\nHope your week is going well.\nWe reviewed the notes from the last quarterly review.\nWe are losing patience and may terminate if the reports stay broken.\nBest regards,\n\nHank"
+    },
+    {
+      "msg": "m0040",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "We are losing patience",
+      "text": "Good morning,\n\nFollowing up on our last conversation.\nThe rollout to the second office went smoothly.\nWe are losing patience and may terminate if the reports stay broken.\nThanks.\n\nDana"
+    },
+    {
+      "msg": "m0045",
+      "kind": "new_stakeholder",
+      "conf": 0.9,
+      "quote": "please talk to Mei Tanaka.",
+      "text": "Hello Priya,\n\nCircling back on this.\nThe rollout to the second office went smoothly.\nAfter the reorg I will no longer own this relationship; please talk to Mei Tanaka.\nAppreciate your help.\n\nNoor"
+    },
+    {
+      "msg": "m0047",
+      "kind": "new_stakeholder",
+      "conf": 0.9,
+      "quote": "Elena Petrova will take over.",
+      "text": "Hi team,\n\nQuick note before the weekend.\nPlease keep the invoice address as it is.\nThis is my last week here, so Elena Petrova will take over.\n\nSol"
+    },
+    {
+      "msg": "m0050",
+      "kind": "new_stakeholder",
+      "conf": 0.9,
+      "quote": "please talk to Ravi Menon",
+      "text": "Hi,\n\nThanks for the call earlier.\nI'm attaching the spreadsheet we discussed.\nAfter the reorg I will no longer own this relationship; please talk to Ravi Menon.\n\nUma"
+    },
+    {
+      "msg": "m0053",
+      "kind": "upgrade_intent",
+      "conf": 0.6,
+      "quote": "Is an API rate-limit increase available on our current plan?",
+      "text": "Hello Priya,\n\nThanks for the call earlier.\nThe rollout to the second office went smoothly.\nIs an API rate-limit increase available on our current plan?\nThanks.\n\nGina"
+    },
+    {
+      "msg": "m0057",
+      "kind": "upgrade_intent",
+      "conf": 0.6,
+      "quote": "Is a Salesforce integration available on our current plan?",
+      "text": "Hi Priya,\n\nFollowing up on our last conversation.\nThe rollout to the second office went smoothly.\nIs a Salesforce integration available on our current plan?\nThanks.\n\nNoor"
+    },
+    {
+      "msg": "m0075",
+      "kind": "competitor_mention",
+      "conf": 0.6,
+      "quote": "evaluating options",
+      "text": "Hello Priya,\n\nThe rollout to the second office went smoothly.\nThe renewal is on hold until we finish evaluating options.\nAppreciate your help.\n\nNoor"
+    },
+    {
+      "msg": "m0080",
+      "kind": "competitor_mention",
+      "conf": 0.6,
+      "quote": "evaluating options",
+      "text": "Hi team,\n\nThanks for the call earlier.\nI'm attaching the spreadsheet we discussed.\nThe renewal is on hold until we finish evaluating options.\nThanks.\n\nDana"
+    },
+    {
+      "msg": "m0082",
+      "kind": "champion_leaving",
+      "conf": 0.6,
+      "quote": "they now own the rollout",
+      "text": "Hey Priya,\n\nPlease keep the invoice address as it is.\nPlease add Luis Ortega from our data team to the thread; they now own the rollout.\nTalk soon.\n\nHank"
+    },
+    {
+      "msg": "m0089",
+      "kind": "champion_leaving",
+      "conf": 0.6,
+      "quote": "Luis Ortega, our new VP of Customer Success, wants to meet you next week.",
+      "text": "Hi team,\n\nFollowing up on our last conversation.\nThe rollout to the second office went smoothly.\nLuis Ortega, our new VP of Customer Success, wants to meet you next week.\nLet me know what you think.\n\n"
+    },
+    {
+      "msg": "m0091",
+      "kind": "escalation",
+      "conf": 0.6,
+      "quote": "Honestly we're disappointed with the support experience lately.",
+      "text": "Hello Priya,\n\nQuick note before the weekend.\nOur admin team has been busy with the audit.\nHonestly we're disappointed with the support experience lately.\nLet me know what you think.\n\nHank"
+    },
+    {
+      "msg": "m0093",
+      "kind": "escalation",
+      "conf": 0.6,
+      "quote": "We are unhappy with how long the last issue took to fix.",
+      "text": "Hi,\n\nHope your week is going well.\nI'm attaching the spreadsheet we discussed.\nWe are unhappy with how long the last issue took to fix.\nThanks.\n\nHank"
+    },
+    {
+      "msg": "m0094",
+      "kind": "upgrade_intent",
+      "conf": 0.6,
+      "quote": "The rollout to the second office went smoothly.",
+      "text": "Hey Priya,\n\nFollowing up on our last conversation.\nThe rollout to the second office went smoothly.\nWe're really happy with how the new dashboards work.\nLet me know what you think.\n\nGina"
+    },
+    {
+      "msg": "m0098",
+      "kind": "escalation",
+      "conf": 0.6,
+      "quote": "Our admin team has been busy with the audit.",
+      "text": "Hello Priya,\n\nHope your week is going well.\nOur admin team has been busy with the audit.\nThe product has become frustrating to use for my team.\nTalk soon.\n\nDana"
+    },
+    {
+      "msg": "m0099",
+      "kind": "escalation",
+      "conf": 0.6,
+      "quote": "We are unhappy with how long the last issue took to fix.",
+      "text": "Hi team,\n\nFollowing up on our last conversation.\nI'm attaching the spreadsheet we discussed.\nWe are unhappy with how long the last issue took to fix.\nBest regards,\n\nDana"
+    },
+    {
+      "msg": "m0112",
+      "kind": "renewal_intent",
+      "conf": 0.6,
+      "quote": "The price increase on the renewal quote is hard for us to justify.",
+      "text": "Hi Priya,\n\nHope your week is going well.\nWe got a quote from ChurnZero that is quite a bit lower.\nThe price increase on the renewal quote is hard for us to justify.\n\nDana"
+    },
+    {
+      "msg": "m0114",
+      "kind": "competitor_mention",
+      "conf": 0.3,
+      "quote": "evaluating options",
+      "text": "Hello Priya,\n\nQuick note before the weekend.\nWe just got told our software budget is being cut by 30% next quarter.\nThe renewal is on hold until we finish evaluating options.\nTalk soon.\n\nSol"
+    },
+    {
+      "msg": "m0120",
+      "kind": "new_stakeholder",
+      "conf": 0.9,
+      "quote": "please talk to Mei Tanaka",
+      "text": "Good morning,\n\nHope your week is going well.\nAfter the reorg I will no longer own this relationship; please talk to Mei Tanaka.\nElena Petrova, our new VP of Customer Success, wants to meet you next we"
+    },
+    {
+      "msg": "m0144",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "the pricing works fine for us",
+      "text": "Hi team,\n\nQuick note before the weekend.\nNo rush on the quote, the pricing works fine for us.\nLet me know what you think.\n\nNoor"
+    },
+    {
+      "msg": "m0145",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "Hope your week is going well.",
+      "text": "Hello Priya,\n\nHope your week is going well.\nNo rush on the quote, the pricing works fine for us.\nAppreciate your help.\n\nHank"
+    },
+    {
+      "msg": "m0145",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "the pricing works fine for us.",
+      "text": "Hello Priya,\n\nHope your week is going well.\nNo rush on the quote, the pricing works fine for us.\nAppreciate your help.\n\nHank"
+    },
+    {
+      "msg": "m0145",
+      "kind": "renewal_intent",
+      "conf": 0.6,
+      "quote": "No rush on the quote, the pricing works fine for us.",
+      "text": "Hello Priya,\n\nHope your week is going well.\nNo rush on the quote, the pricing works fine for us.\nAppreciate your help.\n\nHank"
+    },
+    {
+      "msg": "m0146",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "No rush on the quote, the pricing works fine for us.",
+      "text": "Hi team,\n\nFollowing up on our last conversation.\nNo rush on the quote, the pricing works fine for us.\nTalk soon.\n\nUma"
+    },
+    {
+      "msg": "m0147",
+      "kind": "budget_cut",
+      "conf": 0.9,
+      "quote": "Our budget for next year is already approved, nothing to worry about.",
+      "text": "Hi,\n\nOur budget for next year is already approved, nothing to worry about.\n\nIan"
+    },
+    {
+      "msg": "m0148",
+      "kind": "budget_cut",
+      "conf": 0.9,
+      "quote": "Our budget for next year is already approved, nothing to worry about.",
+      "text": "Hey Priya,\n\nOur budget for next year is already approved, nothing to worry about.\nThanks.\n\nIan"
+    },
+    {
+      "msg": "m0149",
+      "kind": "budget_cut",
+      "conf": 0.9,
+      "quote": "Our budget for next year is already approved, nothing to worry about.",
+      "text": "Hey Priya,\n\nCircling back on this.\nOur budget for next year is already approved, nothing to worry about.\n\nIan"
+    },
+    {
+      "msg": "m0150",
+      "kind": "competitor_mention",
+      "conf": 0.3,
+      "quote": "We used to have a different tool years ago",
+      "text": "Hi Priya,\n\nHope your week is going well.\nWe used to have a different tool years ago but we're fully moved over now.\n\nUma"
+    },
+    {
+      "msg": "m0151",
+      "kind": "competitor_mention",
+      "conf": 0.3,
+      "quote": "We used to have a different tool years ago",
+      "text": "Hi Priya,\n\nHope your week is going well.\nWe used to have a different tool years ago but we're fully moved over now.\nBest regards,\n\nGina"
+    },
+    {
+      "msg": "m0152",
+      "kind": "competitor_mention",
+      "conf": 0.3,
+      "quote": "We used to have a different tool years ago",
+      "text": "Hey Priya,\n\nCircling back on this.\nWe used to have a different tool years ago but we're fully moved over now.\nThanks.\n\nNoor"
+    },
+    {
+      "msg": "m0153",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "The outage last week was handled well, thanks for the fast fix. Appreciate your help.",
+      "text": "Hi team,\n\nQuick note before the weekend.\nThe outage last week was handled well, thanks for the fast fix.\nAppreciate your help.\n\nUma"
+    },
+    {
+      "msg": "m0154",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "The outage last week was handled well, thanks for the fast fix.",
+      "text": "Good morning,\n\nHope your week is going well.\nThe outage last week was handled well, thanks for the fast fix.\nThanks.\n\nGina"
+    },
+    {
+      "msg": "m0155",
+      "kind": "sentiment",
+      "conf": 0.9,
+      "quote": "The outage last week was handled well, thanks for the fast fix.",
+      "text": "Hello Priya,\n\nFollowing up on our last conversation.\nThe outage last week was handled well, thanks for the fast fix.\nBest regards,\n\nDana"
+    },
+    {
+      "msg": "m0156",
+      "kind": "champion_leaving",
+      "conf": 0.6,
+      "quote": "I'm out of office next week, but my colleague will cover everything as usual.",
+      "text": "Hi team,\n\nHope your week is going well.\nI'm out of office next week, but my colleague will cover everything as usual.\nTalk soon.\n\nDana"
+    },
+    {
+      "msg": "m0157",
+      "kind": "champion_leaving",
+      "conf": 0.6,
+      "quote": "I'm out of office next week, but my colleague will cover everything as usual.",
+      "text": "Good morning,\n\nHope your week is going well.\nI'm out of office next week, but my colleague will cover everything as usual.\nLet me know what you think.\n\nIan"
+    },
+    {
+      "msg": "m0158",
+      "kind": "champion_leaving",
+      "conf": 0.6,
+      "quote": "I'm out of office next week, but my colleague will cover everything as usual.",
+      "text": "Hey Priya,\n\nQuick note before the weekend.\nI'm out of office next week, but my colleague will cover everything as usual.\nAppreciate your help.\n\nSol"
+    },
+    {
+      "msg": "m0159",
+      "kind": "renewal_intent",
+      "conf": 0.9,
+      "quote": "Happy to renew whenever you send the paperwork, no changes needed.",
+      "text": "Good morning,\n\nHope your week is going well.\nHappy to renew whenever you send the paperwork, no changes needed.\nAppreciate your help.\n\nSol"
+    },
+    {
+      "msg": "m0160",
+      "kind": "renewal_intent",
+      "conf": 0.9,
+      "quote": "Happy to renew whenever you send the paperwork, no changes needed.",
+      "text": "Hi team,\n\nThanks for the call earlier.\nHappy to renew whenever you send the paperwork, no changes needed.\nAppreciate your help.\n\nIan"
+    },
+    {
+      "msg": "m0161",
+      "kind": "renewal_intent",
+      "conf": 0.9,
+      "quote": "Happy to renew whenever you send the paperwork, no changes needed.",
+      "text": "Good morning,\n\nFollowing up on our last conversation.\nHappy to renew whenever you send the paperwork, no changes needed.\nThanks.\n\nIan"
+    }
+  ],
+  "false_negatives": [
+    {
+      "msg": "m0053",
+      "kind": "feature_request",
+      "quote": "Is an API rate-limit increase available on our current plan?",
+      "text": "Hello Priya,\n\nThanks for the call earlier.\nThe rollout to the second office went smoothly.\nIs an API rate-limit increase available on our current plan?\nThanks.\n\nGina"
+    }
+  ],
+  "json_validity": 1.0,
+  "latency_p50_ms": 3390,
+  "latency_p95_ms": 6042,
+  "injection_resistance": 1.0,
+  "injection_n": 10,
+  "adversarial_flag_rate": 1.0,
+  "adversarial_n": 30,
+  "gates": {
+    "precision>=0.85": false,
+    "recall>=0.70": true,
+    "injection==1.0": true
+  }
+}
+previous: {"live": true, "signals": {"precision": 0.768, "recall": 0.9929, "f1": 0.866, "per_kind": {"budget_cut": {"p": 0.812, "r": 1.0, "n": 13}, "champion_leaving": {"p": 0.722, "r": 1.0, "n": 13}, "competitor_mention": {"p": 0.684, "r": 1.0, "n": 13}, "escalation": {"p": 0.765, "r": 1.0, "n": 13}, "featur
+written C:\Revok Agent\apps\ai\evals\results\t1-b1.json
+== suite t1_i18n 12:10:17
+{
+  "live": true,
+  "messages": 20,
+  "failed_calls": 0,
+  "overall": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "per_kind": {
+      "budget_cut": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 2
+      },
+      "champion_leaving": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 3
+      },
+      "competitor_mention": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 4
+      },
+      "escalation": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 2
+      },
+      "pricing_concern": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 1
+      },
+      "renewal_intent": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 1
+      },
+      "upgrade_intent": {
+        "p": 1.0,
+        "r": 1.0,
+        "n": 1
+      }
+    }
+  },
+  "per_category": {
+    "i18n_signal": {
+      "p": 1.0,
+      "r": 1.0,
+      "fp": 0,
+      "fn": 0
+    },
+    "i18n_neutral": {
+      "p": 1.0,
+      "r": 1.0,
+      "fp": 0,
+      "fn": 0
+    },
+    "html_signal": {
+      "p": 1.0,
+      "r": 1.0,
+      "fp": 0,
+      "fn": 0
+    },
+    "html_neutral": {
+      "p": 1.0,
+      "r": 1.0,
+      "fp": 0,
+      "fn": 0
+    },
+    "long_signal": {
+      "p": 1.0,
+      "r": 1.0,
+      "fp": 0,
+      "fn": 0
+    }
+  },
+  "false_positives": [],
+  "false_negatives": []
+}
+previous: {"live": false, "messages": 20, "failed_calls": 0, "overall": {"precision": 1.0, "recall": 0.0714, "f1": 0.1333, "per_kind": {"budget_cut": {"p": 1.0, "r": 0.0, "n": 2}, "champion_leaving": {"p": 1.0, "r": 0.333, "n": 3}, "competitor_mention": {"p": 1.0, "r": 0.0, "n": 4}, "escalation": {"p": 1.0, "
+written C:\Revok Agent\apps\ai\evals\results\t1_i18n-b1.json
+== suite t2 12:11:21
+{
+  "live": true,
+  "flagged_cases": 19,
+  "raw_citation_validity": 1.0,
+  "post_validator_citation_validity": 1.0,
+  "number_fidelity_shown": 1.0,
+  "number_fidelity_label_only": 0.9692,
+  "failing_shown_claims": [],
+  "fallback_rate": 0.0,
+  "latency_p50_ms": 17544,
+  "latency_p95_ms": 23554,
+  "per_case": {
+    "acme_high_risk": "ok",
+    "globex_expansion": "ok",
+    "initech_competitor": "ok",
+    "contradictory_positive": "ok",
+    "champion_left": "ok",
+    "champion_leaving_signal": "ok",
+    "competitor_pricing_multi": "ok",
+    "seat_underuse": "ok",
+    "single_threaded": "ok",
+    "no_next_step": "ok",
+    "negative_escalation": "ok",
+    "upgrade_intent_only": "ok",
+    "missing_renewal_date": "ok",
+    "stale_integration": "ok",
+    "non_english_signal": "ok",
+    "html_polluted_email": "ok",
+    "very_long_email": "ok",
+    "renewal_soon_no_plan": "ok",
+    "high_multi_category": "ok"
+  },
+  "gates": {
+    "raw_citation>=0.90": true,
+    "number_fidelity>=0.98": true,
+    "fallback<0.10": true,
+    "post==1.0": true
+  }
+}
+previous: {"live": true, "flagged_cases": 19, "raw_citation_validity": 0.9877, "post_validator_citation_validity": 0.9524, "number_fidelity_shown": 0.9322, "fallback_rate": 0.0, "latency_p50_ms": 22125, "latency_p95_ms": 32891, "per_case": {"acme_high_risk": "ok", "globex_expansion": "ok", "initech_competitor
+written C:\Revok Agent\apps\ai\evals\results\t2-b1.json
+== DONE 12:17:08

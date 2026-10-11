@@ -1,0 +1,14 @@
+.venv
+.env
+.mypy_cache
+.ruff_cache
+.pytest_cache
+.hypothesis
+__pycache__
+tests
+evals
+reports
+data
+demo_ui
+infra
+scripts

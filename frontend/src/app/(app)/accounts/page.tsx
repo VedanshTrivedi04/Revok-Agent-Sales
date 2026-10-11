@@ -12,6 +12,7 @@ import { SeverityBadge, Severity } from "../../../components/ui/severity-badge";
 import { DateText } from "../../../components/ui/date-text";
 import { FilterBar } from "../../../components/ui/filter-bar";
 import { TableSkeleton } from "../../../components/ui/table-skeleton";
+import { MlScoreChip } from "../../../components/ui/ml-score";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ErrorState } from "../../../components/ui/error-state";
 import { ChevronRight, Building2 } from "lucide-react";
@@ -72,7 +73,7 @@ export default function AccountsPage() {
         />
 
         {/* Loading State */}
-        {isLoading && <TableSkeleton rows={5} columns={6} />}
+        {isLoading && <TableSkeleton rows={5} columns={7} />}
 
         {/* Error State */}
         {error && !isLoading && (
@@ -107,6 +108,7 @@ export default function AccountsPage() {
                   <th className="p-3.5">Seats</th>
                   <th className="p-3.5">Renewal Date</th>
                   <th className="p-3.5">Risk Level</th>
+                  <th className="p-3.5">Predicted Churn</th>
                   <th className="p-3.5 text-right pr-4">Action</th>
                 </tr>
               </thead>
@@ -142,6 +144,9 @@ export default function AccountsPage() {
                       ) : (
                         <span className="text-slate-400 font-mono text-[11px]">—</span>
                       )}
+                    </td>
+                    <td className="p-3.5">
+                      <MlScoreChip kind="churn" score={acc.ml_scores?.churn} />
                     </td>
                     <td className="p-3.5 text-right pr-4">
                       <Link

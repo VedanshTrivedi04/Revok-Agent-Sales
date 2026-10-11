@@ -1,0 +1,67 @@
+{
+ "case_id": "initech_competitor",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-initech_competitor",
+  "name": "Initech",
+  "domains": [
+   "initech.example.com"
+  ],
+  "arr": 36000.0,
+  "plan": "Team",
+  "seats_purchased": 40,
+  "renewal_date": "2026-12-24",
+  "crm_health": "Yellow",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-initech_competitor-1",
+   "name": "Ian Initech",
+   "email": "ian@initech.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-initech_competitor-2",
+   "name": "Ivy Initech",
+   "email": "ivy@initech.example.com",
+   "title": "Analyst",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-initech_competitor",
+   "name": "Initech renewal",
+   "stage_label": "Proposal",
+   "amount": 36000.0,
+   "close_date": "2026-12-24",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

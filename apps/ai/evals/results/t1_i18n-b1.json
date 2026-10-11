@@ -1,0 +1,86 @@
+{
+  "suite": "t1_i18n",
+  "tag": "b1",
+  "live": true,
+  "metrics": {
+    "live": true,
+    "messages": 20,
+    "failed_calls": 0,
+    "overall": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "per_kind": {
+        "budget_cut": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 2
+        },
+        "champion_leaving": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "competitor_mention": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 4
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 2
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 1
+        },
+        "renewal_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 1
+        },
+        "upgrade_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 1
+        }
+      }
+    },
+    "per_category": {
+      "i18n_signal": {
+        "p": 1.0,
+        "r": 1.0,
+        "fp": 0,
+        "fn": 0
+      },
+      "i18n_neutral": {
+        "p": 1.0,
+        "r": 1.0,
+        "fp": 0,
+        "fn": 0
+      },
+      "html_signal": {
+        "p": 1.0,
+        "r": 1.0,
+        "fp": 0,
+        "fn": 0
+      },
+      "html_neutral": {
+        "p": 1.0,
+        "r": 1.0,
+        "fp": 0,
+        "fn": 0
+      },
+      "long_signal": {
+        "p": 1.0,
+        "r": 1.0,
+        "fp": 0,
+        "fn": 0
+      }
+    },
+    "false_positives": [],
+    "false_negatives": []
+  }
+}

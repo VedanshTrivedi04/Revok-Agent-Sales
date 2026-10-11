@@ -24,6 +24,8 @@ import { Eye, Clock, Ban, ArrowUpRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 type TodayResponse = components["schemas"]["TodayResponse"];
+import { MlScoreChip } from "../../../components/ui/ml-score";
+
 type TodayItem = components["schemas"]["TodayItem"];
 
 export default function TodayPage() {
@@ -207,6 +209,12 @@ export default function TodayPage() {
                       <p className="text-xs text-slate-600 dark:text-slate-400">
                         {item.summary || item.title}
                       </p>
+                      {account.ml_scores && (
+                        <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                          <MlScoreChip kind="churn" score={account.ml_scores.churn} />
+                          <MlScoreChip kind="expansion" score={account.ml_scores.expansion} />
+                        </div>
+                      )}
                     </div>
 
                     {/* Financial ARR & Date Primitives */}

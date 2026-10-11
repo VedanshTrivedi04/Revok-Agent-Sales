@@ -52,6 +52,7 @@ celery_app.conf.update(
         "app.workers.tasks_sync",
         "app.workers.tasks_slack",
         "app.workers.tasks_run",
+        "app.workers.tasks_ai",
     ),
     beat_schedule={
         "hourly-hubspot-sync": {
@@ -65,6 +66,10 @@ celery_app.conf.update(
         "nightly-account-runs": {
             "task": "run.nightly_dispatch",
             "schedule": 900.0,
+        },
+        "ai-signal-extraction": {
+            "task": "run.ai_extract_dispatch",
+            "schedule": 600.0,
         },
         "expire-cards-hourly": {
             "task": "maintenance.expire_cards_fanout",

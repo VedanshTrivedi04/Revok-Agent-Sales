@@ -1833,6 +1833,7 @@ export interface components {
     schemas: {
         /** AccountDetail */
         AccountDetail: {
+            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Arr */
             arr?: number | null;
             /** Crm Health */
@@ -1890,8 +1891,55 @@ export interface components {
              */
             status: "active" | "churned" | "prospect" | "archived";
         };
+        /** MlReason */
+        MlReason: {
+            /** Text */
+            text: string;
+            /**
+             * Direction
+             * @enum {string}
+             */
+            direction: "raises" | "lowers";
+        };
+        /** MlScore */
+        MlScore: {
+            /** Probability */
+            probability: number;
+            /**
+             * Band
+             * @enum {string}
+             */
+            band: "low" | "medium" | "high";
+            /**
+             * Reasons
+             * @default []
+             */
+            reasons: components["schemas"]["MlReason"][];
+        };
+        /**
+         * MlScores
+         * @description Statistical churn / expansion scores for an account (separate from rule findings).
+         */
+        MlScores: {
+            churn: components["schemas"]["MlScore"];
+            expansion: components["schemas"]["MlScore"];
+            /** View */
+            view: string;
+            /** Model Version */
+            model_version?: string | null;
+            /** Trained On */
+            trained_on?: string | null;
+            /**
+             * Synthetic
+             * @default false
+             */
+            synthetic: boolean;
+            /** Scored At */
+            scored_at?: string | null;
+        };
         /** AccountListItem */
         AccountListItem: {
+            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Arr */
             arr?: number | null;
             /** Crm Health */
@@ -1962,6 +2010,7 @@ export interface components {
         };
         /** AccountSummary */
         AccountSummary: {
+            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Arr */
             arr?: number | null;
             /** Crm Health */

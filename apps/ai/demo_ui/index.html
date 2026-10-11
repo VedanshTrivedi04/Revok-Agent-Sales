@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RevOps Agent Demo</title>
+<style>
+:root{--bg:#07080a;--card:#0e1013;--line:#23272e;--txt:#e9ecf1;--mut:#9aa3b2;--acc:#f59e0b;--ok:#34d399;--bad:#f87171;--blue:#60a5fa;--chip:#1a1e25}
+@media (prefers-color-scheme: light){:root{--bg:#f5f6f8;--card:#fff;--line:#d9dde4;--txt:#14171c;--mut:#5b6472;--acc:#b45309;--ok:#047857;--bad:#b91c1c;--blue:#1d4ed8;--chip:#eef0f4}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+select,button{font:inherit;color:var(--txt);background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+button{cursor:pointer}
+button.primary{background:var(--acc);color:#111;border-color:var(--acc);font-weight:600}
+button:disabled{opacity:.5;cursor:default}
+label{color:var(--mut);font-size:13px;display:flex;gap:6px;align-items:center}
+.warn{margin:10px 0;font-size:12.5px;color:var(--mut);border-left:3px solid var(--acc);padding:4px 10px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0}
+.step.hl{border-color:var(--acc)}
+.step.idle{opacity:.45}
+.step h2{font-size:16px;margin:0 0 2px;text-align:center}
+.step .d{color:var(--mut);font-size:13px;text-align:center;margin-bottom:12px}
+.arrow{text-align:center;color:var(--mut);padding:6px 0;font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.kv{background:var(--chip);border-radius:8px;padding:8px 10px}
+.kv b{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+.row{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0;background:var(--bg)}
+.row .t{font-size:12px;color:var(--mut)}
+.chip{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:12px;margin:2px 4px 2px 0}
+.chip.ev{color:var(--blue);cursor:help}
+.neg{color:var(--bad)}.pos{color:var(--ok)}
+.quote{border-left:3px solid var(--blue);padding-left:8px;color:var(--txt);font-style:italic;margin:4px 0}
+.pill{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;margin-right:6px}
+.t1{background:#064e3b;color:#a7f3d0}.t2{background:#78350f;color:#fde68a}
+.sev-high,.sev-critical{color:var(--bad)}.sev-medium{color:var(--acc)}.sev-low{color:var(--ok)}
+details{margin-top:8px}summary{cursor:pointer;color:var(--mut);font-size:13px}
+pre{white-space:pre-wrap;word-break:break-word;margin:6px 0 0;font:13px/1.45 ui-monospace,Consolas,monospace}
+.btns{display:flex;gap:8px;margin-top:8px}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.mut{color:var(--mut)}
+.spin{display:none;margin-left:6px}
+.banner{margin:12px 0;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.sim{font-size:11px;background:var(--acc);color:#111;border-radius:6px;padding:1px 6px;margin-left:6px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>RevOps Agent: local demo</h1>
+  <div class="sub">Pick an account, run the agent, and watch each of the 6 steps with its real output. This is a throwaway viewer, not the product frontend.</div>
+  <div class="bar">
+    <select id="acct" aria-label="Account"></select>
+    <label><input type="checkbox" id="live"> use live Qwen model</label>
+    <button class="primary" id="run">Run agent</button>
+    <span class="spin" id="spin">running…</span>
+  </div>
+  <div class="warn" id="modeNote"></div>
+  <div id="banner"></div>
+  <div id="flow"></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => n == null ? '-' : '$' + Number(n).toLocaleString();
+let run = null, evMap = {};
+
+async function api(path, body) {
+  const r = await fetch(path, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)} : {});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || r.statusText);
+  return j;
+}
+function updateNote() {
+  $('#modeNote').textContent = $('#live').checked
+    ? 'LIVE: the real Qwen3.5-9B from .env is called. Takes 1-3 minutes per account. Do not use while an eval is running on the same GPU.'
+    : 'OFFLINE: a deterministic stand-in model produces the AI output (plumbing demo, not the real model quality). Data is synthetic. Step 6 is simulated.';
+}
+$('#live').onchange = updateNote; updateNote();
+
+async function init() {
+  const list = await api('/api/accounts');
+  $('#acct').innerHTML = list.map(a => `<option value="${esc(a.case_id)}">${esc(a.name)} (${esc(a.case_id)}) - expected: ${esc(a.expected)}</option>`).join('');
+  const acme = list.find(a => a.case_id === 'acme_high_risk'); if (acme) $('#acct').value = acme.case_id;
+}
+$('#run').onclick = async () => {
+  $('#run').disabled = true; $('#spin').style.display = 'inline'; $('#banner').innerHTML = '';
+  try { run = await api('/api/run', {case_id: $('#acct').value, live: $('#live').checked}); render(); }
+  catch (e) { $('#banner').innerHTML = `<div class="banner bad">Error: ${esc(e.message)}</div>`; }
+  $('#run').disabled = false; $('#spin').style.display = 'none';
+};
+async function decide(cardId, d) {
+  const pend = run.step5.pending, decisions = {};
+  decisions[cardId] = d;
+  window._dec = Object.assign(window._dec || {}, decisions);
+  const el = document.querySelector(`[data-card="${cardId}"] .btns`); if (el) el.innerHTML = `<span class="${d==='approved'?'ok':'bad'}">${d}</span>`;
+  if (pend.every(p => window._dec[p])) {
+    try { run = await api(`/api/runs/${run.run_id}/decide`, {decisions: window._dec}); window._dec = {}; render(); }
+    catch (e) { $('#banner').innerHTML = `<div class="banner bad">Error: ${esc(e.message)}</div>`; }
+  }
+}
+const chips = ids => (ids || []).map(k => `<span class="chip ev" title="${esc(evMap[k] || '')}">${esc(k)}</span>`).join('');
+const step = (n, title, desc, body, cls = '') => `<div class="step ${cls}"><h2>Step ${n}: ${esc(title)}</h2><div class="d">${esc(desc)}</div>${body}</div><div class="arrow">↓</div>`;
+
+function renderPayload(c) {
+  const p = c.payload || {};
+  if (c.type === 'email_draft') return `<div class="t">To: ${esc((p.to||[]).join(', '))}${p.cc&&p.cc.length?' | Cc: '+esc(p.cc.join(', ')):''}</div><div><b>${esc(p.subject)}</b></div><pre>${esc(p.body_text || p.body || '')}</pre>`;
+  if (c.type === 'crm_task') return `<div><b>${esc(p.title)}</b> <span class="mut">due ${esc(p.due_date)} | priority ${esc(p.priority)}</span></div><pre>${esc(p.body || '')}</pre>`;
+  if (c.type === 'crm_field_update') return (p.changes || []).map(x => `<div>CRM field <b>${esc(x.field)}</b>: <span class="mut">${esc(x.before)}</span> → <b>${esc(x.after)}</b></div>`).join('');
+  if (c.type === 'slack_internal') return `<div class="t">to ${esc(p.to || p.channel || 'owner')}</div><pre>${esc(p.text || '')}</pre>`;
+  return `<pre>${esc(JSON.stringify(p, null, 2))}</pre>`;
+}
+
+function render() {
+  const r = run, a = r.step1.account, ex = r.step3.explanation;
+  evMap = {}; r.step3.evidence.forEach(e => evMap[e.key] = `${e.label}${e.detail ? ' - ' + e.detail : ''} [${e.source}${e.date ? ', ' + e.date : ''}]`);
+  const out = [];
+  $('#banner').innerHTML = `<div class="banner">Run <b>${esc(r.run_id)}</b> | status: <b>${esc(r.status)}</b> | mode: <b>${r.live ? 'LIVE Qwen' : 'offline stand-in'}</b>${r.error ? ' | <span class="bad">' + esc(r.error) + '</span>' : ''}</div>`;
+
+  // 1
+  const s1 = r.step1;
+  out.push(step(1, 'Customer data collect karo', 'CRM + Emails + Calendar + Product usage + Meeting notes (synthetic here)',
+    `<div class="grid">
+      <div class="kv"><b>Account</b>${esc(a.name)}</div><div class="kv"><b>ARR</b>${money(a.arr)}</div>
+      <div class="kv"><b>Plan / seats</b>${esc(a.plan || '-')} / ${esc(a.seats ?? '-')}</div><div class="kv"><b>Renewal</b>${esc(a.renewal_date)} (today ${esc(a.now)})</div>
+      <div class="kv"><b>CRM health</b>${esc(a.crm_health || '-')}</div><div class="kv"><b>Owner</b>${esc(a.owner)}</div></div>
+     <div style="margin-top:8px">${Object.entries(s1.sources).map(([k, v]) => `<span class="chip ${v ? 'ok' : 'bad'}">${esc(k)}: ${v ? 'connected' : 'missing'}</span>`).join('')}</div>
+     <details><summary>${s1.events.length} events (emails, meetings, notes)</summary>${s1.events.map(e => `<div class="row"><div class="t">${esc(e.date)} | ${esc(e.source)} | ${esc(e.type)}${e.title ? ' | ' + esc(e.title) : ''}</div>${esc(e.text)}</div>`).join('') || '<div class="mut">none</div>'}</details>
+     <details><summary>Usage (${s1.usage.length} weeks) | ${s1.contacts.length} contacts | ${s1.deals.length} deals</summary>
+       <div class="row">${s1.usage.map(u => `<span class="chip">${esc(u.period)}: ${esc(u.active_users)} users</span>`).join('') || 'no usage data'}</div>
+       ${s1.contacts.map(c => `<div class="row">${esc(c.name)} <span class="mut">${esc(c.title || '')} | ${esc(c.email)}${c.active ? '' : ' | LEFT'}</span></div>`).join('')}
+       ${s1.deals.map(d => `<div class="row">${esc(d.name)} <span class="mut">${esc(d.stage)} | ${money(d.amount)} | close ${esc(d.close_date)}</span></div>`).join('')}</details>`));
+
+  // 2
+  const s2 = r.step2;
+  out.push(step(2, 'Signals analyse karo', 'Customer ki situation samjho, risk ya opportunity identify karo.',
+    `${s2.finding_type ? `<div class="row"><b>Finding: ${esc(s2.finding_type)}</b> | severity <b class="sev-${esc(s2.severity)}">${esc(s2.severity)}</b> | priority ${esc(s2.priority != null ? Number(s2.priority).toFixed(2) : '-')}</div>` : '<div class="row ok"><b>No finding</b>: nothing here needs attention.</div>'}
+     <div class="t mut">Rules that fired (deterministic code, not the model)</div>
+     ${s2.rule_hits.map(h => `<div class="row"><b>${esc(h.rule_key)}</b> <span class="mut">(+${esc(h.points)})</span><br>${esc(h.text)}</div>`).join('') || '<div class="mut">none</div>'}
+     <div class="t mut" style="margin-top:8px">Signals the AI read from emails/notes (each has an exact quote)${s2.quarantined.length ? ' | <span class="bad">' + s2.quarantined.length + ' message(s) quarantined: contained instructions aimed at the AI</span>' : ''}</div>
+     ${s2.signals.map(s => `<div class="row"><span class="chip">${esc(s.kind)}</span><span class="${s.polarity === 'negative' ? 'neg' : s.polarity === 'positive' ? 'pos' : ''}">${esc(s.polarity)}</span> <span class="mut">conf ${esc(s.confidence)} | ${esc(s.event_title)}</span><div class="quote">"${esc(s.quote)}"</div></div>`).join('') || '<div class="mut">no signals extracted</div>'}
+     ${s2.ml ? `<details><summary>ML scores (SYNTHETIC-trained): churn ${Math.round(s2.ml.churn.probability * 100)}% [${esc(s2.ml.churn.band)}] | expansion ${Math.round(s2.ml.expansion.probability * 100)}% [${esc(s2.ml.expansion.band)}]</summary><div class="mut">${esc(s2.ml.note)}</div>${s2.ml.churn.reasons.map(x => `<div class="row">churn ${esc(x.direction)} (${Number(x.approx_pp).toFixed(1)} pp): ${esc(x.text)}</div>`).join('')}</details>` : ''}`));
+
+  // 3
+  out.push(step(3, 'Evidence aur reasoning do', 'Kaunse facts ke basis par ye conclusion nikla, ye batao.',
+    ex ? `<div class="row"><b>${esc(ex.summary)}</b><div class="t">model: ${esc(ex.model)} | prompt: ${esc(ex.prompt_version)} | confidence: ${esc(ex.confidence_label)}${r.step3.used_fallback ? ' | <span class="bad">template fallback (needs review)</span>' : ''}</div></div>
+      ${ex.claims.map(c => `<div class="row">${esc(c.text)} ${chips(c.evidence_ids)}</div>`).join('')}
+      ${ex.contradictions.length ? '<div class="t mut">Signals disagree</div>' + ex.contradictions.map(c => `<div class="row">⚠ ${esc(c.text)} ${chips(c.evidence_ids)}</div>`).join('') : ''}
+      ${ex.unknowns.length ? '<div class="t mut">Not known / not confirmed</div>' + ex.unknowns.map(u => `<div class="row">? ${esc(u)}</div>`).join('') : ''}
+      <div class="t mut">Hover an E-chip to see the evidence behind it. Every sentence above was checked by code against its evidence before being shown.</div>
+      <details><summary>All ${r.step3.evidence.length} evidence items</summary>${r.step3.evidence.map(e => `<div class="row"><span class="chip ev">${esc(e.key)}</span> ${esc(e.label)}${e.detail ? ' <span class="mut">- ' + esc(e.detail) + '</span>' : ''}<div class="t">${esc(e.source)}${e.date ? ' | ' + esc(e.date) : ''}</div></div>`).join('')}</details>`
+    : '<div class="mut">No explanation (no finding).</div>', ex ? '' : 'idle'));
+
+  // 4
+  const s4 = r.step4;
+  out.push(step(4, 'Actions propose karo', 'Follow-up task, email draft, CRM update aur account owner notification.',
+    s4.cards.map(c => `<div class="row" data-card="${esc(c.id)}"><span class="pill ${c.tier === 1 ? 't1' : 't2'}">${c.tier === 1 ? 'TIER 1 auto' : 'TIER 2 needs approval'}</span><b>${esc(c.type)}</b> ${chips(c.evidence_keys)}${c.flags.length ? ' <span class="chip bad">' + esc(c.flags.join(', ')) + '</span>' : ''}
+       ${renderPayload(c)}<div class="t">Why: ${esc(c.rationale)}</div></div>`).join('') || '<div class="mut">no actions proposed</div>'
+    + (s4.dropped.length ? `<details><summary>${s4.dropped.length} AI suggestion(s) blocked by safety checks</summary>${s4.dropped.map(d => `<div class="row"><span class="chip bad">${esc(d.reason || d.kind || 'dropped')}</span> ${esc(JSON.stringify(d).slice(0, 220))}</div>`).join('')}</details>` : '')
+    + (s4.rejected.length ? `<div class="row bad">Backend rejected: ${esc(JSON.stringify(s4.rejected))}</div>` : ''), s4.cards.length ? '' : 'idle'));
+
+  // 5
+  const pend = r.step5.pending, cards = r.step4.cards;
+  out.push(step(5, 'Human approval', 'User proposed changes review karega aur approve ya reject karega.',
+    pend.length ? cards.filter(c => c.tier === 2).map(c => `<div class="row" data-card="${esc(c.id)}"><b>${esc(c.type)}</b> <span class="mut">${esc(c.id)}</span>
+       <div class="btns">${c.decision ? `<span class="${c.decision === 'approved' ? 'ok' : 'bad'}">${esc(c.decision)}</span>` : `<button onclick="decide('${esc(c.id)}','approved')">Approve</button><button onclick="decide('${esc(c.id)}','rejected')">Reject</button>`}</div></div>`).join('')
+      + (r.step5.waiting ? '<div class="t mut">The run is paused (checkpointed) until every tier-2 card has a decision. Tier-1 cards (tasks, Slack to the owner) need none.</div>' : '')
+    : '<div class="mut">Nothing needs approval.</div>', r.step5.waiting ? 'hl' : (pend.length ? '' : 'idle')));
+
+  // 6
+  const s6 = r.step6;
+  out.push(`<div class="step ${s6.executed.length ? '' : 'idle'}"><h2>Step 6: Approved actions execute karo <span class="sim">SIMULATED</span></h2><div class="d">Task create karo, email bhejo, CRM update karo aur owner ko notify karo. (The real executor is the backend's job; nothing is sent here.)</div>
+    ${s6.executed.map(x => `<div class="row ok">✓ would execute <b>${esc(x.type)}</b> <span class="mut">${esc(x.id)} | ${esc(x.how)}</span></div>`).join('')}
+    ${s6.not_executed.map(x => `<div class="row mut">· not executed <b>${esc(x.type)}</b> <span>${esc(x.id)} | ${esc(x.why)}</span></div>`).join('')}
+    ${!s6.executed.length && !s6.not_executed.length ? '<div class="mut">no actions</div>' : ''}</div>`);
+  $('#flow').innerHTML = out.join('');
+}
+init().catch(e => $('#banner').innerHTML = `<div class="banner bad">${esc(e.message)}</div>`);
+</script>
+</body>
+</html>

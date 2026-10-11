@@ -1,0 +1,67 @@
+{
+ "case_id": "negative_escalation",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-negative_escalation",
+  "name": "Initrode",
+  "domains": [
+   "initrode.example.com"
+  ],
+  "arr": 68000.0,
+  "plan": "Business",
+  "seats_purchased": 60,
+  "renewal_date": "2027-01-13",
+  "crm_health": "Yellow",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-negative_escalation-1",
+   "name": "Milton Initrode",
+   "email": "milton@initrode.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-negative_escalation-2",
+   "name": "Bill Initrode",
+   "email": "bill@initrode.example.com",
+   "title": "VP",
+   "role_tags": [
+    "economic_buyer"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-negative_escalation",
+   "name": "Initrode renewal",
+   "stage_label": "Proposal",
+   "amount": 68000.0,
+   "close_date": "2027-01-13",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

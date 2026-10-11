@@ -35,6 +35,7 @@ from app.schemas.accounts import (
     TimelineParticipant,
     UsagePoint,
     UsageSeries,
+    ml_scores_out,
 )
 from app.utils.errors import AppError
 from app.utils.pagination import OrderKey, Page, PageParams, paginate
@@ -136,6 +137,7 @@ async def list_accounts_service(
                 else None,
                 last_activity_at=acc.last_activity_at,
                 crm_url=acc.crm_url,
+                ml_scores=ml_scores_out(acc.ml_scores),
             )
         )
 
@@ -275,6 +277,7 @@ async def get_account_detail_service(
         priority_score=float(acc.priority_score) if acc.priority_score is not None else None,
         last_activity_at=acc.last_activity_at,
         crm_url=acc.crm_url,
+        ml_scores=ml_scores_out(acc.ml_scores),
         metrics=metrics,
         open_findings=open_findings,
         data_gaps=data_gaps,

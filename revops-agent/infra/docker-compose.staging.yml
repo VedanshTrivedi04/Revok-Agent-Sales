@@ -32,7 +32,7 @@ services:
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
-    environment:
+    environment: &api_env
       APP_ENV: staging
       MOCK_API: "false"
       REAL_ROUTERS: ${REAL_ROUTERS:-me,orgs,members,invites,api_keys,notifications,action_cards,autonomy,log,stream,integrations,oauth,field_mapping,ingest,accounts,entity_reviews,slack,admin,runs,today,findings,rules}
@@ -49,6 +49,9 @@ services:
       WEB_URL: ${WEB_URL:-http://localhost:3000}
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8080}
       SENTRY_DSN: ${SENTRY_DSN:-}
+      # template = deterministic explanations only; external = the `ai` service upgrades them
+      AI_MODE: ${AI_MODE:-template}
+      AI_SERVICE_URL: ${AI_SERVICE_URL:-http://ai:8100}
     ports:
       - "${API_PORT:-8080}:8000"
     healthcheck:
@@ -56,6 +59,44 @@ services:
       interval: 10s
       timeout: 5s
       retries: 6
+  # Celery worker + beat: syncs, account runs, card execution, digests and the hand-off to `ai`.
+  worker:
+    build: ../apps/api
+    restart: unless-stopped
+    depends_on:
+      api: { condition: service_healthy }
+    environment:
+      <<: *api_env
+      SEED_ON_START: "false"
+    entrypoint: []
+    command: ["celery", "-A", "app.workers.celery_app", "worker", "-Q", "sync,run,executor,notify,default", "-l", "info", "--concurrency", "4"]
+  beat:
+    build: ../apps/api
+    restart: unless-stopped
+    depends_on:
+      api: { condition: service_healthy }
+    environment:
+      <<: *api_env
+      SEED_ON_START: "false"
+    entrypoint: []
+    command: ["celery", "-A", "app.workers.celery_app", "beat", "-l", "info", "-s", "/tmp/celerybeat-schedule"]
+  # AI service (apps/ai): `--profile ai` and AI_MODE=external. Needs LLM_BASE_URL (model endpoint).
+  ai:
+    profiles: ["ai"]
+    build: ../../apps/ai
+    restart: unless-stopped
+    depends_on:
+      api: { condition: service_healthy }
+    environment:
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-Qwen/Qwen3.5-9B}
+      LLM_STRUCTURED_MODE: ${LLM_STRUCTURED_MODE:-response_format}
+      INTERNAL_API_URL: http://api:8000/internal
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:?set INTERNAL_API_KEY}
+      LANGFUSE_HOST: ${LANGFUSE_HOST:-}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
   caddy:
     image: caddy:2
     profiles: ["https"]

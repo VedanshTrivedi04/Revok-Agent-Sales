@@ -1,0 +1,67 @@
+{
+ "case_id": "umbrella_healthy",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-umbrella_healthy",
+  "name": "Umbrella",
+  "domains": [
+   "umbrella.example.com"
+  ],
+  "arr": 60000.0,
+  "plan": "Business",
+  "seats_purchased": 60,
+  "renewal_date": "2027-04-28",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-umbrella_healthy-1",
+   "name": "Uma Umbrella",
+   "email": "uma@umbrella.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-umbrella_healthy-2",
+   "name": "Ugo Umbrella",
+   "email": "ugo@umbrella.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-umbrella_healthy",
+   "name": "Umbrella renewal",
+   "stage_label": "Proposal",
+   "amount": 60000.0,
+   "close_date": "2027-04-28",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

@@ -1,0 +1,152 @@
+{
+  "suite": "t1_i18n",
+  "tag": "20261011-062921",
+  "live": false,
+  "metrics": {
+    "live": false,
+    "messages": 20,
+    "failed_calls": 0,
+    "overall": {
+      "precision": 1.0,
+      "recall": 0.0714,
+      "f1": 0.1333,
+      "per_kind": {
+        "budget_cut": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 2
+        },
+        "champion_leaving": {
+          "p": 1.0,
+          "r": 0.333,
+          "n": 3
+        },
+        "competitor_mention": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 4
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 2
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 1
+        },
+        "renewal_intent": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 1
+        },
+        "upgrade_intent": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 1
+        }
+      }
+    },
+    "per_category": {
+      "i18n_signal": {
+        "p": 1.0,
+        "r": 0.0,
+        "fp": 0,
+        "fn": 10
+      },
+      "i18n_neutral": {
+        "p": 1.0,
+        "r": 1.0,
+        "fp": 0,
+        "fn": 0
+      },
+      "html_signal": {
+        "p": 1.0,
+        "r": 0.333,
+        "fp": 0,
+        "fn": 2
+      },
+      "html_neutral": {
+        "p": 1.0,
+        "r": 1.0,
+        "fp": 0,
+        "fn": 0
+      },
+      "long_signal": {
+        "p": 1.0,
+        "r": 0.0,
+        "fp": 0,
+        "fn": 1
+      }
+    },
+    "false_positives": [],
+    "false_negatives": [
+      {
+        "id": "i001",
+        "kind": "competitor_mention",
+        "quote": "Estamos evaluando Gainsight como alternativa antes de la renovaci\u00f3n."
+      },
+      {
+        "id": "i002",
+        "kind": "champion_leaving",
+        "quote": "dejo la empresa a fin de mes y ya no ser\u00e9 su contacto principal"
+      },
+      {
+        "id": "i003",
+        "kind": "escalation",
+        "quote": "Necesitamos una soluci\u00f3n esta semana o cancelaremos el contrato."
+      },
+      {
+        "id": "i004",
+        "kind": "upgrade_intent",
+        "quote": "Nos gustar\u00eda a\u00f1adir 15 licencias m\u00e1s para el equipo de ventas."
+      },
+      {
+        "id": "i005",
+        "kind": "competitor_mention",
+        "quote": "wir pr\u00fcfen derzeit Totango als Alternative zu Ihrem Produkt."
+      },
+      {
+        "id": "i006",
+        "kind": "budget_cut",
+        "quote": "Das Budget f\u00fcr Software wurde nach der Umstrukturierung stark gek\u00fcrzt."
+      },
+      {
+        "id": "i007",
+        "kind": "pricing_concern",
+        "quote": "Der Preis ist im Vergleich zum letzten Jahr deutlich zu hoch."
+      },
+      {
+        "id": "i008",
+        "kind": "champion_leaving",
+        "quote": "Je change de poste le mois prochain"
+      },
+      {
+        "id": "i009",
+        "kind": "renewal_intent",
+        "quote": "Nous comptons renouveler pour une ann\u00e9e suppl\u00e9mentaire, merci d'envoyer le contrat."
+      },
+      {
+        "id": "i013",
+        "kind": "competitor_mention",
+        "quote": "We are evaluating Totango for the same use case."
+      },
+      {
+        "id": "i014",
+        "kind": "escalation",
+        "quote": "We need this fixed this week or we will cancel."
+      },
+      {
+        "id": "i018",
+        "kind": "competitor_mention",
+        "quote": "We are also looking at Vitally for the same use case."
+      },
+      {
+        "id": "i019",
+        "kind": "budget_cut",
+        "quote": "Nuestro presupuesto fue recortado y no podremos ampliar el plan este a\u00f1o."
+      }
+    ]
+  }
+}

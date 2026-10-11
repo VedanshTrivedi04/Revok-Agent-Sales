@@ -9,7 +9,7 @@ from sqlalchemy import (
     UniqueConstraint,
     text,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, TIMESTAMP
+from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
 from app.db.base import Base, IdMixin, TimestampMixin
@@ -54,6 +54,8 @@ class Account(Base, IdMixin, TimestampMixin):
     name: Mapped[str] = mapped_column(Text, nullable=False)
     domains: Mapped[list[str]] = text_array()
     external_ids: Mapped[dict[str, Any]] = jsonb()
+    # churn/expansion scores from the AI service's ML model (AI_MODE=external); None = not scored
+    ml_scores: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     owner_user_id: Mapped[UUID | None] = uuid_fk("users.id", nullable=True, ondelete="SET NULL")
     crm_owner_id: Mapped[str | None] = mapped_column(Text)
     arr: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))

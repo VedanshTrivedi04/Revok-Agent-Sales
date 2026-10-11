@@ -1,0 +1,67 @@
+{
+ "case_id": "champion_leaving_signal",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-champion_leaving_signal",
+  "name": "Oscorp",
+  "domains": [
+   "oscorp.example.com"
+  ],
+  "arr": 65000.0,
+  "plan": "Business",
+  "seats_purchased": 60,
+  "renewal_date": "2027-01-03",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-champion_leaving_signal-1",
+   "name": "Norman Oscorp",
+   "email": "norman@oscorp.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-champion_leaving_signal-2",
+   "name": "Harry Oscorp",
+   "email": "harry@oscorp.example.com",
+   "title": "VP",
+   "role_tags": [
+    "economic_buyer"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-champion_leaving_signal",
+   "name": "Oscorp renewal",
+   "stage_label": "Proposal",
+   "amount": 65000.0,
+   "close_date": "2027-01-03",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

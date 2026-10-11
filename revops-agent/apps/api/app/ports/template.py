@@ -259,21 +259,3 @@ class TemplateActionPlanner:
         if not account.get("owner_slack_id"):
             proposals = [p for p in proposals if p.type != "slack_internal"]
         return proposals
-
-
-class ExternalPending:
-    """AI_MODE=external: work is done by the external AI service through /internal/v1 (Phase 6).
-
-    Until then calling these ports is a configuration error, not a silent no-op.
-    """
-
-    async def extract(self, ctx: ExtractCtx, event: EventView) -> list[SignalIn]:
-        raise NotImplementedError("AI_MODE=external: signals arrive via /internal/v1 (Phase 6)")
-
-    async def explain(self, ctx: ExplainCtx) -> ExplanationOut:
-        raise NotImplementedError(
-            "AI_MODE=external: explanations arrive via /internal/v1 (Phase 6)"
-        )
-
-    async def plan(self, ctx: PlanCtx) -> list[ActionProposal]:
-        raise NotImplementedError("AI_MODE=external: proposals arrive via /internal/v1 (Phase 6)")

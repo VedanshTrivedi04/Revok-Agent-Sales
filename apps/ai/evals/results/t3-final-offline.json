@@ -1,0 +1,23 @@
+{
+  "suite": "t3",
+  "tag": "final-offline",
+  "live": false,
+  "metrics": {
+    "live": false,
+    "cases": 19,
+    "proposals": 72,
+    "raw_actions": 72,
+    "dropped_by_validator": 0,
+    "skipped_fallback": 1,
+    "banned_phrases_after_validation": 0,
+    "recipient_correctness": 1.0,
+    "mapped_payload_validity": 1.0,
+    "forbidden_recipient_leaks": 0,
+    "latency_p95_ms": 1,
+    "gates": {
+      "banned_phrases==0": true,
+      "recipients==1.0": true,
+      "mapped_valid==1.0": true
+    }
+  }
+}

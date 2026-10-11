@@ -6,6 +6,7 @@ Implements:
 """
 
 import asyncio
+import json
 import random
 import time
 from datetime import datetime, timedelta
@@ -13,11 +14,13 @@ from typing import Any
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select
+import structlog
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import admin_session, org_session
 from app.models.brain import AgentRun
+from app.models.brain import RuleHit as DbRuleHit
 from app.models.tenancy import Organization
 from app.models.timeline import Account
 from app.ports.registry import get_explainer
@@ -25,7 +28,8 @@ from app.ports.types import ExplainCtx
 from app.rules.base import evaluate_rules
 from app.rules.detectors import detect_contradictions, detect_unknowns
 from app.rules.evidence import build_evidence
-from app.schemas.accounts import EvidenceOut
+from app.schemas.accounts import Claim, EvidenceOut
+from app.services import ai_client
 from app.services.context import build_context, fetch_rows
 from app.services.findings import upsert_finding
 from app.services.scoring import (
@@ -37,6 +41,9 @@ from app.utils.locks import LockNotAcquired, lock
 from app.utils.time import utcnow
 from app.workers.celery_app import celery_app, tenant_task
 
+log = structlog.get_logger()
+TEMPLATE_MODEL = "template"
+
 
 async def _execute_account_run_inner(
     session: AsyncSession,
@@ -46,15 +53,18 @@ async def _execute_account_run_inner(
     trigger: str,
     triggered_by: UUID | None,
     agent_run_id: UUID,
-) -> None:
+) -> list[UUID]:
+    """Run context -> rules -> findings -> cards. Returns the ids of the findings that currently
+    carry the template explanation (the ones the AI service may upgrade)."""
     now = utcnow()
     steps: list[dict[str, Any]] = []
+    to_enhance: list[UUID] = []
 
     # 1. Check account & 1-hour debounce if non-manual
     acc_stmt = select(Account).where(Account.id == account_id, Account.org_id == org_id)
     account = (await session.execute(acc_stmt)).scalar_one_or_none()
     if not account:
-        return
+        return to_enhance
 
     if trigger != "manual" and account.last_run_at:
         if (now - account.last_run_at) < timedelta(hours=1):
@@ -65,7 +75,7 @@ async def _execute_account_run_inner(
                 run.finished_at = now
                 run.stats = {"skipped_reason": "run within last 1 hour"}
                 await session.flush()
-            return
+            return to_enhance
 
     # Load agent run record
     run_stmt = select(AgentRun).where(AgentRun.id == agent_run_id)
@@ -93,6 +103,29 @@ async def _execute_account_run_inner(
     # Suppression rule: if risk severity is high, suppress expansion hits
     if risk_severity == "high":
         expansion_hits = []
+
+    # Persist the hits of this run (the finding detail page reads them back)
+    await session.execute(
+        delete(DbRuleHit).where(DbRuleHit.org_id == org_id, DbRuleHit.account_id == account_id)
+    )
+    for h in [*risk_hits, *expansion_hits]:
+        session.add(
+            DbRuleHit(
+                org_id=org_id,
+                account_id=account_id,
+                agent_run_id=agent_run_id,
+                rule_key=h.rule_key,
+                category=h.category,
+                finding_type=h.finding_type,
+                severity_points=h.severity_points,
+                metrics=json.loads(json.dumps(h.metrics, default=str)),
+                evidence_refs=[
+                    {"kind": r.kind, "ref_ids": [str(i) for i in r.ref_ids]}
+                    for r in h.evidence_refs
+                ],
+                created_at=now,
+            )
+        )
 
     t_rules = int((time.perf_counter() - t0) * 1000)
     steps.append({"name": "rules", "status": "ok", "duration_ms": t_rules})
@@ -149,7 +182,13 @@ async def _execute_account_run_inner(
                 for e in evidence_items
             ],
             unknowns=unknowns,
-            contradictions=[],
+            # each detected contradiction cites its own evidence item (see build_evidence)
+            contradictions=[
+                Claim(text=c["text"], evidence_ids=[e.evidence_key])
+                for c in contradictions
+                for e in evidence_items
+                if e.label == f"Contradiction: {c.get('text', '')}"
+            ],
         )
         explanation = await explainer.explain(explain_ctx)
 
@@ -178,7 +217,7 @@ async def _execute_account_run_inner(
             newest_evidence_age_days=newest_evidence_age,
         )
 
-        await upsert_finding(
+        finding = await upsert_finding(
             session,
             ctx=ctx,
             hits=hits,
@@ -191,6 +230,8 @@ async def _execute_account_run_inner(
             score_breakdown=score_breakdown,
             agent_run_id=agent_run_id,
         )
+        if finding is not None and finding.status == "open" and finding.model == TEMPLATE_MODEL:
+            to_enhance.append(finding.id)
 
     t_findings = int((time.perf_counter() - t0) * 1000)
     steps.append({"name": "findings", "status": "ok", "duration_ms": t_findings})
@@ -206,20 +247,32 @@ async def _execute_account_run_inner(
             "total_duration_ms": t_context + t_rules + t_findings,
         }
     await session.flush()
+    return to_enhance
 
 
 @tenant_task("run.account")
 async def run_account_task(
-    org_id: str,
+    _session: AsyncSession,
+    org_id: UUID | str,
     account_id: str,
     trigger: str = "manual",
     triggered_by: str | None = None,
     agent_run_id: str | None = None,
 ) -> dict[str, Any]:
-    """Execute detection engine run for an account with distributed locking."""
-    oid = UUID(org_id)
-    aid = UUID(account_id)
-    tby = UUID(triggered_by) if triggered_by else None
+    """Execute detection engine run for an account with distributed locking.
+
+    The run opens its own session inside the lock so that everything is committed before the AI
+    service is asked to upgrade the result (it reads the finding through /internal/v1).
+    """
+    oid = UUID(str(org_id))
+    aid = UUID(str(account_id))
+    tby = UUID(str(triggered_by)) if triggered_by else None
+    ai_on = ai_client.enabled()
+
+    # A person is waiting for this run: read the unread emails/notes of the account first so the
+    # signal-based rules see them. Nightly runs rely on the periodic extraction instead.
+    if ai_on and trigger != "nightly":
+        await ai_client.request_extraction(org_id=oid, account_id=aid, limit=20, wait=True)
 
     # Distributed lock run:{account_id}
     try:
@@ -240,7 +293,7 @@ async def run_account_task(
                     await session.flush()
                     rid = agent_run.id
 
-                await _execute_account_run_inner(
+                to_enhance = await _execute_account_run_inner(
                     session,
                     org_id=oid,
                     account_id=aid,
@@ -248,9 +301,30 @@ async def run_account_task(
                     triggered_by=tby,
                     agent_run_id=rid,
                 )
-                return {"status": "completed", "agent_run_id": str(rid)}
     except LockNotAcquired:
         return {"status": "busy", "reason": "run lock busy"}
+
+    # committed: the template result is live; the AI upgrade is optional work on top of it
+    if ai_on:
+        from app.workers.tasks_ai import ai_scores_task
+
+        try:  # every account gets a churn/expansion score, also the ones without a finding
+            ai_scores_task.delay(str(oid), str(aid))
+        except Exception:
+            log.warning("ai_scores_not_enqueued", account_id=str(aid))
+    if ai_on and to_enhance:
+        from app.workers.tasks_ai import ai_enhance_task
+
+        for fid in to_enhance:
+            try:
+                ai_enhance_task.delay(str(oid), str(aid), str(fid), str(rid), trigger)
+            except Exception:  # broker down: keep the template result
+                log.warning("ai_enhance_not_enqueued", finding_id=str(fid))
+    return {
+        "status": "completed",
+        "agent_run_id": str(rid),
+        "ai_requested": len(to_enhance) if ai_on else 0,
+    }
 
 
 def is_nightly_tick(

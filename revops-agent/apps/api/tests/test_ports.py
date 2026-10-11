@@ -9,7 +9,6 @@ from app.config import get_settings
 from app.ports import ActionPlanner, Explainer, SignalExtractor
 from app.ports import registry as reg
 from app.ports.template import (
-    ExternalPending,
     NullSignalExtractor,
     TemplateActionPlanner,
     TemplateExplainer,
@@ -44,12 +43,15 @@ async def test_null_extractor_returns_no_signals() -> None:
     assert await reg.get_signal_extractor().extract(ExtractCtx(org_id=uuid4()), ev) == []
 
 
-def test_external_mode_switches_implementations(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_external_mode_keeps_the_template_baseline(monkeypatch: pytest.MonkeyPatch) -> None:
+    """AI_MODE=external upgrades results through /internal/v1; the in-process baseline stays."""
     try:
         monkeypatch.setenv("AI_MODE", "external")
         get_settings.cache_clear()
-        assert isinstance(reg.get_explainer(), ExternalPending)
-        assert isinstance(reg.get_action_planner(), ExternalPending)
+        assert get_settings().ai_mode == "external"
+        assert isinstance(reg.get_explainer(), TemplateExplainer)
+        assert isinstance(reg.get_action_planner(), TemplateActionPlanner)
+        assert isinstance(reg.get_signal_extractor(), NullSignalExtractor)
     finally:
         monkeypatch.undo()
         get_settings.cache_clear()

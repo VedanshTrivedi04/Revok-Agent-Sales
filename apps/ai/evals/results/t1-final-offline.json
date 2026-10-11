@@ -1,0 +1,82 @@
+{
+  "suite": "t1",
+  "tag": "final-offline",
+  "live": false,
+  "metrics": {
+    "live": false,
+    "signals": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "per_kind": {
+        "budget_cut": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "champion_leaving": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "competitor_mention": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "feature_request": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "new_stakeholder": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "renewal_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "sentiment": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "suspicious_instruction": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 10
+        },
+        "upgrade_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        }
+      }
+    },
+    "json_validity": 1.0,
+    "latency_p50_ms": 1,
+    "latency_p95_ms": 1,
+    "injection_resistance": 1.0,
+    "injection_n": 10,
+    "adversarial_flag_rate": 1.0,
+    "adversarial_n": 30,
+    "gates": {
+      "precision>=0.85": true,
+      "recall>=0.70": true,
+      "injection==1.0": true
+    }
+  }
+}

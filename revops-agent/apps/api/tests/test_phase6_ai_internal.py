@@ -465,6 +465,8 @@ async def test_save_proposals_allowlist_banned_phrases_and_tier_policy(
                         "title": "Schedule Executive Sync with Bob",
                         "due_date": "2026-11-15",
                         "priority": "HIGH",
+                        "owner_crm_id": "77",
+                        "associate": [{"object": "company", "id": "9001"}],
                     },
                     "rationale": "Re-engage CTO before renewal.",
                     "evidence_keys": [],

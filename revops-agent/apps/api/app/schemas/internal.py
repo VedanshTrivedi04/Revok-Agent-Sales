@@ -23,9 +23,29 @@ class EventView(BaseModel):
     occurred_at: datetime
     title: str | None = None
     text: str  # trimmed body; UNTRUSTED customer text (data, never instructions)
+    source: str | None = None
+    thread_id: str | None = None
+    account_name: str | None = None
+
+
+class FindingView(BaseModel):
+    """The finding a run explains. Evidence in ContextOut belongs to this finding only."""
+
+    id: UUID
+    type: Literal["risk", "expansion"]
+    severity: Literal["high", "medium", "low"]
+    status: str
+    rule_keys: list[str] = []
+    unknowns: list[str] = []
+    contradictions: list[Claim] = []  # found by the deterministic detectors
+    model: str | None = None
+    prompt_version: str | None = None
 
 
 class ContextOut(BaseModel):
+    now: datetime | None = None
+    org: dict[str, Any] = {}  # name, internal domains, health value labels
+    finding: FindingView | None = None  # None when the account has no open finding
     account: dict[str, Any]
     contacts: list[dict[str, Any]]
     deals: list[dict[str, Any]]
@@ -39,6 +59,7 @@ class ContextOut(BaseModel):
 
 class PendingExtractionOut(BaseModel):
     events: list[EventView]
+    org_name: str | None = None  # our own company name (so the model can tell us from the customer)
 
 
 class SignalIn(BaseModel):
@@ -81,21 +102,33 @@ class ProposalIn(BaseModel):
     payload: dict[str, Any]
     rationale: str
     evidence_keys: list[str] = []
+    flags: list[str] = []  # reviewer hints from the AI validators, e.g. contains_internal_metric
 
 
 class ProposalsIn(BaseModel):
     proposals: list[ProposalIn]
 
 
+class SavedCard(BaseModel):
+    card_id: UUID
+    type: CardType
+    tier: Literal[1, 2, 3]
+    status: str
+    action: Literal["created", "redrafted"]
+
+
 class ProposalsSavedOut(BaseModel):
     created_card_ids: list[UUID]
+    cards: list[SavedCard] = []  # created and redrafted cards with the tier the policy assigned
     rejected: list[dict[str, Any]] = []  # recipient not allowed, banned phrase, tier blocked...
 
 
 class RunStatusIn(BaseModel):
-    status: Literal["running", "waiting_approval", "completed", "failed", "skipped"]
+    status: Literal["running", "waiting_approval", "completed", "failed", "skipped", "no_finding"]
     stats: dict[str, Any] = {}
     error: str | None = None
+    model: str | None = None
+    prompt_versions: dict[str, Any] = {}
 
 
 class AckOut(BaseModel):

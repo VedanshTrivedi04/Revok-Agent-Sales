@@ -1,0 +1,10 @@
+.venv/
+.env
+__pycache__/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+data/synthetic/*.csv
+evals/results/*-tmp*.json
+.hypothesis/
+req.txt

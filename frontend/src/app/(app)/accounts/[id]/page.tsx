@@ -12,6 +12,7 @@ import { queryKeys } from "../../../../lib/api/query-keys";
 import { MoneyText } from "../../../../components/ui/money-text";
 import { SeverityBadge, Severity } from "../../../../components/ui/severity-badge";
 import { DateText } from "../../../../components/ui/date-text";
+import { MlScoresCard, type MlScores } from "../../../../components/ui/ml-score";
 import { TableSkeleton } from "../../../../components/ui/table-skeleton";
 import { EmptyState } from "../../../../components/ui/empty-state";
 import { ErrorState } from "../../../../components/ui/error-state";
@@ -63,6 +64,7 @@ interface AccountDetail {
   priority_score?: number | null;
   last_activity_at?: string | null;
   crm_url?: string | null;
+  ml_scores?: MlScores | null;
   metrics: AccountMetrics;
   open_findings: OpenFindingRef[];
   data_gaps: string[];
@@ -262,11 +264,14 @@ export default function AccountDetailPage({
                 CRM Health Status
               </span>
               <span className="text-base font-semibold text-slate-900 dark:text-slate-100 capitalize">
-                {account.crm_health || "Healthy"}
+                {account.crm_health || "—"}
               </span>
             </div>
           </div>
         </div>
+
+        {/* Predicted churn / expansion (ML model; absent until the account has been scored) */}
+        {account.ml_scores && <MlScoresCard scores={account.ml_scores} />}
 
         {/* Tab Navigation */}
         <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 text-xs font-semibold">

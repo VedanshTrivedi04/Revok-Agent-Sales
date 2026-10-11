@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     real_routers: str = ""
     internal_api_key: str = DEV_INTERNAL_KEY
     ai_mode: Literal["template", "external"] = "template"
+    ai_service_url: str = ""  # apps/ai base URL (AI_MODE=external); empty = AI upgrades are off
+    ai_service_timeout_s: float = 10.0
+    ai_extract_wait_s: float = 90.0  # max wait for signal extraction before a manual run
     feature_email_send: bool = False
 
     hubspot_client_id: str = ""

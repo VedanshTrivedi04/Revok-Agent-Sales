@@ -1,0 +1,31 @@
+{
+  "suite": "e2e",
+  "tag": "a6",
+  "live": false,
+  "metrics": {
+    "live": false,
+    "cases": 30,
+    "statuses": {
+      "waiting_approval": 17,
+      "completed": 13
+    },
+    "rule_hits_match": "29/30",
+    "finding_type_match": "29/30",
+    "fallback_rate": 0.0526,
+    "cards_created": 68,
+    "backend_rejections": [],
+    "mismatches": {
+      "non_english_signal": {
+        "got": [],
+        "want": [
+          "R07_competitor_mention"
+        ]
+      }
+    },
+    "gates": {
+      "no_failed_runs": true,
+      "rule_hits_match_all": false,
+      "no_backend_rejections": true
+    }
+  }
+}

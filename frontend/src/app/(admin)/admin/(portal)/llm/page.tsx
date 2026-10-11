@@ -59,8 +59,21 @@ export default function AdminLlmHealthPage() {
     void refetchData();
   };
 
-  const isHealthy = llmHealth?.status === "ok";
-  const isDegraded = llmHealth?.status === "degraded";
+  // Template mode has no model to be up or down: explanations are deterministic. Only an external
+  // model that does not answer is a problem.
+  const isTemplate = llmHealth?.mode === "template";
+  const isUnconfigured = llmHealth?.status === "not_configured";
+  const isHealthy = llmHealth?.status === "ok" || (isTemplate && isUnconfigured);
+  const isDegraded = llmHealth?.status === "degraded" || (!isTemplate && isUnconfigured);
+  const statusLabel = !llmHealth
+    ? "—"
+    : isTemplate
+    ? "TEMPLATE"
+    : isUnconfigured
+    ? "NOT CONFIGURED"
+    : llmHealth.status.toUpperCase();
+  const ms = (v: number | null | undefined) => (v == null ? "—" : `${v} ms`);
+  const pct = (v: number | null | undefined) => (v == null ? "—" : `${v}%`);
 
   return (
     <div className="space-y-6">
@@ -134,11 +147,11 @@ export default function AdminLlmHealthPage() {
                     }`}
                   >
                     {isHealthy ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
-                    <span>{llmHealth?.status?.toUpperCase() || "OK"}</span>
+                    <span>{statusLabel}</span>
                   </span>
                 </div>
                 <p className="text-xs text-[var(--adm-text-muted)]">
-                  Mode: <strong className="font-mono text-[var(--adm-text)]">{llmHealth?.mode || "template"}</strong> · Latency: <strong className="font-mono text-[var(--adm-text)]">{llmHealth?.latency_ms ?? 5}ms</strong>
+                  Mode: <strong className="font-mono text-[var(--adm-text)]">{llmHealth?.mode ?? "—"}</strong> · Latency: <strong className="font-mono text-[var(--adm-text)]">{ms(llmHealth?.latency_ms)}</strong>
                 </p>
               </div>
             </div>
@@ -162,9 +175,11 @@ export default function AdminLlmHealthPage() {
               <span>Customer Portal Impact (Portals C &amp; D)</span>
             </div>
             <p className="text-[11px] leading-relaxed opacity-90">
-              {isHealthy
-                ? "Inference pipelines operating normally. Finding summaries, automated risk analyses, and draft email generation execute without delay."
-                : "LLM service degraded. Customer findings display a 'Needs Review' banner with rule-based deterministic summaries. AI email drafts are paused."}
+              {isTemplate
+                ? "Template mode: findings show rule-based summaries and template drafts. No model is called."
+                : isHealthy
+                ? "The model endpoint is answering. New findings get an AI-written, evidence-checked explanation and email draft on top of the rule-based result."
+                : "The model endpoint is not answering. Findings keep their rule-based summaries and template drafts until it is back; nothing is lost."}
             </p>
           </div>
         </div>
@@ -179,10 +194,10 @@ export default function AdminLlmHealthPage() {
             <CheckCircle2 className="w-4 h-4 text-[var(--adm-ok)]" />
           </div>
           <div className="text-2xl font-black font-mono text-[var(--adm-text)]">
-            {llmHealth?.uptime_pct ?? 99.99}%
+            {pct(llmHealth?.uptime_pct)}
           </div>
           <p className="text-[10px] text-[var(--adm-text-muted)]">
-            Zero unplanned downtime
+            Model endpoint availability
           </p>
         </div>
 
@@ -193,10 +208,10 @@ export default function AdminLlmHealthPage() {
             <Zap className="w-4 h-4 text-[var(--adm-accent)]" />
           </div>
           <div className="text-2xl font-black font-mono text-[var(--adm-text)]">
-            {llmHealth?.latency_ms ?? 5} ms
+            {ms(llmHealth?.latency_ms)}
           </div>
           <p className="text-[10px] text-[var(--adm-text-muted)]">
-            p50: 4ms · p95: 12ms
+            Last health probe of the model endpoint
           </p>
         </div>
 
@@ -207,7 +222,7 @@ export default function AdminLlmHealthPage() {
             <FileCheck className="w-4 h-4 text-cyan-400" />
           </div>
           <div className="text-2xl font-black font-mono text-[var(--adm-text)]">
-            {llmHealth?.json_failure_pct ?? 0.0}%
+            {pct(llmHealth?.json_failure_pct)}
           </div>
           <p className="text-[10px] text-[var(--adm-text-muted)]">
             Structured output validation
@@ -221,7 +236,7 @@ export default function AdminLlmHealthPage() {
             <HelpCircle className="w-4 h-4 text-[var(--adm-ok)]" />
           </div>
           <div className="text-2xl font-black font-mono text-[var(--adm-text)]">
-            {llmHealth?.citation_failure_pct ?? 0.0}%
+            {pct(llmHealth?.citation_failure_pct)}
           </div>
           <p className="text-[10px] text-[var(--adm-text-muted)]">
             Grounded evidence verification

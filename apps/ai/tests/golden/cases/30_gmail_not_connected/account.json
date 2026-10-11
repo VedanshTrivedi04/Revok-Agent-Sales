@@ -1,0 +1,67 @@
+{
+ "case_id": "gmail_not_connected",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-gmail_not_connected",
+  "name": "Tyrell EU",
+  "domains": [
+   "tyrelleu.example.com"
+  ],
+  "arr": 39000.0,
+  "plan": "Team",
+  "seats_purchased": 35,
+  "renewal_date": "2026-12-09",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": false,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-gmail_not_connected-1",
+   "name": "Joe Tyrell",
+   "email": "joe@tyrelleu.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-gmail_not_connected-2",
+   "name": "Jan Tyrell",
+   "email": "jan@tyrelleu.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-gmail_not_connected",
+   "name": "Tyrell EU renewal",
+   "stage_label": "Proposal",
+   "amount": 39000.0,
+   "close_date": "2026-12-09",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 5,
+   "days_since_activity": 0
+  }
+ ]
+}

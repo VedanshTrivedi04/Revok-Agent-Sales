@@ -77,6 +77,18 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
           queryClient.invalidateQueries({ queryKey: queryKeys.runs() });
         });
 
+        es.addEventListener("account.updated", (event: MessageEvent) => {
+          updateEventId(event);
+          queryClient.invalidateQueries({ queryKey: queryKeys.accounts() });
+          queryClient.invalidateQueries({ queryKey: queryKeys.today() });
+          try {
+            const data = JSON.parse(event.data);
+            if (data.id) queryClient.invalidateQueries({ queryKey: queryKeys.account(data.id) });
+          } catch {
+            // ignore JSON parse error
+          }
+        });
+
         es.addEventListener("sync.updated", (event: MessageEvent) => {
           updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.integrations() });

@@ -1,0 +1,54 @@
+{
+ "case_id": "missing_renewal_date",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-missing_renewal_date",
+  "name": "Bluth Co",
+  "domains": [
+   "bluth.example.com"
+  ],
+  "arr": 47000.0,
+  "plan": "Business",
+  "seats_purchased": 50,
+  "renewal_date": null,
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-missing_renewal_date-1",
+   "name": "George Bluth",
+   "email": "george@bluth.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-missing_renewal_date-2",
+   "name": "Lucille Bluth",
+   "email": "lucille@bluth.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": []
+}

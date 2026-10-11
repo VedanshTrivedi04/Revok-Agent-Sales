@@ -49,6 +49,7 @@ from app.schemas.accounts import (
     TodayItem,
     TodayResponse,
     TopReason,
+    ml_scores_out,
 )
 from app.schemas.identity import Ack
 from app.services import decision_log
@@ -116,6 +117,25 @@ async def upsert_finding(
     target_finding: Finding | None = None
     severity_ranks = {"low": 1, "medium": 2, "high": 3}
 
+    # An AI explanation stays as long as the evidence it cites is unchanged: re-running an account
+    # on the same data must not flip the text back to the template (and its keys stay valid).
+    keep_explanation = False
+    if existing is not None and existing.model not in (None, "template"):
+        old_rows = (
+            (
+                await session.execute(
+                    select(FindingEvidence).where(FindingEvidence.finding_id == existing.id)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        old_sig = sorted((e.evidence_key, e.kind, e.label, e.detail or "") for e in old_rows)
+        new_sig = sorted((e.evidence_key, e.kind, e.label, e.detail or "") for e in evidence_items)
+        keep_explanation = old_sig == new_sig and sorted(existing.rule_keys or []) == sorted(
+            h.rule_key for h in hits
+        )
+
     # 2. Existing active finding
     if existing:
         is_snoozed = (
@@ -137,9 +157,12 @@ async def upsert_finding(
             # Update silently, stay snoozed
             existing.priority_score = priority_score  # type: ignore[assignment]
             existing.confidence = confidence
-            existing.claims = [c.model_dump() for c in explanation.claims]
-            existing.unknowns = explanation.unknowns
-            existing.contradictions = [c.model_dump() for c in explanation.contradictions]
+            if not keep_explanation:
+                existing.claims = [c.model_dump() for c in explanation.claims]
+                existing.unknowns = explanation.unknowns
+                existing.contradictions = [c.model_dump() for c in explanation.contradictions]
+                existing.model = explanation.model
+                existing.prompt_version = explanation.prompt_version
             existing.rule_keys = [h.rule_key for h in hits]
             existing.categories = list({h.category for h in hits})
             existing.last_seen_at = ctx.now
@@ -152,11 +175,14 @@ async def upsert_finding(
             existing.severity = severity
             existing.priority_score = priority_score  # type: ignore[assignment]
             existing.confidence = confidence
-            existing.title = f"{ctx.account_name}: {explanation.summary[:90]}"
-            existing.summary = explanation.summary
-            existing.claims = [c.model_dump() for c in explanation.claims]
-            existing.unknowns = explanation.unknowns
-            existing.contradictions = [c.model_dump() for c in explanation.contradictions]
+            if not keep_explanation:
+                existing.title = f"{ctx.account_name}: {explanation.summary[:90]}"
+                existing.summary = explanation.summary
+                existing.claims = [c.model_dump() for c in explanation.claims]
+                existing.unknowns = explanation.unknowns
+                existing.contradictions = [c.model_dump() for c in explanation.contradictions]
+                existing.model = explanation.model
+                existing.prompt_version = explanation.prompt_version
             existing.rule_keys = [h.rule_key for h in hits]
             existing.categories = list({h.category for h in hits})
             existing.last_seen_at = ctx.now
@@ -456,6 +482,7 @@ async def get_today_service(
             renewal_in_days=renewal_in_days,
             owner=acc_owner,
             crm_health=row_acc.crm_health,
+            ml_scores=ml_scores_out(row_acc.ml_scores),
         )
 
         # Top reasons from claims
@@ -590,7 +617,10 @@ async def get_finding_detail_service(
         FindingEvidence.org_id == org_id,
         FindingEvidence.finding_id == finding_id,
     )
-    ev_rows = (await session.execute(ev_stmt)).scalars().all()
+    ev_rows = sorted(
+        (await session.execute(ev_stmt)).scalars().all(),
+        key=lambda e: int(e.evidence_key[1:]) if e.evidence_key[1:].isdigit() else 10_000,
+    )
     evidence_out = [
         EvidenceOut(
             key=e.evidence_key,

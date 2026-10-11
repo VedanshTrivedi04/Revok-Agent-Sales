@@ -1,0 +1,67 @@
+{
+ "case_id": "two_injections_thread",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-two_injections_thread",
+  "name": "Nakatomi",
+  "domains": [
+   "nakatomi.example.com"
+  ],
+  "arr": 77000.0,
+  "plan": "Business",
+  "seats_purchased": 70,
+  "renewal_date": "2027-01-18",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-two_injections_thread-1",
+   "name": "Hans Nakatomi",
+   "email": "hans@nakatomi.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-two_injections_thread-2",
+   "name": "Holly Nakatomi",
+   "email": "holly@nakatomi.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-two_injections_thread",
+   "name": "Nakatomi renewal",
+   "stage_label": "Proposal",
+   "amount": 77000.0,
+   "close_date": "2027-01-18",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

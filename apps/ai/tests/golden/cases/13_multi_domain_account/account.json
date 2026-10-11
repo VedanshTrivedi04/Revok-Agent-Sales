@@ -1,0 +1,68 @@
+{
+ "case_id": "multi_domain_account",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-multi_domain_account",
+  "name": "Massive Dynamic",
+  "domains": [
+   "massive.example.com",
+   "massivedynamic.example.org"
+  ],
+  "arr": 110000.0,
+  "plan": "Business",
+  "seats_purchased": 120,
+  "renewal_date": "2027-03-19",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-multi_domain_account-1",
+   "name": "Olivia Massive",
+   "email": "olivia@massive.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-multi_domain_account-2",
+   "name": "Peter Massive",
+   "email": "peter@massive.example.com",
+   "title": "Eng",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-multi_domain_account",
+   "name": "Massive Dynamic renewal",
+   "stage_label": "Proposal",
+   "amount": 110000.0,
+   "close_date": "2027-03-19",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

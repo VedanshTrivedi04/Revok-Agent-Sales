@@ -1,0 +1,72 @@
+{
+  "suite": "baseline",
+  "tag": "a1",
+  "live": false,
+  "metrics": {
+    "signals_null_extractor": {
+      "precision": 1.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "per_kind": {
+        "budget_cut": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "champion_leaving": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "competitor_mention": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "feature_request": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "new_stakeholder": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "renewal_intent": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "sentiment": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        },
+        "suspicious_instruction": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 10
+        },
+        "upgrade_intent": {
+          "p": 1.0,
+          "r": 0.0,
+          "n": 13
+        }
+      }
+    },
+    "cases": 30,
+    "reference_engine_matches_expected": 30,
+    "injection_cases": 2
+  }
+}

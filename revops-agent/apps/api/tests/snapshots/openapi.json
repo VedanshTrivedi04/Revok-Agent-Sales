@@ -76,6 +76,16 @@
        "unanswered_emails": 0
       }
      },
+     "ml_scores": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/MlScores"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
      "name": {
       "title": "Name",
       "type": "string"
@@ -248,6 +258,16 @@
        }
       ],
       "title": "Last Activity At"
+     },
+     "ml_scores": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/MlScores"
+       },
+       {
+        "type": "null"
+       }
+      ]
      },
      "name": {
       "title": "Name",
@@ -479,6 +499,16 @@
       "format": "uuid",
       "title": "Id",
       "type": "string"
+     },
+     "ml_scores": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/MlScores"
+       },
+       {
+        "type": "null"
+       }
+      ]
      },
      "name": {
       "title": "Name",
@@ -4120,6 +4150,122 @@
      }
     },
     "title": "MemberPatchIn",
+    "type": "object"
+   },
+   "MlReason": {
+    "properties": {
+     "direction": {
+      "enum": [
+       "raises",
+       "lowers"
+      ],
+      "title": "Direction",
+      "type": "string"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text",
+     "direction"
+    ],
+    "title": "MlReason",
+    "type": "object"
+   },
+   "MlScore": {
+    "properties": {
+     "band": {
+      "enum": [
+       "low",
+       "medium",
+       "high"
+      ],
+      "title": "Band",
+      "type": "string"
+     },
+     "probability": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Probability",
+      "type": "number"
+     },
+     "reasons": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/MlReason"
+      },
+      "title": "Reasons",
+      "type": "array"
+     }
+    },
+    "required": [
+     "probability",
+     "band"
+    ],
+    "title": "MlScore",
+    "type": "object"
+   },
+   "MlScores": {
+    "description": "Statistical churn / expansion scores for an account (separate from rule findings).",
+    "properties": {
+     "churn": {
+      "$ref": "#/components/schemas/MlScore"
+     },
+     "expansion": {
+      "$ref": "#/components/schemas/MlScore"
+     },
+     "model_version": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model Version"
+     },
+     "scored_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Scored At"
+     },
+     "synthetic": {
+      "default": false,
+      "title": "Synthetic",
+      "type": "boolean"
+     },
+     "trained_on": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Trained On"
+     },
+     "view": {
+      "title": "View",
+      "type": "string"
+     }
+    },
+    "required": [
+     "churn",
+     "expansion",
+     "view"
+    ],
+    "title": "MlScores",
     "type": "object"
    },
    "NotificationOut": {

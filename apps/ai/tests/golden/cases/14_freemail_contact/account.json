@@ -1,0 +1,67 @@
+{
+ "case_id": "freemail_contact",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-freemail_contact",
+  "name": "Pied Piper",
+  "domains": [
+   "piedpiper.example.com"
+  ],
+  "arr": 30000.0,
+  "plan": "Team",
+  "seats_purchased": 25,
+  "renewal_date": "2027-02-27",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-freemail_contact-1",
+   "name": "Richard Pied",
+   "email": "richard.hendricks@gmail.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-freemail_contact-2",
+   "name": "Gilfoyle Pied",
+   "email": "gilfoyle@piedpiper.example.com",
+   "title": "Eng",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-freemail_contact",
+   "name": "Pied Piper renewal",
+   "stage_label": "Proposal",
+   "amount": 30000.0,
+   "close_date": "2027-02-27",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

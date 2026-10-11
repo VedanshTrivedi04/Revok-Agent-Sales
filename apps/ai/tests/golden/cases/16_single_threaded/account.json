@@ -1,0 +1,56 @@
+{
+ "case_id": "single_threaded",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-single_threaded",
+  "name": "Hanover Group",
+  "domains": [
+   "hanover.example.com"
+  ],
+  "arr": 90000.0,
+  "plan": "Business",
+  "seats_purchased": 60,
+  "renewal_date": "2027-03-09",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-single_threaded-1",
+   "name": "Harper Hanover",
+   "email": "harper@hanover.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-single_threaded",
+   "name": "Hanover Group renewal",
+   "stage_label": "Proposal",
+   "amount": 90000.0,
+   "close_date": "2027-03-09",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

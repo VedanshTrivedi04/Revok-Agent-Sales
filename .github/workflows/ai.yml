@@ -1,0 +1,39 @@
+name: AI
+
+on:
+  pull_request:
+    paths: ["apps/ai/**", ".github/workflows/ai.yml"]
+  push:
+    branches: [main]
+    paths: ["apps/ai/**"]
+
+defaults:
+  run:
+    working-directory: apps/ai
+
+jobs:
+  ai:
+    runs-on: ubuntu-latest   # Docker is available: the Postgres checkpoint test uses testcontainers
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy revops_ai
+      - run: uv run pytest -q
+      - name: Dataset is current (regenerate and diff)
+        run: |
+          uv run python scripts/gen_golden.py > /dev/null
+          git diff --exit-code -- tests/golden
+      - name: Privacy and dependency checks
+        run: |
+          uv run python scripts/egress_check.py
+          uv export --no-hashes -o req.txt && uvx pip-audit -r req.txt --no-deps --disable-pip
+      - name: Eval smoke on recorded/heuristic responses (no GPU)
+        run: |
+          uv run python -m revops_ai.evals.run --suite t1 --tag ci
+          uv run python -m revops_ai.evals.run --suite t2 --tag ci
+          uv run python -m revops_ai.evals.run --suite t3 --tag ci
+          uv run python -m revops_ai.evals.run --suite e2e --tag ci

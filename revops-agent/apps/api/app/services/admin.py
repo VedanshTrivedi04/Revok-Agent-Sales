@@ -42,7 +42,7 @@ from app.schemas.ops import (
     FlagPutIn,
     LlmHealthOut,
 )
-from app.services import decision_log
+from app.services import ai_client, decision_log
 from app.services.auth import generate_temporary_password, issue_set_password_token
 from app.services.email import get_email_sender
 from app.services.identity import DEFAULT_FEATURE_FLAGS, insert_org_with_owner
@@ -348,12 +348,18 @@ async def discard_admin_job(job_id: UUID) -> Ack:
 
 
 async def llm_health() -> LlmHealthOut:
-    """Placeholder health check for AI services in template mode."""
+    """Live status of the AI path. Template mode has no model: explanations are deterministic."""
+    settings = get_settings()
+    if settings.ai_mode != "external":
+        return LlmHealthOut(status="not_configured", mode="template")
+    if not settings.ai_service_url:
+        return LlmHealthOut(status="not_configured", mode="external")
+    h = await ai_client.health()
     return LlmHealthOut(
-        status="ok",
-        mode="template",
-        latency_ms=5,
-        model=None,
+        status="ok" if h.get("ok") and h.get("llm_ok") else "down",
+        mode="external",
+        latency_ms=h.get("llm_latency_ms") or h.get("latency_ms"),
+        model=h.get("model"),
     )
 
 

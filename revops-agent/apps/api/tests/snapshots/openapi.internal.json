@@ -63,12 +63,40 @@
       "title": "Evidence",
       "type": "array"
      },
+     "finding": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/FindingView"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
      "missing_data": {
       "items": {
        "type": "string"
       },
       "title": "Missing Data",
       "type": "array"
+     },
+     "now": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Now"
+     },
+     "org": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Org",
+      "type": "object"
      },
      "recent_events": {
       "items": {
@@ -130,6 +158,17 @@
       ],
       "title": "Account Id"
      },
+     "account_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Name"
+     },
      "id": {
       "format": "uuid",
       "title": "Id",
@@ -140,9 +179,31 @@
       "title": "Occurred At",
       "type": "string"
      },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     },
      "text": {
       "title": "Text",
       "type": "string"
+     },
+     "thread_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Thread Id"
      },
      "title": {
       "anyOf": [
@@ -331,6 +392,91 @@
     "title": "ExplanationSavedOut",
     "type": "object"
    },
+   "FindingView": {
+    "description": "The finding a run explains. Evidence in ContextOut belongs to this finding only.",
+    "properties": {
+     "contradictions": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/Claim"
+      },
+      "title": "Contradictions",
+      "type": "array"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "model": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model"
+     },
+     "prompt_version": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Prompt Version"
+     },
+     "rule_keys": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Rule Keys",
+      "type": "array"
+     },
+     "severity": {
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ],
+      "title": "Severity",
+      "type": "string"
+     },
+     "status": {
+      "title": "Status",
+      "type": "string"
+     },
+     "type": {
+      "enum": [
+       "risk",
+       "expansion"
+      ],
+      "title": "Type",
+      "type": "string"
+     },
+     "unknowns": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+     }
+    },
+    "required": [
+     "id",
+     "type",
+     "severity",
+     "status"
+    ],
+    "title": "FindingView",
+    "type": "object"
+   },
    "HTTPValidationError": {
     "properties": {
      "detail": {
@@ -390,6 +536,17 @@
       },
       "title": "Events",
       "type": "array"
+     },
+     "org_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Org Name"
      }
     },
     "required": [
@@ -406,6 +563,14 @@
        "type": "string"
       },
       "title": "Evidence Keys",
+      "type": "array"
+     },
+     "flags": {
+      "default": [],
+      "items": {
+       "type": "string"
+      },
+      "title": "Flags",
       "type": "array"
      },
      "payload": {
@@ -456,6 +621,14 @@
    },
    "ProposalsSavedOut": {
     "properties": {
+     "cards": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/SavedCard"
+      },
+      "title": "Cards",
+      "type": "array"
+     },
      "created_card_ids": {
       "items": {
        "format": "uuid",
@@ -493,6 +666,23 @@
       ],
       "title": "Error"
      },
+     "model": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model"
+     },
+     "prompt_versions": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Prompt Versions",
+      "type": "object"
+     },
      "stats": {
       "additionalProperties": true,
       "default": {},
@@ -505,7 +695,8 @@
        "waiting_approval",
        "completed",
        "failed",
-       "skipped"
+       "skipped",
+       "no_finding"
       ],
       "title": "Status",
       "type": "string"
@@ -515,6 +706,57 @@
      "status"
     ],
     "title": "RunStatusIn",
+    "type": "object"
+   },
+   "SavedCard": {
+    "properties": {
+     "action": {
+      "enum": [
+       "created",
+       "redrafted"
+      ],
+      "title": "Action",
+      "type": "string"
+     },
+     "card_id": {
+      "format": "uuid",
+      "title": "Card Id",
+      "type": "string"
+     },
+     "status": {
+      "title": "Status",
+      "type": "string"
+     },
+     "tier": {
+      "enum": [
+       1,
+       2,
+       3
+      ],
+      "title": "Tier",
+      "type": "integer"
+     },
+     "type": {
+      "enum": [
+       "email_draft",
+       "crm_task",
+       "crm_field_update",
+       "crm_note",
+       "slack_internal",
+       "meeting_request"
+      ],
+      "title": "Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "card_id",
+     "type",
+     "tier",
+     "status",
+     "action"
+    ],
+    "title": "SavedCard",
     "type": "object"
    },
    "SignalIn": {
@@ -744,7 +986,7 @@
   },
   "/v1/orgs/{org}/accounts/{account_id}/context": {
    "get": {
-    "description": "Everything needed for a run, including the backend-numbered evidence list.",
+    "description": "Everything needed for a run on one finding, including its numbered evidence list.",
     "operationId": "ai_get_context",
     "parameters": [
      {
@@ -765,6 +1007,23 @@
        "format": "uuid",
        "title": "Account Id",
        "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "finding_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Finding Id"
       }
      },
      {
@@ -814,7 +1073,7 @@
   },
   "/v1/orgs/{org}/events/pending-extraction": {
    "get": {
-    "description": "Events whose signals_extracted_at is null.",
+    "description": "Text events matched to an account whose signals_extracted_at is null.",
     "operationId": "ai_pending_events",
     "parameters": [
      {
@@ -837,6 +1096,23 @@
        "minimum": 1,
        "title": "Limit",
        "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "account_id",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "format": "uuid",
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Account Id"
       }
      },
      {

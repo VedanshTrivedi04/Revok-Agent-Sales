@@ -1,0 +1,54 @@
+{
+ "case_id": "stale_integration",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-stale_integration",
+  "name": "Pawnee Parks",
+  "domains": [
+   "pawnee.example.com"
+  ],
+  "arr": 33000.0,
+  "plan": "Team",
+  "seats_purchased": 30,
+  "renewal_date": "2027-01-08",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 60
+ },
+ "contacts": [
+  {
+   "id": "ct-stale_integration-1",
+   "name": "Leslie Pawnee",
+   "email": "leslie@pawnee.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-stale_integration-2",
+   "name": "Ron Pawnee",
+   "email": "ron@pawnee.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": []
+}

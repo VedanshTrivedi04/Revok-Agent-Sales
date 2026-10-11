@@ -1,0 +1,78 @@
+{
+ "case_id": "champion_left",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-champion_left",
+  "name": "Wayne Tech",
+  "domains": [
+   "wayne.example.com"
+  ],
+  "arr": 70000.0,
+  "plan": "Business",
+  "seats_purchased": 70,
+  "renewal_date": "2026-12-04",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-champion_left-1",
+   "name": "Bruce Wayne",
+   "email": "bruce@wayne.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": false,
+   "left_company_at": "2026-09-30T03:30:00Z"
+  },
+  {
+   "id": "ct-champion_left-2",
+   "name": "Alfred Wayne",
+   "email": "alfred@wayne.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-champion_left-3",
+   "name": "Lucius Wayne",
+   "email": "lucius@wayne.example.com",
+   "title": "Eng",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-champion_left",
+   "name": "Wayne Tech renewal",
+   "stage_label": "Proposal",
+   "amount": 70000.0,
+   "close_date": "2026-12-04",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 5,
+   "days_since_activity": 0
+  }
+ ]
+}

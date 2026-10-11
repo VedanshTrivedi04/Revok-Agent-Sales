@@ -1,0 +1,54 @@
+{
+ "case_id": "long_thread_ok",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-long_thread_ok",
+  "name": "Soprano Waste",
+  "domains": [
+   "soprano.example.com"
+  ],
+  "arr": 58000.0,
+  "plan": "Business",
+  "seats_purchased": 55,
+  "renewal_date": "2027-03-29",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-long_thread_ok-1",
+   "name": "Tony Soprano",
+   "email": "tony@soprano.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-long_thread_ok-2",
+   "name": "Carmela Soprano",
+   "email": "carmela@soprano.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": []
+}

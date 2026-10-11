@@ -1,0 +1,67 @@
+{
+ "case_id": "contradictory_positive",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-contradictory_positive",
+  "name": "Stark Industries",
+  "domains": [
+   "stark.example.com"
+  ],
+  "arr": 90000.0,
+  "plan": "Business",
+  "seats_purchased": 80,
+  "renewal_date": "2026-12-19",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-contradictory_positive-1",
+   "name": "Tony Stark",
+   "email": "tony@stark.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-contradictory_positive-2",
+   "name": "Pepper Stark",
+   "email": "pepper@stark.example.com",
+   "title": "COO",
+   "role_tags": [
+    "economic_buyer"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-contradictory_positive",
+   "name": "Stark Industries renewal",
+   "stage_label": "Proposal",
+   "amount": 90000.0,
+   "close_date": "2026-12-19",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

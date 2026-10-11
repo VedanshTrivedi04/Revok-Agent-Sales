@@ -1,0 +1,62 @@
+[
+ {
+  "period_start": "2026-07-13",
+  "active_users": 26,
+  "seats_used": 25
+ },
+ {
+  "period_start": "2026-07-20",
+  "active_users": 26,
+  "seats_used": 26
+ },
+ {
+  "period_start": "2026-07-27",
+  "active_users": 26,
+  "seats_used": 27
+ },
+ {
+  "period_start": "2026-08-03",
+  "active_users": 27,
+  "seats_used": 25
+ },
+ {
+  "period_start": "2026-08-10",
+  "active_users": 26,
+  "seats_used": 26
+ },
+ {
+  "period_start": "2026-08-17",
+  "active_users": 29,
+  "seats_used": 27
+ },
+ {
+  "period_start": "2026-08-24",
+  "active_users": 30,
+  "seats_used": 25
+ },
+ {
+  "period_start": "2026-08-31",
+  "active_users": 26,
+  "seats_used": 26
+ },
+ {
+  "period_start": "2026-09-07",
+  "active_users": 30,
+  "seats_used": 27
+ },
+ {
+  "period_start": "2026-09-14",
+  "active_users": 28,
+  "seats_used": 25
+ },
+ {
+  "period_start": "2026-09-21",
+  "active_users": 28,
+  "seats_used": 26
+ },
+ {
+  "period_start": "2026-09-28",
+  "active_users": 30,
+  "seats_used": 27
+ }
+]

@@ -1,0 +1,56 @@
+{
+ "case_id": "globex_expansion",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-globex_expansion",
+  "name": "Globex",
+  "domains": [
+   "globex.example.com"
+  ],
+  "arr": 120000.0,
+  "plan": "Business",
+  "seats_purchased": 100,
+  "renewal_date": "2027-02-07",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-globex_expansion-1",
+   "name": "Gina Globex",
+   "email": "gina@globex.example.com",
+   "title": "IT Admin",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-globex_expansion",
+   "name": "Globex renewal",
+   "stage_label": "Proposal",
+   "amount": 120000.0,
+   "close_date": "2027-02-07",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

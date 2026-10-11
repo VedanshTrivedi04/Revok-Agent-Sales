@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Any, Literal
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 Severity = Literal["high", "medium", "low"]
 FindingType = Literal["risk", "expansion"]
@@ -16,6 +16,39 @@ class OwnerRef(BaseModel):
     name: str
 
 
+class MlReason(BaseModel):
+    text: str  # plain sentence, e.g. "Usage fell 38% in 4 weeks"
+    direction: Literal["raises", "lowers"]
+
+
+class MlScore(BaseModel):
+    probability: float = Field(ge=0, le=1)
+    band: Literal["low", "medium", "high"]
+    reasons: list[MlReason] = []
+
+
+class MlScores(BaseModel):
+    """Statistical churn / expansion scores for an account (separate from rule findings)."""
+
+    churn: MlScore
+    expansion: MlScore
+    view: str  # one label for lists: at_risk, watch, growth_opportunity, stable, ...
+    model_version: str | None = None
+    trained_on: str | None = None
+    synthetic: bool = False  # true while the model is trained on synthetic data
+    scored_at: datetime | None = None
+
+
+def ml_scores_out(raw: Any) -> MlScores | None:
+    """Stored scores -> API model. Anything malformed is treated as "not scored"."""
+    if not isinstance(raw, dict):
+        return None
+    try:
+        return MlScores.model_validate(raw)
+    except ValueError:
+        return None
+
+
 class AccountSummary(BaseModel):
     id: UUID
     name: str
@@ -24,6 +57,7 @@ class AccountSummary(BaseModel):
     renewal_in_days: int | None = None
     owner: OwnerRef | None = None
     crm_health: str | None = None
+    ml_scores: MlScores | None = None
 
 
 class TopReason(BaseModel):
@@ -75,6 +109,7 @@ class AccountListItem(BaseModel):
     priority_score: float | None = None
     last_activity_at: datetime | None = None
     crm_url: str | None = None
+    ml_scores: MlScores | None = None
 
 
 class AccountMetrics(BaseModel):

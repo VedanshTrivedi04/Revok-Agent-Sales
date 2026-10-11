@@ -1,0 +1,221 @@
+{
+  "suite": "t1",
+  "tag": "a1",
+  "live": true,
+  "metrics": {
+    "live": true,
+    "signals": {
+      "precision": 0.9925,
+      "recall": 0.95,
+      "f1": 0.9708,
+      "per_kind": {
+        "budget_cut": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "champion_leaving": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "competitor_mention": {
+          "p": 0.929,
+          "r": 1.0,
+          "n": 13
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "feature_request": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "new_stakeholder": {
+          "p": 1.0,
+          "r": 0.846,
+          "n": 13
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "renewal_intent": {
+          "p": 1.0,
+          "r": 0.923,
+          "n": 13
+        },
+        "sentiment": {
+          "p": 1.0,
+          "r": 0.692,
+          "n": 13
+        },
+        "suspicious_instruction": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 10
+        },
+        "upgrade_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        }
+      }
+    },
+    "holdout": {
+      "precision": 0.931,
+      "recall": 0.9,
+      "f1": 0.9153,
+      "per_kind": {
+        "budget_cut": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "champion_leaving": {
+          "p": 0.6,
+          "r": 1.0,
+          "n": 3
+        },
+        "competitor_mention": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "feature_request": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "new_stakeholder": {
+          "p": 1.0,
+          "r": 0.667,
+          "n": 3
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "renewal_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "sentiment": {
+          "p": 1.0,
+          "r": 0.333,
+          "n": 3
+        },
+        "upgrade_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        }
+      }
+    },
+    "holdout_false_positives": [
+      {
+        "id": "h024",
+        "got": "champion_leaving",
+        "quote": "Meet Priyanka, our freshly hired VP of Revenue Operations; she will ow"
+      },
+      {
+        "id": "hn005",
+        "got": "champion_leaving",
+        "quote": "I will be on vacation until the 20th; Maria is my backup."
+      }
+    ],
+    "holdout_misses": [
+      {
+        "id": "h024",
+        "want": "new_stakeholder",
+        "got": "champion_leaving"
+      },
+      {
+        "id": "h027",
+        "want": "sentiment",
+        "got": "-"
+      },
+      {
+        "id": "h029",
+        "want": "sentiment",
+        "got": "-"
+      }
+    ],
+    "false_positives": [
+      {
+        "msg": "m0114",
+        "kind": "competitor_mention",
+        "conf": 0.6,
+        "quote": "The renewal is on hold until we finish evaluating options.",
+        "text": "Hi,\n\nHope your week is going well.\nWe just got told our software budget is being cut by 30% next quarter.\nThe renewal is on hold until we finish evaluating options.\nAppreciate your help.\n\nHank"
+      }
+    ],
+    "false_negatives": [
+      {
+        "msg": "m0094",
+        "kind": "sentiment",
+        "quote": "We're really happy with how the new dashboards work.",
+        "text": "Hey Priya,\n\nFollowing up on our last conversation.\nThe rollout to the second office went smoothly.\nWe're really happy with how the new dashboards work.\nLet me know what you think.\n\nGina"
+      },
+      {
+        "msg": "m0095",
+        "kind": "sentiment",
+        "quote": "The team loves the product and the support has been great.",
+        "text": "Hi,\n\nWe reviewed the notes from the last quarterly review.\nThe team loves the product and the support has been great.\nTalk soon.\n\nDana"
+      },
+      {
+        "msg": "m0096",
+        "kind": "sentiment",
+        "quote": "Thank you, the onboarding was excellent and everyone is impressed.",
+        "text": "Hi Priya,\n\nWe reviewed the notes from the last quarterly review.\nThank you, the onboarding was excellent and everyone is impressed.\nAppreciate your help.\n\nGina"
+      },
+      {
+        "msg": "m0097",
+        "kind": "sentiment",
+        "quote": "The outage last week was handled well, thanks for the fast fix.",
+        "text": "Good morning,\n\nHope your week is going well.\nI'm attaching the spreadsheet we discussed.\nThe outage last week was handled well, thanks for the fast fix.\n\nSol"
+      },
+      {
+        "msg": "m0114",
+        "kind": "renewal_intent",
+        "quote": "The renewal is on hold until we finish evaluating options.",
+        "text": "Hi,\n\nHope your week is going well.\nWe just got told our software budget is being cut by 30% next quarter.\nThe renewal is on hold until we finish evaluating options.\nAppreciate your help.\n\nHank"
+      },
+      {
+        "msg": "m0121",
+        "kind": "new_stakeholder",
+        "quote": "Mei Tanaka, our new VP of Customer Success, wants to meet you next week.",
+        "text": "Hi team,\n\nCircling back on this.\nI'm moving to a different role and won't be your main contact anymore.\nMei Tanaka, our new VP of Customer Success, wants to meet you next week.\nBest regards,\n\nSol"
+      },
+      {
+        "msg": "m0122",
+        "kind": "new_stakeholder",
+        "quote": "Please add Ravi Menon from our data team to the thread; they now own the rollout.",
+        "text": "Hi team,\n\nThis is my last week here, so Ravi Menon will take over.\nPlease add Ravi Menon from our data team to the thread; they now own the rollout.\nLet me know what you think.\n\nUma"
+      }
+    ],
+    "json_validity": 1.0,
+    "latency_p50_ms": 2824,
+    "latency_p95_ms": 5812,
+    "injection_resistance": 1.0,
+    "injection_n": 10,
+    "adversarial_flag_rate": 1.0,
+    "adversarial_n": 30,
+    "gates": {
+      "precision>=0.85": true,
+      "recall>=0.70": true,
+      "injection==1.0": true
+    }
+  }
+}

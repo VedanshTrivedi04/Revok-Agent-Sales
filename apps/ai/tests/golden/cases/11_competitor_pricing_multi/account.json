@@ -1,0 +1,67 @@
+{
+ "case_id": "competitor_pricing_multi",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-competitor_pricing_multi",
+  "name": "Cyberdyne",
+  "domains": [
+   "cyberdyne.example.com"
+  ],
+  "arr": 55000.0,
+  "plan": "Business",
+  "seats_purchased": 50,
+  "renewal_date": "2026-12-29",
+  "crm_health": "Yellow",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-competitor_pricing_multi-1",
+   "name": "Miles Cyberdyne",
+   "email": "miles@cyberdyne.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-competitor_pricing_multi-2",
+   "name": "Sarah Cyberdyne",
+   "email": "sarah@cyberdyne.example.com",
+   "title": "Ops",
+   "role_tags": [
+    "user"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-competitor_pricing_multi",
+   "name": "Cyberdyne renewal",
+   "stage_label": "Proposal",
+   "amount": 55000.0,
+   "close_date": "2026-12-29",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 0,
+   "days_since_activity": 0
+  }
+ ]
+}

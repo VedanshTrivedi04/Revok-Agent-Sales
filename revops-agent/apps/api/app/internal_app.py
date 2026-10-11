@@ -52,20 +52,24 @@ def create_internal_app() -> FastAPI:
     @app.get(
         f"{o}/accounts/{{account_id}}/context", operation_id="ai_get_context", tags=["AI Internal"]
     )
-    async def get_context(org: UUID, account_id: UUID) -> ContextOut:
-        """Everything needed for a run, including the backend-numbered evidence list."""
+    async def get_context(
+        org: UUID, account_id: UUID, finding_id: UUID | None = None
+    ) -> ContextOut:
+        """Everything needed for a run on one finding, including its numbered evidence list."""
         async with org_session(org) as s:
-            return await internal_ai.get_account_context(s, org, account_id)
+            return await internal_ai.get_account_context(s, org, account_id, finding_id)
 
     @app.get(
         f"{o}/events/pending-extraction", operation_id="ai_pending_events", tags=["AI Internal"]
     )
     async def pending_events(
-        org: UUID, limit: Annotated[int, Query(ge=1, le=100)] = 25
+        org: UUID,
+        limit: Annotated[int, Query(ge=1, le=100)] = 25,
+        account_id: UUID | None = None,
     ) -> PendingExtractionOut:
-        """Events whose signals_extracted_at is null."""
+        """Text events matched to an account whose signals_extracted_at is null."""
         async with org_session(org) as s:
-            return await internal_ai.get_pending_extraction_events(s, org, limit)
+            return await internal_ai.get_pending_extraction_events(s, org, limit, account_id)
 
     @app.post(
         f"{o}/events/{{event_id}}/signals", operation_id="ai_save_signals", tags=["AI Internal"]

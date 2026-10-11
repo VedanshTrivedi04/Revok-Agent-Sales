@@ -25,6 +25,19 @@ services:
   mailpit:
     image: axllent/mailpit:v1.20
     ports: ["1025:1025", "8025:8025"]
-  # langfuse: placeholder, enabled in the AI phase (see infra/README)
+  # AI service (apps/ai). Off by default: `docker compose --profile ai up -d --build ai`
+  # Then run the API and the Celery worker with AI_MODE=external AI_SERVICE_URL=http://localhost:8100
+  ai:
+    profiles: ["ai"]
+    build: ../../apps/ai
+    environment:
+      LLM_BASE_URL: ${LLM_BASE_URL:?set LLM_BASE_URL (OpenAI-compatible endpoint serving the model)}
+      LLM_API_KEY: ${LLM_API_KEY:-dev-llm-key}
+      LLM_MODEL: ${LLM_MODEL:-Qwen/Qwen3.5-9B}
+      LLM_STRUCTURED_MODE: ${LLM_STRUCTURED_MODE:-response_format}
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://host.docker.internal:8000/internal}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    ports: ["8100:8100"]
 volumes:
   pgdata:

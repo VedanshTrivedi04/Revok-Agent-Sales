@@ -1,0 +1,67 @@
+{
+ "case_id": "acme_high_risk",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-acme_high_risk",
+  "name": "Acme Corp",
+  "domains": [
+   "acme.example.com"
+  ],
+  "arr": 84000.0,
+  "plan": "Business",
+  "seats_purchased": 100,
+  "renewal_date": "2026-11-22",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-acme_high_risk-1",
+   "name": "Dana Acme",
+   "email": "dana@acme.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-acme_high_risk-2",
+   "name": "Pat Acme",
+   "email": "pat@acme.example.com",
+   "title": "VP",
+   "role_tags": [
+    "economic_buyer"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-acme_high_risk",
+   "name": "Acme Corp renewal",
+   "stage_label": "Negotiation",
+   "amount": 84000.0,
+   "close_date": "2026-11-22",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 40,
+   "days_since_activity": 3
+  }
+ ]
+}

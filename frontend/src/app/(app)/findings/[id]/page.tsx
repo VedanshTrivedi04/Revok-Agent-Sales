@@ -214,9 +214,19 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           {finding.summary && (
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
-              {finding.summary}
-            </p>
+            <div className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg space-y-2">
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{finding.summary}</p>
+              {finding.model && (
+                <p className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
+                  <Bot className="w-3 h-3 shrink-0" />
+                  <span>
+                    {finding.model === "template"
+                      ? "Rule-based summary. Every statement comes from the evidence below."
+                      : "Written by AI. Every statement was checked against the evidence below."}
+                  </span>
+                </p>
+              )}
+            </div>
           )}
 
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">

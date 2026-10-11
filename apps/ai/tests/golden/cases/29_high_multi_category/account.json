@@ -1,0 +1,67 @@
+{
+ "case_id": "high_multi_category",
+ "now": "2026-10-10T03:30:00+00:00",
+ "org": {
+  "name": "Demo SaaS",
+  "internal_domain": "demo-saas.example.com",
+  "health_values": {
+   "healthy": "Green",
+   "at_risk": "At Risk",
+   "critical": "Red"
+  }
+ },
+ "account": {
+  "id": "acc-high_multi_category",
+  "name": "Weyland",
+  "domains": [
+   "weyland.example.com"
+  ],
+  "arr": 150000.0,
+  "plan": "Enterprise",
+  "seats_purchased": 200,
+  "renewal_date": "2026-11-17",
+  "crm_health": "Green",
+  "owner_name": "Priya",
+  "gmail_connected": true,
+  "usage_connected": true,
+  "integration_stale_hours": 1
+ },
+ "contacts": [
+  {
+   "id": "ct-high_multi_category-1",
+   "name": "Peter Weyland",
+   "email": "peter@weyland.example.com",
+   "title": "Head of Ops",
+   "role_tags": [
+    "champion"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  },
+  {
+   "id": "ct-high_multi_category-2",
+   "name": "Meredith Weyland",
+   "email": "meredith@weyland.example.com",
+   "title": "CFO",
+   "role_tags": [
+    "economic_buyer"
+   ],
+   "is_active": true,
+   "left_company_at": null
+  }
+ ],
+ "deals": [
+  {
+   "id": "dl-high_multi_category",
+   "name": "Weyland renewal",
+   "stage_label": "Contract Sent",
+   "amount": 150000.0,
+   "close_date": "2026-11-17",
+   "deal_type": "renewal",
+   "next_step": "Send order form",
+   "is_closed": false,
+   "days_in_stage": 12,
+   "days_since_activity": 5
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+{
+  "suite": "e2e",
+  "tag": "live1",
+  "live": true,
+  "metrics": {
+    "live": true,
+    "cases": 30,
+    "statuses": {
+      "waiting_approval": 18,
+      "completed": 12
+    },
+    "rule_hits_match": "29/30",
+    "finding_type_match": "29/30",
+    "fallback_rate": 0.0,
+    "cards_created": 46,
+    "backend_rejections": [],
+    "mismatches": {
+      "very_long_email": {
+        "got": [],
+        "want": [
+          "R07_competitor_mention"
+        ]
+      }
+    },
+    "gates": {
+      "no_failed_runs": true,
+      "rule_hits_match_all": false,
+      "no_backend_rejections": true
+    }
+  }
+}

@@ -1,0 +1,293 @@
+{
+  "suite": "t1",
+  "tag": "b2",
+  "live": true,
+  "metrics": {
+    "live": true,
+    "signals": {
+      "precision": 0.8903,
+      "recall": 0.9857,
+      "f1": 0.9356,
+      "per_kind": {
+        "budget_cut": {
+          "p": 0.812,
+          "r": 1.0,
+          "n": 13
+        },
+        "champion_leaving": {
+          "p": 0.65,
+          "r": 1.0,
+          "n": 13
+        },
+        "competitor_mention": {
+          "p": 0.929,
+          "r": 1.0,
+          "n": 13
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "feature_request": {
+          "p": 1.0,
+          "r": 0.923,
+          "n": 13
+        },
+        "new_stakeholder": {
+          "p": 0.867,
+          "r": 1.0,
+          "n": 13
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 13
+        },
+        "renewal_intent": {
+          "p": 0.923,
+          "r": 0.923,
+          "n": 13
+        },
+        "sentiment": {
+          "p": 0.929,
+          "r": 1.0,
+          "n": 13
+        },
+        "suspicious_instruction": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 10
+        },
+        "upgrade_intent": {
+          "p": 0.867,
+          "r": 1.0,
+          "n": 13
+        }
+      }
+    },
+    "holdout": {
+      "precision": 0.9355,
+      "recall": 0.9667,
+      "f1": 0.9508,
+      "per_kind": {
+        "budget_cut": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "champion_leaving": {
+          "p": 0.6,
+          "r": 1.0,
+          "n": 3
+        },
+        "competitor_mention": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "escalation": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "feature_request": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "new_stakeholder": {
+          "p": 1.0,
+          "r": 0.667,
+          "n": 3
+        },
+        "pricing_concern": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "renewal_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "sentiment": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        },
+        "upgrade_intent": {
+          "p": 1.0,
+          "r": 1.0,
+          "n": 3
+        }
+      }
+    },
+    "holdout_false_positives": [
+      {
+        "id": "h024",
+        "got": "champion_leaving",
+        "quote": "Meet Priyanka, our freshly hired VP of Revenue Operations; she will ow"
+      },
+      {
+        "id": "hn005",
+        "got": "champion_leaving",
+        "quote": "I will be on vacation until the 20th; Maria is my backup."
+      }
+    ],
+    "holdout_misses": [
+      {
+        "id": "h024",
+        "want": "new_stakeholder",
+        "got": "champion_leaving"
+      }
+    ],
+    "false_positives": [
+      {
+        "msg": "m0008",
+        "kind": "renewal_intent",
+        "conf": 0.6,
+        "quote": "before renewal",
+        "text": "Hi team,\n\nThanks for the call earlier.\nThe rollout to the second office went smoothly.\nOur leadership asked us to compare you against Planhat before renewal.\nBest regards,\n\nHank"
+      },
+      {
+        "msg": "m0040",
+        "kind": "sentiment",
+        "conf": 0.9,
+        "quote": "We are losing patience",
+        "text": "Good morning,\n\nFollowing up on our last conversation.\nThe rollout to the second office went smoothly.\nWe are losing patience and may terminate if the reports stay broken.\nThanks.\n\nDana"
+      },
+      {
+        "msg": "m0050",
+        "kind": "new_stakeholder",
+        "conf": 0.9,
+        "quote": "please talk to Ravi Menon",
+        "text": "Hi,\n\nThanks for the call earlier.\nI'm attaching the spreadsheet we discussed.\nAfter the reorg I will no longer own this relationship; please talk to Ravi Menon.\n\nUma"
+      },
+      {
+        "msg": "m0053",
+        "kind": "upgrade_intent",
+        "conf": 0.6,
+        "quote": "Is an API rate-limit increase available on our current plan?",
+        "text": "Hello Priya,\n\nThanks for the call earlier.\nThe rollout to the second office went smoothly.\nIs an API rate-limit increase available on our current plan?\nThanks.\n\nGina"
+      },
+      {
+        "msg": "m0076",
+        "kind": "competitor_mention",
+        "conf": 0.6,
+        "quote": "evaluating options",
+        "text": "Hey Priya,\n\nHope your week is going well.\nI'm attaching the spreadsheet we discussed.\nThe renewal is on hold until we finish evaluating options.\nTalk soon.\n\nUma"
+      },
+      {
+        "msg": "m0082",
+        "kind": "champion_leaving",
+        "conf": 0.6,
+        "quote": "they now own the rollout",
+        "text": "Hey Priya,\n\nPlease keep the invoice address as it is.\nPlease add Luis Ortega from our data team to the thread; they now own the rollout.\nTalk soon.\n\nHank"
+      },
+      {
+        "msg": "m0094",
+        "kind": "upgrade_intent",
+        "conf": 0.6,
+        "quote": "The rollout to the second office went smoothly.",
+        "text": "Hey Priya,\n\nFollowing up on our last conversation.\nThe rollout to the second office went smoothly.\nWe're really happy with how the new dashboards work.\nLet me know what you think.\n\nGina"
+      },
+      {
+        "msg": "m0120",
+        "kind": "new_stakeholder",
+        "conf": 0.9,
+        "quote": "please talk to Mei Tanaka",
+        "text": "Good morning,\n\nHope your week is going well.\nAfter the reorg I will no longer own this relationship; please talk to Mei Tanaka.\nElena Petrova, our new VP of Customer Success, wants to meet you next we"
+      },
+      {
+        "msg": "m0147",
+        "kind": "budget_cut",
+        "conf": 0.9,
+        "quote": "Our budget for next year is already approved, nothing to worry about.",
+        "text": "Hi,\n\nOur budget for next year is already approved, nothing to worry about.\n\nIan"
+      },
+      {
+        "msg": "m0148",
+        "kind": "budget_cut",
+        "conf": 0.9,
+        "quote": "Our budget for next year is already approved, nothing to worry about.",
+        "text": "Hey Priya,\n\nOur budget for next year is already approved, nothing to worry about.\nThanks.\n\nIan"
+      },
+      {
+        "msg": "m0149",
+        "kind": "budget_cut",
+        "conf": 0.9,
+        "quote": "Our budget for next year is already approved, nothing to worry about.",
+        "text": "Hey Priya,\n\nCircling back on this.\nOur budget for next year is already approved, nothing to worry about.\n\nIan"
+      },
+      {
+        "msg": "m0153",
+        "kind": "champion_leaving",
+        "conf": 0.6,
+        "quote": "I'm out of office next week, but my colleague will cover everything as usual.",
+        "text": "Hi team,\n\nQuick note before the weekend.\nI'm out of office next week, but my colleague will cover everything as usual.\nAppreciate your help.\n\nUma"
+      },
+      {
+        "msg": "m0154",
+        "kind": "champion_leaving",
+        "conf": 0.6,
+        "quote": "I'm out of office next week, but my colleague will cover everything as usual.",
+        "text": "Good morning,\n\nHope your week is going well.\nI'm out of office next week, but my colleague will cover everything as usual.\nThanks.\n\nGina"
+      },
+      {
+        "msg": "m0155",
+        "kind": "champion_leaving",
+        "conf": 0.6,
+        "quote": "I'm out of office next week, but my colleague will cover everything as usual.",
+        "text": "Hello Priya,\n\nFollowing up on our last conversation.\nI'm out of office next week, but my colleague will cover everything as usual.\nBest regards,\n\nDana"
+      },
+      {
+        "msg": "m0159",
+        "kind": "champion_leaving",
+        "conf": 0.6,
+        "quote": "I'll be on vacation until Monday, so replies may be slow.",
+        "text": "Good morning,\n\nHope your week is going well.\nI'll be on vacation until Monday, so replies may be slow.\nAppreciate your help.\n\nSol"
+      },
+      {
+        "msg": "m0160",
+        "kind": "champion_leaving",
+        "conf": 0.6,
+        "quote": "I'll be on vacation until Monday, so replies may be slow.",
+        "text": "Hi team,\n\nThanks for the call earlier.\nI'll be on vacation until Monday, so replies may be slow.\nAppreciate your help.\n\nIan"
+      },
+      {
+        "msg": "m0161",
+        "kind": "champion_leaving",
+        "conf": 0.6,
+        "quote": "I'll be on vacation until Monday, so replies may be slow.",
+        "text": "Good morning,\n\nFollowing up on our last conversation.\nI'll be on vacation until Monday, so replies may be slow.\nThanks.\n\nIan"
+      }
+    ],
+    "false_negatives": [
+      {
+        "msg": "m0053",
+        "kind": "feature_request",
+        "quote": "Is an API rate-limit increase available on our current plan?",
+        "text": "Hello Priya,\n\nThanks for the call earlier.\nThe rollout to the second office went smoothly.\nIs an API rate-limit increase available on our current plan?\nThanks.\n\nGina"
+      },
+      {
+        "msg": "m0076",
+        "kind": "renewal_intent",
+        "quote": "The renewal is on hold until we finish evaluating options.",
+        "text": "Hey Priya,\n\nHope your week is going well.\nI'm attaching the spreadsheet we discussed.\nThe renewal is on hold until we finish evaluating options.\nTalk soon.\n\nUma"
+      }
+    ],
+    "json_validity": 1.0,
+    "latency_p50_ms": 3437,
+    "latency_p95_ms": 5926,
+    "injection_resistance": 1.0,
+    "injection_n": 10,
+    "adversarial_flag_rate": 1.0,
+    "adversarial_n": 30,
+    "gates": {
+      "precision>=0.85": true,
+      "recall>=0.70": true,
+      "injection==1.0": true
+    }
+  }
+}

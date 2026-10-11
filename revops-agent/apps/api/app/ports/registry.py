@@ -1,12 +1,11 @@
-"""Resolve port implementations from AI_MODE (and test overrides). Services call these getters."""
+"""Resolve port implementations (and test overrides). Services call these getters.
 
-from app.config import get_settings
+Both AI modes use the deterministic implementations in-process. With AI_MODE=external the AI
+service (apps/ai) upgrades their output asynchronously through /internal/v1, so a finding always
+has a valid explanation and cards even when the model is slow, wrong or down.
+"""
+
 from app.ports import ActionPlanner, Explainer, SignalExtractor
-from app.ports.external import (
-    ExternalActionPlanner,
-    ExternalExplainer,
-    ExternalSignalExtractor,
-)
 from app.ports.template import (
     NullSignalExtractor,
     TemplateActionPlanner,
@@ -28,22 +27,20 @@ def clear_overrides() -> None:
 def get_signal_extractor() -> SignalExtractor:
     if "signal_extractor" in _overrides:
         return _overrides["signal_extractor"]  # type: ignore[return-value]
-    if get_settings().ai_mode == "external":
-        return ExternalSignalExtractor()
+    # AI_MODE=external: signals are written by the AI service through /internal/v1
     return NullSignalExtractor()
 
 
 def get_explainer() -> Explainer:
     if "explainer" in _overrides:
         return _overrides["explainer"]  # type: ignore[return-value]
-    if get_settings().ai_mode == "external":
-        return ExternalExplainer()
+    # AI_MODE=external: the template explanation is the baseline every finding starts with; the AI
+    # service replaces it through /internal/v1 once its own validators and ours accept the result
     return TemplateExplainer()
 
 
 def get_action_planner() -> ActionPlanner:
     if "action_planner" in _overrides:
         return _overrides["action_planner"]  # type: ignore[return-value]
-    if get_settings().ai_mode == "external":
-        return ExternalActionPlanner()
+    # AI_MODE=external: template cards are the baseline; pending ones are redrafted by the AI
     return TemplateActionPlanner()
