@@ -49,14 +49,14 @@ export default function AccountsPage() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
               Accounts Directory
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Monitored customer accounts, contract values, usage trends, and active risk findings.
             </p>
           </div>
-          <div role="group" aria-label="View" className="inline-flex rounded-xl border border-slate-200/90 bg-white p-1 shadow-2xs text-xs font-semibold self-start">
+          <div role="group" aria-label="View" className="inline-flex rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#0D1522] p-1 shadow-2xs text-xs font-semibold self-start">
             {([["map", "Map", LayoutGrid], ["list", "List", List]] as const).map(([key, label, Icon]) => (
               <button
                 key={key}
@@ -64,7 +64,7 @@ export default function AccountsPage() {
                 onClick={() => setView(key)}
                 aria-pressed={view === key}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  view === key ? "bg-[#143C2E] text-white shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                  view === key ? "bg-[#143C2E] dark:bg-emerald-600 text-white shadow-2xs font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" aria-hidden="true" />

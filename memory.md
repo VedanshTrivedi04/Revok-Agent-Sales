@@ -572,3 +572,85 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
   - Control Portal: `/control/data`, `/control/workspace`, `/control/members`
   - Platform Admin Portal: `/admin/orgs`, `/admin/flags`, `/admin/jobs`, `/admin/analytics`
 - TypeScript compilation passes with 0 errors (`npx tsc --noEmit`).
+
+### 2026-10-12 04:25
+
+**User Request**
+> make it better in better some things are dark and some things are light like background
+
+**Exploration**
+- Inspected user screenshot of `http://localhost:3000/inbox`.
+- Discovered severe theme dissonance:
+  - Sidebar was obsidian black (`#080C11`), Action Cards were dark slate (`dark:bg-slate-900`), and buttons were dark navy.
+  - The main canvas in `(app)/layout.tsx` and header `topbar.tsx` were hardcoded to `#FAF9F5` (white/cream).
+  - Because the user's OS had system dark mode enabled (`prefers-color-scheme: dark`), Tailwind v4 evaluated `dark:text-slate-100` (`#f1f5f9`), rendering invisible white text on a white background ("Action Cards Inbox").
+  - Tailwind CSS v4 in the project lacked `@custom-variant dark (&:where(.dark, .dark *));`, meaning classes couldn't toggle via DOM class `.dark`.
+
+**Work Done**
+- Built robust Theme System:
+  - Created `frontend/src/lib/theme/theme-context.tsx`: Provides `ThemeProvider` and `useTheme()` hook supporting `"dark" | "light" | "system"` with `localStorage` persistence, OS media query sync, and DOM `classList` management.
+  - Created `frontend/src/components/ui/theme-toggle.tsx`: Modern 1-click theme dropdown (Light / Dark / System) with Lucide Sun/Moon icons.
+  - Mounted `ThemeProvider` in `frontend/src/components/providers.tsx`.
+  - Updated `frontend/src/app/layout.tsx`: Added anti-flicker `<head>` script and `suppressHydrationWarning` on `<html>`.
+  - Updated `frontend/src/app/globals.css`: Added `@custom-variant dark (&:where(.dark, .dark *));`, smooth theme transitions, and dark body (`#070B11`) background.
+- Harmonized Layout Shells:
+  - `frontend/src/app/(app)/layout.tsx`: Replaced hardcoded `#FAF9F5` with `bg-[#FAF9F5] dark:bg-[#070B11] text-slate-900 dark:text-slate-100` on both wrapper and main scroll container.
+  - `frontend/src/app/(control)/layout.tsx`: Added `dark:bg-[#070B11] dark:text-slate-100`.
+  - `frontend/src/app/(admin)/layout.tsx`: Added `dark:bg-[#070B11] dark:text-slate-100`.
+  - `frontend/src/components/layout/topbar.tsx`: Added dark glassmorphic styling (`dark:bg-[#080C11]/90 dark:border-slate-800/80`), dark org switcher, dark search bar, dark user menu, and mounted `<ThemeToggle />`.
+  - `frontend/src/components/layout/sidebar.tsx`: Changed `<aside>` from `min-h-screen` to `h-full` to eliminate viewport overflow and clipping, and polished user status card.
+- Polished Pages & Components:
+  - `frontend/src/app/(app)/inbox/page.tsx`: Fixed header contrast (`dark:text-white`), emerald active tab underline (`dark:border-emerald-400 dark:text-emerald-400`), dark scope switcher pill, elevated cards (`dark:bg-[#0D1522] dark:border-slate-800/80`), vivid emerald Approve buttons (`dark:bg-emerald-600`), and dark rationale cards (`dark:bg-[#080D18]`).
+  - `frontend/src/app/(app)/today/page.tsx`: Fixed header title, subtitle, owner scope selector, priority item cards (`dark:bg-[#0D1522]`), Snooze/Dismiss/Review buttons.
+  - `frontend/src/app/(app)/accounts/page.tsx`: Fixed header contrast and Map/List view switcher.
+  - `frontend/src/components/ui/filter-bar.tsx`: Added dark container (`dark:bg-[#0D1522]`), dark input, and dark filter pills.
+  - `frontend/src/components/ui/evidence-chip.tsx`: Added dark surfaces to chip button and detail popup modal.
+- Verified live across all app routes (`/inbox`, `/today`, `/accounts`, `/team`, `/review`, `/log`, `/outcomes`) via Chrome DevTools MCP.
+
+**Files Changed**
+- `frontend/src/lib/theme/theme-context.tsx`
+  - Created theme provider with system/dark/light modes and localStorage persistence.
+- `frontend/src/components/ui/theme-toggle.tsx`
+  - Created theme toggle dropdown component.
+- `frontend/src/components/providers.tsx`
+  - Mounted ThemeProvider at application root.
+- `frontend/src/app/layout.tsx`
+  - Added anti-flicker script in `<head>` and `suppressHydrationWarning`.
+- `frontend/src/app/globals.css`
+  - Configured Tailwind v4 `@custom-variant dark` and dark root styling.
+- `frontend/src/app/(app)/layout.tsx`
+  - Added dark background and text tokens to main layout canvas.
+- `frontend/src/app/(control)/layout.tsx`
+  - Added dark background and text tokens.
+- `frontend/src/app/(admin)/layout.tsx`
+  - Added dark background and text tokens.
+- `frontend/src/components/layout/topbar.tsx`
+  - Converted topbar to dark glassmorphism and integrated ThemeToggle.
+- `frontend/src/components/layout/sidebar.tsx`
+  - Fixed sidebar height to h-full and refined footer status widget.
+- `frontend/src/app/(app)/inbox/page.tsx`
+  - Fixed header readability, tabs, elevated dark action cards, and approve buttons.
+- `frontend/src/app/(app)/today/page.tsx`
+  - Harmonized typography, filter scope, and elevated priority cards.
+- `frontend/src/app/(app)/accounts/page.tsx`
+  - Harmonized header and view toggle.
+- `frontend/src/components/ui/filter-bar.tsx`
+  - Added dark surfaces for search and filter buttons.
+- `frontend/src/components/ui/evidence-chip.tsx`
+  - Added dark styling for evidence citations and popup modal.
+- `memory.md`
+  - Documented theme harmonization work, verification, and git synchronization.
+
+**Verification**
+- Visual and functional inspection via Chrome DevTools MCP:
+  - Verified `http://localhost:3000/inbox` with high-contrast text and cohesive dark canvas.
+  - Verified `http://localhost:3000/today`, `/accounts`, `/team`, `/review`, `/log`, and `/outcomes`.
+  - Tested 1-click theme switching between Dark, Light, and System modes.
+  - Zero hydration errors, zero console errors.
+
+**Git**
+- Branch: main
+- Commit: pending
+- Push: pending
+- Status: staged and ready
+

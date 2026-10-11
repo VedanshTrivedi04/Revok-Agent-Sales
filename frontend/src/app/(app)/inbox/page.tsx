@@ -195,7 +195,7 @@ export default function InboxPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
               Action Cards Inbox
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -233,8 +233,8 @@ export default function InboxPage() {
                 }}
                 className={`pb-2 px-3 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap ${
                   statusTab === t.key
-                    ? "border-[#143C2E] text-[#143C2E] dark:text-emerald-400 font-bold"
-                    : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    ? "border-[#143C2E] text-[#143C2E] dark:border-emerald-400 dark:text-emerald-400 font-bold"
+                    : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
               >
                 {t.label}
@@ -244,7 +244,7 @@ export default function InboxPage() {
 
           {/* Scope Switcher (Manager+ Team Lead Tabs) */}
           {isManagerOrAdmin && (
-            <div className="inline-flex items-center p-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs">
+            <div className="inline-flex items-center p-0.5 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-xs">
               <button
                 type="button"
                 onClick={() => {
@@ -253,8 +253,8 @@ export default function InboxPage() {
                 }}
                 className={`px-3 py-1 rounded-md font-semibold transition-colors ${
                   scope === "all"
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-xs"
-                    : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
               >
                 All Pending (Team)
@@ -267,8 +267,8 @@ export default function InboxPage() {
                 }}
                 className={`px-3 py-1 rounded-md font-semibold transition-colors ${
                   scope === "me"
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-xs"
-                    : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
               >
                 Waiting For Me
@@ -367,10 +367,10 @@ export default function InboxPage() {
               return (
                 <div
                   key={card.id}
-                  className={`rounded-xl border bg-white dark:bg-slate-900 p-5 shadow-xs space-y-3 transition-colors ${
+                  className={`rounded-2xl border p-5 shadow-xs space-y-3.5 transition-all ${
                     isSelected
                       ? "border-[#143C2E] dark:border-emerald-500/80 bg-emerald-50/20 dark:bg-emerald-950/20 ring-1 ring-[#143C2E]/20"
-                      : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
+                      : "border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0D1522] hover:border-slate-300 dark:hover:border-slate-700/80"
                   }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -379,12 +379,12 @@ export default function InboxPage() {
                         <button
                           type="button"
                           onClick={() => handleToggleSelect(card.id)}
-                          className="mt-1 text-slate-400 hover:text-[#143C2E]"
+                          className="mt-1 text-slate-400 hover:text-[#143C2E] dark:hover:text-emerald-400"
                         >
                           {isSelected ? (
                             <CheckSquare className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                           ) : (
-                            <Square className="w-4 h-4 text-slate-400" />
+                            <Square className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                           )}
                         </button>
                       )}
@@ -393,7 +393,7 @@ export default function InboxPage() {
                         <div className="flex flex-wrap items-center gap-2">
                           <Link
                             href={`/inbox/${card.id}`}
-                            className="font-bold text-sm text-slate-900 dark:text-slate-100 hover:text-[#143C2E] dark:hover:text-emerald-400 inline-flex items-center gap-1"
+                            className="font-bold text-sm text-slate-900 dark:text-white hover:text-[#143C2E] dark:hover:text-emerald-400 inline-flex items-center gap-1"
                           >
                             <span>{card.title}</span>
                             <ArrowRight className="w-3.5 h-3.5 opacity-60" />
@@ -406,7 +406,7 @@ export default function InboxPage() {
                             </span>
                           )}
                           {card.type === "email_draft" && (
-                            <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono">
+                            <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono font-medium">
                               Draft created in Gmail
                             </span>
                           )}
@@ -415,7 +415,7 @@ export default function InboxPage() {
                           Target Account:{" "}
                           <Link
                             href={`/accounts/${card.account_id}`}
-                            className="font-semibold text-slate-700 dark:text-slate-300 hover:underline"
+                            className="font-semibold text-slate-700 dark:text-slate-300 hover:underline dark:hover:text-white"
                           >
                             {card.account_name}
                           </Link>
@@ -443,7 +443,7 @@ export default function InboxPage() {
                                 type="button"
                                 onClick={() => approveMutation.mutate(card.id)}
                                 disabled={approveMutation.isPending}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] active:bg-[#0A2018] text-white transition-colors shadow-xs"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] dark:bg-emerald-600 dark:hover:bg-emerald-500 active:bg-[#0A2018] text-white transition-colors shadow-xs"
                               >
                                 <Check className="w-3.5 h-3.5" />
                                 <span>Approve</span>
@@ -474,10 +474,11 @@ export default function InboxPage() {
                                 .then(() => {
                                   toast.success("Retry initiated");
                                   queryClient.invalidateQueries({ queryKey: ["cards"] });
+                                  return;
                                 })
                                 .catch((e) => handleApiErrorToast(e));
                             }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] text-white transition-colors shadow-xs"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white transition-colors shadow-xs"
                           >
                             <span>Retry</span>
                           </button>
@@ -501,7 +502,7 @@ export default function InboxPage() {
                   </div>
 
                   {card.rationale && (
-                    <p className="text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#070D18] border border-slate-100 dark:border-slate-800/60 p-2.5 rounded-xl">
                       {card.rationale}
                     </p>
                   )}

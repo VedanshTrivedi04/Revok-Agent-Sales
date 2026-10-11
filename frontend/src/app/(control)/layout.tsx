@@ -21,14 +21,14 @@ export default function ControlLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#FAF9F5] text-slate-900 selection:bg-emerald-600 selection:text-white">
+    <div className="flex h-screen overflow-hidden bg-[#FAF9F5] dark:bg-[#070B11] text-slate-900 dark:text-slate-100 selection:bg-emerald-600 selection:text-white transition-colors duration-150">
       <ControlSidebar />
 
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Topbar />
         <IntegrationBanner />
 
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[#FAF9F5] dark:bg-[#070B11] transition-colors duration-150">
           <div className="max-w-7xl mx-auto space-y-6">
             <PermissionGuard action="view:control">
               <AnalyticsFilterProvider>{children}</AnalyticsFilterProvider>

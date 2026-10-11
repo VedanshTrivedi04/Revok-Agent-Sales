@@ -76,11 +76,11 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
 
   return (
     <aside
-      className="w-64 flex-shrink-0 flex flex-col border-r border-slate-800/80 bg-[#080C11] text-slate-100 min-h-screen select-none"
+      className="w-64 flex-shrink-0 flex flex-col border-r border-slate-800/80 bg-[#080C11] text-slate-100 h-full select-none"
       aria-label="Main Navigation"
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 bg-[#080C11]">
+      <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 bg-[#080C11] flex-shrink-0">
         <Link href={home} className="flex items-center gap-2.5 font-bold tracking-tight text-white group">
           <img
             src="/secondary logo.png"
@@ -102,7 +102,7 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
 
       {/* Portal switcher: only for people who may enter both portals */}
       {portals.length > 1 && (
-        <div className="px-3 pt-3">
+        <div className="px-3 pt-3 flex-shrink-0">
           <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-900/90 border border-slate-800/80 p-1" role="group" aria-label="Portal">
             {portals.map((p) => (
               <Link
@@ -175,18 +175,24 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
       </nav>
 
       {/* User Status / Footer */}
-      <div className="p-3 border-t border-slate-800/80 bg-[#06090D]">
+      <div className="p-3 border-t border-slate-800/80 bg-[#06090D] flex-shrink-0">
         <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-900/90 border border-slate-800/80 text-xs">
-          <ShieldAlert className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-          <div className="overflow-hidden">
-            <div className="text-[11px] font-medium text-slate-200 truncate">
+          <div className="w-6 h-6 rounded-full bg-emerald-950/80 border border-emerald-600/40 text-emerald-300 flex items-center justify-center font-bold text-[10px] flex-shrink-0">
+            {me?.user?.name
+              ? me.user.name.charAt(0).toUpperCase()
+              : me?.user?.email
+              ? me.user.email.charAt(0).toUpperCase()
+              : "U"}
+          </div>
+          <div className="overflow-hidden flex-1 min-w-0">
+            <div className="text-[11px] font-semibold text-slate-200 truncate">
               {isLoading ? (
                 <span className="inline-block w-20 h-3 bg-slate-800 animate-pulse rounded" />
               ) : (
                 me?.user?.name || me?.user?.email || "Signed in"
               )}
             </div>
-            <div className="text-[10px] text-slate-400 truncate capitalize font-mono">
+            <div className="text-[10px] text-emerald-400 truncate capitalize font-mono font-medium">
               Role: {me?.role || activeRole || "—"}
             </div>
           </div>

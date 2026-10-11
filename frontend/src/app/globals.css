@@ -2,6 +2,8 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   color-scheme: light;
   --font-handwriting: var(--font-caveat), 'Caveat', cursive, sans-serif;
@@ -21,6 +23,13 @@ body {
   color: #111827;
   font-family: var(--font-display);
   min-height: 100vh;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dark body,
+html.dark body {
+  background-color: #070b11;
+  color: #f8fafc;
 }
 
 /* Elegant scrollbar styling */
@@ -33,13 +42,25 @@ body {
   background: #f1f0eb;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #0b111a;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 9999px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #143c2e;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
 }
 
 /* Handwritten script annotation font */

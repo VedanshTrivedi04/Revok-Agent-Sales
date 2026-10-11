@@ -18,6 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "../../lib/api/client";
 import { handleApiErrorToast } from "../../lib/api/error";
 import { NotificationsDropdown } from "./notifications-dropdown";
+import { ThemeToggle } from "../ui/theme-toggle";
 
 export function Topbar() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export function Topbar() {
   };
 
   return (
-    <header className="h-16 border-b border-slate-200/80 bg-[#FAF9F5]/90 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+    <header className="h-16 border-b border-slate-200/80 dark:border-slate-800/80 bg-[#FAF9F5]/90 dark:bg-[#080C11]/90 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs transition-colors">
       {/* Left: Org Switcher & Search */}
       <div className="flex items-center gap-4">
         {/* Org Switcher */}
@@ -47,14 +48,14 @@ export function Topbar() {
           <button
             type="button"
             onClick={() => setIsOrgMenuOpen(!isOrgMenuOpen)}
-            className="flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 transition-colors text-xs font-semibold text-slate-800 shadow-2xs"
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#0D1522] hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs"
             aria-expanded={isOrgMenuOpen}
           >
-            <div className="w-5 h-5 rounded-full bg-emerald-100 text-[#143C2E] flex items-center justify-center font-bold text-[10px]">
+            <div className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#143C2E] dark:text-emerald-400 flex items-center justify-center font-bold text-[10px]">
               <Building className="w-3 h-3" />
             </div>
             <span>{me?.org?.name || (isLoading ? "Loading..." : "Workspace")}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
           </button>
 
           {isOrgMenuOpen && (
@@ -64,8 +65,8 @@ export function Topbar() {
                 onClick={() => setIsOrgMenuOpen(false)}
                 aria-hidden="true"
               />
-              <div className="absolute left-0 mt-1.5 w-60 rounded-2xl bg-white border border-slate-200/90 shadow-xl z-50 p-1.5 space-y-1 text-xs">
-                <div className="px-3 py-1.5 text-[10px] uppercase font-mono font-bold text-slate-400">
+              <div className="absolute left-0 mt-1.5 w-60 rounded-2xl bg-white dark:bg-[#0D1522] border border-slate-200/90 dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1 text-xs">
+                <div className="px-3 py-1.5 text-[10px] uppercase font-mono font-bold text-slate-400 dark:text-slate-500">
                   Organizations
                 </div>
                 {me?.memberships?.map((m) => (
@@ -73,14 +74,14 @@ export function Topbar() {
                     key={m.org_id}
                     type="button"
                     onClick={() => void switchOrg(m.org_id)}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-slate-50 transition-colors text-slate-800"
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors text-slate-800 dark:text-slate-200"
                   >
                     <div>
-                      <div className="font-semibold text-xs text-slate-900">{m.org_name}</div>
-                      <div className="text-[10px] text-slate-500 capitalize">{m.role}</div>
+                      <div className="font-semibold text-xs text-slate-900 dark:text-slate-100">{m.org_name}</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize">{m.role}</div>
                     </div>
                     {m.org_id === me?.org?.id && (
-                      <Check className="w-3.5 h-3.5 text-[#143C2E]" />
+                      <Check className="w-3.5 h-3.5 text-[#143C2E] dark:text-emerald-400" />
                     )}
                   </button>
                 ))}
@@ -93,27 +94,30 @@ export function Topbar() {
         <button
           type="button"
           onClick={() => router.push("/accounts")}
-          className="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-slate-200/90 bg-white text-slate-500 text-xs hover:border-emerald-300 transition-colors min-w-[220px] shadow-2xs"
+          className="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#0D1522] text-slate-500 dark:text-slate-400 text-xs hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-colors min-w-[220px] shadow-2xs"
         >
-          <Search className="w-3.5 h-3.5 text-slate-400" />
+          <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
           <span className="flex-1 text-left">Search accounts...</span>
-          <kbd className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-slate-100 border border-slate-200 text-slate-500">
+          <kbd className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
             ⌘K
           </kbd>
         </button>
       </div>
 
-      {/* Right: Authenticated Role Badge + Notifications Bell + User Menu */}
+      {/* Right: Authenticated Role Badge + Theme Toggle + Notifications Bell + User Menu */}
       <div className="flex items-center gap-3">
         {activeRole && (
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs shadow-2xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#143C2E]" />
-            <span className="text-[11px] font-medium text-emerald-800 hidden sm:inline">Role:</span>
-            <span className="text-xs font-bold text-[#143C2E] capitalize">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-xs shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#143C2E] dark:text-emerald-400" />
+            <span className="text-[11px] font-medium text-emerald-800 dark:text-emerald-300 hidden sm:inline">Role:</span>
+            <span className="text-xs font-bold text-[#143C2E] dark:text-emerald-400 capitalize">
               {activeRole}
             </span>
           </div>
         )}
+
+        {/* Theme Switcher Toggle */}
+        <ThemeToggle />
 
         {/* Dynamic Notifications Dropdown Panel */}
         <NotificationsDropdown />
@@ -123,17 +127,17 @@ export function Topbar() {
           <button
             type="button"
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            className="flex items-center gap-2 p-1 pl-2 rounded-full hover:bg-slate-100 transition-colors"
+            className="flex items-center gap-2 p-1 pl-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
             aria-expanded={isUserMenuOpen}
           >
-            <div className="w-7 h-7 rounded-full bg-[#143C2E] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+            <div className="w-7 h-7 rounded-full bg-[#143C2E] dark:bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
               {me?.user?.name
                 ? me.user.name.charAt(0).toUpperCase()
                 : me?.user?.email
                 ? me.user.email.charAt(0).toUpperCase()
                 : "U"}
             </div>
-            <ChevronDown className="w-3 h-3 text-slate-400" />
+            <ChevronDown className="w-3 h-3 text-slate-400 dark:text-slate-500" />
           </button>
 
           {isUserMenuOpen && (
@@ -143,13 +147,13 @@ export function Topbar() {
                 onClick={() => setIsUserMenuOpen(false)}
                 aria-hidden="true"
               />
-              <div className="absolute right-0 mt-1.5 w-56 rounded-2xl bg-white border border-slate-200/90 shadow-xl z-50 p-1.5 space-y-1 text-xs">
-                <div className="px-3 py-2 border-b border-slate-100">
-                  <div className="font-semibold text-slate-900">
+              <div className="absolute right-0 mt-1.5 w-56 rounded-2xl bg-white dark:bg-[#0D1522] border border-slate-200/90 dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1 text-xs">
+                <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                  <div className="font-semibold text-slate-900 dark:text-slate-100">
                     {me?.user?.name || me?.user?.email || (isLoading ? "Loading..." : "Signed in")}
                   </div>
                   {me?.user?.email && (
-                    <div className="text-[11px] text-slate-500 truncate">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                       {me.user.email}
                     </div>
                   )}
@@ -158,9 +162,9 @@ export function Topbar() {
                 <Link
                   href="/settings/profile"
                   onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
                 >
-                  <User className="w-4 h-4 text-slate-400" />
+                  <User className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                   <span>Profile Settings</span>
                 </Link>
 
@@ -170,7 +174,7 @@ export function Topbar() {
                     setIsUserMenuOpen(false);
                     void signOut();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Sign out</span>

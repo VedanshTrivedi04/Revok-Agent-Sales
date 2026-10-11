@@ -50,14 +50,14 @@ export function EvidenceChip({ evidence, className }: EvidenceChipProps) {
         }}
         className={clsx(
           "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-mono font-medium border transition-all shadow-2xs",
-          "bg-emerald-50/70 hover:bg-emerald-100/70 border-emerald-200/80 text-slate-800",
-          "focus-visible:ring-2 focus-visible:ring-[#143C2E]/20",
+          "bg-emerald-50/70 hover:bg-emerald-100/70 border-emerald-200/80 text-slate-800 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40 dark:border-emerald-800/60 dark:text-emerald-300",
+          "focus-visible:ring-2 focus-visible:ring-[#143C2E]/20 dark:focus-visible:ring-emerald-500/20",
           className
         )}
         title={evidence.label}
         aria-expanded={isOpen}
       >
-        <span className="font-bold text-[#143C2E]">[{evidence.key}]</span>
+        <span className="font-bold text-[#143C2E] dark:text-emerald-400">[{evidence.key}]</span>
         {getSourceIcon(evidence.source)}
         <span className="truncate max-w-[140px] font-sans font-normal">{evidence.label}</span>
       </button>
@@ -69,28 +69,28 @@ export function EvidenceChip({ evidence, className }: EvidenceChipProps) {
             onClick={() => setIsOpen(false)}
             aria-hidden="true"
           />
-          <div className="absolute left-0 top-full mt-1.5 z-50 w-72 rounded-2xl p-3.5 bg-white border border-slate-200/90 shadow-xl text-xs space-y-2">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-              <span className="font-mono font-bold text-[#143C2E]">
+          <div className="absolute left-0 top-full mt-1.5 z-50 w-72 rounded-2xl p-3.5 bg-white dark:bg-[#0D1522] border border-slate-200/90 dark:border-slate-800 shadow-xl text-xs space-y-2">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-1.5">
+              <span className="font-mono font-bold text-[#143C2E] dark:text-emerald-400">
                 Evidence [{evidence.key}]
               </span>
-              <span className="text-[10px] uppercase font-semibold text-slate-500 font-mono">
+              <span className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 font-mono">
                 {evidence.source || "System"}
               </span>
             </div>
 
-            <p className="font-medium text-slate-900">
+            <p className="font-medium text-slate-900 dark:text-slate-100">
               {evidence.label}
             </p>
 
             {evidence.detail && (
-              <p className="text-slate-600 font-sans leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
                 {evidence.detail}
               </p>
             )}
 
             {evidence.occurred_at && (
-              <div className="text-[11px] text-slate-500 font-mono">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                 Occurred: {new Date(evidence.occurred_at).toLocaleString()}
               </div>
             )}
@@ -100,7 +100,7 @@ export function EvidenceChip({ evidence, className }: EvidenceChipProps) {
                 href={evidence.source_url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 text-[#143C2E] hover:underline pt-1 font-semibold"
+                className="inline-flex items-center gap-1 text-[#143C2E] dark:text-emerald-400 hover:underline pt-1 font-semibold"
               >
                 <span>Open in {evidence.source || "source"}</span>
                 <ExternalLink className="w-3 h-3" />
