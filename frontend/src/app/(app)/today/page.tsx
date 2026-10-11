@@ -40,7 +40,7 @@ export default function TodayPage() {
     if (!search) return true;
     const q = search.toLowerCase();
     const nameMatch = item.account?.name?.toLowerCase().includes(q);
-    const domainMatch = item.account?.domain?.toLowerCase().includes(q);
+    const domainMatch = (item.account as { domain?: string } | undefined)?.domain?.toLowerCase().includes(q);
     const titleMatch = item.title?.toLowerCase().includes(q);
     return Boolean(nameMatch || domainMatch || titleMatch);
   });
@@ -147,7 +147,7 @@ export default function TodayPage() {
                         ) : (
                           <SeverityBadge severity={item.severity as Severity} />
                         )}
-                        <TierBadge tier={(account.tier || 2) as Tier} />
+                        <TierBadge tier={((account as { tier?: number })?.tier || 2) as Tier} />
                         <StatusBadge
                           status={item.pending_cards > 0 ? "pending_approval" : "executed"}
                         />
