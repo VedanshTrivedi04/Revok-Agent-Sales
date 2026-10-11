@@ -21,7 +21,7 @@ export default function ControlLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="flex h-screen overflow-hidden bg-[#FAF9F5] text-slate-900 selection:bg-emerald-600 selection:text-white">
       <ControlSidebar />
 
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">

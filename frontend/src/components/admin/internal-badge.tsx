@@ -5,9 +5,9 @@ import { ShieldAlert } from "lucide-react";
 export function InternalBadge({ className = "" }: { className?: string }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full bg-[var(--adm-internal-bg)] px-3 py-1 font-mono text-[10px] font-black uppercase tracking-widest text-[var(--adm-internal-ink)] shadow-sm ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border border-emerald-200/80 bg-emerald-50 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-[#143C2E] shadow-2xs ${className}`}
     >
-      <ShieldAlert className="h-3.5 w-3.5" aria-hidden="true" />
+      <ShieldAlert className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
       INTERNAL
     </span>
   );

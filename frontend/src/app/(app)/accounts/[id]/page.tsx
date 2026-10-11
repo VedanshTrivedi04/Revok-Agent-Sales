@@ -186,7 +186,7 @@ export default function AccountDetailPage({
                   {account.status}
                 </span>
                 {account.plan_name && (
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300">
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-[#143C2E] dark:text-emerald-300 font-semibold">
                     {account.plan_name}
                   </span>
                 )}
@@ -211,7 +211,7 @@ export default function AccountDetailPage({
                     href={account.crm_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1 text-blue-600 hover:underline"
+                    className="flex items-center gap-1 text-[#143C2E] hover:underline font-semibold"
                   >
                     <span>CRM Record</span>
                     <ExternalLink className="w-3 h-3" />
@@ -227,7 +227,7 @@ export default function AccountDetailPage({
                   type="button"
                   onClick={() => runMutation.mutate()}
                   disabled={runMutation.isPending}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-[#143C2E] text-white hover:bg-[#0E2C22] rounded-xl font-semibold disabled:opacity-50 transition-all shadow-xs"
                 >
                   <Play className="w-3.5 h-3.5 fill-current" />
                   {runMutation.isPending ? "Queuing analysis..." : "Run analysis now"}
@@ -291,7 +291,7 @@ export default function AccountDetailPage({
             onClick={() => setActiveTab("overview")}
             className={`pb-3 transition-colors ${
               activeTab === "overview"
-                ? "border-b-2 border-blue-600 text-blue-600 dark:text-blue-400"
+                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -302,7 +302,7 @@ export default function AccountDetailPage({
             onClick={() => setActiveTab("brain")}
             className={`pb-3 transition-colors ${
               activeTab === "brain"
-                ? "border-b-2 border-blue-600 text-blue-600 dark:text-blue-400"
+                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -313,7 +313,7 @@ export default function AccountDetailPage({
             onClick={() => setActiveTab("findings")}
             className={`pb-3 transition-colors ${
               activeTab === "findings"
-                ? "border-b-2 border-blue-600 text-blue-600 dark:text-blue-400"
+                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -324,7 +324,7 @@ export default function AccountDetailPage({
             onClick={() => setActiveTab("actions")}
             className={`pb-3 transition-colors ${
               activeTab === "actions"
-                ? "border-b-2 border-blue-600 text-blue-600 dark:text-blue-400"
+                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -335,7 +335,7 @@ export default function AccountDetailPage({
             onClick={() => setActiveTab("timeline")}
             className={`pb-3 transition-colors ${
               activeTab === "timeline"
-                ? "border-b-2 border-blue-600 text-blue-600 dark:text-blue-400"
+                ? "border-b-2 border-[#143C2E] text-[#143C2E] font-bold"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -459,7 +459,7 @@ export default function AccountDetailPage({
                       <div className="flex flex-wrap items-center gap-2">
                         <Link
                           href={`/inbox/${card.id}`}
-                          className="font-bold text-sm text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400"
+                          className="font-bold text-sm text-slate-900 dark:text-slate-100 hover:text-[#143C2E]"
                         >
                           {card.title}
                         </Link>
@@ -476,7 +476,7 @@ export default function AccountDetailPage({
                       <CanAct action="approve:card" entity={card}>
                         <Link
                           href={`/inbox/${card.id}`}
-                          className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                          className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] hover:bg-[#0E2C22] text-white shadow-xs transition-all"
                         >
                           Review &amp; Act
                         </Link>

@@ -59,11 +59,11 @@ export function SnoozeModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl w-full max-w-sm p-6 shadow-xl space-y-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-xl space-y-4">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-blue-500" />
+              <Clock className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
               Snooze Finding
             </h2>
             <p className="text-xs text-slate-500 mt-1 line-clamp-1">{findingTitle}</p>
@@ -94,7 +94,7 @@ export function SnoozeModal({
                       name="snooze_days"
                       checked={selectedDays === d.days}
                       onChange={() => setSelectedDays(d.days)}
-                      className="text-blue-600 focus:ring-blue-500"
+                      className="text-[#143C2E] focus:ring-[#143C2E]"
                     />
                     <span className="text-slate-800 dark:text-slate-200 font-medium">{d.label}</span>
                   </div>
@@ -118,7 +118,7 @@ export function SnoozeModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] disabled:opacity-50 text-white transition-colors shadow-xs"
             >
               {isSubmitting ? "Snoozing..." : "Confirm Snooze"}
             </button>

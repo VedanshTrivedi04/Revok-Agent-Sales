@@ -75,11 +75,11 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
 
   return (
     <aside
-      className="w-64 flex-shrink-0 flex flex-col border-r border-slate-200 dark:border-slate-800 bg-slate-900 text-slate-100 min-h-screen select-none"
+      className="w-64 flex-shrink-0 flex flex-col border-r border-slate-800/80 bg-[#080C11] text-slate-100 min-h-screen select-none"
       aria-label="Main Navigation"
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800">
+      <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 bg-[#080C11]">
         <Link href={home} className="flex items-center gap-2.5 font-bold tracking-tight text-white group">
           <img
             src="/secondary logo.png"
@@ -102,15 +102,15 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
       {/* Portal switcher: only for people who may enter both portals */}
       {portals.length > 1 && (
         <div className="px-3 pt-3">
-          <div className="grid grid-cols-2 gap-1 rounded-lg bg-slate-800/70 p-1" role="group" aria-label="Portal">
+          <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-900/90 border border-slate-800/80 p-1" role="group" aria-label="Portal">
             {portals.map((p) => (
               <Link
                 key={p}
                 href={PORTALS[p].href}
                 aria-current={p === portal ? "page" : undefined}
                 className={clsx(
-                  "rounded-md px-2 py-1.5 text-center text-[11px] font-semibold transition-colors",
-                  p === portal ? "bg-white text-slate-900 shadow-sm" : "text-slate-300 hover:text-white"
+                  "rounded-lg px-2 py-1.5 text-center text-[11px] font-semibold transition-all",
+                  p === portal ? "bg-[#143C2E] text-white shadow-xs ring-1 ring-emerald-500/30" : "text-slate-400 hover:text-white"
                 )}
               >
                 {PORTALS[p].label}
@@ -139,17 +139,17 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
                   key={item.name}
                   href={item.href}
                   className={clsx(
-                    "flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all group",
+                    "flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group",
                     isActive
-                      ? "bg-blue-600 text-white font-semibold shadow-sm"
-                      : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
+                      ? "bg-[#143C2E] text-white font-semibold shadow-xs ring-1 ring-emerald-500/30"
+                      : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       className={clsx(
                         "w-4 h-4 transition-colors",
-                        isActive ? "text-white" : "text-slate-400 group-hover:text-slate-200"
+                        isActive ? "text-emerald-400" : "text-slate-400 group-hover:text-slate-200"
                       )}
                       aria-hidden="true"
                     />
@@ -160,7 +160,7 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
                     <span
                       className={clsx(
                         "px-1.5 py-0.5 text-[10px] font-mono rounded-full font-bold",
-                        isActive ? "bg-white/20 text-white" : "bg-slate-800 text-slate-300"
+                        isActive ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-slate-800 text-slate-300"
                       )}
                     >
                       {item.badge}
@@ -174,9 +174,9 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
       </nav>
 
       {/* User Status / Footer */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950/60">
-        <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-900 border border-slate-800/80 text-xs">
-          <ShieldAlert className="w-4 h-4 text-blue-400 flex-shrink-0" />
+      <div className="p-3 border-t border-slate-800/80 bg-[#06090D]">
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-900/90 border border-slate-800/80 text-xs">
+          <ShieldAlert className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           <div className="overflow-hidden">
             <div className="text-[11px] font-medium text-slate-200 truncate">
               {isLoading ? (

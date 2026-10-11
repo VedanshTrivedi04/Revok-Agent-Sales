@@ -131,10 +131,10 @@ export default function OnboardingFirstSyncPage() {
 
       <Link
         href="/home"
-        className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bold ${
+        className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bold transition-all ${
           ready
-            ? "bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] shadow-md"
-            : "border border-slate-200 dark:border-emerald-900 text-slate-600 dark:text-slate-300"
+            ? "bg-[#143C2E] hover:bg-[#0E2C22] text-white shadow-xs cursor-pointer"
+            : "border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
         }`}
       >
         <span>{ready ? "Open Today" : "Open the app while this runs"}</span>

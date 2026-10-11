@@ -108,82 +108,108 @@ export function ExampleSketchAnnotation({ className = "" }: { className?: string
 }
 
 export function CtaDecisionBranch({ className = "" }: { className?: string }) {
+  const items = [
+    { id: "risk", label: "Detect risk sooner" },
+    { id: "expansion", label: "Find expansion opportunities" },
+    { id: "action", label: "Take action with confidence" },
+  ];
+
   return (
-    <div className={`relative flex flex-col ${className}`}>
-      {/* Hand-drawn note */}
-      <div className="flex items-center gap-2 mb-4">
-        <span className="font-handwriting text-xl text-slate-700 rotate-[-2deg]">
+    <div className={`relative flex flex-col text-left select-none ${className}`}>
+      {/* Title with subtle curved hand-drawn accent arrow */}
+      <div className="relative mb-8 max-w-md">
+        <h3 className="text-2xl sm:text-[28px] font-medium text-slate-900 tracking-tight leading-[1.25]">
           From scattered data to clearer decisions.
-        </span>
-        <svg
-          className="w-12 h-6 text-slate-700 overflow-visible"
-          viewBox="0 0 50 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M 5 12 C 20 8, 32 16, 44 14"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 38 9 L 45 14 L 39 18"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        </h3>
+        {/* Delicate hand-drawn sketch arrow curving down into the branch */}
+        <div className="absolute -bottom-6 right-2 sm:right-10 pointer-events-none">
+          <svg
+            className="w-16 h-8 text-slate-600 overflow-visible"
+            viewBox="0 0 70 30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M 5 6 C 25 4, 48 12, 60 22"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 52 22 L 61 23 L 60 14"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </div>
 
-      {/* Decision branching tree diagram */}
-      <div className="relative pl-6 py-2">
-        {/* Branching SVG curves */}
+      {/* Minimal Tree Diagram */}
+      <div className="relative pl-10 sm:pl-12 py-2">
+        {/* Smooth branching tree lines */}
         <svg
-          className="absolute left-0 top-0 w-8 h-full text-slate-400 overflow-visible"
-          viewBox="0 0 32 140"
+          className="absolute left-2 sm:left-3 top-0 w-8 h-full text-slate-300 pointer-events-none overflow-visible"
+          viewBox="0 0 32 180"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          {/* Main trunk */}
-          <line x1="8" y1="16" x2="8" y2="124" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
-          
+          {/* Main vertical trunk */}
+          <line
+            x1="8"
+            y1="18"
+            x2="8"
+            y2="156"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeDasharray="3 3"
+          />
+
           {/* Branch 1 to top */}
-          <path d="M 8 20 C 18 20, 24 20, 32 20" stroke="currentColor" strokeWidth="1.5" />
-          
+          <path
+            d="M 8 18 C 16 18, 24 18, 32 18"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+
           {/* Branch 2 to middle */}
-          <path d="M 8 70 C 18 70, 24 70, 32 70" stroke="currentColor" strokeWidth="1.5" />
-          
+          <path
+            d="M 8 87 C 16 87, 24 87, 32 87"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+
           {/* Branch 3 to bottom */}
-          <path d="M 8 120 C 18 120, 24 120, 32 120" stroke="currentColor" strokeWidth="1.5" />
+          <path
+            d="M 8 156 C 16 156, 24 156, 32 156"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
         </svg>
 
-        {/* 3 Outcome nodes */}
-        <div className="space-y-6 pl-4">
-          <div className="flex items-center gap-3 group">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs shadow-emerald-400/50 group-hover:scale-125 transition-transform" />
-            <span className="text-sm font-semibold text-slate-800">
-              Detect risk sooner
-            </span>
-          </div>
+        {/* 3 Minimal Outcome Nodes */}
+        <div className="space-y-8 sm:space-y-9">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="group flex items-center gap-3.5 cursor-default transition-transform hover:translate-x-1"
+            >
+              {/* Luminous emerald dot */}
+              <span className="relative flex h-3 w-3 shrink-0 items-center justify-center">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40 group-hover:animate-ping" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 group-hover:ring-emerald-200 transition-all" />
+              </span>
 
-          <div className="flex items-center gap-3 group">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs shadow-emerald-400/50 group-hover:scale-125 transition-transform" />
-            <span className="text-sm font-semibold text-slate-800">
-              Find expansion opportunities
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 group">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs shadow-emerald-400/50 group-hover:scale-125 transition-transform" />
-            <span className="text-sm font-semibold text-slate-800">
-              Take action with confidence
-            </span>
-          </div>
+              {/* Minimal Text */}
+              <span className="text-base sm:text-lg font-medium text-slate-800 tracking-tight group-hover:text-emerald-950 transition-colors">
+                {item.label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

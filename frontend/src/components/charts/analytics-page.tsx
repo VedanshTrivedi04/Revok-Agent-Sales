@@ -14,7 +14,7 @@ interface MemberOption {
 }
 
 const selectClass =
-  "rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+  "rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]";
 
 interface AnalyticsPageProps {
   title: string;

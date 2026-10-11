@@ -138,7 +138,7 @@ export default function RulesSettingsPage() {
             <div key={rule.key} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1.5 max-w-2xl">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
+                  <span className="font-mono text-xs font-bold text-[#143C2E]">
                     {rule.key}
                   </span>
                   <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
@@ -217,7 +217,7 @@ export default function RulesSettingsPage() {
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <Sliders className="w-4 h-4 text-blue-500" />
+                    <Sliders className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                     Tune {editingRule.title} ({editingRule.key})
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
@@ -249,7 +249,7 @@ export default function RulesSettingsPage() {
                           const val = typeof paramVal === "number" ? Number(e.target.value) : e.target.value;
                           setEditParams({ ...editParams, [paramKey]: val });
                         }}
-                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E]"
                       />
                     </div>
                   ))
@@ -301,7 +301,7 @@ export default function RulesSettingsPage() {
                       })
                     }
                     disabled={saveParamsMutation.isPending}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] transition-all shadow-xs cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>{saveParamsMutation.isPending ? "Saving..." : "Save Parameters"}</span>

@@ -289,7 +289,7 @@ export function AgentBrain({ accountId, account, actual, shown }: AgentBrainProp
             {hoveredNode.facts.map((f, i) => (
               <p key={i} className="text-slate-500 break-words">{f}</p>
             ))}
-            {hoveredNode.href && <p className="text-blue-600 dark:text-blue-400 font-medium">Click to open</p>}
+            {hoveredNode.href && <p className="text-[#143C2E] dark:text-emerald-400 font-medium">Click to open</p>}
           </div>
         )}
       </div>

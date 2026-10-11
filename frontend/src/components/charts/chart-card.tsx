@@ -111,7 +111,7 @@ export function ChartCard({
   return (
     <section
       className={clsx(
-        "viz flex flex-col rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs",
+        "viz flex flex-col rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xs",
         className
       )}
     >

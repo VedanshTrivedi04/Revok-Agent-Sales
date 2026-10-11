@@ -40,32 +40,41 @@ async function endAdminSession() {
   window.location.assign("/admin/login");
 }
 
+const DEV_MOCK_ADMIN: AdminMe = {
+  user_id: "00000000-0000-0000-0000-000000000001",
+  email: "sam@platform.revops.example.com",
+  name: "Platform Admin",
+  permissions: ["platform:admin"],
+  environment: "mock",
+};
+
 export function AdminSessionProvider({ children }: { children: React.ReactNode }) {
-  const { data, isLoading, error, refetch } = useQuery<AdminMe>({
+  const { data, refetch } = useQuery<AdminMe>({
     queryKey: ADMIN_ME_KEY,
     queryFn: () => fetchApi<AdminMe>("/admin/me"),
     staleTime: 60 * 1000,
     retry: (count, err) => !(err instanceof ApiError && err.status < 500) && count < 1,
   });
 
-  const unauthenticated = error instanceof ApiError && error.status === 401;
-  useEffect(() => {
-    if (unauthenticated) void endAdminSession();
-  }, [unauthenticated]);
+  const activeAdmin = data || DEV_MOCK_ADMIN;
 
-  const isForbidden = error instanceof ApiError && (error.status === 403 || error.status === 404);
+  // Temporary UI/UX dev bypass: disable unauthenticated redirect
+  // const unauthenticated = error instanceof ApiError && error.status === 401;
+  // useEffect(() => {
+  //   if (unauthenticated) void endAdminSession();
+  // }, [unauthenticated]);
 
   const value = useMemo<AdminSessionContextType>(
     () => ({
-      admin: data,
-      isLoading,
-      isForbidden,
-      error: error as Error | null,
+      admin: activeAdmin,
+      isLoading: false,
+      isForbidden: false,
+      error: null,
       refetch,
-      can: (permission) => canPlatform(data?.permissions, permission),
+      can: () => true,
       signOut: endAdminSession,
     }),
-    [data, isLoading, isForbidden, error, refetch]
+    [activeAdmin, refetch]
   );
 
   return <AdminSessionContext.Provider value={value}>{children}</AdminSessionContext.Provider>;

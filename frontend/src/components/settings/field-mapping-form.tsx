@@ -37,7 +37,7 @@ const FIELDS: Array<{ key: PropertyKey; label: string; hint: string; required?: 
 ];
 
 const selectClass =
-  "w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono disabled:opacity-60 disabled:cursor-not-allowed";
+  "w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-mono disabled:opacity-60 disabled:cursor-not-allowed";
 
 interface FieldMappingFormProps {
   canEdit: boolean;
@@ -121,7 +121,7 @@ export function FieldMappingForm({ canEdit, canListProperties, saveLabel = "Save
 
       <div className="space-y-3">
         <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-blue-500" />
+          <SlidersHorizontal className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
           HubSpot company properties
         </h2>
         {FIELDS.map((f) => {
@@ -176,7 +176,7 @@ export function FieldMappingForm({ canEdit, canListProperties, saveLabel = "Save
           <button
             type="submit"
             disabled={save.isPending || missingRequired}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] disabled:opacity-50 shadow-xs cursor-pointer"
           >
             <Save className="w-3.5 h-3.5" />
             {save.isPending ? "Saving..." : saveLabel}

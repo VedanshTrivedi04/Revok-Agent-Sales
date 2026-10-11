@@ -18,7 +18,7 @@ export function PermissionGuard({ action, context, children }: PermissionGuardPr
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#143C2E] dark:text-emerald-500" />
       </div>
     );
   }

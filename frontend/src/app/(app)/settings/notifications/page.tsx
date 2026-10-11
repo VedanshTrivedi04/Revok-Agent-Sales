@@ -14,7 +14,7 @@ import type { MeUser } from "../../../../lib/auth/session-context";
 type Prefs = MeUser["notification_prefs"];
 
 const field =
-  "w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-xs";
+  "w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-medium text-xs";
 
 const ALERTS: Array<{ key: "alert_high" | "alert_assigned" | "alert_failed"; label: string; hint: string }> = [
   { key: "alert_high", label: "A new high-severity finding", hint: "On accounts you own, or any account if you manage the team." },
@@ -62,9 +62,9 @@ export default function NotificationsSettingsPage() {
         }}
         className="space-y-6 max-w-2xl"
       >
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
           <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Bell className="w-4 h-4 text-blue-500" />
+            <Bell className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
             Daily digest
           </h2>
 
@@ -121,10 +121,10 @@ export default function NotificationsSettingsPage() {
           </div>
         </div>
 
-        <fieldset className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs space-y-3">
+        <fieldset className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-3">
           <legend className="sr-only">Instant alerts</legend>
           <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <BellRing className="w-4 h-4 text-blue-500" />
+            <BellRing className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
             Instant alerts
           </h2>
           {ALERTS.map((a) => (
@@ -147,7 +147,7 @@ export default function NotificationsSettingsPage() {
           <button
             type="submit"
             disabled={updateMutation.isPending || Object.keys(edits).length === 0}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] active:bg-[#0A2018] disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
           >
             <Save className="w-3.5 h-3.5" />
             {updateMutation.isPending ? "Saving..." : "Save preferences"}

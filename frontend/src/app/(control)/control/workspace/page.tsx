@@ -152,9 +152,9 @@ export default function GeneralSettingsPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
           {/* Organization Details Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
             <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Building className="w-4 h-4 text-blue-500" />
+              <Building className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
               Workspace Identification
             </h2>
 
@@ -169,7 +169,7 @@ export default function GeneralSettingsPage() {
                   disabled={!canEdit}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -183,7 +183,7 @@ export default function GeneralSettingsPage() {
                   value={primaryDomain}
                   onChange={(e) => setPrimaryDomain(e.target.value)}
                   placeholder="e.g. acme.com"
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-mono disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -197,7 +197,7 @@ export default function GeneralSettingsPage() {
                   disabled={!canEdit}
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-mono disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -212,16 +212,16 @@ export default function GeneralSettingsPage() {
                   maxLength={3}
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono uppercase disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-mono uppercase disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
           </div>
 
           {/* Engine & Scheduler Policies Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
             <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-blue-500" />
+              <Clock className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
               Scheduler & Action Lifecycle
             </h2>
 
@@ -238,7 +238,7 @@ export default function GeneralSettingsPage() {
                   disabled={!canEdit}
                   value={nightlyHour}
                   onChange={(e) => setNightlyHour(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-mono disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 <span className="text-[10px] text-slate-400 block">Scheduled in {timezone}</span>
               </div>
@@ -255,7 +255,7 @@ export default function GeneralSettingsPage() {
                   disabled={!canEdit}
                   value={cardExpiryDays}
                   onChange={(e) => setCardExpiryDays(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-mono disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 <span className="text-[10px] text-slate-400 block">Stale pending cards auto-expire</span>
               </div>
@@ -272,7 +272,7 @@ export default function GeneralSettingsPage() {
                   disabled={!canEdit}
                   value={backfillDays}
                   onChange={(e) => setBackfillDays(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-mono disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 <span className="text-[10px] text-slate-400 block">Initial CRM ingest span</span>
               </div>
@@ -285,7 +285,7 @@ export default function GeneralSettingsPage() {
               <button
                 type="submit"
                 disabled={updateMutation.isPending}
-                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50 transition-colors shadow-xs"
+                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] active:bg-[#0A2018] disabled:opacity-50 transition-colors shadow-xs"
               >
                 <Save className="w-3.5 h-3.5" />
                 {updateMutation.isPending ? "Saving changes..." : "Save Workspace Settings"}

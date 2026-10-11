@@ -85,7 +85,7 @@ export function TimeSeriesChart({ points, series, mode, formatX, formatY, intege
           role="img"
           aria-label={label}
           tabIndex={0}
-          className="block outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
+          className="block outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E] rounded-md"
           onPointerMove={(e) => pick(e.clientX)}
           onPointerLeave={() => setIndex(null)}
           onFocus={() => setIndex((i) => i ?? n - 1)}

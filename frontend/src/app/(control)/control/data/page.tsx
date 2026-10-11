@@ -63,9 +63,9 @@ export default function DataPrivacySettingsPage() {
         </div>
 
         {/* Data Export Card */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs space-y-4 max-w-3xl">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-4 max-w-3xl">
           <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Download className="w-4 h-4 text-blue-500" />
+            <Download className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
             Decision Audit Trail Export
           </h2>
           <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -76,7 +76,7 @@ export default function DataPrivacySettingsPage() {
               type="button"
               onClick={handleExportAuditLog}
               disabled={exporting}
-              className="disabled:opacity-50 inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 transition-colors shadow-xs"
+              className="disabled:opacity-50 inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] active:bg-[#0A2018] transition-colors shadow-xs"
             >
               <Download className="w-3.5 h-3.5" />
               Export Decision Log (CSV)
@@ -86,7 +86,7 @@ export default function DataPrivacySettingsPage() {
 
         {/* Owner-Only Workspace Deletion Danger Zone */}
         {isOwner && (
-          <div className="bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/60 rounded-xl p-6 shadow-xs space-y-4 max-w-3xl">
+          <div className="bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/60 rounded-2xl p-6 shadow-xs space-y-4 max-w-3xl">
             <h2 className="text-sm font-bold text-red-900 dark:text-red-200 flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-red-600 dark:text-red-400" />
               Danger Zone: Workspace Deletion

@@ -67,7 +67,7 @@ const STATUS_WORD: Record<FlowStepStatus, string> = {
 
 const STATUS_TEXT: Record<FlowStepStatus, string> = {
   pending: "text-slate-400",
-  started: "text-blue-500",
+  started: "text-emerald-600 dark:text-emerald-400",
   ok: "text-emerald-600 dark:text-emerald-400",
   skipped: "text-slate-500",
   failed: "text-rose-600 dark:text-rose-400",
@@ -75,7 +75,7 @@ const STATUS_TEXT: Record<FlowStepStatus, string> = {
 
 const NODE_STYLE: Record<FlowStepStatus, string> = {
   pending: "border-dashed border-slate-300 dark:border-slate-700 text-slate-400 bg-transparent",
-  started: "border-blue-500 text-blue-500 bg-blue-500/10",
+  started: "border-emerald-500 text-emerald-600 bg-emerald-500/10",
   ok: "border-emerald-500 text-emerald-500 bg-emerald-500/10",
   skipped: "border-slate-400 text-slate-400 bg-slate-500/5",
   failed: "border-rose-500 text-rose-500 bg-rose-500/10",
@@ -231,7 +231,7 @@ function StepData({ step }: { step: FlowStep }) {
                 {String(f.type)}
               </span>
               {(f.outcome === "created" || f.outcome === "updated") && typeof f.finding_id === "string" ? (
-                <Link href={`/findings/${f.finding_id}`} className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                <Link href={`/findings/${f.finding_id}`} className="font-semibold text-[#143C2E] dark:text-emerald-400 hover:underline">
                   {typeof f.title === "string" && f.title ? f.title : "Open finding"}
                 </Link>
               ) : (
@@ -366,7 +366,7 @@ function StepData({ step }: { step: FlowStep }) {
               <span className={pill}>{String(c.type).replace(/_/g, " ")}</span>
               <span className="text-[10px] font-mono text-slate-500">Tier {formatValue(c.tier)} · {humanize(String(c.status))}</span>
               {typeof c.id === "string" ? (
-                <Link href={`/inbox/${c.id}`} className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">{String(c.title)}</Link>
+                <Link href={`/inbox/${c.id}`} className="font-semibold text-[#143C2E] dark:text-emerald-400 hover:underline">{String(c.title)}</Link>
               ) : (
                 <span className="font-semibold">{String(c.title)}</span>
               )}
@@ -485,12 +485,12 @@ export function AgentFlow({ flow: actual, caption, error, onShown }: AgentFlowPr
     <section
       aria-label="Agent workflow"
       className={clsx(
-        "rounded-xl border p-5 space-y-5 transition-colors duration-500",
+        "rounded-2xl border p-6 space-y-5 transition-colors duration-500",
         live
-          ? "bg-gradient-to-b from-blue-50/70 to-white dark:from-blue-950/30 dark:to-slate-900 border-blue-200 dark:border-blue-900/60"
+          ? "bg-gradient-to-b from-emerald-50/70 to-white dark:from-emerald-950/30 dark:to-slate-900 border-emerald-200/80 dark:border-emerald-800/60"
           : phase === "failed"
             ? "bg-white dark:bg-slate-900 border-rose-200 dark:border-rose-900/60"
-            : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800",
+            : "bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800",
       )}
     >
       <style>{STYLES}</style>
@@ -506,8 +506,8 @@ export function AgentFlow({ flow: actual, caption, error, onShown }: AgentFlowPr
             </span>
           )}
           {phase === "running" && (
-            <span className="text-blue-600 dark:text-blue-400 inline-flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-blue-500 af-blink" aria-hidden="true" />
+            <span className="text-[#143C2E] dark:text-emerald-400 inline-flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 af-blink" aria-hidden="true" />
               {replaying ? "Replaying the recorded run" : "Analysing this account"}
             </span>
           )}
@@ -520,7 +520,7 @@ export function AgentFlow({ flow: actual, caption, error, onShown }: AgentFlowPr
       {phase === "queued" && (
         <div className="space-y-2">
           <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden" aria-hidden="true">
-            <span className="block h-full w-1/4 rounded-full bg-blue-500 af-indeterminate" />
+            <span className="block h-full w-1/4 rounded-full bg-emerald-500 af-indeterminate" />
           </div>
           <QueueWait since={actual.createdAt} />
         </div>
@@ -583,8 +583,8 @@ export function AgentFlow({ flow: actual, caption, error, onShown }: AgentFlowPr
                 >
                   {s.status === "started" && (
                     <>
-                      <span className="absolute inset-0 rounded-full border-2 border-blue-500 af-ring" aria-hidden="true" />
-                      <span className="absolute inset-0 rounded-full border-2 border-blue-500 af-ring" style={{ animationDelay: "0.95s" }} aria-hidden="true" />
+                      <span className="absolute inset-0 rounded-full border-2 border-emerald-500 af-ring" aria-hidden="true" />
+                      <span className="absolute inset-0 rounded-full border-2 border-emerald-500 af-ring" style={{ animationDelay: "0.95s" }} aria-hidden="true" />
                     </>
                   )}
                   <span key={`${s.name}-${s.status}`} className={clsx("relative flex", resolved && "af-pop")}>
@@ -601,7 +601,7 @@ export function AgentFlow({ flow: actual, caption, error, onShown }: AgentFlowPr
                       style={{ height: resolved ? "100%" : "0%" }}
                     />
                     {s.status === "ok" && next.status === "started" && (
-                      <span className="absolute -left-[3px] w-2.5 h-3 rounded-full bg-blue-400 shadow-[0_0_10px_3px_rgba(59,130,246,.65)] af-packet-v" />
+                      <span className="absolute -left-[3px] w-2.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_3px_rgba(16,185,129,.65)] af-packet-v" />
                     )}
                   </span>
                 )}
@@ -613,7 +613,7 @@ export function AgentFlow({ flow: actual, caption, error, onShown }: AgentFlowPr
                   onClick={() => toggle(s)}
                   disabled={s.status === "pending"}
                   aria-expanded={open}
-                  className="w-full flex items-start gap-3 text-left cursor-pointer disabled:cursor-default rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  className="w-full flex items-start gap-3 text-left cursor-pointer disabled:cursor-default rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]"
                 >
                   <span className="flex-1 min-w-0 space-y-0.5">
                     <span className="block text-sm font-semibold text-slate-900 dark:text-slate-100">{stepTitle(s.name)}</span>

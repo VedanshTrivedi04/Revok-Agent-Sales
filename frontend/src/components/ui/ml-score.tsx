@@ -111,13 +111,13 @@ export function MlScoresCard({ scores, className }: { scores: MlScores; classNam
   return (
     <div
       className={clsx(
-        "rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-4",
+        "rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xs space-y-4",
         className
       )}
     >
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-          <Activity className="w-4 h-4 text-blue-500" />
+          <Activity className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
           Predicted risk and growth
         </h2>
         <span className="text-[10px] font-mono text-slate-400">

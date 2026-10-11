@@ -75,7 +75,7 @@ export function HBarChart({ rows, series, format, label }: HBarChartProps) {
               role="listitem"
               tabIndex={0}
               aria-label={`${row.label}: ${format(total(row))}`}
-              className="grid grid-cols-[minmax(0,9rem)_minmax(0,1fr)_auto] items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="grid grid-cols-[minmax(0,9rem)_minmax(0,1fr)_auto] items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]"
               onPointerMove={(e) => {
                 const box = ref.current?.getBoundingClientRect();
                 if (box) show(row, e.clientX - box.left, e.clientY - box.top);

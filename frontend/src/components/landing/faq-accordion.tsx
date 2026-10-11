@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronDown, HelpCircle } from "lucide-react";
-import { ScrollReveal } from "./scroll-reveal";
+import { ChevronDown, HelpCircle, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "./scroll-reveal";
 
 export function FaqAccordion() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
@@ -36,11 +37,14 @@ export function FaqAccordion() {
 
   return (
     <section id="faq" className="py-20 md:py-28 bg-[#FAF9F5] border-t border-slate-200/50 overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-100/20 blur-3xl pointer-events-none" />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <ScrollReveal direction="down" delayMs={50}>
           <div className="text-center space-y-4 mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100/80 text-[#143C2E] border border-emerald-300/50">
-              <HelpCircle className="w-3.5 h-3.5 text-emerald-700" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100/80 text-[#143C2E] border border-emerald-300/50 shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
               <span>Frequently Asked Questions</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
@@ -52,37 +56,51 @@ export function FaqAccordion() {
           </div>
         </ScrollReveal>
 
-        <ScrollReveal direction="up" delayMs={150}>
+        <StaggerContainer staggerDelay={0.08} delayChildren={0.1}>
           <div className="space-y-3.5">
             {faqs.map((faq, idx) => {
               const isOpen = openIdx === idx;
               return (
-                <div
-                  key={idx}
-                  className="rounded-2xl border border-slate-200/90 bg-white overflow-hidden transition-all duration-200 shadow-2xs hover:border-slate-300"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenIdx(isOpen ? null : idx)}
-                    className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 hover:text-[#143C2E] transition-colors cursor-pointer"
+                <StaggerItem key={idx}>
+                  <div
+                    className={`rounded-2xl border transition-all duration-200 shadow-2xs overflow-hidden ${
+                      isOpen
+                        ? "border-[#143C2E]/40 bg-white ring-1 ring-[#143C2E]/10 shadow-xs"
+                        : "border-slate-200/90 bg-white/95 hover:border-slate-300"
+                    }`}
                   >
-                    <span className="text-sm sm:text-base">{faq.q}</span>
-                    <ChevronDown
-                      className={`w-5 h-5 shrink-0 text-slate-400 transition-transform duration-200 ${
-                        isOpen ? "rotate-180 text-[#143C2E]" : ""
-                      }`}
-                    />
-                  </button>
-                  {isOpen && (
-                    <div className="px-5 sm:px-6 pb-6 pt-1 text-sm text-slate-600 leading-relaxed border-t border-slate-100 text-left">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => setOpenIdx(isOpen ? null : idx)}
+                      className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 hover:text-[#143C2E] transition-colors cursor-pointer"
+                    >
+                      <span className="text-sm sm:text-base">{faq.q}</span>
+                      <ChevronDown
+                        className={`w-5 h-5 shrink-0 text-slate-400 transition-transform duration-300 ${
+                          isOpen ? "rotate-180 text-[#143C2E]" : ""
+                        }`}
+                      />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <div className="px-5 sm:px-6 pb-6 pt-1 text-sm text-slate-600 leading-relaxed border-t border-slate-100 text-left">
+                            {faq.a}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </StaggerItem>
               );
             })}
           </div>
-        </ScrollReveal>
+        </StaggerContainer>
       </div>
     </section>
   );

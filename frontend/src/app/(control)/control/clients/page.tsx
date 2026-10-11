@@ -40,7 +40,7 @@ const SORTS = [
   { value: "renewal", label: "Renewal date" },
 ];
 const selectClass =
-  "rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+  "rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]";
 
 /**
  * Client management for Owner / Admin: every customer account with its owner, revenue, renewal
@@ -192,7 +192,7 @@ export default function ClientsPage() {
       )}
 
       {!isLoading && !error && accounts.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+        <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 font-mono uppercase text-[10px]">
               <tr>
@@ -254,7 +254,7 @@ export default function ClientsPage() {
                   <td className="p-3.5 pr-4 text-right">
                     <Link
                       href={`/accounts/${acc.id}`}
-                      className="text-blue-600 dark:text-blue-400 font-medium inline-flex items-center gap-1 hover:underline"
+                      className="text-[#143C2E] dark:text-emerald-400 font-semibold inline-flex items-center gap-1 hover:underline"
                     >
                       <span>Account 360</span>
                       <ChevronRight className="w-3.5 h-3.5" />

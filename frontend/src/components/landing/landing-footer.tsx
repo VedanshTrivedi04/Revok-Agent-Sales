@@ -31,51 +31,107 @@ export function LandingFooter() {
       <div className="absolute top-1/2 left-0 w-64 h-64 bg-slate-800/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top CTA / Newsletter Ribbon inside the footer */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 border-b border-slate-850 border-slate-800/70">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-gradient-to-r from-slate-900/90 via-[#0D151D] to-[#0A1A14] border border-slate-800/90 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 border-b border-slate-800/70">
+        <div className="relative rounded-3xl p-6 sm:p-10 bg-gradient-to-br from-[#0E2219]/95 via-[#0A1812] to-[#07100C] border border-emerald-500/20 shadow-2xl shadow-emerald-950/40 overflow-hidden">
+          {/* Ambient Lighting & Pattern */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-emerald-900/15 rounded-full blur-2xl pointer-events-none" />
+          {/* Subtle grid pattern background */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#10B98108_1px,transparent_1px),linear-gradient(to_bottom,#10B98108_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
-          <div className="lg:col-span-7 space-y-2 text-left">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Revenue Intelligence Briefing</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              Get notified of new autonomous revenue playbooks
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-xl leading-relaxed">
-              Join 4,200+ revenue leaders receiving weekly breakdowns on early churn signals, verifiable risk explanations [E1], and pipeline health.
-            </p>
-          </div>
-
-          <div className="lg:col-span-5">
-            {subscribed ? (
-              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-sm font-medium">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                <span>You&apos;re subscribed! Watch your inbox for updates.</span>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            {/* Left Column: Heading, Subtitle & Social Proof */}
+            <div className="lg:col-span-7 space-y-4 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/90 border border-emerald-500/30 text-emerald-400 text-xs font-semibold shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Revenue Intelligence Briefing</span>
               </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
-                <div className="relative flex-1">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your work email..."
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
-                  />
+
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-[1.2]">
+                Get notified of new{" "}
+                <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400 bg-clip-text text-transparent">
+                  autonomous revenue playbooks
+                </span>
+              </h3>
+
+              <p className="text-xs sm:text-sm text-slate-300/90 max-w-xl leading-relaxed">
+                Join 4,200+ revenue leaders receiving weekly breakdowns on early churn signals, verifiable risk explanations [E1], and pipeline health.
+              </p>
+
+              {/* Social Proof + Topic Badges */}
+              <div className="pt-1 flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                {/* Avatar Stack */}
+                <div className="flex items-center -space-x-2">
+                  <div className="w-7 h-7 rounded-full bg-emerald-800 text-white font-bold text-[10px] flex items-center justify-center border-2 border-[#0A1812]">
+                    JD
+                  </div>
+                  <div className="w-7 h-7 rounded-full bg-teal-700 text-white font-bold text-[10px] flex items-center justify-center border-2 border-[#0A1812]">
+                    SC
+                  </div>
+                  <div className="w-7 h-7 rounded-full bg-amber-700 text-white font-bold text-[10px] flex items-center justify-center border-2 border-[#0A1812]">
+                    MK
+                  </div>
+                  <div className="w-7 h-7 rounded-full bg-emerald-900/90 text-emerald-200 font-bold text-[9px] flex items-center justify-center border-2 border-[#0A1812]">
+                    +4k
+                  </div>
                 </div>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md hover:shadow-emerald-900/30 shrink-0 cursor-pointer"
-                >
-                  <span>Subscribe</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </form>
-            )}
+                <span className="text-xs text-slate-300 font-medium">
+                  Read by CROs & RevOps leads at 500+ B2B scaleups
+                </span>
+              </div>
+            </div>
+
+            {/* Right Column: Sleek Form & Value Anchors */}
+            <div className="lg:col-span-5 space-y-3">
+              {subscribed ? (
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-950/90 to-emerald-900/50 border border-emerald-500/40 text-left space-y-2 shadow-lg">
+                  <div className="flex items-center gap-2 text-emerald-300 font-bold text-sm">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <span>You&apos;re officially on the list!</span>
+                  </div>
+                  <p className="text-xs text-emerald-200/80 leading-relaxed">
+                    Check your inbox for Issue #42: <em>&ldquo;Detecting Silent Seat Drop 45 Days Before Renewal.&rdquo;</em>
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubscribe} className="space-y-3">
+                  {/* Integrated Capsule Input Bar */}
+                  <div className="p-1.5 rounded-2xl bg-black/60 backdrop-blur-md border border-slate-700/80 hover:border-slate-600 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shadow-inner">
+                    <div className="relative flex-1 flex items-center pl-3">
+                      <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your work email..."
+                        className="w-full pl-2.5 pr-3 py-2 bg-transparent text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md hover:shadow-emerald-500/20 shrink-0 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <span>Subscribe</span>
+                      <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                    </button>
+                  </div>
+
+                  {/* Micro Trust Proofs */}
+                  <div className="flex flex-wrap items-center justify-between px-1 text-[11px] text-slate-400 font-medium">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      Every Tuesday 9 AM
+                    </span>
+                    <span className="text-slate-600">•</span>
+                    <span>No marketing spam</span>
+                    <span className="text-slate-600">•</span>
+                    <span>1-click unsubscribe</span>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </div>

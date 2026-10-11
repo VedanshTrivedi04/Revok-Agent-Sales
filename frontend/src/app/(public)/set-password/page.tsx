@@ -38,17 +38,17 @@ function SetPasswordForm() {
 
   if (done) {
     return (
-      <div className="bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-7 sm:p-9 space-y-4">
-        <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-lime-400" />
-        <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-7 sm:p-9 space-y-4">
+        <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+        <h1 className="text-2xl font-black tracking-tight text-slate-900">
           Password saved
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-slate-500">
           You can now sign in with your email and the password you just chose.
         </p>
         <Link
           href="/login"
-          className="inline-flex items-center justify-center w-full py-2.5 rounded-xl bg-[#0D3823] dark:bg-[#CCFF00] text-[#CCFF00] dark:text-[#0D3823] text-sm font-bold"
+          className="inline-flex items-center justify-center w-full py-3 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white text-xs font-bold shadow-xs transition-all"
         >
           Continue to sign in
         </Link>
@@ -90,13 +90,13 @@ function SetPasswordForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-7 sm:p-9 space-y-5"
+      className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-7 sm:p-9 space-y-5"
     >
       <div className="space-y-2">
-        <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-black tracking-tight text-slate-900">
           Choose your password
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500">
           Your workspace is ready. Set a password to finish creating your account.
         </p>
       </div>
@@ -104,7 +104,7 @@ function SetPasswordForm() {
       {error && (
         <div
           role="alert"
-          className="flex items-start gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-xs text-red-700 dark:text-red-300"
+          className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700"
         >
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{error}</span>
@@ -112,24 +112,24 @@ function SetPasswordForm() {
       )}
 
       <div className="space-y-1.5">
-        <label htmlFor="password" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <label htmlFor="password" className="block text-xs font-semibold text-slate-700">
           New password
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             id="password"
             type={show ? "text" : "password"}
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full pl-10 pr-11 py-2.5 rounded-2xl border border-slate-200 bg-slate-50/50 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#143C2E]/20 focus:border-[#143C2E]"
           />
           <button
             type="button"
             onClick={() => setShow((v) => !v)}
             aria-label={show ? "Hide password" : "Show password"}
-            className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
           >
             {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -138,7 +138,7 @@ function SetPasswordForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="confirm" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <label htmlFor="confirm" className="block text-xs font-semibold text-slate-700">
           Confirm password
         </label>
         <input
@@ -147,14 +147,14 @@ function SetPasswordForm() {
           autoComplete="new-password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 bg-slate-50/50 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#143C2E]/20 focus:border-[#143C2E]"
         />
       </div>
 
       <button
         type="submit"
         disabled={submitting}
-        className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0D3823] dark:bg-[#CCFF00] text-[#CCFF00] dark:text-[#0D3823] text-sm font-bold disabled:opacity-50"
+        className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white text-xs font-bold shadow-xs disabled:opacity-50 transition-all cursor-pointer"
       >
         {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
         {submitting ? "Saving..." : "Save password"}

@@ -164,12 +164,12 @@ function InviteAcceptContent({ params }: InvitePageProps) {
   // 2. Success State View
   if (effectiveState === "success") {
     return (
-      <div className="bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-7 sm:p-9 text-center space-y-6">
-        <div className="mx-auto w-16 h-16 rounded-3xl bg-[#F4FCE3] dark:bg-emerald-950/80 border border-lime-300 dark:border-lime-500/30 text-[#0D3823] dark:text-[#CCFF00] flex items-center justify-center shadow-lg shadow-lime-500/10">
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-7 sm:p-9 text-center space-y-6">
+        <div className="mx-auto w-16 h-16 rounded-3xl bg-emerald-50 border border-emerald-200/80 text-[#143C2E] flex items-center justify-center shadow-xs">
           <CheckCircle2 className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/80 dark:border-lime-500/30">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-100/70 text-[#143C2E] border border-emerald-300/60 shadow-2xs">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Invitation Accepted</span>
           </div>
@@ -178,7 +178,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
           </h1>
           <p className="text-xs text-slate-600 dark:text-slate-400">
             You joined as a{" "}
-            <span className="font-bold text-[#0D3823] dark:text-[#CCFF00] uppercase">
+            <span className="font-bold text-[#143C2E] uppercase">
               {acceptedRole}
             </span>
             . Loading your workspace...
@@ -214,7 +214,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
         <div className="pt-2 space-y-3">
           <Link
             href="/login"
-            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] font-bold text-xs shadow-md transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white font-bold text-xs shadow-xs transition-all"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Return to Sign In</span>
@@ -245,7 +245,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
         <div className="pt-2">
           <Link
             href="/login"
-            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] font-bold text-xs shadow-md transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white font-bold text-xs shadow-xs transition-all"
           >
             <span>Return to Sign In</span>
           </Link>
@@ -275,7 +275,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
         <div className="pt-2">
           <Link
             href="/login"
-            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] font-bold text-xs shadow-md transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white font-bold text-xs shadow-xs transition-all"
           >
             <span>Sign In to Workspace</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -319,7 +319,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
         <div className="pt-2 space-y-3">
           <Link
             href={`/login?email=${encodeURIComponent(queryEmail || "")}`}
-            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] font-bold text-xs shadow-md transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white font-bold text-xs shadow-xs transition-all"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Sign In with Invited Email</span>
@@ -365,8 +365,8 @@ function InviteAcceptContent({ params }: InvitePageProps) {
               className="h-6 w-auto object-contain hidden dark:inline-block"
             />
           </div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/80 dark:border-lime-500/30">
-            <Sparkles className="w-3.5 h-3.5 text-[#0D3823] dark:text-[#CCFF00]" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-100/70 text-[#143C2E] border border-emerald-300/60 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#143C2E]" />
             <span>Workspace Invitation</span>
           </div>
         </div>
@@ -420,7 +420,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
             <Lock className="w-4 h-4 text-emerald-700 dark:text-lime-400" />
             <span className="font-semibold">Assigned Role</span>
           </div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0D3823] dark:bg-[#CCFF00] text-[#CCFF00] dark:text-[#0D3823]">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-[#143C2E] border border-emerald-200/80">
             <span>{queryRole}</span>
           </div>
         </div>
@@ -454,7 +454,7 @@ function InviteAcceptContent({ params }: InvitePageProps) {
           type="button"
           onClick={handleAccept}
           disabled={isAccepting}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] font-bold text-xs shadow-md shadow-emerald-950/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white font-bold text-xs shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {isAccepting ? (
             <>

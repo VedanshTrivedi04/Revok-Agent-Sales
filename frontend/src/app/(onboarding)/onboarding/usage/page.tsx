@@ -10,10 +10,10 @@ export default function OnboardingUsagePage() {
   const [done, setDone] = useState(false);
 
   const tabClass = (active: boolean) =>
-    `px-3 py-1.5 text-xs font-semibold rounded-lg border cursor-pointer ${
+    `px-3.5 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
       active
-        ? "bg-[#0D3823] text-[#CCFF00] border-[#0D3823]"
-        : "bg-white dark:bg-[#0C1E15] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-emerald-950"
+        ? "bg-[#143C2E] text-white border-[#143C2E] shadow-xs"
+        : "bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 shadow-2xs"
     }`;
 
   return (

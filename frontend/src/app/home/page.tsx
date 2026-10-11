@@ -20,7 +20,7 @@ export default function HomeRedirect() {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <Loader2 className="w-6 h-6 animate-spin text-blue-600" aria-label="Loading" />
+      <Loader2 className="w-6 h-6 animate-spin text-[#143C2E] dark:text-emerald-500" aria-label="Loading" />
     </div>
   );
 }

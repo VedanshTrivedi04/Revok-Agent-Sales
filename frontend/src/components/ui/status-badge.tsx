@@ -58,11 +58,11 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       return (
         <span
           className={clsx(
-            "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900",
+            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-800 border-emerald-200/80 shadow-2xs",
             className
           )}
         >
-          <Loader2 className="w-3 h-3 text-blue-600 animate-spin dark:text-blue-400" aria-hidden="true" />
+          <Loader2 className="w-3 h-3 text-emerald-600 animate-spin" aria-hidden="true" />
           <span>Executing</span>
         </span>
       );

@@ -29,7 +29,7 @@ export function Forbidden403({
       <div className="flex items-center gap-3">
         <Link
           href={homeHref}
-          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] hover:bg-[#0E2C22] text-white transition-colors focus-visible:ring-2 focus-visible:ring-[#143C2E] shadow-xs"
         >
           <Home className="w-4 h-4" />
           <span>{homeLabel}</span>

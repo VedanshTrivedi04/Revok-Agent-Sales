@@ -68,7 +68,7 @@ export function TimeChart({ points, series, mode, label, height = 220 }: TimeCha
         role="img"
         aria-label={label}
         tabIndex={0}
-        className="block rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--adm-accent)]"
+        className="block rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]"
         onPointerMove={(e) => setActive(indexAt(e.clientX, e.currentTarget.getBoundingClientRect()))}
         onPointerLeave={() => setActive(null)}
         onBlur={() => setActive(null)}
@@ -80,8 +80,8 @@ export function TimeChart({ points, series, mode, label, height = 220 }: TimeCha
       >
         {ticks.map((t) => (
           <g key={t}>
-            <line x1={M.left} x2={width - M.right} y1={y(t)} y2={y(t)} stroke={t === 0 ? "var(--viz-axis)" : "var(--viz-grid)"} strokeWidth={1} />
-            <text x={M.left - 6} y={y(t)} textAnchor="end" dominantBaseline="middle" fontSize={10} fill="var(--viz-muted)" style={{ fontVariantNumeric: "tabular-nums" }}>
+            <line x1={M.left} x2={width - M.right} y1={y(t)} y2={y(t)} stroke={t === 0 ? "rgba(148, 163, 184, 0.45)" : "rgba(148, 163, 184, 0.18)"} strokeWidth={1} />
+            <text x={M.left - 6} y={y(t)} textAnchor="end" dominantBaseline="middle" fontSize={10} fill="#64748B" style={{ fontVariantNumeric: "tabular-nums" }}>
               {Number.isInteger(t) ? t : t.toFixed(1)}
             </text>
           </g>
@@ -89,14 +89,14 @@ export function TimeChart({ points, series, mode, label, height = 220 }: TimeCha
 
         {points.map((p, i) =>
           i % labelEvery === 0 ? (
-            <text key={p.date} x={xCenter(i)} y={height - 8} textAnchor="middle" fontSize={10} fill="var(--viz-muted)">
+            <text key={p.date} x={xCenter(i)} y={height - 8} textAnchor="middle" fontSize={10} fill="#64748B">
               {shortDay(p.date)}
             </text>
           ) : null
         )}
 
-        {active !== null && mode === "line" && <line x1={xCenter(active)} x2={xCenter(active)} y1={M.top} y2={M.top + innerH} stroke="var(--viz-axis)" strokeWidth={1} />}
-        {active !== null && mode === "bars" && <rect x={M.left + band * active} y={M.top} width={band} height={innerH} fill="var(--viz-grid)" />}
+        {active !== null && mode === "line" && <line x1={xCenter(active)} x2={xCenter(active)} y1={M.top} y2={M.top + innerH} stroke="rgba(20, 60, 46, 0.4)" strokeWidth={1} strokeDasharray="3 3" />}
+        {active !== null && mode === "bars" && <rect x={M.left + band * active} y={M.top} width={band} height={innerH} fill="rgba(20, 60, 46, 0.05)" />}
 
         {mode === "line" &&
           series.map((s) => (
@@ -123,7 +123,7 @@ export function TimeChart({ points, series, mode, label, height = 220 }: TimeCha
                   const y1 = y(acc + v);
                   const h = y(acc) - y1;
                   acc += v;
-                  return <rect key={s.key} x={xCenter(i) - w / 2} y={y1} width={w} height={Math.max(1, h)} rx={2} fill={s.color} stroke="var(--viz-surface)" strokeWidth={2} />;
+                  return <rect key={s.key} x={xCenter(i) - w / 2} y={y1} width={w} height={Math.max(1, h)} rx={2} fill={s.color} stroke="#ffffff" strokeWidth={1.5} />;
                 })}
               </g>
             );
@@ -132,25 +132,25 @@ export function TimeChart({ points, series, mode, label, height = 220 }: TimeCha
         {active !== null &&
           mode === "line" &&
           series.map((s) => (
-            <circle key={s.key} cx={xCenter(active)} cy={y(points[active].values[s.key] ?? 0)} r={4.5} fill={s.color} stroke="var(--viz-surface)" strokeWidth={2} />
+            <circle key={s.key} cx={xCenter(active)} cy={y(points[active].values[s.key] ?? 0)} r={4.5} fill={s.color} stroke="#ffffff" strokeWidth={2} />
           ))}
       </svg>
 
       {active !== null && (
         <div
           role="status"
-          className="pointer-events-none absolute z-10 min-w-36 rounded-lg border border-[var(--adm-border-strong)] bg-[var(--adm-surface-2)] px-3 py-2 shadow-lg"
+          className="pointer-events-none absolute z-10 min-w-40 rounded-xl border border-slate-200/90 bg-white/95 px-3 py-2 shadow-xl backdrop-blur-xs"
           style={{ left: tooltipLeft, top: 0 }}
         >
-          <div className="mb-1 text-[11px] font-medium text-[var(--adm-text-muted)]">{shortDay(points[active].date)}</div>
+          <div className="mb-1 text-[11px] font-mono text-slate-500">{shortDay(points[active].date)}</div>
           <ul className="space-y-0.5">
             {series.map((s) => (
               <li key={s.key} className="flex items-center justify-between gap-4 text-xs">
-                <span className="inline-flex items-center gap-1.5 text-[var(--adm-text-muted)]">
+                <span className="inline-flex items-center gap-1.5 text-slate-600 font-medium">
                   <span aria-hidden="true" className="inline-block h-2 w-2 rounded-[2px]" style={{ backgroundColor: s.color }} />
                   {s.label}
                 </span>
-                <span className="font-semibold tabular-nums text-[var(--adm-text)]">{points[active].values[s.key] ?? 0}</span>
+                <span className="font-bold tabular-nums text-slate-900">{points[active].values[s.key] ?? 0}</span>
               </li>
             ))}
           </ul>

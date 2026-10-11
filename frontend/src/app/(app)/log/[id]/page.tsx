@@ -66,7 +66,7 @@ export default function WhyReplayPage({ params }: { params: Promise<{ id: string
 
         <div className={card}>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono uppercase px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            <span className="text-xs font-mono uppercase px-2 py-0.5 rounded font-bold bg-emerald-50 text-[#143C2E] dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
               {entry.event}
             </span>
             <span className="text-xs text-slate-500 font-mono">
@@ -115,7 +115,7 @@ export default function WhyReplayPage({ params }: { params: Promise<{ id: string
               {evidence.map((ev, i) => (
                 <li key={`${text(ev.key) ?? i}`} className="p-2 rounded bg-slate-50 dark:bg-slate-800 flex justify-between gap-3">
                   <span>
-                    <span className="font-mono font-bold text-blue-600">[{text(ev.key) ?? i + 1}]</span>{" "}
+                    <span className="font-mono font-bold text-[#143C2E] dark:text-emerald-400">[{text(ev.key) ?? i + 1}]</span>{" "}
                     <span className="text-slate-800 dark:text-slate-200">{text(ev.label) ?? "Evidence"}</span>
                   </span>
                   <span className="text-slate-400 font-mono text-[11px] text-right">
@@ -199,7 +199,7 @@ export default function WhyReplayPage({ params }: { params: Promise<{ id: string
         {related.length > 0 && (
           <div className={card}>
             <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <GitCommit className="w-4 h-4 text-blue-500" />
+              <GitCommit className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
               Related decisions
             </h2>
             <ol className="space-y-1.5 text-xs">

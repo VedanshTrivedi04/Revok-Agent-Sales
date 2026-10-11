@@ -233,7 +233,7 @@ export default function InboxPage() {
                 }}
                 className={`pb-2 px-3 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap ${
                   statusTab === t.key
-                    ? "border-blue-600 text-blue-600 dark:text-blue-400"
+                    ? "border-[#143C2E] text-[#143C2E] dark:text-emerald-400 font-bold"
                     : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                 }`}
               >
@@ -279,9 +279,9 @@ export default function InboxPage() {
 
         {/* Bulk Action Bar (When Items Selected) */}
         {selectedCardIds.size > 0 && statusTab === "pending_approval" && (
-          <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 flex items-center justify-between text-xs animate-in">
-            <div className="flex items-center gap-2 text-blue-900 dark:text-blue-200 font-semibold">
-              <CheckSquare className="w-4 h-4 text-blue-600" />
+          <div className="p-3 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 flex items-center justify-between text-xs animate-in">
+            <div className="flex items-center gap-2 text-emerald-900 dark:text-emerald-200 font-semibold">
+              <CheckSquare className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
               <span>{selectedCardIds.size} cards selected</span>
             </div>
             <div className="flex items-center gap-2">
@@ -300,7 +300,7 @@ export default function InboxPage() {
                 <button
                   type="button"
                   onClick={handleBulkApprove}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-semibold bg-[#143C2E] hover:bg-[#0E2C22] text-white shadow-xs"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>Bulk Approve</span>
@@ -353,7 +353,7 @@ export default function InboxPage() {
                   className="inline-flex items-center gap-1.5 hover:text-slate-800 dark:hover:text-slate-200"
                 >
                   {selectedCardIds.size === cards.length ? (
-                    <CheckSquare className="w-3.5 h-3.5 text-blue-600" />
+                    <CheckSquare className="w-3.5 h-3.5 text-[#143C2E] dark:text-emerald-400" />
                   ) : (
                     <Square className="w-3.5 h-3.5 text-slate-400" />
                   )}
@@ -369,7 +369,7 @@ export default function InboxPage() {
                   key={card.id}
                   className={`rounded-xl border bg-white dark:bg-slate-900 p-5 shadow-xs space-y-3 transition-colors ${
                     isSelected
-                      ? "border-blue-500 dark:border-blue-500/80 bg-blue-50/20 dark:bg-blue-950/20"
+                      ? "border-[#143C2E] dark:border-emerald-500/80 bg-emerald-50/20 dark:bg-emerald-950/20 ring-1 ring-[#143C2E]/20"
                       : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
                   }`}
                 >
@@ -379,10 +379,10 @@ export default function InboxPage() {
                         <button
                           type="button"
                           onClick={() => handleToggleSelect(card.id)}
-                          className="mt-1 text-slate-400 hover:text-blue-600"
+                          className="mt-1 text-slate-400 hover:text-[#143C2E]"
                         >
                           {isSelected ? (
-                            <CheckSquare className="w-4 h-4 text-blue-600" />
+                            <CheckSquare className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                           ) : (
                             <Square className="w-4 h-4 text-slate-400" />
                           )}
@@ -393,7 +393,7 @@ export default function InboxPage() {
                         <div className="flex flex-wrap items-center gap-2">
                           <Link
                             href={`/inbox/${card.id}`}
-                            className="font-bold text-sm text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 inline-flex items-center gap-1"
+                            className="font-bold text-sm text-slate-900 dark:text-slate-100 hover:text-[#143C2E] dark:hover:text-emerald-400 inline-flex items-center gap-1"
                           >
                             <span>{card.title}</span>
                             <ArrowRight className="w-3.5 h-3.5 opacity-60" />
@@ -406,7 +406,7 @@ export default function InboxPage() {
                             </span>
                           )}
                           {card.type === "email_draft" && (
-                            <span className="text-[10px] text-blue-600 dark:text-blue-400 font-mono">
+                            <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono">
                               Draft created in Gmail
                             </span>
                           )}
@@ -443,7 +443,7 @@ export default function InboxPage() {
                                 type="button"
                                 onClick={() => approveMutation.mutate(card.id)}
                                 disabled={approveMutation.isPending}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition-colors shadow-xs"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] active:bg-[#0A2018] text-white transition-colors shadow-xs"
                               >
                                 <Check className="w-3.5 h-3.5" />
                                 <span>Approve</span>
@@ -477,7 +477,7 @@ export default function InboxPage() {
                                 })
                                 .catch((e) => handleApiErrorToast(e));
                             }}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] text-white transition-colors shadow-xs"
                           >
                             <span>Retry</span>
                           </button>
@@ -516,7 +516,7 @@ export default function InboxPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-sm w-full p-5 shadow-xl space-y-4">
               <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-500" />
+                <Users className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                 Assign {selectedCardIds.size} Cards
               </h3>
 
@@ -527,7 +527,7 @@ export default function InboxPage() {
                 <select
                   value={bulkAssignee}
                   onChange={(e) => setBulkAssignee(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E]"
                 >
                   <option value="">Choose team member...</option>
                   {members.map((m) => (
@@ -550,7 +550,7 @@ export default function InboxPage() {
                   type="button"
                   disabled={!bulkAssignee}
                   onClick={handleBulkAssign}
-                  className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50"
+                  className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] hover:bg-[#0E2C22] text-white disabled:opacity-50 shadow-xs"
                 >
                   Confirm Assignment
                 </button>

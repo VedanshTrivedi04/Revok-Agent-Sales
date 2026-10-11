@@ -100,7 +100,7 @@ function LoginForm() {
   const errorMessage = formError || queryError;
 
   return (
-    <div className="bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-7 sm:p-9 space-y-6">
+    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-7 sm:p-9 space-y-6">
       {/* Header Pill & Title */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -108,34 +108,24 @@ function LoginForm() {
             <img
               src="/primary logo.png"
               alt="Revora"
-              className="w-7 h-7 object-contain dark:hidden"
-            />
-            <img
-              src="/secondary logo.png"
-              alt="Revora"
-              className="w-7 h-7 object-contain hidden dark:inline-block"
+              className="w-7 h-7 object-contain"
             />
             <img
               src="/pr name.png"
               alt="Revora"
-              className="h-6 w-auto object-contain dark:hidden"
-            />
-            <img
-              src="/sc name.png"
-              alt="Revora"
-              className="h-6 w-auto object-contain hidden dark:inline-block"
+              className="h-6 w-auto object-contain"
             />
           </div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/80 dark:border-lime-500/30">
-            <Sparkles className="w-3.5 h-3.5 text-[#0D3823] dark:text-[#CCFF00]" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-100/70 text-[#143C2E] border border-emerald-300/60 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#143C2E]" />
             <span>Enterprise Portal</span>
           </div>
         </div>
 
-        <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-black tracking-tight text-slate-900">
           Sign in to Revora
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500">
           Evidence-first, approval-native revenue intelligence.
         </p>
       </div>
@@ -144,9 +134,9 @@ function LoginForm() {
       {errorMessage && (
         <div
           role="alert"
-          className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 flex items-start gap-2.5 text-xs text-rose-800 dark:text-rose-300"
+          className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 text-xs text-rose-800"
         >
-          <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -154,7 +144,7 @@ function LoginForm() {
       {/* Email + password form */}
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div className="space-y-1.5">
-          <label htmlFor="login-email" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <label htmlFor="login-email" className="block text-xs font-semibold text-slate-700">
             Work Email Address
           </label>
           <div className="relative">
@@ -168,13 +158,13 @@ function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-emerald-900/60 bg-slate-50/50 dark:bg-emerald-950/20 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#CCFF00] dark:focus:ring-[#CCFF00]"
+              className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#143C2E]/20 focus:border-[#143C2E]"
             />
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="login-password" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <label htmlFor="login-password" className="block text-xs font-semibold text-slate-700">
             Password
           </label>
           <div className="relative">
@@ -187,14 +177,14 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full pl-10 pr-11 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-emerald-900/60 bg-slate-50/50 dark:bg-emerald-950/20 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#CCFF00] dark:focus:ring-[#CCFF00]"
+              className="w-full pl-10 pr-11 py-2.5 text-xs rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#143C2E]/20 focus:border-[#143C2E]"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
               aria-pressed={showPassword}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CCFF00]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-slate-400 hover:text-slate-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -204,7 +194,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting || !email || !password}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] font-bold text-xs shadow-md shadow-emerald-950/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white font-bold text-xs shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {isSubmitting ? (
             <>
@@ -221,30 +211,30 @@ function LoginForm() {
       </form>
 
       {/* Role-based access note */}
-      <div className="rounded-2xl border border-slate-200 dark:border-emerald-900/60 bg-slate-50/60 dark:bg-emerald-950/20 p-3.5 space-y-2.5">
-        <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-[#CCFF00]" />
+      <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5 space-y-2.5">
+        <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-700">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#143C2E]" />
           <span>Role-based access</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {ROLE_LABELS.map((label) => (
             <span
               key={label}
-              className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-[#F4FCE3] dark:bg-emerald-950/80 text-[#0D3823] dark:text-[#CCFF00] border border-lime-300/70 dark:border-lime-500/30"
+              className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/70"
             >
               {label}
             </span>
           ))}
         </div>
-        <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+        <p className="text-[11px] leading-relaxed text-slate-500">
           Your role is assigned by your workspace and applied automatically after you sign in.
         </p>
       </div>
 
       {/* Link to Signup */}
-      <div className="pt-2 border-t border-slate-100 dark:border-emerald-950/80 text-center text-xs text-slate-500">
+      <div className="pt-2 border-t border-slate-100 text-center text-xs text-slate-500">
         Don&apos;t have an account?{" "}
-        <Link href={signupHref} className="font-bold text-[#0D3823] dark:text-[#CCFF00] hover:underline">
+        <Link href={signupHref} className="font-bold text-[#143C2E] hover:underline">
           Create account
         </Link>
       </div>

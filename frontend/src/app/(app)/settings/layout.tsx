@@ -17,7 +17,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-xs">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-3 shadow-xs">
         <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 px-3 mb-1">
           Personal Settings
         </div>
@@ -31,7 +31,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                 href={tab.href}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
                   isActive
-                    ? "bg-blue-600 text-white shadow-xs"
+                    ? "bg-[#143C2E] text-white shadow-xs"
                     : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
               >

@@ -18,8 +18,8 @@ export function TierBadge({ tier, className }: TierBadgeProps) {
   const configs: Record<Tier, { label: string; icon: React.ReactNode; classes: string }> = {
     1: {
       label: "Auto (Tier 1)",
-      icon: <Zap className="w-3 h-3 text-blue-600 dark:text-blue-400" aria-hidden="true" />,
-      classes: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/60",
+      icon: <Zap className="w-3 h-3 text-[#143C2E]" aria-hidden="true" />,
+      classes: "bg-emerald-50 text-emerald-800 border-emerald-200/80 shadow-2xs",
     },
     2: {
       label: "Needs approval (Tier 2)",

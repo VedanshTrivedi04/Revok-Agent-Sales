@@ -97,7 +97,7 @@ export default function DataHealthPage() {
               </tbody>
             </table>
           </div>
-          <Link href="/control/integrations" className="self-start text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          <Link href="/control/integrations" className="self-start text-xs font-semibold text-[#143C2E] dark:text-emerald-400 hover:underline">
             Manage integrations
           </Link>
         </ChartCard>

@@ -189,12 +189,12 @@ export default function IntegrationsSettingsPage() {
             return (
               <div
                 key={key}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-4 flex flex-col justify-between"
+                className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4 flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <Plug className="w-4 h-4 text-blue-500" />
+                      <Plug className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                       {p.name}
                     </h2>
                     {first ? (
@@ -252,7 +252,7 @@ export default function IntegrationsSettingsPage() {
                   {p.connectWith === null ? (
                     <Link
                       href={p.providers.includes("gmail") ? "/settings/connections" : "/control/api-keys"}
-                      className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-xs font-semibold text-[#143C2E] dark:text-emerald-400 hover:underline"
                     >
                       {p.providers.includes("gmail") ? "My connections" : "API keys"}
                     </Link>
@@ -264,7 +264,7 @@ export default function IntegrationsSettingsPage() {
                         type="button"
                         onClick={() => syncMutation.mutate(first.id)}
                         disabled={syncMutation.isPending || isSyncing}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
                       >
                         <RefreshCw className={`w-3 h-3 ${isSyncing ? "animate-spin" : ""}`} />
                         Sync now
@@ -298,7 +298,7 @@ export default function IntegrationsSettingsPage() {
                       type="button"
                       onClick={() => connectMutation.mutate(p.connectWith as "hubspot" | "slack")}
                       disabled={connectMutation.isPending}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] disabled:opacity-50 transition-opacity cursor-pointer shadow-xs"
                     >
                       {connectMutation.isPending ? "Redirecting..." : `Connect ${p.name}`}
                     </button>

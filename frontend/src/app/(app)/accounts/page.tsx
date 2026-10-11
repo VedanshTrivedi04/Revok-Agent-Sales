@@ -56,15 +56,15 @@ export default function AccountsPage() {
               Monitored customer accounts, contract values, usage trends, and active risk findings.
             </p>
           </div>
-          <div role="group" aria-label="View" className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5 text-xs font-semibold self-start">
+          <div role="group" aria-label="View" className="inline-flex rounded-xl border border-slate-200/90 bg-white p-1 shadow-2xs text-xs font-semibold self-start">
             {([["map", "Map", LayoutGrid], ["list", "List", List]] as const).map(([key, label, Icon]) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => setView(key)}
                 aria-pressed={view === key}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
-                  view === key ? "bg-blue-600 text-white" : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  view === key ? "bg-[#143C2E] text-white shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" aria-hidden="true" />
@@ -173,7 +173,7 @@ export default function AccountsPage() {
                     <td className="p-3.5 text-right pr-4">
                       <Link
                         href={`/accounts/${acc.id}`}
-                        className="text-blue-600 dark:text-blue-400 font-medium inline-flex items-center gap-1 hover:underline"
+                        className="text-[#143C2E] font-semibold inline-flex items-center gap-1 hover:underline"
                       >
                         <span>View 360</span>
                         <ChevronRight className="w-3.5 h-3.5" />

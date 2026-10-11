@@ -94,7 +94,7 @@ export function Heatmap({ columns, rows, unit, label }: HeatmapProps) {
                       tabIndex={0}
                       aria-label={`${row.label}, ${col.label}: ${cell.value} ${unit}`}
                       className={clsx(
-                        "h-7 min-w-10 rounded-sm text-center text-[11px] font-semibold tabular-nums outline-none hover:brightness-110 focus-visible:ring-2 focus-visible:ring-blue-500",
+                        "h-7 min-w-10 rounded-sm text-center text-[11px] font-semibold tabular-nums outline-none hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[#143C2E]",
                         INK[s]
                       )}
                       style={{ backgroundColor: STEPS[s] }}

@@ -74,10 +74,10 @@ export function OnboardingShell({
   const next = nextPath(step, isAdminFlow);
 
   const continueClass =
-    "w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] font-bold text-xs shadow-md shadow-emerald-950/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
+    "w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#143C2E] hover:bg-[#0E2C22] text-white font-bold text-xs shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
 
   return (
-    <main className="min-h-screen flex flex-col items-center bg-[#F8FAF8] dark:bg-[#07130D] p-4 sm:p-6">
+    <main className="min-h-screen flex flex-col items-center bg-[#FAF9F5] p-4 sm:p-6">
       <nav aria-label="Onboarding progress" className="w-full max-w-2xl mt-2 mb-6 overflow-x-auto">
         <ol className="flex items-center gap-2 min-w-max">
           {steps.map((s, i) => {
@@ -89,25 +89,25 @@ export function OnboardingShell({
                   aria-current={current ? "step" : undefined}
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold border ${
                     current
-                      ? "bg-[#0D3823] text-[#CCFF00] border-[#0D3823]"
+                      ? "bg-[#143C2E] text-white border-[#143C2E] shadow-2xs"
                       : done
-                        ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900"
-                        : "bg-white dark:bg-[#0C1E15] text-slate-500 border-slate-200 dark:border-emerald-950"
+                        ? "bg-emerald-50 text-emerald-800 border-emerald-200/80"
+                        : "bg-white text-slate-500 border-slate-200/80"
                   }`}
                 >
                   {done && !current ? <Check className="w-3 h-3" /> : <span>{i + 1}</span>}
                   {s.label}
                 </span>
-                {i < steps.length - 1 && <span className="w-4 h-px bg-slate-300 dark:bg-emerald-900" />}
+                {i < steps.length - 1 && <span className="w-4 h-px bg-slate-300" />}
               </li>
             );
           })}
         </ol>
       </nav>
 
-      <div className="w-full max-w-xl bg-white dark:bg-[#0C1E15] rounded-3xl border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xl p-7 sm:p-9 space-y-6">
+      <div className="w-full max-w-xl bg-white rounded-3xl border border-slate-200/90 shadow-xl p-7 sm:p-9 space-y-6">
         <div className="space-y-2">
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">{title}</h1>
+          <h1 className="text-2xl font-black tracking-tight text-slate-900">{title}</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{description}</p>
         </div>
 

@@ -17,7 +17,7 @@ export function StatTile({ label, value, hint, href, flag }: StatTileProps) {
   const body = (
     <div
       className={clsx(
-        "viz h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-xs",
+        "viz h-full rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs",
         href && "transition-colors hover:border-slate-300 dark:hover:border-slate-700"
       )}
     >
@@ -40,7 +40,7 @@ export function StatTile({ label, value, hint, href, flag }: StatTileProps) {
     </div>
   );
   return href ? (
-    <Link href={href} className="block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+    <Link href={href} className="block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]">
       {body}
     </Link>
   ) : (

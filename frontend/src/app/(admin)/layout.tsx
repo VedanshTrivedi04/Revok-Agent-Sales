@@ -6,5 +6,5 @@ import "../../styles/tokens-admin.css";
  * session scope, own guard. Nothing in here may import from the customer `(app)` layout.
  */
 export default function AdminGroupLayout({ children }: { children: React.ReactNode }) {
-  return <div className="admin-theme min-h-screen bg-[var(--adm-bg)] text-[var(--adm-text)]">{children}</div>;
+  return <div className="admin-theme min-h-screen bg-[#FAF9F5] text-slate-900 selection:bg-emerald-600 selection:text-white">{children}</div>;
 }

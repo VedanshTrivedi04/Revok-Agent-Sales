@@ -82,7 +82,7 @@ export default function AutonomySettingsPage() {
           Changes apply to new actions only. Actions already waiting keep the tier they were created with.
         </p>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl divide-y divide-slate-100 dark:divide-slate-800 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl divide-y divide-slate-100 dark:divide-slate-800 shadow-xs">
           {policies.map((p) => (
             <div key={p.action_type} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -112,7 +112,7 @@ export default function AutonomySettingsPage() {
                       tier: Number(e.target.value),
                     })
                   }
-                  className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E] font-medium disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value={1}>Auto</option>
                   <option value={2}>Needs approval</option>

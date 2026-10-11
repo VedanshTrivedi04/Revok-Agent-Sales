@@ -42,8 +42,8 @@ function EnvironmentChip({ environment }: { environment: string | undefined }) {
     <span
       className={`inline-flex items-center rounded-full border px-3 py-0.5 font-mono text-[10px] font-bold tracking-widest ${
         env.isProduction
-          ? "border-[var(--adm-danger)] bg-rose-950/40 text-[var(--adm-danger)]"
-          : "border-[var(--adm-border-strong)] bg-[var(--adm-surface-2)]/80 text-[var(--adm-text-muted)]"
+          ? "border-rose-200 bg-rose-50 text-rose-700"
+          : "border-emerald-200/80 bg-emerald-50 text-emerald-800"
       }`}
       aria-label={`Environment: ${env.text}`}
     >
@@ -52,15 +52,15 @@ function EnvironmentChip({ environment }: { environment: string | undefined }) {
   );
 }
 
-/** Dark Forest "Internal" shell: sidebar + top bar + guarded content. Never reuses the customer shell. */
+/** Luxury Landing-Page-Coordinated Admin Shell: Obsidian sidebar + Warm Cream Topbar & Canvas. */
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { admin, can, isLoading, isForbidden, error, refetch, signOut } = useAdmin();
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--adm-bg)]" role="status" aria-label="Loading">
-        <Loader2 className="h-6 w-6 animate-spin text-[var(--adm-accent)]" />
+      <div className="flex min-h-screen items-center justify-center bg-[#FAF9F5]" role="status" aria-label="Loading">
+        <Loader2 className="h-6 w-6 animate-spin text-[#143C2E]" />
       </div>
     );
   }
@@ -80,26 +80,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const visible = NAV.filter((item) => can(item.permission));
 
   return (
-    <div className="flex min-h-screen bg-[var(--adm-bg)]">
+    <div className="flex min-h-screen bg-[#FAF9F5] text-slate-900 selection:bg-emerald-600 selection:text-white">
       <aside
-        className="sticky top-0 flex h-screen w-60 flex-shrink-0 flex-col border-r border-[var(--adm-border)] bg-[var(--adm-surface)]"
+        className="sticky top-0 flex h-screen w-64 flex-shrink-0 flex-col border-r border-slate-800/80 bg-[#080C11] text-slate-300 z-30"
         aria-label="Platform Admin navigation"
       >
-        <div className="flex h-16 items-center gap-3 border-b border-[var(--adm-border)] px-5">
+        <div className="flex h-16 items-center gap-3 border-b border-slate-800/80 px-5">
           <img
             src="/secondary logo.png"
             alt="Revora"
             className="w-7 h-7 object-contain shrink-0"
           />
-          <div>
-            <img
-              src="/sc name.png"
-              alt="Revora"
-              className="h-4 w-auto object-contain"
-            />
-            <div className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-[var(--adm-accent)] font-bold">
+          <div className="min-w-0">
+            <span className="font-extrabold text-sm tracking-tight text-white block">Revora</span>
+            <span className="mt-0.5 inline-block font-mono text-[9px] uppercase tracking-wider text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full">
               Platform Admin
-            </div>
+            </span>
           </div>
         </div>
 
@@ -114,45 +110,45 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all ${
                   active
-                    ? "bg-[var(--adm-accent)] text-[var(--adm-accent-ink)] font-bold shadow-md shadow-[var(--adm-accent)]/10"
-                    : "text-[var(--adm-text-muted)] hover:bg-[var(--adm-surface-2)] hover:text-[var(--adm-text)]"
+                    ? "bg-[#143C2E] text-white font-bold shadow-xs ring-1 ring-emerald-500/30"
+                    : "text-slate-400 hover:bg-slate-900/60 hover:text-white"
                 }`}
               >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <Icon className={`h-4 w-4 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`} aria-hidden="true" />
                 <span>{item.name}</span>
               </Link>
             );
           })}
         </nav>
 
-        <p className="border-t border-[var(--adm-border)] p-4 text-[11px] leading-relaxed text-[var(--adm-text-muted)]">
+        <p className="border-t border-slate-800/80 p-4 text-[11px] leading-relaxed text-slate-500">
           Counts, statuses and error text only. Customer content is never shown here.
         </p>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-[var(--adm-border)] bg-[var(--adm-surface)]/95 px-6 backdrop-blur">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-slate-200/90 bg-[#FAF9F5]/90 px-6 backdrop-blur">
           <div className="flex items-center gap-3">
             <InternalBadge />
             <EnvironmentChip environment={admin.environment} />
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right leading-tight">
-              <div className="text-xs font-semibold">{admin.name || "Platform operator"}</div>
-              <div className="text-[11px] text-[var(--adm-text-muted)]">{admin.email}</div>
+              <div className="text-xs font-bold text-slate-900">{admin.name || "Platform operator"}</div>
+              <div className="text-[11px] text-slate-500 font-mono">{admin.email}</div>
             </div>
             <button
               type="button"
               onClick={() => void signOut()}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[var(--adm-border-strong)] bg-[var(--adm-surface-2)]/60 px-3.5 py-1.5 text-xs font-semibold text-[var(--adm-text-muted)] hover:border-[var(--adm-accent)] hover:text-[var(--adm-text)] transition-all"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition-all"
             >
-              <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+              <LogOut className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
               <span>Sign out</span>
             </button>
           </div>
         </header>
 
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-6 lg:p-8 bg-[#FAF9F5]">
           <div className="mx-auto max-w-7xl space-y-6">{children}</div>
         </main>
       </div>

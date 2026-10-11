@@ -179,7 +179,7 @@ export default function ReviewPage() {
                             [rev.id]: e.target.value,
                           })
                         }
-                        className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E]"
                       >
                         {candidates.length === 0 ? (
                           <option value="">No candidates found</option>
@@ -198,7 +198,7 @@ export default function ReviewPage() {
                         type="button"
                         onClick={() => ignoreMutation.mutate(rev.id)}
                         disabled={ignoreMutation.isPending}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition-all"
                       >
                         <X className="w-3.5 h-3.5 text-slate-400" />
                         <span>Ignore</span>
@@ -214,7 +214,7 @@ export default function ReviewPage() {
                             addDomain: true,
                           })
                         }
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 transition-colors shadow-xs"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] hover:bg-[#0E2C22] text-white disabled:opacity-50 shadow-xs transition-all cursor-pointer"
                       >
                         <Globe className="w-3.5 h-3.5" />
                         <span>Apply &amp; Add Domain</span>

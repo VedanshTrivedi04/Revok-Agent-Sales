@@ -93,7 +93,7 @@ export function DismissModal({
                     value={r.value}
                     checked={reason === r.value}
                     onChange={(e) => setReason(e.target.value)}
-                    className="mt-0.5 text-blue-600 focus:ring-blue-500"
+                    className="mt-0.5 text-[#143C2E] focus:ring-[#143C2E]"
                   />
                   <span className="text-slate-800 dark:text-slate-200">{r.label}</span>
                 </label>
@@ -110,7 +110,7 @@ export function DismissModal({
               onChange={(e) => setNote(e.target.value)}
               placeholder="Provide reason details to improve future detection..."
               rows={3}
-              className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E]"
             />
           </div>
 

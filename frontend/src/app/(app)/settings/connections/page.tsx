@@ -105,11 +105,11 @@ export default function ConnectionsSettingsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Google */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-4 flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4 flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <Link2 className="w-4 h-4 text-blue-500" />
+                <Link2 className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                 Google (Gmail and Calendar)
               </h3>
               {isGoogleConnected ? (
@@ -152,7 +152,7 @@ export default function ConnectionsSettingsPage() {
                 type="button"
                 onClick={() => connectMutation.mutate()}
                 disabled={connectMutation.isPending}
-                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90 disabled:opacity-50"
+                className="ml-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] disabled:opacity-50 shadow-xs"
               >
                 {connectMutation.isPending ? "Redirecting..." : needsReauth ? "Reconnect Google" : "Connect Google"}
               </button>
@@ -161,7 +161,7 @@ export default function ConnectionsSettingsPage() {
         </div>
 
         {/* Slack */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-4 flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4 flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">

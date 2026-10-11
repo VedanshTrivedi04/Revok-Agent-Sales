@@ -118,7 +118,7 @@ export default function ApiKeysSettingsPage() {
                 setRevealedKey(null);
                 setCreateModalOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 transition-colors shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] active:bg-[#0A2018] transition-colors shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               Generate API Key
@@ -133,7 +133,7 @@ export default function ApiKeysSettingsPage() {
             icon={<Key className="w-6 h-6" />}
           />
         ) : (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
@@ -196,10 +196,10 @@ export default function ApiKeysSettingsPage() {
         {/* Generate Key Modal */}
         {createModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <Key className="w-4 h-4 text-blue-500" />
+                  <Key className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                   Generate New API Key
                 </h3>
                 <button
@@ -238,7 +238,7 @@ export default function ApiKeysSettingsPage() {
                     <button
                       type="button"
                       onClick={() => setCreateModalOpen(false)}
-                      className="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500"
+                      className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] shadow-xs"
                     >
                       Done
                     </button>
@@ -266,7 +266,7 @@ export default function ApiKeysSettingsPage() {
                       placeholder="e.g. Production Data Warehouse Pipeline"
                       value={newKeyName}
                       onChange={(e) => setNewKeyName(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] focus:border-[#143C2E]"
                     />
                   </div>
 
@@ -281,7 +281,7 @@ export default function ApiKeysSettingsPage() {
                     <button
                       type="submit"
                       disabled={createMutation.isPending || !newKeyName.trim()}
-                      className="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50 transition-colors shadow-xs"
+                      className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] active:bg-[#0A2018] disabled:opacity-50 transition-colors shadow-xs"
                     >
                       {createMutation.isPending ? "Generating..." : "Generate Key"}
                     </button>

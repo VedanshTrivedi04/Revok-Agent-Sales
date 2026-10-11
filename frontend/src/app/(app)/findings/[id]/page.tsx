@@ -157,7 +157,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
                 </span>
                 <span
                   title={`Confidence ${finding.confidence.toFixed(2)}`}
-                  className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800"
+                  className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-[#143C2E] dark:text-emerald-300 font-semibold border border-emerald-200 dark:border-emerald-800"
                 >
                   {confidenceLabel(finding.confidence)}
                 </span>
@@ -252,7 +252,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
                     type="button"
                     onClick={handleReopen}
                     disabled={isReopening}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white cursor-pointer"
+                    className="inline-flex items-center gap-1 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#143C2E] hover:bg-[#0E2C22] disabled:opacity-50 text-white cursor-pointer shadow-xs"
                   >
                     <Check className="w-3.5 h-3.5" />
                     <span>{isReopening ? "Reopening..." : "Reopen"}</span>
@@ -317,7 +317,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {evidence.map((e) => (
                     <tr key={e.key} className="align-top">
-                      <td className="py-2 pr-3 font-mono font-bold text-blue-600 dark:text-blue-400">{e.key}</td>
+                      <td className="py-2 pr-3 font-mono font-bold text-[#143C2E] dark:text-emerald-400">{e.key}</td>
                       <td className="py-2 pr-3 text-slate-600 dark:text-slate-400">{e.source ?? e.kind}</td>
                       <td className="py-2 pr-3 text-slate-800 dark:text-slate-200">
                         {e.label}
@@ -328,7 +328,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
                       </td>
                       <td className="py-2">
                         {e.source_url ? (
-                          <a href={e.source_url} target="_blank" rel="noreferrer" aria-label={`Open ${e.key} in ${e.source ?? "source"}`} className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
+                          <a href={e.source_url} target="_blank" rel="noreferrer" aria-label={`Open ${e.key} in ${e.source ?? "source"}`} className="text-[#143C2E] dark:text-emerald-400 hover:underline inline-flex items-center gap-1">
                             Open <ExternalLink className="w-3 h-3" />
                           </a>
                         ) : (
@@ -374,7 +374,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
         {cards.length > 0 && (
           <div className={card}>
             <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-blue-500" />
+              <Layers className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
               Suggested actions ({cards.length})
             </h2>
             <div className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -390,7 +390,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                   <Link
                     href={`/inbox/${c.id}`}
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors text-center"
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] text-white transition-colors text-center shadow-xs"
                   >
                     Open
                   </Link>

@@ -94,8 +94,8 @@ export function PortfolioMap({ query, risk }: { query: string; risk: string }) {
           </span>
         )}
         {active.size > 0 && (
-          <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" aria-hidden="true" />
+          <span className="inline-flex items-center gap-1.5 text-[#143C2E] dark:text-emerald-400 font-bold">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
             {active.size} being analysed now
           </span>
         )}
@@ -146,7 +146,7 @@ export function PortfolioMap({ query, risk }: { query: string; risk: string }) {
                   </text>
                 ) : null}
                 {step && b.r >= 28 && (
-                  <text x={b.x} y={b.y + b.r - 8} textAnchor="middle" className="fill-blue-500 pointer-events-none" fontSize={9}>
+                  <text x={b.x} y={b.y + b.r - 8} textAnchor="middle" className="fill-[#143C2E] dark:fill-emerald-400 pointer-events-none font-bold" fontSize={9}>
                     {stepTitle(step.name)}…
                   </text>
                 )}
@@ -169,7 +169,7 @@ export function PortfolioMap({ query, risk }: { query: string; risk: string }) {
             {typeof hovered.account.renewal_in_days === "number" && <p className="text-slate-500">Renews in {hovered.account.renewal_in_days} days</p>}
             {hovered.account.owner && <p className="text-slate-500">Owner: {hovered.account.owner.name}</p>}
             {hoveredRun && (
-              <p className="text-blue-600 dark:text-blue-400 font-medium">{hoveredStep ? `Agent: ${stepTitle(hoveredStep.name)}…` : "Agent is analysing this account"}</p>
+              <p className="text-[#143C2E] dark:text-emerald-400 font-medium">{hoveredStep ? `Agent: ${stepTitle(hoveredStep.name)}…` : "Agent is analysing this account"}</p>
             )}
           </div>
         )}

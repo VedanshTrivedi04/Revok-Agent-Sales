@@ -171,7 +171,7 @@ export default function MembersSettingsPage() {
               <button
                 type="button"
                 onClick={() => setInviteModalOpen(true)}
-                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 transition-colors shadow-xs"
+                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] active:bg-[#0A2018] transition-colors shadow-xs"
               >
                 <UserPlus className="w-3.5 h-3.5" />
                 Invite Teammate
@@ -197,13 +197,13 @@ export default function MembersSettingsPage() {
 
         {/* Active Members Table */}
         {!isMembersLoading && !membersError && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
             <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-between">
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Active Members ({members.length})
               </h2>
               {isOwner && (
-                <span className="text-[11px] text-blue-600 dark:text-blue-400 font-medium">
+                <span className="text-[11px] text-[#143C2E] dark:text-emerald-400 font-bold">
                   Owner Superpowers Active: Role Transfer & Management Enabled
                 </span>
               )}
@@ -243,7 +243,7 @@ export default function MembersSettingsPage() {
                                   role: e.target.value,
                                 })
                               }
-                              className="px-2.5 py-1 text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 capitalize font-medium"
+                              className="px-2.5 py-1 text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#143C2E] capitalize font-medium"
                             >
                               <option value="owner">Owner</option>
                               <option value="admin">Admin</option>
@@ -254,7 +254,7 @@ export default function MembersSettingsPage() {
                           ) : (
                             <div className="flex items-center gap-1.5 font-medium capitalize">
                               {m.role === "owner" && <Crown className="w-3.5 h-3.5 text-amber-500" />}
-                              {m.role === "admin" && <Shield className="w-3.5 h-3.5 text-blue-500" />}
+                              {m.role === "admin" && <Shield className="w-3.5 h-3.5 text-emerald-600" />}
                               <span>{m.role}</span>
                               {isSelf && (
                                 <span className="text-[10px] text-slate-400 font-mono">(You)</span>
@@ -324,7 +324,7 @@ export default function MembersSettingsPage() {
 
         {/* Pending Invites Section */}
         {invites.length > 0 && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
             <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Pending Invitations ({invites.length})
@@ -356,10 +356,10 @@ export default function MembersSettingsPage() {
         {/* Invite Member Modal */}
         {inviteModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-blue-500" />
+                  <UserPlus className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
                   Invite Teammate to Workspace
                 </h3>
                 <button
@@ -382,7 +382,7 @@ export default function MembersSettingsPage() {
                     placeholder="colleague@example.com"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E]"
                   />
                 </div>
 
@@ -395,7 +395,7 @@ export default function MembersSettingsPage() {
                     onChange={(e) =>
                       setInviteRole(e.target.value as "admin" | "manager" | "member" | "viewer")
                     }
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 capitalize"
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#143C2E] capitalize"
                   >
                     <option value="admin">Admin — Full operational controls</option>
                     <option value="manager">Manager — Can review, edit rules & cards</option>
@@ -415,7 +415,7 @@ export default function MembersSettingsPage() {
                   <button
                     type="submit"
                     disabled={inviteMutation.isPending || !inviteEmail}
-                    className="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50 transition-colors shadow-xs"
+                    className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#143C2E] text-white hover:bg-[#0E2C22] active:bg-[#0A2018] disabled:opacity-50 transition-colors shadow-xs"
                   >
                     {inviteMutation.isPending ? "Sending invite..." : "Send Invitation"}
                   </button>

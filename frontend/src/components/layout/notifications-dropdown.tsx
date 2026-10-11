@@ -108,7 +108,7 @@ export function NotificationsDropdown() {
       case "finding_high":
         return <ShieldAlert className="w-4 h-4 text-rose-600 dark:text-rose-400" aria-hidden="true" />;
       case "card_assigned":
-        return <Inbox className="w-4 h-4 text-blue-600 dark:text-blue-400" aria-hidden="true" />;
+        return <Inbox className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" aria-hidden="true" />;
       case "execution_failed":
         return <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" aria-hidden="true" />;
       case "integration_error":
@@ -125,7 +125,7 @@ export function NotificationsDropdown() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-visible:ring-2 focus-visible:ring-[#143C2E]"
         aria-label={`Notifications (${unreadCount} unread)`}
         aria-expanded={isOpen}
       >
@@ -159,7 +159,7 @@ export function NotificationsDropdown() {
                 type="button"
                 onClick={() => markAllMutation.mutate()}
                 disabled={markAllMutation.isPending}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
+                className="inline-flex items-center gap-1 text-[11px] font-medium text-[#143C2E] hover:underline disabled:opacity-50"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
                 <span>Mark all read</span>
@@ -171,7 +171,7 @@ export function NotificationsDropdown() {
           <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
             {isLoading && (
               <div className="p-6 text-center text-slate-400 flex items-center justify-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
                 <span>Loading notifications...</span>
               </div>
             )}
@@ -203,7 +203,7 @@ export function NotificationsDropdown() {
                     type="button"
                     onClick={() => handleItemClick(n)}
                     className={`w-full text-left p-3.5 transition-colors flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
-                      isUnread ? "bg-blue-50/30 dark:bg-blue-950/20" : ""
+                      isUnread ? "bg-emerald-50/40 dark:bg-emerald-950/20" : ""
                     }`}
                   >
                     <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 mt-0.5 flex-shrink-0">
@@ -223,7 +223,7 @@ export function NotificationsDropdown() {
                         </span>
                         {isUnread && (
                           <span
-                            className="w-2 h-2 rounded-full bg-blue-600 flex-shrink-0"
+                            className="w-2 h-2 rounded-full bg-emerald-600 flex-shrink-0"
                             aria-label="Unread indicator"
                           />
                         )}

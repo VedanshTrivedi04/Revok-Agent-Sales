@@ -24,14 +24,14 @@ import { TimeChart } from "../../../../../components/admin/charts/time-chart";
 import { AdminForbidden } from "../../../../../components/admin/admin-forbidden";
 
 const C = {
-  blue: "var(--viz-1)",
-  orange: "var(--viz-2)",
-  aqua: "var(--viz-3)",
-  amber: "var(--viz-4)",
-  good: "var(--viz-good)",
-  warning: "var(--viz-warning)",
-  critical: "var(--viz-critical)",
-  neutral: "var(--viz-neutral)",
+  blue: "#143C2E",
+  orange: "#F97316",
+  aqua: "#10B981",
+  amber: "#F59E0B",
+  good: "#10B981",
+  warning: "#F59E0B",
+  critical: "#F43F5E",
+  neutral: "#94A3B8",
 };
 
 const PROVIDER: Record<string, string> = {
@@ -84,19 +84,19 @@ export default function AdminAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 border-b border-[var(--adm-border)] pb-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-4 border-b border-slate-200/90 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-[var(--adm-text)]">Analytics</h1>
-          <p className="mt-1 text-xs text-[var(--adm-text-muted)]">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Analytics</h1>
+          <p className="mt-1 text-xs text-slate-500">
             How the platform is used and how healthy it is, across every organization. Counts and rates only; never customer content.
           </p>
         </div>
-        <label className="flex items-center gap-2 text-xs text-[var(--adm-text-muted)]">
-          <span>Period</span>
+        <label className="flex items-center gap-2 text-xs text-slate-500">
+          <span className="font-medium">Period</span>
           <select
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
-            className="cursor-pointer rounded-lg border border-[var(--adm-border-strong)] bg-[var(--adm-surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--adm-text)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--adm-accent)]"
+            className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-[#143C2E] shadow-2xs"
           >
             {RANGES.map((r) => (
               <option key={r.days} value={r.days}>
@@ -286,32 +286,36 @@ export default function AdminAnalyticsPage() {
           isEmpty={!!data && data.orgs.length === 0}
           emptyText="No organizations yet."
         >
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-slate-200/90">
             <table className="w-full text-left text-xs">
-              <thead className="text-[var(--adm-text-muted)]">
+              <thead className="bg-slate-50 text-slate-500 border-b border-slate-200/90 text-[10px] font-mono uppercase">
                 <tr>
-                  <th scope="col" className="py-1.5 pr-3 font-semibold">Organization</th>
-                  <th scope="col" className="px-2 py-1.5 text-right font-semibold">Members</th>
-                  <th scope="col" className="px-2 py-1.5 text-right font-semibold">Accounts</th>
-                  <th scope="col" className="px-2 py-1.5 text-right font-semibold">Open findings</th>
-                  <th scope="col" className="px-2 py-1.5 text-right font-semibold">Decided</th>
-                  <th scope="col" className="whitespace-nowrap py-1.5 pl-2 text-right font-semibold">Last activity</th>
+                  <th scope="col" className="py-2.5 px-3 font-semibold">Organization</th>
+                  <th scope="col" className="px-3 py-2.5 text-right font-semibold">Members</th>
+                  <th scope="col" className="px-3 py-2.5 text-right font-semibold">Accounts</th>
+                  <th scope="col" className="px-3 py-2.5 text-right font-semibold">Open findings</th>
+                  <th scope="col" className="px-3 py-2.5 text-right font-semibold">Decided</th>
+                  <th scope="col" className="whitespace-nowrap py-2.5 px-3 text-right font-semibold">Last activity</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--adm-border)] text-[var(--adm-text)]">
+              <tbody className="divide-y divide-slate-100 text-slate-800">
                 {(data?.orgs ?? []).map((o) => (
-                  <tr key={o.id}>
-                    <td className="min-w-40 py-2 pr-3">
-                      <Link href={`/admin/orgs/${o.id}`} className="font-semibold hover:underline">
+                  <tr key={o.id} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="min-w-40 py-2.5 px-3">
+                      <Link href={`/admin/orgs/${o.id}`} className="font-bold text-[#143C2E] hover:underline">
                         {o.name}
                       </Link>
-                      {o.status !== "active" && <span className="ml-2 rounded border border-[var(--adm-warn)]/50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[var(--adm-warn)]">{o.status}</span>}
+                      {o.status !== "active" && (
+                        <span className="ml-2 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
+                          {o.status}
+                        </span>
+                      )}
                     </td>
-                    <td className="px-2 py-2 text-right tabular-nums">{o.members}</td>
-                    <td className="px-2 py-2 text-right tabular-nums">{o.accounts}</td>
-                    <td className="px-2 py-2 text-right tabular-nums">{o.open_findings}</td>
-                    <td className="px-2 py-2 text-right tabular-nums">{o.cards_decided}</td>
-                    <td className="whitespace-nowrap py-2 pl-2 text-right text-[var(--adm-text-muted)]">{o.last_activity_at ? `${formatDistanceToNowStrict(new Date(o.last_activity_at))} ago` : "—"}</td>
+                    <td className="px-3 py-2.5 text-right tabular-nums">{o.members}</td>
+                    <td className="px-3 py-2.5 text-right tabular-nums">{o.accounts}</td>
+                    <td className="px-3 py-2.5 text-right tabular-nums">{o.open_findings}</td>
+                    <td className="px-3 py-2.5 text-right tabular-nums">{o.cards_decided}</td>
+                    <td className="whitespace-nowrap py-2.5 px-3 text-right text-slate-500 font-mono text-[11px]">{o.last_activity_at ? `${formatDistanceToNowStrict(new Date(o.last_activity_at))} ago` : "—"}</td>
                   </tr>
                 ))}
               </tbody>

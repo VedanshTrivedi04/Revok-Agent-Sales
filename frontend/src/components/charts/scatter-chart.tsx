@@ -77,7 +77,7 @@ export function ScatterChart({ points, xMax, xLabel, yLabel, formatX, formatY, l
           role="img"
           aria-label={label}
           tabIndex={0}
-          className="block rounded-md outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="block rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]"
           style={{ cursor: current?.href ? "pointer" : "default" }}
           onPointerMove={(e) => nearest(e.clientX, e.clientY)}
           onPointerLeave={() => setActive(null)}

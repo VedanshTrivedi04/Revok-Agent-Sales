@@ -80,27 +80,27 @@ export default function TodayPage() {
                 Today&apos;s Revenue Priorities
               </h1>
               {readOnly && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-900">
-                  <Eye className="w-3 h-3" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                  <Eye className="w-3 h-3 text-[#143C2E]" />
                   <span>Read-only view</span>
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Ranked revenue risk and expansion accounts verified with evidence snapshots.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Owner Scope Selector */}
-            <div className="inline-flex rounded-lg p-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+            <div className="inline-flex rounded-xl p-1 bg-slate-200/60 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setOwnerScope("me")}
-                className={`px-3 py-1 rounded-md transition-colors ${
+                className={`px-3 py-1 rounded-lg transition-all ${
                   ownerScope === "me"
-                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs"
-                    : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
+                    ? "bg-[#143C2E] text-white shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 Assigned to Me
@@ -108,10 +108,10 @@ export default function TodayPage() {
               <button
                 type="button"
                 onClick={() => setOwnerScope("all")}
-                className={`px-3 py-1 rounded-md transition-colors ${
+                className={`px-3 py-1 rounded-lg transition-all ${
                   ownerScope === "all"
-                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs"
-                    : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
+                    ? "bg-[#143C2E] text-white shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 Everyone
@@ -181,7 +181,7 @@ export default function TodayPage() {
               return (
                 <div
                   key={item.finding_id || index}
-                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-4 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                  className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-2xs space-y-4 hover:border-emerald-300/80 transition-all"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="space-y-1.5">
@@ -191,13 +191,13 @@ export default function TodayPage() {
                         </span>
                         <Link
                           href={`/accounts/${account.id}`}
-                          className="font-bold text-sm text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 inline-flex items-center gap-1"
+                          className="font-bold text-sm text-slate-900 hover:text-[#143C2E] inline-flex items-center gap-1 transition-colors"
                         >
                           <span>{account.name}</span>
                           <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
                         </Link>
                         {isExpansion ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
                             Expansion Opportunity
                           </span>
                         ) : (
@@ -275,7 +275,7 @@ export default function TodayPage() {
                       {item.finding_id && (
                         <Link
                           href={`/findings/${item.finding_id}`}
-                          className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 font-medium"
+                          className="text-[#143C2E] hover:underline inline-flex items-center gap-1 font-semibold"
                         >
                           View Finding <ArrowRight className="w-3 h-3" />
                         </Link>
@@ -294,7 +294,7 @@ export default function TodayPage() {
                                 title: item.title,
                               })
                             }
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition-all"
                           >
                             <Clock className="w-3.5 h-3.5 text-slate-400" />
                             <span>Snooze</span>
@@ -313,7 +313,7 @@ export default function TodayPage() {
                                 title: item.title,
                               })
                             }
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-red-600 dark:text-red-400 transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-rose-200/90 bg-rose-50/50 hover:bg-rose-100/60 text-rose-700 shadow-2xs transition-all"
                           >
                             <Ban className="w-3.5 h-3.5" />
                             <span>Dismiss</span>
@@ -325,7 +325,7 @@ export default function TodayPage() {
                       <CanAct action="approve:card" entity={account}>
                         <Link
                           href="/inbox"
-                          className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#143C2E] hover:bg-[#0E2C22] text-white shadow-xs transition-all"
                         >
                           Review &amp; Approve
                         </Link>

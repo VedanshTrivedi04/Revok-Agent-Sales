@@ -53,7 +53,7 @@ export function OrgStatusNotice({ status, orgName }: OrgStatusNoticeProps) {
             If you believe this is in error or need data exports restored, please contact platform support at{" "}
             <a
               href="mailto:support@revopsagent.com"
-              className="text-blue-600 dark:text-blue-400 font-semibold underline underline-offset-2 hover:text-blue-700"
+              className="text-[#143C2E] dark:text-emerald-400 font-semibold underline underline-offset-2 hover:text-[#0E2C22]"
             >
               support@revopsagent.com
             </a>

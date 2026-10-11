@@ -92,11 +92,11 @@ export default function TeamPage() {
             {members.map((m) => (
               <div
                 key={m.id}
-                className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-4 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-4 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                    <div className="w-10 h-10 rounded-full bg-[#143C2E] text-white flex items-center justify-center font-bold text-sm shadow-xs ring-2 ring-emerald-500/20">
                       {m.name
                         ? m.name.charAt(0).toUpperCase()
                         : m.email.charAt(0).toUpperCase()}

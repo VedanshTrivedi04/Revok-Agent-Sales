@@ -22,7 +22,7 @@ export default function LegacyIntegrationsRedirect() {
 
   return (
     <div className="flex h-64 items-center justify-center">
-      <Loader2 className="w-6 h-6 animate-spin text-blue-600" aria-label="Loading" />
+      <Loader2 className="w-6 h-6 animate-spin text-[#143C2E] dark:text-emerald-500" aria-label="Loading" />
     </div>
   );
 }
