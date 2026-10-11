@@ -10,4 +10,4 @@ USER app
 ENV PATH="/app/.venv/bin:$PATH"
 EXPOSE 8000
 ENTRYPOINT ["sh", "scripts/entrypoint.sh"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers ${UVICORN_WORKERS:-4} --proxy-headers --forwarded-allow-ips '*'"]
