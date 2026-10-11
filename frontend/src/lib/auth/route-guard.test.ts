@@ -52,7 +52,7 @@ describe("customer routes", () => {
     expect(decideRoute({ pathname: "/accounts", search: "?q=a", ...none })).toEqual(
       to("/login?next=%2Faccounts%3Fq%3Da")
     );
-    expect(decideRoute({ pathname: "/", ...none })).toEqual(to("/login"));
+    expect(decideRoute({ pathname: "/", ...none })).toEqual(next);
   });
 
   it("keeps public pages public and bounces signed-in customers off /login and /signup", () => {

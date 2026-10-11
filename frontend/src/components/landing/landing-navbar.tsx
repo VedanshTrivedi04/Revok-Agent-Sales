@@ -21,21 +21,21 @@ export function LandingNavbar() {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-8 text-[13px] font-medium text-slate-600">
-              <a href="#product" className="hover:text-slate-950 transition-colors">
+            <nav className="hidden md:flex items-center gap-7 text-[13px] font-medium text-slate-600">
+              <a href="#product" className="hover:text-[#143C2E] transition-colors">
                 Product
               </a>
-              <a href="#workflow" className="hover:text-slate-950 transition-colors">
+              <a href="#workflow" className="hover:text-[#143C2E] transition-colors">
                 Workflow
               </a>
-              <a href="#integrations" className="hover:text-slate-950 transition-colors">
-                Integrations
+              <a href="#investigation" className="hover:text-[#143C2E] transition-colors">
+                Investigation
               </a>
-              <a href="#security" className="hover:text-slate-950 transition-colors">
-                Security
+              <a href="#autonomy" className="hover:text-[#143C2E] transition-colors">
+                Autonomy
               </a>
-              <a href="#pricing" className="hover:text-slate-950 transition-colors">
-                Pricing
+              <a href="#faq" className="hover:text-[#143C2E] transition-colors">
+                FAQ
               </a>
             </nav>
 
@@ -97,25 +97,25 @@ export function LandingNavbar() {
                 Workflow
               </a>
               <a
-                href="#integrations"
+                href="#investigation"
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-3 py-2 rounded-lg hover:bg-slate-100"
               >
-                Integrations
+                Investigation
               </a>
               <a
-                href="#security"
+                href="#autonomy"
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-3 py-2 rounded-lg hover:bg-slate-100"
               >
-                Security
+                Autonomy
               </a>
               <a
-                href="#pricing"
+                href="#faq"
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-3 py-2 rounded-lg hover:bg-slate-100"
               >
-                Pricing
+                FAQ
               </a>
             </nav>
             <div className="pt-3 border-t border-slate-200 flex flex-col gap-2">

@@ -52,7 +52,7 @@ export function EvidenceModal({
                   High Risk (86%)
                 </span>
               </div>
-              <p className="text-xs text-slate-500">ARR: $240,000 • Renewal: 43 Days</p>
+              <p className="text-xs text-slate-500">ARR: $84,000 • Renewal: 43 Days</p>
             </div>
           </div>
           <button
@@ -78,7 +78,7 @@ export function EvidenceModal({
                 </h4>
                 <p className="text-xs text-slate-700 leading-relaxed">
                   Acme Corporation is showing compounding churn signals across 4 disconnected systems. 
-                  Product activity has dropped 32% since executive reorganization, the champion has not replied in 21 days, 
+                  Product activity has dropped 38% over trailing 4 weeks, the champion has not replied in 21 days, 
                   and the renewal window opens in 43 days with no active calendar invites.
                 </p>
               </div>
@@ -105,7 +105,7 @@ export function EvidenceModal({
                   </span>
                 </div>
                 <p className="text-xs text-slate-600">
-                  Deal ARR: $240,000. Stage unchanged for 60 days. Renewal date: Nov 24, 2026.
+                  Deal ARR: $84,000. Stage unchanged for 45 days. Renewal date: Nov 22, 2026.
                 </p>
               </div>
 
@@ -113,8 +113,8 @@ export function EvidenceModal({
               <div className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-md bg-blue-100 text-blue-600">
-                      <Clock className="w-3.5 h-3.5" />
+                    <div className="w-6 h-6 rounded-md bg-white border border-slate-200/80 shadow-2xs flex items-center justify-center shrink-0 p-0.5">
+                      <img src="/clndr%20logo.png" alt="Google Calendar" className="w-3.5 h-3.5 object-contain" />
                     </div>
                     <span className="text-xs font-bold text-slate-800">Google Calendar</span>
                   </div>
@@ -137,11 +137,11 @@ export function EvidenceModal({
                     <span className="text-xs font-bold text-slate-800">PostHog / Snowflake</span>
                   </div>
                   <span className="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded">
-                    -32% Active Users
+                    -38% Active Users
                   </span>
                 </div>
                 <p className="text-xs text-slate-600">
-                  Weekly active users dropped from 142 to 96 across core analytics modules.
+                  Weekly active users dropped 38% across core telemetry modules over 4 weeks.
                 </p>
               </div>
 
@@ -149,8 +149,8 @@ export function EvidenceModal({
               <div className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-md bg-purple-100 text-purple-600">
-                      <Mail className="w-3.5 h-3.5" />
+                    <div className="w-6 h-6 rounded-md bg-white border border-slate-200/80 shadow-2xs flex items-center justify-center shrink-0 p-0.5">
+                      <img src="/gmail.webp" alt="Gmail" className="w-3.5 h-3.5 object-contain" />
                     </div>
                     <span className="text-xs font-bold text-slate-800">Gmail Outreach</span>
                   </div>
@@ -159,7 +159,7 @@ export function EvidenceModal({
                   </span>
                 </div>
                 <p className="text-xs text-slate-600">
-                  Sent 2 follow-ups to primary champion Sarah Jenkins since Mar 12 with 0 opens.
+                  Sent 2 follow-ups to primary champion unanswered for 9 days.
                 </p>
               </div>
             </div>

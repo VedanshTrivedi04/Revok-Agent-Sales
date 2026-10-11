@@ -39,8 +39,8 @@ export function LandingFooter() {
                   </a>
                 </li>
                 <li>
-                  <a href="#pricing" className="hover:text-slate-900 transition-colors">
-                    Pricing
+                  <a href="#faq" className="hover:text-slate-900 transition-colors">
+                    FAQ
                   </a>
                 </li>
               </ul>

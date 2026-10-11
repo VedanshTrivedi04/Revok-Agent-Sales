@@ -70,7 +70,8 @@ const PUBLIC_PREFIXES = ["/login", "/signup", "/invite", "/auth"];
 const isAdminPath = (pathname: string | null) => !!pathname && (pathname === "/admin" || pathname.startsWith("/admin/"));
 
 function isPublicPath(pathname: string | null) {
-  return !!pathname && PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  if (!pathname || pathname === "/") return true;
+  return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 async function endSession() {

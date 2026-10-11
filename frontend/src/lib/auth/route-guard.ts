@@ -44,7 +44,7 @@ export function decideRoute(input: GuardInput): GuardDecision {
     return { action: "redirect", to: hasCustomerSession ? "/403" : ADMIN_LOGIN };
   }
 
-  if (pathname === "/403") return { action: "next" };
+  if (pathname === "/" || pathname === "/403") return { action: "next" };
 
   if (within(pathname, CUSTOMER_PUBLIC)) {
     if (hasCustomerSession && within(pathname, CUSTOMER_GUEST_ONLY) && !hasInviteParam) {

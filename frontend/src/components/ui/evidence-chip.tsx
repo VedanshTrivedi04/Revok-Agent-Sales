@@ -26,10 +26,10 @@ export function EvidenceChip({ evidence, className }: EvidenceChipProps) {
     switch (source?.toLowerCase()) {
       case "gmail":
       case "email":
-        return <Mail className="w-3 h-3 text-red-500" aria-hidden="true" />;
+        return <img src="/gmail.webp" alt="Gmail" className="w-3 h-3 object-contain inline-block" aria-hidden="true" />;
       case "gcal":
       case "calendar":
-        return <Calendar className="w-3 h-3 text-blue-500" aria-hidden="true" />;
+        return <img src="/clndr%20logo.png" alt="Google Calendar" className="w-3 h-3 object-contain inline-block" aria-hidden="true" />;
       case "usage":
         return <TrendingDown className="w-3 h-3 text-amber-500" aria-hidden="true" />;
       case "hubspot":

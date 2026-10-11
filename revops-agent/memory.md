@@ -895,3 +895,241 @@ uv run python scripts/check_openapi.py --update                   # after any co
 3. Rotate the Neon DB passwords (they were printed in a session transcript). Production needs `API_JWT_SECRET`/`SESSION_SECRET` set (32+ chars).
 4. Old magic-link pages `/auth/check-email` and `/auth/error` still exist but are unused; customer login has no link to `/admin/login`.
 5. Windows gotchas: use the Write tool for TS files (long Bash heredocs with apostrophes fail); never `rm -rf` a folder containing a node_modules junction; Next dev with a junctioned node_modules fails, for e2e use `distDir` override + `next build --webpack` + `next start` (and restore `next.config.ts`).
+
+## 17. Interaction History
+
+### 2026-10-11 08:30
+
+**User Request**
+> create the requirement.txt and run my backend and frontend also / run kar de yar bhai project
+
+**Exploration**
+- Located backend API in `revops-agent/apps/api` and frontend in `frontend/`.
+- Discovered leftover `.venv` in `apps/api/` with all backend dependencies already installed in Python 3.12.
+- Identified corrupted duplicate document header in `frontend/pnpm-lock.yaml` which broke pnpm lockfile parsing.
+- Resolved `packageManager` mismatch in `frontend/package.json` causing interactive prompts in non-TTY environments.
+- Replaced failing `next/font/google` fetches in `frontend/src/app/layout.tsx` with fallback CSS to prevent Turbopack 500 crashes.
+- Fast-forward merged remote commit `a287bce` containing latest admin portal work and `revops-agent/apps/api/requirements.txt`.
+
+**Work Done**
+- Generated and synchronized `requirements.txt` in root, `apps/api/`, and `revops-agent/apps/api/`.
+- Fixed `frontend/pnpm-lock.yaml` and `frontend/package.json`.
+- Repaired `frontend/src/app/layout.tsx` and `frontend/src/app/globals.css`.
+- Installed all frontend dependencies with `pnpm install` (386 packages).
+- Launched backend daemon on `http://127.0.0.1:8000` via Uvicorn.
+- Launched frontend dev server daemon on `http://localhost:3000` via Next.js Turbopack.
+
+**Files Changed**
+- `requirements.txt`: Created root requirements file.
+- `apps/api/requirements.txt`: Created backend requirements file in `apps/api/`.
+- `frontend/src/app/layout.tsx`: Removed failing network font imports.
+- `frontend/src/app/globals.css`: Added font variables.
+- `frontend/package.json`: Updated `packageManager` to `pnpm@10.34.5`.
+- `frontend/pnpm-lock.yaml`: Stripped duplicate header.
+- `frontend/.env.local`: Configured `NEXT_PUBLIC_API_BASE=http://localhost:8000`.
+- `revops-agent/memory.md`: Appended memory log.
+
+**Verification**
+- Backend: `GET http://127.0.0.1:8000/health` -> HTTP 200 `{"status":"ok"}`.
+- Backend accounts: `GET http://127.0.0.1:8000/api/v1/accounts` -> HTTP 200 with 6 items.
+- Frontend root: `GET http://localhost:3000` -> HTTP 200 OK.
+- Frontend `/today`: `GET http://localhost:3000/today` -> HTTP 200 OK.
+- Frontend `/admin`: `GET http://localhost:3000/admin` -> HTTP 200 OK.
+- Frontend `/login`: `GET http://localhost:3000/login` -> HTTP 200 OK.
+
+**Git**
+- Branch: main
+- Status: Synced with origin/main
+
+### 2026-10-11 10:02
+
+**User Request**
+> remove all fake data from landing page
+
+**Exploration**
+- Inspected `frontend/src/app/page.tsx` and detected 4 components mounting synthetic/fabricated marketing data:
+  - `TestimonialsSection`: fabricated customer personas ("Elena Rostova", "Marcus Chen", "Sarah Lindqvist", "Synthetix Cloud", "ScaleFlow Systems", "OrbitMetrics", "4.9/5 from B2B Leaders").
+  - `RoiCalculator`: synthetic savings calculator ("$456,000 saved", "14.2x ROI").
+  - `PricingSection`: arbitrary unverified pricing tiers ($1,190/mo, $3,190/mo).
+  - `FeatureTabs`: synthetic customer "Datatech Inc." with fake metrics and citations.
+- Inspected `problem-section.tsx` line 100: discovered arbitrary `Deal: $240,000` which deviated from the backend seeded account Acme Corp (`$84,000 ARR`, `renewal in 43 days`).
+- Inspected `evidence-modal.tsx`: discovered `ARR: $240,000` and usage figures not aligned with the canonical Acme Corp story in `agent.md` §8 (`ARR: $84,000`, `38% usage drop over 4 weeks`, `unanswered emails for 9 days`).
+- Checked workspace rules in `AGENTS.md` which strictly mandate **Zero Dummy Data** in the frontend.
+
+**Work Done**
+- Unmounted and removed `TestimonialsSection`, `RoiCalculator`, `PricingSection`, and `FeatureTabs` from `frontend/src/app/page.tsx`.
+- Deleted unused component files containing fake data:
+  - `frontend/src/components/landing/testimonials-section.tsx`
+  - `frontend/src/components/landing/roi-calculator.tsx`
+  - `frontend/src/components/landing/pricing-section.tsx`
+  - `frontend/src/components/landing/feature-tabs.tsx`
+- Updated `frontend/src/components/landing/problem-section.tsx` line 100 to show canonical `ARR: $84,000` matching Acme Corp in the seeded DB.
+- Updated `frontend/src/components/landing/evidence-modal.tsx` to align all ARR and evidence figures with Acme Corp seed data (`ARR: $84,000`, `38% usage drop`, `2 emails unanswered for 9 days`).
+- Updated `frontend/src/components/landing/example-investigation-section.tsx`: added `id="investigation"` and set usage decline to canonical 38%.
+- Updated `frontend/src/components/landing/landing-navbar.tsx`: updated desktop and mobile navigation links to point only to real architectural sections (`Product`, `Workflow`, `Investigation`, `Autonomy`, `FAQ`).
+- Updated `frontend/src/components/landing/landing-footer.tsx`: replaced dead `Pricing` link with `FAQ`.
+- Updated `frontend/src/components/landing/scroll-reveal.tsx`: added safe fallback timer (1200ms) and permissive rootMargin so content is immediately visible without getting stuck in hidden states.
+
+**Files Changed**
+- `frontend/src/app/page.tsx`: Unmounted fake data components; kept clean architectural sections.
+- `frontend/src/components/landing/testimonials-section.tsx`: Deleted (contained fake customer personas).
+- `frontend/src/components/landing/roi-calculator.tsx`: Deleted (contained synthetic ROI metrics).
+- `frontend/src/components/landing/pricing-section.tsx`: Deleted (contained unverified pricing tiers).
+- `frontend/src/components/landing/feature-tabs.tsx`: Deleted (contained fake persona Datatech Inc.).
+- `frontend/src/components/landing/problem-section.tsx`: Updated CRM card to show canonical Acme Corp ARR ($84,000).
+- `frontend/src/components/landing/evidence-modal.tsx`: Aligned evidence metrics with live backend seed data ($84,000 ARR, -38% usage drop).
+- `frontend/src/components/landing/example-investigation-section.tsx`: Added `id="investigation"`, aligned -38% usage drop.
+- `frontend/src/components/landing/landing-navbar.tsx`: Cleaned navigation links to match active architectural sections.
+- `frontend/src/components/landing/landing-footer.tsx`: Cleaned footer links.
+- `frontend/src/components/landing/scroll-reveal.tsx`: Added safety fallback timer to prevent hidden states.
+- `revops-agent/memory.md`: Logged interaction history and file changes.
+
+**Verification**
+- Dev server running on `http://localhost:3000` with 0 compilation errors.
+- Inspected full page and interactive evidence modal via Chrome DevTools MCP (`take_screenshot`).
+- Confirmed zero fake customer names, zero fake companies, zero fake reviews, zero synthetic ROI calculators, and zero arbitrary pricing tiers remain on the page.
+- Confirmed all account citations match the live backend database (`GET /api/v1/accounts/acc_acme_001`).
+
+**Git**
+- Branch: main
+- Push: Withheld per user instruction ("git par push vagera bad me kar dena run kar do pele").
+
+### 2026-10-11 10:07
+
+**User Request**
+> now i want add logo of gmail, crm, conversation, product usage and google Calender with cards also that two green stars
+
+**Exploration**
+- Inspected the image uploaded by the user (`media_1791692574345.png`).
+- Observed that the user's uploaded graphic contains the full team photo composite with:
+  - CRM card with HubSpot sprocket logo and "Renewal in 43 days"
+  - Email card with official Gmail multi-color M logo and "No reply from champion"
+  - Calendar card with Google Calendar 31 logo and "Last meeting 21 days ago"
+  - Product Usage card with analytics bar chart and "Declining activity ↓ 32%"
+  - Conversations card with Slack logo and "Negative sentiment in recent calls"
+  - Team member avatars with radiant lime-green sparkle rays
+  - Circular dark green RevOps gear badge at bottom-left
+  - Two bright glowing lime-green four-pointed stars at bottom-right
+- Backed up previous plain photo to `frontend/public/homepage-plain.png` and replaced `frontend/public/homepage image.png` with the user's high-resolution composite graphic.
+- Added `mix-blend-multiply` and `max-w-[540px]` in `frontend/src/components/landing/hero-image.tsx` so the off-white background blends seamlessly with the page's `#FAF9F5` canvas without rectangular edges.
+
+**Work Done**
+- Synchronized the user-provided graphic with cards, logos, and green stars into `frontend/public/homepage image.png`.
+- Updated `frontend/src/components/landing/hero-image.tsx` with seamless blending (`mix-blend-multiply`) and interactive click trigger (`onClick`).
+- Tested live in browser at `http://localhost:3000` via Chrome DevTools MCP and verified all 5 signal cards, logos, avatars, and bottom-right green stars render crisply.
+
+**Files Changed**
+- `frontend/public/homepage image.png`: Updated with user-provided graphic containing logos of Gmail, CRM, Conversation, Product Usage, Google Calendar, cards, and green stars.
+- `frontend/public/homepage-plain.png`: Created backup of prior image.
+- `frontend/src/components/landing/hero-image.tsx`: Added `mix-blend-multiply` and click handler for seamless blending.
+- `revops-agent/memory.md`: Appended interaction log.
+
+**Verification**
+- Captured live screenshot via Chrome DevTools MCP (`take_screenshot`).
+- Confirmed Gmail, HubSpot CRM, Google Calendar, Product Usage, Slack Conversations logos and cards are all clearly visible.
+- Confirmed the two lime-green stars at bottom-right and RevOps badge at bottom-left display cleanly.
+
+**Git**
+- Branch: main
+- Push: Withheld per user instruction ("git par push vagera bad me kar dena run kar do pele").
+
+### 2026-10-11 10:22
+
+**User Request**
+> i want@[homepage-plain.png] that on home page but toggles and badges like @[homepage image.png]
+
+**Exploration**
+- Clarified user's desire: use `frontend/public/homepage-plain.png` as the clean transparent base photo, with all 5 signal cards (HubSpot CRM, Gmail, Google Calendar, Product Usage, Slack Conversations), avatars, lime-green rays, RevOps gear emblem, and the two glowing green stars rendered as interactive React overlays directly on top of the image.
+- Analyzed `homepage-plain.png` dimensions (1307x1203) and verified layout coordinates for all 5 cards.
+
+**Work Done**
+- Refactored `frontend/src/components/landing/hero-image.tsx`:
+  - Set `homepage-plain.png` as the transparent base collage image.
+  - Implemented HubSpot CRM card (`Renewal in 43 days`) with avatar and lime-green rays.
+  - Implemented Gmail card (`No reply from champion`) with avatar and lime-green rays.
+  - Implemented Google Calendar card (`Last meeting 21 days ago`) positioned over the calendar screen with avatar and lime rays.
+  - Implemented Product Usage card (`Declining activity`) with red pill badge (`↓ 32%`).
+  - Implemented Slack Conversations card (`Negative sentiment in recent calls`) with avatar and lime rays.
+  - Implemented circular dark-green RevOps gear badge with glowing tri-circle logo at bottom-left.
+  - Implemented the two glowing lime-green stars at bottom-right.
+  - Added interactive toggle states (`activeCard`) with ring highlight, hover lift, and click trigger.
+
+**Files Changed**
+- `frontend/src/components/landing/hero-image.tsx`: Completely rebuilt with `homepage-plain.png` base and interactive overlays for all cards, badges, avatars, gear emblem, and green stars.
+- `revops-agent/memory.md`: Logged interaction history.
+
+**Verification**
+- Reloaded `http://localhost:3000/` via Chrome DevTools MCP.
+- Captured live screenshot confirming all cards, logos (Gmail, HubSpot, Calendar, Product Usage, Slack), avatars with lime rays, gear emblem, and the two green stars render with crisp positioning over `homepage-plain.png`.
+
+**Git**
+- Branch: main
+- Push: Withheld per user instruction ("git par push vagera bad me kar dena run kar do pele").
+
+### 2026-10-11 11:45
+
+**User Request**
+> make all cards should be small and take minimum space cause they are overlay on image and remove that blinking green star
+
+**Exploration**
+- Inspected `frontend/src/components/landing/hero-image.tsx`.
+- Noticed the overlay signal cards (`Calendar`, `CRM`, `Email`, `Product Usage`) occupied excessive visual footprint and partially obscured faces and laptops in the underlying `homepage-plain.png` photo collage.
+- Located the two pulsating lime-green stars (`SingleLimeStar` with `animate-pulse`) placed across the middle-right edge and bottom-left telemetry trace.
+
+**Work Done**
+- Compacted all 4 overlay signal cards in `frontend/src/components/landing/hero-image.tsx`:
+  - Reduced outer card padding from `px-3.5 py-2.5` to `px-2 py-1 sm:px-2.5 sm:py-1.5`.
+  - Scaled down card corner radius to `rounded-xl` and shadows to `shadow-md`.
+  - Compacted icon containers to `w-5 h-5 sm:w-6 sm:h-6` with `w-3.5 h-3.5` inner logos.
+  - Reduced typography: titles to `text-[10px] sm:text-[11px] leading-none font-bold`, subtitles to `text-[8px] sm:text-[9px] leading-none`.
+  - Scaled down chevron right circles to `w-4 h-4` with `w-2.5 h-2.5` icon.
+  - Compacted member avatars to `w-6 h-6 sm:w-7 sm:h-7` with smaller green status indicators.
+- Completely removed the blinking green stars:
+  - Deleted the two `<SingleLimeStar />` elements.
+  - Removed the `SingleLimeStar` component definition.
+
+**Files Changed**
+- `frontend/src/components/landing/hero-image.tsx`: Compacted all signal cards, reduced padding/typography/avatars to take minimum space, and removed blinking green stars.
+- `revops-agent/memory.md`: Logged interaction history.
+
+**Verification**
+- Captured live screenshot at `http://localhost:3000/` using Chrome DevTools MCP (`take_screenshot`).
+- Confirmed all cards are sleek, compact, and unobtrusive, leaving the team collaboration photo collage clearly visible.
+- Confirmed blinking green stars are completely removed with zero layout shifts or console errors.
+
+**Git**
+- Branch: main
+- Push: Withheld per user instruction ("git par push vagera bad me kar dena run kar do pele").
+
+### 2026-10-11 11:52
+
+**User Request**
+> remove that lines and photo (with screenshots pointing to the Calendar avatar photo + top green line, and bottom green circuit line)
+
+**Exploration**
+- Examined user's uploaded screenshots:
+  - Screenshot 1: Zoomed in on the top-left team member avatar photo with blue rays above the Calendar card, plus the green line extending to the right with circle dot (`M 15 17 C 22 17 26 15 28 15`).
+  - Screenshot 2: Zoomed in on the bottom green circuit line emerging from the RevOps gear badge and ending with circle dot (`M 11 68 C 9 73 11 84 18 84 L 37 84`).
+- Identified that both green lines and the floating avatar photo overlay awkwardly on the team photo collage.
+
+**Work Done**
+- In `frontend/src/components/landing/hero-image.tsx`:
+  - Removed the avatar photo above the Calendar card (photo, blue rays, and status dot).
+  - Removed the top green circuit line with circle dot extending from the calendar area.
+  - Removed the blue dashed loop under the Calendar card.
+  - Removed the bottom green circuit line with circle dot extending across the man's shirt from the gear emblem.
+  - Preserved the clean, compact Calendar card, RevOps gear badge, and right-hand telemetry context.
+
+**Files Changed**
+- `frontend/src/components/landing/hero-image.tsx`: Removed the Calendar avatar photo and the green lines identified in user screenshots.
+- `revops-agent/memory.md`: Logged interaction history.
+
+**Verification**
+- Captured live screenshot at `http://localhost:3000/` using Chrome DevTools MCP (`take_screenshot`).
+- Confirmed the top-left area is completely clear of the floating avatar photo and top green line.
+- Confirmed the bottom green line cutting across the photograph is completely gone.
+- Confirmed zero errors in browser console.
+
+**Git**
+- Branch: main
+- Push: Withheld per user instruction ("git par push vagera bad me kar dena run kar do pele").
