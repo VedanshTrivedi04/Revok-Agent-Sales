@@ -44,6 +44,36 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 
 ## Interaction History
 
+### 2026-10-12 05:10
+
+**User Request**
+> give me credentials for all portals login
+
+**Exploration**
+- Inspected `frontend/README.md`, `revops-agent/apps/api/scripts/seed_demo.py`, and `revops-agent/apps/api/app/mocks/data.py`.
+- Identified all seeded local accounts, roles, and portals:
+  - Enterprise Customer Portal (`/login`): `olivia@demo-saas.example.com` (Owner), `adam@demo-saas.example.com` (Admin), `maya@demo-saas.example.com` (Manager), `priya@demo-saas.example.com` (Member), `victor@demo-saas.example.com` (Viewer). Shared local demo password: `Demo@12345678`.
+  - Platform Admin Portal (`/admin/login`): `sam@platform.revops.example.com` (Superadmin), local demo password: `Demo@12345678`.
+  - In-App Role Switcher: topbar dropdown role switching without signing out.
+
+**Work Done**
+- Documented and structured complete login credentials for all portals (Customer Workspace, Platform Admin, and Topbar role switching).
+
+**Files Changed**
+- None (Informational request).
+
+**Verification**
+- Verified credentials match `seed_demo.py` and `data.py`.
+
+**Git**
+- Branch: main
+- Commit: pending
+- Push: pending
+- Status: memory updated
+
+**Notes**
+- Local demo accounts allow testing all 6 permission tiers (Viewer, Member, Manager, Admin, Owner, Superadmin).
+
 ### 2026-10-12 05:05
 
 **User Request**
