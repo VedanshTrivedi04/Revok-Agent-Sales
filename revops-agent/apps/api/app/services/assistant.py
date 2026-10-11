@@ -33,6 +33,7 @@ from app.schemas.assistant import (
     AssistantQuestion,
     ParamKey,
 )
+from app.services import ai_client
 from app.services.analytics import (
     OPEN_FINDINGS,
     _approved,
@@ -206,7 +207,44 @@ def plan_question(question: str) -> Plan | None:
     return Plan(q.id, _resolve_params(q, given, clamp=True))
 
 
+def _plan_from_model(proposed: dict[str, Any]) -> Plan | None:
+    """A plan proposed by the AI service, checked like any other input. The model only chooses:
+    an id outside the catalog is no plan, and numbers are clamped to the question's ranges."""
+    q = _BY_ID.get(str(proposed.get("question_id") or ""))
+    if q is None:
+        return None
+    raw = proposed.get("params")
+    given: Params = {}
+    for p in q.params:
+        value = raw.get(p.key) if isinstance(raw, dict) else None
+        if isinstance(value, int) and not isinstance(value, bool):
+            given[p.key] = value
+        elif p.key == "min_score":  # no threshold named: count every open risk finding
+            given[p.key] = 0
+    return Plan(q.id, _resolve_params(q, given, clamp=True))
+
+
+async def plan(body: AssistantAskIn, today: date) -> Plan | None:
+    """The plan for a request. A typed question goes to the AI service when it is on
+    (AI_MODE=external); if that does not answer, the keyword match is used instead."""
+    if body.question is None:
+        return resolve(body)
+    if ai_client.enabled():
+        proposed = await ai_client.plan_question(
+            question=body.question,
+            questions=[
+                {"id": q.id, "text": _public(q).text, "params": [p.key for p in q.params]}
+                for q in QUESTIONS
+            ],
+            today=today.isoformat(),
+        )
+        if proposed is not None:
+            return _plan_from_model(proposed)
+    return plan_question(body.question)
+
+
 def resolve(body: AssistantAskIn) -> Plan | None:
+    """The plan without the AI service: a catalog id, or the keyword match of a typed question."""
     if body.question is not None:
         return plan_question(body.question)
     q = _BY_ID.get(body.question_id or "")
@@ -815,8 +853,8 @@ def unsupported(now: datetime) -> AssistantAnswer:
 
 async def ask(s: AsyncSession, org_id: UUID, body: AssistantAskIn) -> AssistantAnswer:
     now = utcnow()
-    plan = resolve(body)
-    if plan is None:
+    chosen = await plan(body, now.date())
+    if chosen is None:
         return unsupported(now)
-    facts = await _GATHER[plan.question_id](s, org_id, plan.params, now)
-    return compose(plan, facts, await _currency(s, org_id), now)
+    facts = await _GATHER[chosen.question_id](s, org_id, chosen.params, now)
+    return compose(chosen, facts, await _currency(s, org_id), now)

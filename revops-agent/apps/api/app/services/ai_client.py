@@ -4,6 +4,9 @@ The backend never sends customer content here: only ids. The AI service reads wh
 /internal/v1 and writes results back there, where every input is validated again. Every call in this
 module is optional work: when the AI service is off or unreachable the deterministic template
 explanation and template cards stay in place.
+
+The one thing sent besides ids is the question a manager typed into Help (`plan_question`): their
+own words and the list of questions the backend can answer, never account data.
 """
 
 import time
@@ -17,6 +20,11 @@ from app.config import get_settings
 from app.utils.errors import TransientError
 
 log = structlog.get_logger()
+# Help planning is interactive: wait briefly, and after a failure leave the model alone for a
+# while so every question in that time is answered at once by the keyword match.
+PLAN_TIMEOUT_S = 8.0
+PLAN_PAUSE_S = 60.0
+_plan_paused_until = 0.0  # time.monotonic(); per process
 
 
 def enabled() -> bool:
@@ -99,6 +107,32 @@ async def fetch_scores(*, org_id: UUID, account_id: UUID) -> dict[str, Any] | No
         return None
     out: dict[str, Any] = r.json()
     return out
+
+
+async def plan_question(
+    *, question: str, questions: list[dict[str, Any]], today: str
+) -> dict[str, Any] | None:
+    """Which catalog question a typed Help question means: `{"question_id": id | None, "params"}`.
+    None when the service or the model did not answer (the caller then matches by keywords);
+    after such a failure it returns None without calling for `PLAN_PAUSE_S`.
+    Never raises, and never logs the question."""
+    global _plan_paused_until
+    if time.monotonic() < _plan_paused_until:
+        return None
+    body = {"question": question, "questions": questions, "today": today}
+    try:
+        timeout = min(PLAN_TIMEOUT_S, get_settings().ai_service_timeout_s)
+        async with httpx.AsyncClient(timeout=timeout) as http:
+            r = await http.post(f"{_base()}/v1/assistant/plan", json=body, headers=_headers())
+        if r.status_code < 400:
+            out = r.json()
+            if isinstance(out, dict):
+                return out
+        log.warning("ai_plan_unavailable", status=r.status_code)
+    except (httpx.HTTPError, ValueError):
+        log.warning("ai_plan_unreachable")
+    _plan_paused_until = time.monotonic() + PLAN_PAUSE_S
+    return None
 
 
 async def health() -> dict[str, Any]:

@@ -4,10 +4,13 @@
     GET  /v1/runs/{run_id}                                                        -> state summary
     POST /v1/runs/{run_id}/resume      {decisions: {card_id: approved|rejected|expired}}
     POST /v1/extraction/{org_id}/run   ?account_id=&limit=&wait=                  -> T1 over pending events
+    POST /v1/assistant/plan            {question, questions[], today?}            -> {question_id, params}
     GET  /health                       ?deep=true also probes the model endpoint
 
 Auth: header `X-AI-Key`. The service never accepts customer content: only ids. Everything it needs it
-reads from the backend's /internal/v1.
+reads from the backend's /internal/v1. The one exception is /v1/assistant/plan, which receives the
+question a signed-in manager typed (their own words, not stored customer records) and the list of
+questions the backend can answer; it returns which one fits, and nothing is stored or logged.
 
 Runs are queued, never refused: one run at a time per account (a risk and an expansion finding of the
 same account run one after the other) and `max_concurrent_runs` in flight overall, so a nightly fan-out
@@ -18,12 +21,13 @@ import asyncio
 import hmac
 import time
 import uuid
+from datetime import date
 from typing import Annotated, Any, Literal
 
 import httpx
 import structlog
 from fastapi import Depends, FastAPI, Header, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from revops_ai.adapters.external import InternalApiBackend, InternalApiProvider
 from revops_ai.adapters.internal_client import InternalClient
@@ -33,6 +37,7 @@ from revops_ai.graph.runner import AccountRunner
 from revops_ai.llm.client import LLMClient
 from revops_ai.observability.tracing import Sink
 from revops_ai.observability.versions import select_prompts
+from revops_ai.tasks.plan import CatalogQuestion, plan_question
 from revops_ai.worker import extract_pending
 
 log = structlog.get_logger()
@@ -50,6 +55,12 @@ class StartRun(BaseModel):
 
 class Resume(BaseModel):
     decisions: dict[str, Literal["approved", "rejected", "expired"]]
+
+
+class PlanRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=500)
+    questions: list[CatalogQuestion] = Field(min_length=1, max_length=50)
+    today: date | None = None  # the backend's "today" (UTC); defaults to this host's date
 
 
 def _summary(st: dict[str, Any]) -> dict[str, Any]:
@@ -209,6 +220,21 @@ def create_service(
         tasks[f"extract:{scope}:{uuid.uuid4()}"] = asyncio.create_task(background())
         _forget_old()
         return {"status": "started"}
+
+    @app.post("/v1/assistant/plan", dependencies=[Depends(auth)])
+    async def assistant_plan(body: PlanRequest) -> dict[str, Any]:
+        """Which catalog question a typed question means. `question_id: null` = none of them."""
+        r = await plan_question(
+            llm, question=body.question, questions=body.questions, today=body.today or date.today()
+        )
+        if r.failed:  # the caller falls back to its own keyword match
+            raise HTTPException(503, "the model did not return a plan")
+        return {
+            "question_id": r.question_id,
+            "params": r.params,
+            "model": r.model,
+            "prompt_version": r.prompt_version,
+        }
 
     async def _scores(org_id: str, account_id: str) -> dict[str, Any]:
         from revops_ai.adapters.external import fixture_from_context

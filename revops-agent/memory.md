@@ -1294,8 +1294,21 @@ uv run python scripts/check_openapi.py --update                   # after any co
   many days of the window have a recorded score. Without the table (database not migrated) it
   answers from live scores only. History starts with the first run after `0008` is applied;
   nothing is backfilled. Neon still needs `alembic upgrade head` for `0008`.
-- Not built: a model-based planner for free text, RAG over emails/notes, and an audit table of
-  questions asked.
+- Model planner for typed questions (only with `AI_MODE=external` + `AI_SERVICE_URL`):
+  `assistant.plan` -> `ai_client.plan_question` -> AI service `POST /v1/assistant/plan`
+  (`apps/ai/revops_ai/tasks/plan.py`, prompt `plan.1.0.0.md`, schema `PlanOutput`). The model
+  gets the typed question and the catalog (id, text, which numbers) and returns an id + numbers;
+  `_plan_from_model` rejects ids outside the catalog and clamps numbers. "none" from the model is
+  final (unsupported). If the service or model does not answer (8 s backend timeout, 6 s budget in
+  the service) the keyword match is used and the model is not asked again for 60 s.
+  This is the one call where the backend sends text, not ids: the manager's own typed question.
+- Answers carry `interpreted_as` (the catalog question with the values used); the Help page shows
+  it under a typed question as "Answered as: ...".
+- NOT verified against the real model: Qwen was down (GPU time expired) on 2026-10-12. When it is
+  up: `cd apps/ai && uv run pytest -m live tests/live -k plan -q` (15 questions, English and
+  Hinglish, 3 that must be refused). Offline tests use `FakeLLM`.
+- Not built: RAG over emails/notes (needs a self-hosted embedding model and pgvector; the local
+  image `postgres:16` has no pgvector), and an audit table of questions asked.
 - `NEXT_DIST_DIR` (set to `.next-e2e` by `playwright.config.ts`) keeps the E2E build out of `.next`.
 
 ### 19.3 Known failing test (not caused by 19.2)

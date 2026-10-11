@@ -7,13 +7,16 @@ from decimal import Decimal
 from typing import Any
 from uuid import uuid4
 
+import httpx
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
 
+from app.config import get_settings
 from app.contract import V1
 from app.db.session import org_session
 from app.models.timeline import AccountScoreDay
+from app.services import ai_client
 from app.services.assistant import QUESTIONS, catalog, plan_question
 from app.services.score_history import record_score_day
 from app.utils.time import utcnow
@@ -367,3 +370,132 @@ async def test_answers_never_include_another_tenant(
     c = client_as("owner")
     for q in QUESTIONS:
         assert (await _ask(c, question_id=q.id))["total"] == 0
+
+
+# --------------------------------------------------------------------- AI planner (AI_MODE=external)
+class _Planner:
+    """The AI service's answer to `plan_question`, scripted; None = it did not answer."""
+
+    def __init__(self) -> None:
+        self.answer: dict[str, Any] | None = None
+        self.calls: list[dict[str, Any]] = []
+
+    async def __call__(self, **kwargs: Any) -> dict[str, Any] | None:
+        self.calls.append(kwargs)
+        return self.answer
+
+
+@pytest.fixture
+def planner(monkeypatch: pytest.MonkeyPatch) -> _Planner:
+    fake = _Planner()
+    monkeypatch.setattr(ai_client, "enabled", lambda: True)
+    monkeypatch.setattr(ai_client, "plan_question", fake)
+    return fake
+
+
+async def test_model_plan_answers_what_keywords_cannot(
+    client_as: ClientAs, org_a: SeededOrg, planner: _Planner
+) -> None:
+    await _seed(org_a)
+    question = "kaun se customers hume chhod kar ja sakte hain"
+    assert plan_question(question) is None  # no keyword in it
+    planner.answer = {"question_id": "high_risk_accounts", "params": {}}
+    data = await _ask(client_as("manager"), question=question)
+    assert (data["status"], data["question_id"]) == ("answered", "high_risk_accounts")
+    assert data["params"] == {"min_score": 0, "limit": 10}  # no threshold named
+    assert [r["title"] for r in data["rows"]] == ["Alpha", "Beta"]
+
+    sent = planner.calls[0]
+    assert sent["question"] == question and sent["today"] == utcnow().date().isoformat()
+    assert [q["id"] for q in sent["questions"]] == [q.id for q in QUESTIONS]
+    assert sent["questions"][0] == {
+        "id": "high_risk_accounts",
+        "text": "Which accounts have a risk score of 80 or higher?",
+        "params": ["min_score", "limit"],
+    }
+
+
+async def test_model_saying_none_is_final_even_when_a_keyword_matches(
+    client_as: ClientAs, planner: _Planner
+) -> None:
+    planner.answer = {"question_id": None, "params": {}}
+    data = await _ask(client_as("manager"), question="what is the risk of rain tomorrow")
+    assert data["status"] == "unsupported"
+
+
+async def test_keywords_are_used_when_the_model_does_not_answer(
+    client_as: ClientAs, planner: _Planner
+) -> None:
+    planner.answer = None  # service down, timeout or invalid model output
+    data = await _ask(client_as("manager"), question="what is pending for approval")
+    assert data["question_id"] == "pending_approvals" and len(planner.calls) == 1
+
+
+@pytest.mark.parametrize(
+    ("answer", "expected"),
+    [
+        ({"question_id": "drop_everything", "params": {}}, None),
+        ({"question_id": "risk_history"}, {"days": 7, "min_score": 0, "limit": 10}),
+        (
+            {"question_id": "risk_history", "params": {"days": 9999, "min_score": "80", "limit": True}},
+            {"days": 365, "min_score": 0, "limit": 10},
+        ),
+        (
+            {"question_id": "pending_approvals", "params": {"days": 5, "limit": 3}},
+            {"limit": 3},
+        ),
+    ],
+)  # fmt: skip
+async def test_whatever_the_model_returns_stays_inside_the_catalog(
+    client_as: ClientAs, planner: _Planner, answer: dict[str, Any], expected: dict[str, int] | None
+) -> None:
+    planner.answer = answer
+    data = await _ask(client_as("manager"), question="anything at all")
+    if expected is None:
+        assert data["status"] == "unsupported"
+    else:
+        assert (data["question_id"], data["params"]) == (answer["question_id"], expected)
+
+
+async def test_catalog_questions_never_go_to_the_model(
+    client_as: ClientAs, planner: _Planner
+) -> None:
+    await _ask(client_as("manager"), question_id="pending_approvals")
+    assert planner.calls == []
+
+
+async def test_ai_client_plan_question_never_raises(
+    monkeypatch: pytest.MonkeyPatch, respx_mock: Any
+) -> None:
+    monkeypatch.setenv("AI_MODE", "external")
+    monkeypatch.setenv("AI_SERVICE_URL", "http://ai.test")
+    get_settings.cache_clear()
+    try:
+        route = respx_mock.post("http://ai.test/v1/assistant/plan")
+        ask = {"question": "at risk?", "questions": [{"id": "x"}], "today": "2026-10-12"}
+
+        route.respond(json={"question_id": "x", "params": {"days": 5}})
+        assert await ai_client.plan_question(**ask) == {"question_id": "x", "params": {"days": 5}}
+        request = route.calls.last.request
+        assert request.headers["X-AI-Key"] == get_settings().internal_api_key
+        assert b'"question":"at risk?"' in request.content
+
+        failures: list[Any] = [
+            {"status_code": 503},  # the model did not return a plan
+            {"json": ["not", "an", "object"]},
+            {"side_effect": httpx.ConnectError("down")},
+        ]
+        for failure in failures:
+            monkeypatch.setattr(ai_client, "_plan_paused_until", 0.0)
+            route.mock(**failure) if "side_effect" in failure else route.respond(**failure)
+            assert await ai_client.plan_question(**ask) is None
+
+        # after a failure the model is left alone for a while: no request, keywords answer at once
+        route.respond(json={"question_id": "x", "params": {}})
+        before = route.call_count
+        assert await ai_client.plan_question(**ask) is None and route.call_count == before
+        monkeypatch.setattr(ai_client, "_plan_paused_until", 0.0)
+        assert await ai_client.plan_question(**ask) == {"question_id": "x", "params": {}}
+    finally:
+        monkeypatch.undo()
+        get_settings.cache_clear()

@@ -153,8 +153,11 @@ Help (`/help`, Manager and above, `assistant:ask`) answers plain-language questi
 tables: `GET /api/v1/assistant/catalog` lists the questions, `POST /api/v1/assistant/ask` takes one
 of them or typed text. A typed question is matched by keywords to a catalog question
 (`app/services/assistant.py::plan_question`), that question runs one fixed read-only query in the
-tenant session, and the answer text is built from the query's numbers. No model is involved, and a
-question that matches nothing is answered with the list of questions that can be asked.
+tenant session, and the answer text is built from the query's numbers. A question that matches
+nothing is answered with the list of questions that can be asked. With `AI_MODE=external` the AI
+service chooses the catalog question for typed text instead (`POST /v1/assistant/plan`); it only
+ever returns an id and numbers, which the backend checks, and the keyword match remains the
+fallback when the model does not answer. No model writes any part of an answer.
 "In the last N days" risk questions read `account_score_history`: one row per account per UTC day
 with its highest open risk and expansion score, written at the end of each account run.
 
