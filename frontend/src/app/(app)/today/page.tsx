@@ -17,7 +17,7 @@ import { FilterBar } from "../../../components/ui/filter-bar";
 import { TableSkeleton } from "../../../components/ui/table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ErrorState } from "../../../components/ui/error-state";
-import { Eye, Lock, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { Eye, Lock, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 type TodayResponse = components["schemas"]["TodayResponse"];
@@ -42,7 +42,8 @@ export default function TodayPage() {
     const nameMatch = item.account?.name?.toLowerCase().includes(q);
     const domainMatch = (item.account as { domain?: string } | undefined)?.domain?.toLowerCase().includes(q);
     const titleMatch = item.title?.toLowerCase().includes(q);
-    return Boolean(nameMatch || domainMatch || titleMatch);
+    const summaryMatch = item.summary?.toLowerCase().includes(q);
+    return Boolean(nameMatch || domainMatch || titleMatch || summaryMatch);
   });
 
   return (
@@ -67,10 +68,12 @@ export default function TodayPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
-            <span>Generated:</span>
-            <RelativeTime date={data?.generated_at || new Date().toISOString()} />
-          </div>
+          {data?.generated_at && (
+            <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
+              <span>Generated:</span>
+              <RelativeTime date={data.generated_at} />
+            </div>
+          )}
         </div>
 
         {/* Filter bar primitive */}
@@ -198,7 +201,6 @@ export default function TodayPage() {
                             key: `E${rIdx + 1}`,
                             label: reason.text,
                             detail: reason.text,
-                            source: "usage",
                           }}
                         />
                       ))}

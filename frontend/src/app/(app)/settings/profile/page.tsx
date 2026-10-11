@@ -6,7 +6,7 @@ import { useMe } from "../../../../lib/auth/session-context";
 import { User, Shield } from "lucide-react";
 
 export default function ProfileSettingsPage() {
-  const { me, activeRole } = useMe();
+  const { me, activeRole, isLoading } = useMe();
 
   return (
     <PermissionGuard action="view:settings_profile">
@@ -26,7 +26,7 @@ export default function ProfileSettingsPage() {
             <input
               type="text"
               readOnly
-              value={me?.user?.name || "Marcus Vance"}
+              value={isLoading ? "Loading..." : me?.user?.name || "—"}
               className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             />
           </div>
@@ -36,7 +36,7 @@ export default function ProfileSettingsPage() {
             <input
               type="email"
               readOnly
-              value={me?.user?.email || "finance.cro@acmesaas.com"}
+              value={isLoading ? "Loading..." : me?.user?.email || "—"}
               className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500"
             />
           </div>
@@ -45,8 +45,8 @@ export default function ProfileSettingsPage() {
             <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Assigned Role</label>
             <div className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 capitalize">
               <Shield className="w-4 h-4 text-blue-500" />
-              <span>{activeRole}</span>
-              {activeRole === "viewer" && (
+              <span>{me?.role || activeRole}</span>
+              {(me?.role === "viewer" || (!me?.role && activeRole === "viewer")) && (
                 <span className="text-[10px] text-slate-400 ml-auto font-mono">Executive Read-Only</span>
               )}
             </div>
@@ -57,7 +57,7 @@ export default function ProfileSettingsPage() {
             <input
               type="text"
               readOnly
-              value={me?.user?.timezone || "America/New_York (UTC-5)"}
+              value={isLoading ? "Loading..." : me?.user?.timezone || "UTC"}
               className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             />
           </div>

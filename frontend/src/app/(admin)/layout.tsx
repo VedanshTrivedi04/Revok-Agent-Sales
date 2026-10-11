@@ -1,9 +1,10 @@
 import React from "react";
+import "../../styles/tokens-admin.css";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      {children}
-    </div>
-  );
+/**
+ * Platform Admin route group. Deliberately separate from the customer shell: own theme, own
+ * session scope, own guard. Nothing in here may import from the customer `(app)` layout.
+ */
+export default function AdminGroupLayout({ children }: { children: React.ReactNode }) {
+  return <div className="admin-theme min-h-screen bg-[var(--adm-bg)] text-[var(--adm-text)]">{children}</div>;
 }

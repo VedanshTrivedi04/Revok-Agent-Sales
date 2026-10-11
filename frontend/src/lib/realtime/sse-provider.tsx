@@ -19,6 +19,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
   const [lastEventId, setLastEventId] = useState<string | null>(null);
+  const lastEventIdRef = useRef<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const backoffRef = useRef<number>(1000);
@@ -30,8 +31,8 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
       if (typeof window === "undefined" || isCancelled) return;
 
       const url = new URL("/api/stream", window.location.origin);
-      if (lastEventId) {
-        url.searchParams.set("last_event_id", lastEventId);
+      if (lastEventIdRef.current) {
+        url.searchParams.set("last_event_id", lastEventIdRef.current);
       }
 
       try {
@@ -43,9 +44,16 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
           backoffRef.current = 1000; // Reset backoff
         };
 
+        const updateEventId = (event: MessageEvent) => {
+          if (event.lastEventId) {
+            lastEventIdRef.current = event.lastEventId;
+            setLastEventId(event.lastEventId);
+          }
+        };
+
         // Handlers per event type according to portals-and-impact.md §7
         es.addEventListener("card.updated", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           try {
             const data = JSON.parse(event.data);
             invalidateAfterCardDecision(queryClient, data.id, data.finding_id, data.account_id);
@@ -55,7 +63,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
         });
 
         es.addEventListener("finding.updated", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           try {
             const data = JSON.parse(event.data);
             invalidateAfterFindingDecision(queryClient, data.id, data.account_id);
@@ -65,18 +73,18 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
         });
 
         es.addEventListener("run.updated", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.runs() });
         });
 
         es.addEventListener("sync.updated", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.integrations() });
           queryClient.invalidateQueries({ queryKey: queryKeys.accounts() });
         });
 
         es.addEventListener("notification.created", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.notifications() });
           try {
             const data = JSON.parse(event.data);
@@ -84,24 +92,24 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
               toast.info(data.title, { description: data.body });
             }
           } catch {
-            // ignore JSON error
+            // ignore JSON parse error
           }
         });
 
         es.addEventListener("member.updated", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.me() });
           queryClient.invalidateQueries({ queryKey: queryKeys.members() });
         });
 
         es.addEventListener("org.updated", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.me() });
           queryClient.invalidateQueries({ queryKey: queryKeys.org() });
         });
 
         es.addEventListener("review.updated", (event: MessageEvent) => {
-          setLastEventId(event.lastEventId);
+          updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.entityReviews() });
         });
 
@@ -137,7 +145,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
         clearTimeout(reconnectTimeoutRef.current);
       }
     };
-  }, [queryClient, lastEventId]);
+  }, [queryClient]); // Depend ONLY on queryClient so events do not cause reconnection thrashing
 
   return (
     <RealtimeContext.Provider value={{ isConnected, lastEventId }}>

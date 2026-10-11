@@ -580,6 +580,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Email + password sign-in; returns the identity and default workspace for the session.
+         * @description Email + password sign-in; returns the identity and default workspace for the session.
+         */
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create an account with email + password (workspace is created in onboarding).
+         * @description Create an account with email + password (workspace is created in onboarding).
+         */
+        post: operations["signup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/autonomy": {
         parameters: {
             query?: never;
@@ -1999,6 +2039,48 @@ export interface components {
             /** Scopes */
             scopes: string[];
         };
+        /**
+         * AuthSession
+         * @description Identity resolved by the API after sign-in. The web tier turns it into a signed session
+         *     cookie; the role here is informational (authorization always re-reads the DB membership).
+         */
+        AuthSession: {
+            /**
+             * Is Superadmin
+             * @default false
+             */
+            is_superadmin: boolean;
+            /**
+             * Memberships
+             * @default []
+             */
+            memberships: components["schemas"]["MeMembership"][];
+            /**
+             * Needs Onboarding
+             * @default false
+             */
+            needs_onboarding: boolean;
+            /**
+             * Org Id
+             * Format: uuid
+             */
+            org_id: string;
+            /** Role */
+            role?: ("owner" | "admin" | "manager" | "member" | "viewer") | null;
+            user: components["schemas"]["AuthUser"];
+        };
+        /** AuthUser */
+        AuthUser: {
+            /** Email */
+            email: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name?: string | null;
+        };
         /** AutonomyPolicyOut */
         AutonomyPolicyOut: {
             /**
@@ -2945,6 +3027,13 @@ export interface components {
             /** Ok */
             ok: boolean;
         };
+        /** LoginIn */
+        LoginIn: {
+            /** Email */
+            email: string;
+            /** Password */
+            password: string;
+        };
         /** MeMembership */
         MeMembership: {
             /**
@@ -3620,6 +3709,18 @@ export interface components {
              * Format: uuid
              */
             agent_run_id: string;
+        };
+        /** SignupIn */
+        SignupIn: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Name */
+            name: string;
+            /** Password */
+            password: string;
         };
         /** SlackAck */
         SlackAck: {
@@ -4915,6 +5016,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Ack"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    signup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignupIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSession"];
                 };
             };
             /** @description Validation Error */

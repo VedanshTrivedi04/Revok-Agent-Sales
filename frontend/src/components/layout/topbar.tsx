@@ -8,7 +8,6 @@ import {
   Building,
   User,
   LogOut,
-  AlertTriangle,
   ShieldCheck,
   Check,
 } from "lucide-react";
@@ -17,10 +16,11 @@ import Link from "next/link";
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "../../lib/api/client";
+import { handleApiErrorToast } from "../../lib/api/error";
 import { queryKeys } from "../../lib/api/query-keys";
 
 export function Topbar() {
-  const { me, activeRole, setMockRole } = useMe();
+  const { me, activeRole, signOut, isLoading } = useMe();
   const [isOrgMenuOpen, setIsOrgMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
@@ -32,7 +32,16 @@ export function Topbar() {
   });
   const unreadCount = (notifData?.items || []).filter((n) => !n.read_at).length;
 
-  const ROLES = ["viewer", "member", "manager", "admin", "owner"];
+  const switchOrg = async (orgId: string) => {
+    setIsOrgMenuOpen(false);
+    if (orgId === me?.org?.id) return;
+    try {
+      await fetchApi("/auth/switch-org", { method: "POST", body: JSON.stringify({ org_id: orgId }) });
+      window.location.assign("/today"); // fresh boot under the new workspace
+    } catch (err) {
+      handleApiErrorToast(err);
+    }
+  };
 
   return (
     <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
@@ -49,7 +58,7 @@ export function Topbar() {
             <div className="w-5 h-5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-[10px]">
               <Building className="w-3 h-3" />
             </div>
-            <span>{me?.org?.name || "Acme SaaS"}</span>
+            <span>{me?.org?.name || (isLoading ? "Loading..." : "Workspace")}</span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
@@ -68,7 +77,7 @@ export function Topbar() {
                   <button
                     key={m.org_id}
                     type="button"
-                    onClick={() => setIsOrgMenuOpen(false)}
+                    onClick={() => void switchOrg(m.org_id)}
                     className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-800 dark:text-slate-200"
                   >
                     <div>
@@ -101,23 +110,16 @@ export function Topbar() {
 
       {/* Right: Role Switcher Pill + Notifications Bell + User Menu */}
       <div className="flex items-center gap-3">
-        {/* Mock Role Switcher (for development testing & verification) */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-          <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-          <span className="text-[11px] font-medium text-slate-500 hidden md:inline">Role:</span>
-          <select
-            value={activeRole}
-            onChange={(e) => setMockRole(e.target.value)}
-            className="bg-transparent text-xs font-semibold text-slate-900 dark:text-slate-100 capitalize focus:outline-none cursor-pointer"
-            aria-label="Switch mock role"
-          >
-            {ROLES.map((r) => (
-              <option key={r} value={r} className="dark:bg-slate-900">
-                {r} {r === "viewer" ? "(Read-Only)" : ""}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Signed-in role (read from GET /me; assigned by the workspace, not selectable here) */}
+        {activeRole && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span className="text-[11px] font-medium text-slate-500 hidden md:inline">Role:</span>
+            <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 capitalize">
+              {activeRole || "—"}
+            </span>
+          </div>
+        )}
 
         {/* Notifications Bell */}
         <button
@@ -142,7 +144,11 @@ export function Topbar() {
             aria-expanded={isUserMenuOpen}
           >
             <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-              {me?.user?.name ? me.user.name.charAt(0) : "M"}
+              {me?.user?.name
+                ? me.user.name.charAt(0).toUpperCase()
+                : me?.user?.email
+                ? me.user.email.charAt(0).toUpperCase()
+                : "U"}
             </div>
             <ChevronDown className="w-3 h-3 text-slate-400" />
           </button>
@@ -157,11 +163,13 @@ export function Topbar() {
               <div className="absolute right-0 mt-1.5 w-56 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1 text-xs">
                 <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
                   <div className="font-semibold text-slate-900 dark:text-slate-100">
-                    {me?.user?.name || "Marcus Vance"}
+                    {me?.user?.name || me?.user?.email || (isLoading ? "Loading..." : "Signed in")}
                   </div>
-                  <div className="text-[11px] text-slate-500 truncate">
-                    {me?.user?.email || "finance.cro@acmesaas.com"}
-                  </div>
+                  {me?.user?.email && (
+                    <div className="text-[11px] text-slate-500 truncate">
+                      {me.user.email}
+                    </div>
+                  )}
                 </div>
 
                 <Link
@@ -177,7 +185,7 @@ export function Topbar() {
                   type="button"
                   onClick={() => {
                     setIsUserMenuOpen(false);
-                    window.location.href = "/login";
+                    void signOut();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                 >

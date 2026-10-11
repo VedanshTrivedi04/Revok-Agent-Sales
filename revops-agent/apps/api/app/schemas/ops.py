@@ -142,3 +142,13 @@ class DataHealthOut(BaseModel):
     orphan_events: int
     contacts_without_account: int
     details: dict[str, Any] = {}
+
+
+class AdminMe(BaseModel):
+    """Identity of the signed-in platform operator (superadmin) and the deployment label."""
+
+    user_id: UUID
+    email: str
+    name: str | None = None
+    permissions: list[str]
+    environment: str

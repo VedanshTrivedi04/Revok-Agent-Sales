@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, SmallInteger, String, Text, UniqueConstraint, text
+from sqlalchemy import Boolean, Integer, SmallInteger, String, Text, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import CITEXT, JSONB, TIMESTAMP
 
 from app.db.base import Base, IdMixin, TimestampMixin
@@ -49,6 +49,11 @@ class User(Base, IdMixin, TimestampMixin):
     is_superadmin: Mapped[bool] = mapped_column(
         Boolean, server_default=text("false"), nullable=False
     )
+    password_hash: Mapped[str | None] = mapped_column(Text)
+    failed_login_count: Mapped[int] = mapped_column(
+        Integer, server_default=text("0"), nullable=False
+    )
+    locked_until: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
 
 
 class Membership(Base, IdMixin, TimestampMixin):

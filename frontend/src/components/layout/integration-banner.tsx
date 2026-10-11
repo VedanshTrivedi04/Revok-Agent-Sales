@@ -4,22 +4,43 @@ import React from "react";
 import { AlertTriangle } from "lucide-react";
 import { useCan } from "../../lib/auth/session-context";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { fetchApi } from "../../lib/api/client";
+import { queryKeys } from "../../lib/api/query-keys";
+import { RelativeTime } from "../ui/date-text";
 
-interface IntegrationBannerProps {
-  hasError?: boolean;
-  providerName?: string;
-  errorTime?: string;
+interface IntegrationItem {
+  id: string;
+  provider: string;
+  status: "connected" | "needs_reauth" | "error" | "disconnected";
+  last_sync_at?: string | null;
+  error_message?: string | null;
+  updated_at?: string | null;
 }
 
-export function IntegrationBanner({
-  hasError = false,
-  providerName = "HubSpot",
-  errorTime = "3 hours ago",
-}: IntegrationBannerProps) {
+interface IntegrationsResponse {
+  items: IntegrationItem[];
+}
+
+export function IntegrationBanner() {
   const can = useCan();
   const canManage = can("manage:integrations");
 
-  if (!hasError) return null;
+  const { data } = useQuery<IntegrationsResponse>({
+    queryKey: queryKeys.integrations(),
+    queryFn: () =>
+      fetchApi<IntegrationsResponse>("/integrations").catch(() => ({ items: [] })),
+  });
+
+  const failedIntegration = (data?.items || []).find(
+    (item) => item.status === "needs_reauth" || item.status === "error"
+  );
+
+  // If no integration is in error/needs_reauth status, render nothing
+  if (!failedIntegration) return null;
+
+  const providerName =
+    failedIntegration.provider.charAt(0).toUpperCase() + failedIntegration.provider.slice(1);
 
   return (
     <div
@@ -29,8 +50,11 @@ export function IntegrationBanner({
       <div className="flex items-center gap-2">
         <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
         <span>
-          <strong>{providerName} needs reconnecting</strong> — data since {errorTime} may be
-          missing. Findings may have stale data.
+          <strong>{providerName} needs reconnecting</strong>
+          {failedIntegration.updated_at ? (
+            <> — issue detected <RelativeTime date={failedIntegration.updated_at} /></>
+          ) : null}
+          . Findings may have stale data.
         </span>
       </div>
 

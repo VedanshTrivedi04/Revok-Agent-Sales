@@ -14,8 +14,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Topbar */}
         <Topbar />
 
-        {/* Integration Alert Banner */}
-        <IntegrationBanner hasError={false} providerName="HubSpot" />
+        {/* Dynamic Integration Alert Banner */}
+        <IntegrationBanner />
 
         {/* Scrollable Page Body */}
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">

@@ -18,19 +18,27 @@ export function DateText({
 }: DateTextProps) {
   if (!date) return <span className="text-slate-400 font-mono">—</span>;
 
+  let formatted: string | null = null;
+  let isoString: string | null = null;
+
   try {
     const parsedDate = typeof date === "string" ? new Date(date) : date;
     const zoned = toZonedTime(parsedDate, timezone);
-    const formatted = format(zoned, formatStr);
-
-    return (
-      <time dateTime={parsedDate.toISOString()} className={clsx("font-sans", className)}>
-        {formatted}
-      </time>
-    );
+    formatted = format(zoned, formatStr);
+    isoString = parsedDate.toISOString();
   } catch {
+    formatted = null;
+  }
+
+  if (!formatted || !isoString) {
     return <span className="text-slate-400 font-mono">—</span>;
   }
+
+  return (
+    <time dateTime={isoString} className={clsx("font-sans", className)}>
+      {formatted}
+    </time>
+  );
 }
 
 interface RelativeTimeProps {
@@ -42,20 +50,31 @@ interface RelativeTimeProps {
 export function RelativeTime({ date, addSuffix = true, className }: RelativeTimeProps) {
   if (!date) return <span className="text-slate-400 font-mono">—</span>;
 
+  let relative: string | null = null;
+  let isoString: string | null = null;
+  let localeStr: string | null = null;
+
   try {
     const parsedDate = typeof date === "string" ? new Date(date) : date;
-    const relative = formatDistanceToNow(parsedDate, { addSuffix });
-
-    return (
-      <time
-        dateTime={parsedDate.toISOString()}
-        title={parsedDate.toLocaleString()}
-        className={clsx("text-slate-500 dark:text-slate-400", className)}
-      >
-        {relative}
-      </time>
-    );
+    relative = formatDistanceToNow(parsedDate, { addSuffix });
+    isoString = parsedDate.toISOString();
+    localeStr = parsedDate.toLocaleString();
   } catch {
+    relative = null;
+  }
+
+  if (!relative || !isoString) {
     return <span className="text-slate-400 font-mono">—</span>;
   }
+
+  return (
+    <time
+      dateTime={isoString}
+      title={localeStr ?? undefined}
+      className={clsx("text-slate-500 dark:text-slate-400", className)}
+    >
+      {relative}
+    </time>
+  );
 }
+

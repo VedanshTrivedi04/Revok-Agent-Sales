@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "gen:api": "openapi-typescript ../revops-agent/apps/api/tests/snapshots/openapi.json -o src/lib/api/schema.d.ts"
+    "gen:api": "openapi-typescript ../revops-agent/apps/api/tests/snapshots/openapi.json -o src/lib/api/schema.d.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.1",
@@ -34,7 +35,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   },
   "packageManager": "pnpm@12.6.0"
 }

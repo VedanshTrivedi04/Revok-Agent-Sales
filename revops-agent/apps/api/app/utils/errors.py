@@ -12,7 +12,9 @@ ERROR_CODES: dict[str, tuple[int, str]] = {
     "unauthenticated": (401, "No bearer token was provided."),
     "invalid_token": (401, "The service JWT is invalid (signature, audience or required claims)."),
     "token_expired": (401, "The service JWT has expired."),
+    "invalid_credentials": (401, "The email or password is incorrect."),
     "forbidden": (403, "The user's role does not allow this action."),
+    "account_disabled": (403, "The account has no active workspace membership."),
     "not_a_member": (403, "The user is not an active member of the organization."),
     "org_suspended": (403, "The organization is suspended; all non-admin routes are blocked."),
     "tier_blocked": (
@@ -44,6 +46,7 @@ ERROR_CODES: dict[str, tuple[int, str]] = {
     "validation_error": (422, "The request body or parameters failed validation."),
     "recipient_not_allowed": (422, "An email recipient is not in the account's contact allowlist."),
     "rate_limited": (429, "Too many requests; retry after the Retry-After header."),
+    "account_locked": (429, "Too many failed sign-in attempts; the account is locked for a while."),
     "payload_too_large": (413, "The upload exceeds the size or row limit."),
     "internal_error": (500, "Unexpected server error."),
     "not_implemented": (501, "The endpoint is part of the contract but not built yet."),

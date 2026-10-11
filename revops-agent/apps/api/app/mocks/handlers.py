@@ -13,7 +13,7 @@ import secrets
 from collections.abc import AsyncIterator, Awaitable, Callable
 from pathlib import Path
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from fastapi import Request
 from fastapi.responses import RedirectResponse, StreamingResponse
@@ -28,6 +28,7 @@ from app.utils.errors import ERROR_CODES, AppError
 from app.utils.pagination import PageParams, decode_cursor, encode_cursor
 
 MOCK_DIR = Path(__file__).parent
+PLATFORM_EMAIL = "sam@platform.revops.example.com"
 Handler = Callable[..., Awaitable[Any] | Any]
 HANDLERS: dict[str, Handler] = {}
 FILES = (
@@ -274,6 +275,54 @@ def m_accept_invite(request: Request, body: Any, **_: Any) -> Any:
     if body.token == "expired":
         raise AppError("bad_request", "Invite expired or already used")
     return {"org_id": D.ORG_ID, "role": "member"}
+
+
+def _mock_auth_session(role: str, name: str, email: str) -> dict[str, Any]:
+    return {
+        "user": {"id": D.USER_IDS[role], "email": email, "name": name},
+        "org_id": D.ORG_ID, "role": role, "is_superadmin": False,
+        "memberships": [{"org_id": D.ORG_ID, "org_name": D.ORG_NAME, "role": role}],
+        "needs_onboarding": False,
+    }  # fmt: skip
+
+
+@mock("login")
+def m_login(request: Request, body: Any, **_: Any) -> Any:
+    """Mock mode accepts any password for the synthetic demo users and rejects everyone else."""
+    for role, (name, email) in D.USERS.items():
+        if email == str(body.email).lower():
+            return _mock_auth_session(role, name, email)
+    raise AppError("invalid_credentials")
+
+
+@mock("admin_login")
+def m_admin_login(request: Request, body: Any, **_: Any) -> Any:
+    if str(body.email).lower() != PLATFORM_EMAIL:
+        raise AppError("invalid_credentials")
+    return {
+        "user": {"id": D.uid("user:superadmin"), "email": PLATFORM_EMAIL, "name": "Sam Superadmin"},
+        "org_id": str(UUID(int=0)), "role": None, "is_superadmin": True,
+        "memberships": [], "needs_onboarding": False,
+    }  # fmt: skip
+
+
+@mock("admin_me")
+def m_admin_me(request: Request, **_: Any) -> Any:
+    return {
+        "user_id": D.uid("user:superadmin"), "email": PLATFORM_EMAIL, "name": "Sam Superadmin",
+        "permissions": ["platform:admin"], "environment": get_settings().app_env,
+    }  # fmt: skip
+
+
+@mock("signup")
+def m_signup(request: Request, body: Any, **_: Any) -> Any:
+    if any(email == str(body.email).lower() for _, email in D.USERS.values()):
+        raise AppError("conflict", "An account with this email already exists")
+    return {
+        "user": {"id": str(uuid4()), "email": str(body.email).lower(), "name": body.name},
+        "org_id": str(UUID(int=0)), "role": None, "is_superadmin": False,
+        "memberships": [], "needs_onboarding": True,
+    }  # fmt: skip
 
 
 @mock("list_api_keys")

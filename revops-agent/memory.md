@@ -852,7 +852,46 @@ uv run python scripts/check_openapi.py --update                   # after any co
 - `uv run python scripts/check_openapi.py`: PASSED (OpenAPI snapshot is current).
 
 
+## 16. Email + password auth, role hierarchy and Platform Admin portal (frontend `D:/CDGI2026/frontend`)
 
+> Date: 2026-10-11. Owner: Vedansh. Product has 6 roles: Owner, Admin, Manager, Member, Viewer (customer, inside a workspace)
+> and Superadmin (our own team, separate portal, no workspace). Magic-link sign-in was fake (backend had no `/auth/*`); replaced.
 
+### 16.1 Backend (apps/api)
+- **Passwords:** `app/auth/passwords.py` (stdlib scrypt `scrypt$n$r$p$salt$hash`, async wrappers, dummy-hash verify for unknown emails so timing does not leak). Policy 10..128 chars.
+- **Migration `0005_user_passwords`:** `users.password_hash`, `failed_login_count`, `locked_until`. Model updated in `app/models/tenancy.py`.
+- **Service `app/services/auth.py`** (uses `admin_session()`: users are global, no tenant yet; allow-listed in `tests/test_remediation_security.py`, documented in `docs/conventions.md`):
+  - `_authenticate(body, platform=bool)`: customer and platform sign-in are disjoint; wrong-portal fails exactly like a wrong password (`invalid_credentials`). 5 failures -> `account_locked` (429, Retry-After) for 15 min; success resets counters.
+  - `login` (customer: default workspace = active org, best role first), `admin_login` (superadmin only, `org_id` = nil UUID, no memberships), `signup` (409 `conflict` on duplicate email; `needs_onboarding` until a workspace is created via `POST /orgs`).
+  - Users with only disabled memberships -> 403 `account_disabled`.
+- **Endpoints (public, rate-limited as sensitive):** `POST /auth/login`, `POST /auth/admin/login`, `POST /auth/signup` (routes in `app/routes/auth.py`); `GET /admin/me` (superadmin; returns `permissions` = `platform:admin|flags|jobs|orgs` and `environment` = APP_ENV). New error codes: `invalid_credentials`, `account_locked`, `account_disabled`. Mock handlers added (`app/mocks/handlers.py`), contract test bodies added.
+- **Seed (`scripts/seed_demo.py`):** `seed_demo_logins()` (local/test only) sets demo password `Demo@12345678` for the 5 workspace users and creates platform superadmin `sam@platform.revops.example.com` (no workspace). Olivia is NOT superadmin any more (flag cleared). Tests unaffected (called from `main()` only).
+- **`scripts/set_password.py <email> [--name] [--superadmin]`:** creates/resets a user password (hidden prompt or `REVOPS_PASSWORD` env), clears lockout. Runs against whatever `.env` DB is configured.
+- `requirements.txt` exported from `uv.lock` (`uv export --no-hashes --no-dev --no-emit-project`).
+- Regenerated: `tests/snapshots/openapi.json`, `docs/endpoints.md`, `docs/error-codes.md`, bruno. **Full suite: 796 passed.**
 
+### 16.2 Frontend (Next 16, `D:/CDGI2026/frontend`)
+- **Two separate sessions** (`src/lib/auth/session-cookie.ts`): `revops_session` (customer, 8h, aud `revops-web-session`) and `revops_admin_session` (admin, 2h, aud `revops-admin-session`). httpOnly, signed with `SESSION_SECRET` or `API_JWT_SECRET` (production refuses the dev secret). Cookie holds identity only; roles/permissions always come from `GET /me` / `GET /admin/me`.
+- **Next route handlers:** `api/auth/{login,signup,admin-login,logout,admin-logout,switch-org}`; catch-all `api/[...path]` picks the admin cookie for `/admin/*` and the customer cookie otherwise, mints the 5-min service JWT, refreshes the customer cookie's org after `POST /orgs` and `/invites/accept`; `api/stream` now authenticated. No mock role / `mock_role` / forgeable `revops_user_id` cookies any more.
+- **Guard:** `src/proxy.ts` + pure `lib/auth/route-guard.ts` (unit-tested): customer (e.g. Owner) on `/admin/*` -> `/403`; superadmin on customer routes -> `/403?scope=platform`; signed-out -> `/login` or `/admin/login`.
+- **Customer UI:** `/login` (email + password, show/hide, lockout/error messages, `?next=`, `?invite=`; fake Google button removed; role-chip note), `/signup` (name, email, password + confirm), `/onboarding/org` (create workspace), topbar shows role read-only (mock role switcher removed), org switcher works, sign out. `SessionProvider` skips `/me` on `/admin/*`; 401 -> logout + `/login`.
+- **Platform Admin (portal E, Step 1 of 9 done):** `(admin)` route group, `styles/tokens-admin.css` (dark, AA), `/admin/login`, guarded shell (`components/admin/admin-shell.tsx`: INTERNAL badge, ENV chip, sidebar Orgs/Jobs/LLM health/Evals/Flags, user + sign-out), `AdminSessionProvider` (`lib/auth/admin-session.tsx`, gating via `permissions[]`). Pages `/admin/{orgs,jobs,llm,evals,flags}` are **placeholders**.
+- **Tests:** Vitest installed (`npm test`): 17 pass (route guard, cookie scopes, env label, canPlatform). Playwright NOT installed yet. `tsc` clean, eslint 0 errors.
 
+### 16.3 Decisions and onboarding hierarchy
+- Client's first user is **Owner**. Credential delivery: **both** emailed set-password link and superadmin-set temporary password (shown once, forced change) — *not built yet*.
+- Hierarchy: Superadmin -> Owner (Admin portal "Onboard client") -> Owner invites Admin/Manager/Member/Viewer; Admin invites only Manager/Member/Viewer; Manager/Member/Viewer cannot invite. *Invite-role hierarchy check is NOT enforced in the backend yet* (`create_invite` accepts any role for anyone with `members:manage`).
+- Superadmin never sees customer content; admin responses are counts/status/error text only.
+
+### 16.4 State of environments / how to run
+- `apps/api/.env` points at the **Neon** DB. Migration `0005` has been applied there (alembic head = 0005). Neon currently has user rows incl. superadmins `superadmin@gmail.com`, `superadmin2@gmail.com`, and an accidental `you@company.com`; demo-saas users there have **no password** (seed's passwords only exist on the local docker DB).
+- Local docker stack (`infra-postgres-1` :5433, redis :6379, mailpit) is migrated + seeded with the demo logins above.
+- Superadmin signs in ONLY at `/admin/login` (customer `/login` always rejects superadmins; that is by design, not a bug). Frontend dev: `NEXT_PUBLIC_API_BASE=http://localhost:8000` (frontend `.env.local`).
+- Verified live (curl, prod build against local docker DB): all 5 customer roles log in with distinct `/me` permissions, cookie scopes do not cross, lockout works, logout works, guards redirect as above. Browser/visual check NOT done.
+
+### 16.5 Known gaps / next steps
+1. **Step 2 (E1 Orgs):** table/search/filters/pagination + "Onboard client" (`POST /admin/orgs`, set-password token flow, temp password option, invite hierarchy check). Then E2 org detail, E3 jobs, E4 LLM (Preview), E5 evals (Preview), E6 flags, cross-cutting (CSV, shortcuts, last refreshed), guard tests + Playwright. Wait for the user's "next" after each step.
+2. Login rate limit is per IP and the Next server is the only client IP (30/min shared) — forward `X-Forwarded-For` / configure proxy headers before production.
+3. Rotate the Neon DB passwords (they were printed in a session transcript). Production needs `API_JWT_SECRET`/`SESSION_SECRET` set (32+ chars).
+4. Old magic-link pages `/auth/check-email` and `/auth/error` still exist but are unused; customer login has no link to `/admin/login`.
+5. Windows gotchas: use the Write tool for TS files (long Bash heredocs with apostrophes fail); never `rm -rf` a folder containing a node_modules junction; Next dev with a junctioned node_modules fails, for e2e use `distDir` override + `next build --webpack` + `next start` (and restore `next.config.ts`).

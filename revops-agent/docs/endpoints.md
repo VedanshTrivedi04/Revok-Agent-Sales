@@ -28,6 +28,7 @@
 | POST | `/api/v1/action-cards/{card_id}/assign` | C4 Action Card | Vedansh | P2 | real | approve:own |
 | POST | `/api/v1/action-cards/{card_id}/revert` | C4 Action Card | Vedansh | P3 | real | revert |
 | POST | `/api/v1/action-cards/{card_id}/retry` | C4 Action Card | Vedansh | P3 | real | approve:any |
+| GET | `/api/v1/admin/me` | E0 Admin login | Vedansh | P5 | real | superadmin |
 | GET | `/api/v1/admin/orgs` | E Admin Console | Vedansh | P5 | real | superadmin |
 | GET | `/api/v1/admin/orgs/{org_id}` | E Admin Console | Vedansh | P5 | real | superadmin |
 | POST | `/api/v1/admin/orgs/{org_id}/suspend` | E Admin Console | Vedansh | P5 | real | superadmin |
@@ -44,6 +45,9 @@
 | GET | `/api/v1/api-keys` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
 | POST | `/api/v1/api-keys` | B5 Usage Data | Vedansh | P1 | real | apikeys:manage |
 | DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
+| POST | `/api/v1/auth/login` | A2 Sign in | Vedansh | P1 | real | public |
+| POST | `/api/v1/auth/admin/login` | E0 Admin login | Vedansh | P5 | real | public |
+| POST | `/api/v1/auth/signup` | A3 Create account | Vedansh | P1 | real | public |
 | GET | `/api/v1/autonomy` | D9 Autonomy | Vedansh | P2 | real | any |
 | PUT | `/api/v1/autonomy/{action_type}` | D9 Autonomy | Vedansh | P2 | real | autonomy:edit |
 | GET | `/api/v1/entity-reviews` | C9 Entity Review | Rajwardhan | P2 | real | review:view |

@@ -1,8 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "../api/client";
+import { ApiError } from "../api/error";
 import { queryKeys } from "../api/query-keys";
 import { checkPermission, AppAction, PermissionContext } from "../permissions";
 
@@ -56,33 +58,28 @@ interface SessionContextType {
   error: Error | null;
   refetch: () => void;
   can: (action: AppAction | string, context?: PermissionContext) => boolean;
+  /** Display label only (from `GET /me`); never use it to gate UI, use `can()` / `<Can>`. */
   activeRole: string;
-  setMockRole: (role: string) => void;
+  signOut: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextType | null>(null);
 
+const PUBLIC_PREFIXES = ["/login", "/signup", "/invite", "/auth"];
+// The Platform Admin portal has its own session (AdminSessionProvider); the customer `/me` never runs there.
+const isAdminPath = (pathname: string | null) => !!pathname && (pathname === "/admin" || pathname.startsWith("/admin/"));
+
+function isPublicPath(pathname: string | null) {
+  return !!pathname && PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
+async function endSession() {
+  await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+  window.location.assign("/login");
+}
+
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const queryClient = useQueryClient();
-  const [mockRole, setMockRoleState] = useState<string>("viewer");
-
-  // Read initial mock role from localStorage/cookie if present
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedRole = localStorage.getItem("revops_mock_role") || "viewer";
-      setMockRoleState(savedRole);
-    }
-  }, []);
-
-  const setMockRole = (role: string) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("revops_mock_role", role);
-      document.cookie = `revops_mock_role=${role}; path=/; max-age=86400`;
-    }
-    setMockRoleState(role);
-    // Invalidate 'me' and clear caches
-    queryClient.invalidateQueries({ queryKey: queryKeys.me() });
-  };
+  const pathname = usePathname();
 
   const {
     data: me,
@@ -91,10 +88,17 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     refetch,
   } = useQuery<MeResponse>({
     queryKey: queryKeys.me(),
-    queryFn: () =>
-      fetchApi<MeResponse>(`/me?mock_role=${mockRole}`),
+    queryFn: () => fetchApi<MeResponse>("/me"),
     staleTime: 60 * 1000,
+    enabled: !isAdminPath(pathname),
+    retry: (count, err) => !(err instanceof ApiError && err.status < 500) && count < 1,
   });
+
+  // Session expired or the user no longer exists: clear the cookie and go back to sign-in.
+  const unauthenticated = error instanceof ApiError && error.status === 401;
+  useEffect(() => {
+    if (unauthenticated && !isPublicPath(pathname)) void endSession();
+  }, [unauthenticated, pathname]);
 
   const can = useMemo(() => {
     return (action: AppAction | string, context?: PermissionContext): boolean => {
@@ -110,10 +114,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       error: error as Error | null,
       refetch,
       can,
-      activeRole: me?.role || mockRole,
-      setMockRole,
+      activeRole: me?.role ?? "",
+      signOut: endSession,
     }),
-    [me, isLoading, error, refetch, can, mockRole]
+    [me, isLoading, error, refetch, can]
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

@@ -23,9 +23,15 @@
   --border-medium: #cbd5e1;
   --border-focus: #2563eb;
 
-  /* Brand / Interactive */
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
+  /* Brand / Interactive (Forest Green & Electric Lime Aesthetic) */
+  --brand-forest: #0d3823;
+  --brand-forest-dark: #072115;
+  --brand-forest-light: #164e32;
+  --brand-lime: #ccff00;
+  --brand-lime-hover: #b8e600;
+  --brand-lime-muted: #f4fce3;
+  --primary: #0d3823;
+  --primary-hover: #072115;
   --primary-fg: #ffffff;
 
   /* Severity Tokens */

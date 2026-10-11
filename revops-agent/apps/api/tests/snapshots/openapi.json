@@ -602,6 +602,50 @@
     "title": "AdminJobOut",
     "type": "object"
    },
+   "AdminMe": {
+    "description": "Identity of the signed-in platform operator (superadmin) and the deployment label.",
+    "properties": {
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "environment": {
+      "title": "Environment",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "permissions": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Permissions",
+      "type": "array"
+     },
+     "user_id": {
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "user_id",
+     "email",
+     "permissions",
+     "environment"
+    ],
+    "title": "AdminMe",
+    "type": "object"
+   },
    "AdminOrgDetail": {
     "properties": {
      "accounts": {
@@ -915,6 +959,91 @@
      "created_at"
     ],
     "title": "ApiKeyOut",
+    "type": "object"
+   },
+   "AuthSession": {
+    "description": "Identity resolved by the API after sign-in. The web tier turns it into a signed session\ncookie; the role here is informational (authorization always re-reads the DB membership).",
+    "properties": {
+     "is_superadmin": {
+      "default": false,
+      "title": "Is Superadmin",
+      "type": "boolean"
+     },
+     "memberships": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/MeMembership"
+      },
+      "title": "Memberships",
+      "type": "array"
+     },
+     "needs_onboarding": {
+      "default": false,
+      "title": "Needs Onboarding",
+      "type": "boolean"
+     },
+     "org_id": {
+      "format": "uuid",
+      "title": "Org Id",
+      "type": "string"
+     },
+     "role": {
+      "anyOf": [
+       {
+        "enum": [
+         "owner",
+         "admin",
+         "manager",
+         "member",
+         "viewer"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Role"
+     },
+     "user": {
+      "$ref": "#/components/schemas/AuthUser"
+     }
+    },
+    "required": [
+     "user",
+     "org_id"
+    ],
+    "title": "AuthSession",
+    "type": "object"
+   },
+   "AuthUser": {
+    "properties": {
+     "email": {
+      "title": "Email",
+      "type": "string"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     }
+    },
+    "required": [
+     "id",
+     "email"
+    ],
+    "title": "AuthUser",
     "type": "object"
    },
    "AutonomyPolicyOut": {
@@ -3366,6 +3495,28 @@
     "title": "LogVerifyOut",
     "type": "object"
    },
+   "LoginIn": {
+    "properties": {
+     "email": {
+      "maxLength": 254,
+      "minLength": 3,
+      "title": "Email",
+      "type": "string"
+     },
+     "password": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Password",
+      "type": "string"
+     }
+    },
+    "required": [
+     "email",
+     "password"
+    ],
+    "title": "LoginIn",
+    "type": "object"
+   },
    "MeMembership": {
     "properties": {
      "org_id": {
@@ -5161,6 +5312,34 @@
      "agent_run_id"
     ],
     "title": "RunTriggerOut",
+    "type": "object"
+   },
+   "SignupIn": {
+    "properties": {
+     "email": {
+      "format": "email",
+      "title": "Email",
+      "type": "string"
+     },
+     "name": {
+      "maxLength": 80,
+      "minLength": 2,
+      "title": "Name",
+      "type": "string"
+     },
+     "password": {
+      "maxLength": 128,
+      "minLength": 10,
+      "title": "Password",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name",
+     "email",
+     "password"
+    ],
+    "title": "SignupIn",
     "type": "object"
    },
    "SlackAck": {
@@ -7260,6 +7439,28 @@
     ]
    }
   },
+  "/api/v1/admin/me": {
+   "get": {
+    "description": "Signed-in platform operator, platform permissions and the environment label.",
+    "operationId": "admin_me",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AdminMe"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Signed-in platform operator, platform permissions and the environment label.",
+    "tags": [
+     "E0 Admin login"
+    ]
+   }
+  },
   "/api/v1/admin/orgs": {
    "get": {
     "description": "All organizations: counts and statuses only, no customer content.",
@@ -7561,6 +7762,132 @@
     "summary": "Revoke an API key.",
     "tags": [
      "D10 API Keys"
+    ]
+   }
+  },
+  "/api/v1/auth/admin/login": {
+   "post": {
+    "description": "Platform Admin (superadmin) sign-in; separate from the customer portal sign-in.",
+    "operationId": "admin_login",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoginIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AuthSession"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Platform Admin (superadmin) sign-in; separate from the customer portal sign-in.",
+    "tags": [
+     "E0 Admin login"
+    ]
+   }
+  },
+  "/api/v1/auth/login": {
+   "post": {
+    "description": "Email + password sign-in; returns the identity and default workspace for the session.",
+    "operationId": "login",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoginIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AuthSession"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Email + password sign-in; returns the identity and default workspace for the session.",
+    "tags": [
+     "A2 Sign in"
+    ]
+   }
+  },
+  "/api/v1/auth/signup": {
+   "post": {
+    "description": "Create an account with email + password (workspace is created in onboarding).",
+    "operationId": "signup",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SignupIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AuthSession"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Create an account with email + password (workspace is created in onboarding).",
+    "tags": [
+     "A3 Create account"
     ]
    }
   },

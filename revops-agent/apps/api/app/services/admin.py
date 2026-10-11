@@ -18,15 +18,18 @@ import structlog
 from sqlalchemy import String, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.jwt import Claims
+from app.config import get_settings
 from app.db.session import admin_session
 from app.models.audit import FailedJob, FeatureFlag
 from app.models.brain import Finding
 from app.models.integrations import Integration
-from app.models.tenancy import Membership, Organization
+from app.models.tenancy import Membership, Organization, User
 from app.models.timeline import Account
 from app.schemas.identity import Ack
 from app.schemas.ops import (
     AdminJobOut,
+    AdminMe,
     AdminOrgDetail,
     AdminOrgOut,
     DataHealthOut,
@@ -354,3 +357,23 @@ async def get_data_health() -> DataHealthOut:
                 "contacts_without_account_count": contacts_without_account,
             },
         )
+
+
+PLATFORM_PERMISSIONS = [
+    "platform:admin",
+    "platform:flags",
+    "platform:jobs",
+    "platform:orgs",
+]
+
+
+async def admin_me(claims: Claims) -> AdminMe:
+    async with admin_session() as s:
+        user = (await s.execute(select(User).where(User.id == claims.user_id))).scalar_one()
+    return AdminMe(
+        user_id=user.id,
+        email=str(user.email),
+        name=user.name,
+        permissions=PLATFORM_PERMISSIONS,
+        environment=get_settings().app_env,
+    )

@@ -9,9 +9,11 @@ Every error uses the envelope `{"error": {"code", "message", "details"}}`. Forei
 | `bad_request` | 400 | The request is malformed or cannot be processed. |
 | `invalid_cursor` | 400 | The pagination cursor is not valid. |
 | `invalid_state` | 400 | The OAuth state is invalid, expired, replayed or for another provider. |
+| `invalid_credentials` | 401 | The email or password is incorrect. |
 | `invalid_token` | 401 | The service JWT is invalid (signature, audience or required claims). |
 | `token_expired` | 401 | The service JWT has expired. |
 | `unauthenticated` | 401 | No bearer token was provided. |
+| `account_disabled` | 403 | The account has no active workspace membership. |
 | `forbidden` | 403 | The user's role does not allow this action. |
 | `not_a_member` | 403 | The user is not an active member of the organization. |
 | `org_suspended` | 403 | The organization is suspended; all non-admin routes are blocked. |
@@ -29,6 +31,7 @@ Every error uses the envelope `{"error": {"code", "message", "details"}}`. Forei
 | `idempotency_key_reuse` | 422 | This Idempotency-Key was already used with a different request. |
 | `recipient_not_allowed` | 422 | An email recipient is not in the account's contact allowlist. |
 | `validation_error` | 422 | The request body or parameters failed validation. |
+| `account_locked` | 429 | Too many failed sign-in attempts; the account is locked for a while. |
 | `rate_limited` | 429 | Too many requests; retry after the Retry-After header. |
 | `internal_error` | 500 | Unexpected server error. |
 | `not_implemented` | 501 | The endpoint is part of the contract but not built yet. |

@@ -1,0 +1,20 @@
+meta {
+  name: admin_me
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/admin/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Signed-in platform operator, platform permissions and the environment label.
+  Page: E0 Admin login | Owner: V | Phase: P5 | Access: superadmin
+}

@@ -174,6 +174,7 @@ async def test_demo_key_backdoor_is_gone(
 # a conscious decision: extend this list in the same PR and justify it in docs/conventions.md.
 ADMIN_SESSION_ALLOWED = {
     "app/auth/deps.py": "membership lookup across orgs, superadmin check (no tenant context yet)",
+    "app/services/auth.py": "email+password sign-in/sign-up: users are global, no tenant yet",
     "app/services/api_keys.py": "API key -> org resolution (the key IS the tenant identity)",
     "app/services/invites.py": "invite acceptance by a user who is not yet a member",
     "app/services/identity.py": "cross-org memberships for /me",

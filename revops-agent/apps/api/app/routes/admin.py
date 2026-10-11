@@ -3,10 +3,12 @@ from uuid import UUID
 
 from fastapi import Depends, Request
 
+from app.auth.deps import get_claims
 from app.contract import endpoint, real
 from app.schemas.identity import Ack
 from app.schemas.ops import (
     AdminJobOut,
+    AdminMe,
     AdminOrgDetail,
     AdminOrgOut,
     DataHealthOut,
@@ -21,6 +23,20 @@ from app.utils.pagination import Page, PageParams, page_params
 
 PAGE = "E Admin Console"
 Paging = Annotated[PageParams, Depends(page_params)]
+
+
+@endpoint(
+    "GET",
+    "/admin/me",
+    group="admin",
+    page="E0 Admin login",
+    owner="V",
+    phase=5,
+    access="superadmin",
+)
+async def admin_me() -> AdminMe:
+    """Signed-in platform operator, platform permissions and the environment label."""
+    raise NotImplementedError
 
 
 @endpoint("GET", "/admin/orgs", group="admin", page=PAGE, owner="V", phase=5, access="superadmin")
@@ -151,6 +167,11 @@ async def data_health() -> DataHealthOut:
 # ---------------------------------------------------------------------------
 # Real Handlers
 # ---------------------------------------------------------------------------
+
+
+@real("admin_me")
+async def admin_me_real(request: Request, **_: Any) -> AdminMe:
+    return await admin_service.admin_me(get_claims(request))
 
 
 @real("list_admin_orgs")

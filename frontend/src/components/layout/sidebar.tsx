@@ -41,7 +41,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { can, me, activeRole } = useMe();
+  const { can, me, activeRole, isLoading } = useMe();
 
   // Filter items strictly using can(action) - hidden items are never rendered
   const visibleNav = ALL_NAV_ITEMS.filter((item) => can(item.action));
@@ -60,7 +60,7 @@ export function Sidebar() {
           <div>
             <div className="text-sm font-bold tracking-tight text-white leading-none">RevOps Agent</div>
             <div className="text-[10px] text-slate-400 font-mono tracking-wider mt-0.5 uppercase">
-              {activeRole} mode
+              {activeRole || "workspace"}
             </div>
           </div>
         </Link>
@@ -114,16 +114,20 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Viewer Notice / Footer */}
+      {/* User Status / Footer */}
       <div className="p-3 border-t border-slate-800 bg-slate-950/60">
         <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-900 border border-slate-800/80 text-xs">
           <ShieldAlert className="w-4 h-4 text-blue-400 flex-shrink-0" />
           <div className="overflow-hidden">
             <div className="text-[11px] font-medium text-slate-200 truncate">
-              {me?.user?.name || "Marcus Vance"}
+              {isLoading ? (
+                <span className="inline-block w-20 h-3 bg-slate-800 animate-pulse rounded" />
+              ) : (
+                me?.user?.name || me?.user?.email || "Signed in"
+              )}
             </div>
             <div className="text-[10px] text-slate-400 truncate capitalize font-mono">
-              Role: {activeRole} (Read-Only)
+              Role: {me?.role || activeRole || "—"}
             </div>
           </div>
         </div>

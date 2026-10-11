@@ -1,0 +1,16 @@
+meta {
+  name: admin_login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/auth/admin/login
+  body: none
+  auth: none
+}
+
+docs {
+  Platform Admin (superadmin) sign-in; separate from the customer portal sign-in.
+  Page: E0 Admin login | Owner: V | Phase: P5 | Access: public
+}

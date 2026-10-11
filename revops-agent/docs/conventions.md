@@ -27,7 +27,7 @@ Rule keys `R01_usage_drop`, `X01_seat_saturation`. IDs are UUIDv7 via `app.utils
 
 ## 3. Tenancy (never skip)
 - Tenant data is only reachable through `org_session(org_id)` (sets `app.org_id` for the transaction; RLS does the rest).
-- `admin_session()` (BYPASSRLS) is for `/admin` routers and platform jobs only.
+- `admin_session()` (BYPASSRLS) is for `/admin` routers, platform jobs and the pre-tenant auth paths (email + password sign-in/sign-up in `services/auth.py`, invite acceptance, membership lookup) only.
 - A foreign-tenant id is **404 `not_found`**, never 403.
 - Every new tenant table: `org_id` FK to `organizations`, `apply_tenant_rls(op, "table")` in its migration.
   `tests/test_rls.py` discovers the table automatically; it must stay green.

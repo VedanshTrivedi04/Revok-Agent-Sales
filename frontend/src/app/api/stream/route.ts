@@ -1,58 +1,61 @@
 import { NextRequest } from "next/server";
+import {
+  apiBase,
+  mintServiceJwt,
+  sessionFromRequest,
+  unauthenticatedResponse,
+} from "../../../lib/auth/service-jwt";
 
+/** Transparent SSE proxy to FastAPI `/api/v1/stream`, authenticated by the session cookie. */
 export async function GET(req: NextRequest) {
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE;
+  const session = await sessionFromRequest(req);
+  if (!session) return unauthenticatedResponse();
 
-  if (apiBase) {
-    try {
-      const response = await fetch(`${apiBase}/api/v1/stream`, {
+  const base = apiBase();
+  const url = new URL(req.url);
+
+  try {
+    const targetUrl = `${base}/api/v1/stream${url.search}`;
+    const lastEventId = req.headers.get("last-event-id");
+    const response = await fetch(targetUrl, {
+      headers: {
+        Authorization: `Bearer ${await mintServiceJwt(session)}`,
+        Accept: "text/event-stream",
+        "Cache-Control": "no-cache",
+        ...(lastEventId ? { "Last-Event-ID": lastEventId } : {}),
+      },
+      signal: req.signal,
+    });
+
+    if (response.ok && response.body) {
+      return new Response(response.body, {
         headers: {
-          Accept: "text/event-stream",
-          "Cache-Control": "no-cache",
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache, no-transform",
+          Connection: "keep-alive",
         },
       });
-
-      if (response.ok && response.body) {
-        return new Response(response.body, {
-          headers: {
-            "Content-Type": "text/event-stream",
-            "Cache-Control": "no-cache, no-transform",
-            Connection: "keep-alive",
-          },
-        });
-      }
-    } catch {
-      // Backend not running, use fallback mock stream
     }
+
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: "stream_unavailable",
+          message: `Realtime stream from ${base} returned status ${response.status}`,
+        },
+      }),
+      { status: response.status, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Connection failed";
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: "backend_stream_offline",
+          message: `Backend realtime stream at ${base}/api/v1/stream is unreachable (${msg}).`,
+        },
+      }),
+      { status: 503, headers: { "Content-Type": "application/json" } }
+    );
   }
-
-  // Fallback SSE mock stream with heartbeats
-  const encoder = new TextEncoder();
-  const stream = new ReadableStream({
-    start(controller) {
-      // Send initial connection event
-      controller.enqueue(encoder.encode(`event: connected\ndata: {"status":"connected"}\n\n`));
-
-      const interval = setInterval(() => {
-        try {
-          // Send 20s heartbeat comment per spec
-          controller.enqueue(encoder.encode(`: heartbeat ${new Date().toISOString()}\n\n`));
-        } catch {
-          clearInterval(interval);
-        }
-      }, 20000);
-
-      req.signal.addEventListener("abort", () => {
-        clearInterval(interval);
-      });
-    },
-  });
-
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      Connection: "keep-alive",
-    },
-  });
 }

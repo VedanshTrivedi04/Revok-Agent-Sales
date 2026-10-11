@@ -188,3 +188,34 @@ class NotificationsReadIn(BaseModel):
 class Ack(BaseModel):
     ok: bool = True
     detail: dict[str, Any] = {}
+
+
+class LoginIn(BaseModel):
+    email: str = Field(
+        min_length=3, max_length=254
+    )  # not EmailStr: sign-in never rejects on format
+    password: str = Field(min_length=1, max_length=128)
+
+
+class SignupIn(BaseModel):
+    name: str = Field(min_length=2, max_length=80)
+    email: EmailStr
+    password: str = Field(min_length=10, max_length=128)
+
+
+class AuthUser(BaseModel):
+    id: UUID
+    email: str
+    name: str | None = None
+
+
+class AuthSession(BaseModel):
+    """Identity resolved by the API after sign-in. The web tier turns it into a signed session
+    cookie; the role here is informational (authorization always re-reads the DB membership)."""
+
+    user: AuthUser
+    org_id: UUID  # default workspace; the nil UUID when the user has no workspace yet
+    role: Role | None = None
+    is_superadmin: bool = False
+    memberships: list[MeMembership] = []
+    needs_onboarding: bool = False

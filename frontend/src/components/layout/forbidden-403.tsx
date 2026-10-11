@@ -1,15 +1,19 @@
 import React from "react";
 import Link from "next/link";
-import { ShieldX, ArrowLeft, Home } from "lucide-react";
+import { ShieldX, Home } from "lucide-react";
 
 interface Forbidden403Props {
   title?: string;
   description?: string;
+  homeHref?: string;
+  homeLabel?: string;
 }
 
 export function Forbidden403({
   title = "You don't have access. Ask an admin.",
   description = "This page or action requires higher permissions than your current role allows.",
+  homeHref = "/today",
+  homeLabel = "Back to Today",
 }: Forbidden403Props) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">
@@ -24,11 +28,11 @@ export function Forbidden403({
       </p>
       <div className="flex items-center gap-3">
         <Link
-          href="/today"
+          href={homeHref}
           className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           <Home className="w-4 h-4" />
-          <span>Back to Today</span>
+          <span>{homeLabel}</span>
         </Link>
       </div>
     </div>

@@ -1,0 +1,75 @@
+/*
+ * Platform Admin ("Internal") theme. Scoped to .admin-theme so it never touches the customer app.
+ * Deep Forest Green & Electric Lime aesthetic matching brand design system.
+ * Contrast: High contrast WCAG AA compliant on all text and controls.
+ */
+.admin-theme {
+  color-scheme: dark;
+
+  /* Rich Forest Green Palette */
+  --adm-bg: #0a1811;
+  --adm-surface: #10261c;
+  --adm-surface-2: #163628;
+  --adm-surface-3: #1e4736;
+  --adm-border: #1c4331;
+  --adm-border-strong: #2a6148;
+
+  /* Crisp Modern Typography */
+  --adm-text: #f0f7f3;
+  --adm-text-muted: #94b9a6;
+  --adm-text-dim: #5c8571;
+
+  /* Electric Lime Neon Accent */
+  --adm-accent: #c4f82a;
+  --adm-accent-hover: #b2e81d;
+  --adm-accent-ink: #07190f;
+  --adm-accent-soft: rgba(196, 248, 42, 0.12);
+  --adm-accent-border: rgba(196, 248, 42, 0.35);
+
+  /* Internal Security Tag (Warm Amber-Gold on Forest) */
+  --adm-internal-bg: #f59e0b;
+  --adm-internal-ink: #1c1002;
+
+  /* Semantic Feedback */
+  --adm-ok: #34d399;
+  --adm-ok-bg: rgba(52, 211, 153, 0.12);
+  --adm-warn: #fbbf24;
+  --adm-warn-bg: rgba(251, 191, 36, 0.12);
+  --adm-danger: #fb7185;
+  --adm-danger-bg: rgba(251, 113, 133, 0.12);
+  --adm-info: #67e8f9;
+
+  --adm-ring: 0 0 0 2px var(--adm-bg), 0 0 0 4px var(--adm-accent);
+
+  background-color: var(--adm-bg);
+  color: var(--adm-text);
+}
+
+.admin-theme :focus-visible {
+  outline: none;
+  box-shadow: var(--adm-ring);
+}
+
+.admin-theme ::selection {
+  background: var(--adm-accent);
+  color: var(--adm-accent-ink);
+}
+
+/* Scrollbar styling for forest theme */
+.admin-theme ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-theme ::-webkit-scrollbar-track {
+  background: var(--adm-bg);
+}
+
+.admin-theme ::-webkit-scrollbar-thumb {
+  background: var(--adm-border-strong);
+  border-radius: 9999px;
+}
+
+.admin-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--adm-accent);
+}

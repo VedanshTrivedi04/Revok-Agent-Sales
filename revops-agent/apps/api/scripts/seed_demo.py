@@ -87,7 +87,7 @@ async def seed_demo_org() -> dict[str, int]:
     S = D.build_files()
     async with org_session(ORG) as s:
         await put(s, tenancy.Organization, [{"id": ORG, "name": D.ORG_NAME, "slug": "demo-saas", "primary_domain": "demo-saas.example.com", "status": "active", "timezone": "Asia/Kolkata", "currency": "USD", "plan": "pilot", "settings": S["org.json"]["settings"]}])  # fmt: skip
-        await put(s, tenancy.User, [{"id": U(D.USER_IDS[r]), "email": e, "name": n, "is_superadmin": r == "owner"} for r, (n, e) in D.USERS.items()])  # fmt: skip
+        await put(s, tenancy.User, [{"id": U(D.USER_IDS[r]), "email": e, "name": n, "is_superadmin": False} for r, (n, e) in D.USERS.items()])  # fmt: skip
         await put(s, tenancy.Membership, [
             {"id": U(D.uid(f"membership:{r}")), "org_id": ORG, "user_id": U(D.USER_IDS[r]), "role": r, "status": "active", "crm_owner_id": f"hs-owner-{i}", "slack_user_id": m["slack_user_id"]}
             for i, (r, m) in enumerate(zip(D.USERS, S["members.json"]["members"], strict=True), 1)
@@ -168,11 +168,48 @@ async def seed_demo() -> dict[str, int]:
     return await seed_demo_org()
 
 
+DEMO_PASSWORD = "Demo@12345678"  # synthetic, local/test only (never set outside those envs)
+SUPERADMIN_EMAIL = "sam@platform.revops.example.com"
+
+
+async def seed_demo_logins() -> dict[str, str]:
+    """Give every demo user a password and add a platform superadmin with no workspace, so each
+    of the six roles can sign in with email + password. Local/test environments only."""
+    from sqlalchemy import update
+
+    from app.auth.passwords import hash_password
+    from app.config import LOCAL_ENVS, get_settings
+    from app.db.session import admin_session
+
+    if get_settings().app_env not in LOCAL_ENVS:
+        raise SystemExit("refusing to set demo passwords outside APP_ENV=local/test")
+    pw = hash_password(DEMO_PASSWORD)
+    async with admin_session() as s:
+        await put(s, tenancy.User, [{"id": D.uuid_of("user:superadmin"), "email": SUPERADMIN_EMAIL, "name": "Sam Superadmin", "is_superadmin": True}])  # fmt: skip
+        workspace_emails = [e for _, e in D.USERS.values()]
+        # superadmin is platform-only: demo workspace users (older seeds flagged Olivia) are not
+        await s.execute(
+            update(tenancy.User)
+            .where(tenancy.User.email.in_(workspace_emails))
+            .values(is_superadmin=False)
+        )
+        emails = [*workspace_emails, SUPERADMIN_EMAIL]
+        await s.execute(
+            update(tenancy.User)
+            .where(tenancy.User.email.in_(emails), tenancy.User.password_hash.is_(None))
+            .values(password_hash=pw)
+        )
+    return {"superadmin": SUPERADMIN_EMAIL, **{r: e for r, (_, e) in D.USERS.items()}}
+
+
 async def main() -> None:
     counts = await seed_demo()
+    logins = await seed_demo_logins()
     await get_engine().dispose()
     print("seeded Demo SaaS:", ", ".join(f"{k}={v}" for k, v in counts.items()))
-    print("login ids (service JWT sub):", {r: D.USER_IDS[r] for r in D.USERS})
+    print(f"sign-in (password for all: {DEMO_PASSWORD}):")
+    for role, email in logins.items():
+        print(f"  {role:<10} {email}")
     print("org_id:", D.ORG_ID)
 
 
