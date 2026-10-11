@@ -74,6 +74,7 @@ async def test_run_publishes_every_step_in_order_with_its_real_data(
     assert by_step["context"]["data"]["arr"] == 84000
     rule_keys = {h["rule_key"] for h in by_step["rules"]["data"]["hits"]}
     assert "R04_renewal_near_no_plan" in rule_keys
+    assert all(isinstance(h["evidence_refs"], list) for h in by_step["rules"]["data"]["hits"])
     assert by_step["trigger"]["data"] == {"trigger": "manual", "account_name": "Orbit Ltd"}
     risk = next(f for f in by_step["findings"]["data"]["findings"] if f["type"] == "risk")
     assert risk["outcome"] == "created" and risk["finding_id"] and risk["evidence_count"] > 0

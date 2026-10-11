@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Workflow } from "lucide-react";
 import { AgentFlow } from "./agent-flow";
@@ -9,7 +9,7 @@ import { ErrorState } from "../ui/error-state";
 import { fetchApi } from "../../lib/api/client";
 import { queryKeys } from "../../lib/api/query-keys";
 import { useMe } from "../../lib/auth/session-context";
-import { flowFromRun } from "../../lib/agent-flow";
+import { flowFromRun, type FlowRun } from "../../lib/agent-flow";
 import { useLiveRun } from "../../lib/realtime/run-live-store";
 import type { RunDetail, RunOut } from "../../lib/runs";
 
@@ -20,7 +20,15 @@ const FINISHED = ["completed", "failed", "skipped"];
  * last persisted run. Persisted data always wins once a run has finished, and a run that is still
  * being watched is re-read every few seconds so a missed SSE event can never leave the view stuck.
  */
-export function AccountAgentFlow({ accountId }: { accountId: string }) {
+interface AccountAgentFlowProps {
+  accountId: string;
+  /** The full run (live or recorded), for views that need the final picture. */
+  onActual?: (flow: FlowRun | undefined) => void;
+  /** The run as currently revealed on screen. */
+  onShown?: (flow: FlowRun | undefined) => void;
+}
+
+export function AccountAgentFlow({ accountId, onActual, onShown }: AccountAgentFlowProps) {
   const { can } = useMe();
   const canViewRuns = can("view:runs");
   const live = useLiveRun(accountId);
@@ -52,6 +60,10 @@ export function AccountAgentFlow({ accountId }: { accountId: string }) {
     return d ? flowFromRun(d) : undefined;
   }, [detail.data, live]);
 
+  useEffect(() => {
+    onActual?.(flow);
+  }, [flow, onActual]);
+
   if (!flow) {
     if (canViewRuns && (latest.isLoading || (!!runId && detail.isLoading))) {
       return <div className="h-40 rounded-xl bg-slate-100 dark:bg-slate-800/60 animate-pulse" aria-hidden="true" />;
@@ -81,6 +93,7 @@ export function AccountAgentFlow({ accountId }: { accountId: string }) {
   return (
     <AgentFlow
       flow={flow}
+      onShown={onShown}
       caption={isLive ? "Live" : "Last run"}
       error={detail.data?.status === "failed" ? detail.data.error : null}
     />

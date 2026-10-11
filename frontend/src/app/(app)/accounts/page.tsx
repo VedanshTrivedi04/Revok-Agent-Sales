@@ -15,7 +15,8 @@ import { TableSkeleton } from "../../../components/ui/table-skeleton";
 import { MlScoreChip } from "../../../components/ui/ml-score";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ErrorState } from "../../../components/ui/error-state";
-import { ChevronRight, Building2 } from "lucide-react";
+import { ChevronRight, Building2, LayoutGrid, List } from "lucide-react";
+import { PortfolioMap } from "../../../components/accounts/portfolio-map";
 import Link from "next/link";
 
 type AccountListResponse = components["schemas"]["Page_AccountListItem_"];
@@ -25,6 +26,8 @@ export default function AccountsPage() {
   const { me } = useMe();
   const [search, setSearch] = useState("");
   const [riskFilter, setRiskFilter] = useState("all");
+  const [view, setView] = useState<"map" | "list">("map");
+  const listMode = view === "list";
 
   const queryParams = new URLSearchParams();
   if (search) queryParams.set("query", search);
@@ -36,6 +39,7 @@ export default function AccountsPage() {
       fetchApi<AccountListResponse>(
         `/accounts${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
       ),
+    enabled: listMode,
   });
 
   const accounts = data?.items || [];
@@ -51,6 +55,22 @@ export default function AccountsPage() {
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Monitored customer accounts, contract values, usage trends, and active risk findings.
             </p>
+          </div>
+          <div role="group" aria-label="View" className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5 text-xs font-semibold self-start">
+            {([["map", "Map", LayoutGrid], ["list", "List", List]] as const).map(([key, label, Icon]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setView(key)}
+                aria-pressed={view === key}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
+                  view === key ? "bg-blue-600 text-white" : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -73,10 +93,12 @@ export default function AccountsPage() {
         />
 
         {/* Loading State */}
-        {isLoading && <TableSkeleton rows={5} columns={7} />}
+        {!listMode && <PortfolioMap query={search} risk={riskFilter} />}
+
+        {listMode && isLoading && <TableSkeleton rows={5} columns={7} />}
 
         {/* Error State */}
-        {error && !isLoading && (
+        {listMode && error && !isLoading && (
           <ErrorState
             title="Failed to load accounts"
             message={error instanceof Error ? error.message : "Unable to reach backend API"}
@@ -85,7 +107,7 @@ export default function AccountsPage() {
         )}
 
         {/* Empty State */}
-        {!isLoading && !error && accounts.length === 0 && (
+        {listMode && !isLoading && !error && accounts.length === 0 && (
           <EmptyState
             title="No Accounts Found"
             description={
@@ -98,7 +120,7 @@ export default function AccountsPage() {
         )}
 
         {/* Dynamic Table */}
-        {!isLoading && !error && accounts.length > 0 && (
+        {listMode && !isLoading && !error && accounts.length > 0 && (
           <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 font-mono uppercase text-[10px]">

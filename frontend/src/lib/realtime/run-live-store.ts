@@ -19,7 +19,11 @@ const runs = new Map<string, FlowRun>();
 const listeners = new Set<() => void>();
 const EMPTY: FlowRun | undefined = undefined;
 
+// accounts with a run in progress; rebuilt on every change so React sees a stable snapshot between them
+let activeSnapshot: ReadonlyMap<string, FlowRun> = new Map();
+
 function emit() {
+  activeSnapshot = new Map([...runs].filter(([, r]) => !r.done));
   listeners.forEach((l) => l());
 }
 
@@ -65,5 +69,14 @@ export function useLiveRun(accountId: string): FlowRun | undefined {
     subscribe,
     () => runs.get(accountId),
     () => EMPTY,
+  );
+}
+
+/** Every account that has a run executing right now, with that run's live steps. */
+export function useActiveRuns(): ReadonlyMap<string, FlowRun> {
+  return useSyncExternalStore(
+    subscribe,
+    () => activeSnapshot,
+    () => activeSnapshot,
   );
 }

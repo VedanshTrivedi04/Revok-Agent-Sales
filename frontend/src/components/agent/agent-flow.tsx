@@ -424,6 +424,8 @@ interface AgentFlowProps {
   caption?: string;
   /** The persisted error of a failed run. */
   error?: string | null;
+  /** Called with the run as currently revealed, so other views can follow the same beat. */
+  onShown?: (flow: FlowRun | undefined) => void;
 }
 
 /**
@@ -433,7 +435,7 @@ interface AgentFlowProps {
  * - once it has finished: a calm summary with totals, where the time went and the full step detail.
  * Both are a pure function of real run data (live events or the persisted record).
  */
-export function AgentFlow({ flow: actual, caption, error }: AgentFlowProps) {
+export function AgentFlow({ flow: actual, caption, error, onShown }: AgentFlowProps) {
   const [stageMap, setStageMap] = useState<Record<string, boolean>>({});
   const [replays, setReplays] = useState<Record<string, number>>({});
   const [toggled, setToggled] = useState<{ key: string; open: Record<string, boolean> }>({ key: "", open: {} });
@@ -448,6 +450,9 @@ export function AgentFlow({ flow: actual, caption, error }: AgentFlowProps) {
   }
 
   const { flow, caughtUp } = useStagedFlow(actual, stageKey, stageMap[stageKey] ?? false);
+  useEffect(() => {
+    onShown?.(flow);
+  }, [flow, onShown]);
   const steps = useMemo(() => visibleSteps(flow), [flow]);
   const phase = flowPhase(flow);
   const live = phase === "queued" || phase === "running";

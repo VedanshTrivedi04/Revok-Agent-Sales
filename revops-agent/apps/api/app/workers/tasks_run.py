@@ -247,6 +247,11 @@ async def _run_steps(
                 "finding_type": h.finding_type,
                 "severity_points": h.severity_points,
                 "metrics": json.loads(json.dumps(h.metrics, default=str)),
+                # the records this hit was derived from (events, deals, contacts, usage, signals)
+                "evidence_refs": [
+                    {"kind": r.kind, "ref_ids": [str(i) for i in r.ref_ids]}
+                    for r in h.evidence_refs
+                ],
             }
             for h in [*risk_hits, *expansion_hits]
         ],

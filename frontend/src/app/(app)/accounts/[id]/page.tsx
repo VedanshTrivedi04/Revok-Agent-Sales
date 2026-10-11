@@ -17,6 +17,8 @@ import { TableSkeleton } from "../../../../components/ui/table-skeleton";
 import { EmptyState } from "../../../../components/ui/empty-state";
 import { ErrorState } from "../../../../components/ui/error-state";
 import { AccountAgentFlow } from "../../../../components/agent/account-agent-flow";
+import { AgentBrain } from "../../../../components/agent/agent-brain";
+import type { FlowRun } from "../../../../lib/agent-flow";
 import { beginRun } from "../../../../lib/realtime/run-live-store";
 import { toast } from "sonner";
 import { handleApiErrorToast } from "../../../../lib/api/error";
@@ -89,7 +91,9 @@ export default function AccountDetailPage({
   const { id: accountId } = use(params);
   const { can } = useMe();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<"overview" | "timeline" | "findings" | "actions">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "brain" | "timeline" | "findings" | "actions">("overview");
+  const [actualFlow, setActualFlow] = useState<FlowRun | undefined>();
+  const [shownFlow, setShownFlow] = useState<FlowRun | undefined>();
 
   // Fetch Account Detail
   const {
@@ -124,6 +128,7 @@ export default function AccountDetailPage({
       }),
     onSuccess: (data) => {
       beginRun(accountId, data.agent_run_id);
+      setActiveTab("brain");
       toast.success("Analysis triggered successfully", {
         description: `Agent run queued (ID: ${data.agent_run_id.slice(0, 8)}...)`,
       });
@@ -277,7 +282,7 @@ export default function AccountDetailPage({
         {account.ml_scores && <MlScoresCard scores={account.ml_scores} />}
 
         {/* What the agent does for this account: live while a run executes, the last run otherwise */}
-        <AccountAgentFlow accountId={accountId} />
+        <AccountAgentFlow accountId={accountId} onActual={setActualFlow} onShown={setShownFlow} />
 
         {/* Tab Navigation */}
         <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 text-xs font-semibold">
@@ -291,6 +296,17 @@ export default function AccountDetailPage({
             }`}
           >
             Overview & Telemetry
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("brain")}
+            className={`pb-3 transition-colors ${
+              activeTab === "brain"
+                ? "border-b-2 border-blue-600 text-blue-600 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            Agent Brain
           </button>
           <button
             type="button"
@@ -374,6 +390,15 @@ export default function AccountDetailPage({
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === "brain" && (
+          <AgentBrain
+            accountId={accountId}
+            account={{ name: account.name, hasUsage: account.metrics.active_users != null || account.metrics.seats_used != null, riskLevel: account.risk_level }}
+            actual={actualFlow}
+            shown={shownFlow}
+          />
         )}
 
         {activeTab === "findings" && (

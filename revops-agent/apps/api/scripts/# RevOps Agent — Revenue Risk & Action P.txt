@@ -1,0 +1,13 @@
+# RevOps Agent — Revenue Risk & Action Platform
+
+[RRevOps AgentRevenue Intelligence](http://localhost:3000/login)
+
+# Check your inbox
+We've sent a secure, one-click sign-in link to:
+1. Open the email from RevOps Agent.
+2. Click the Sign In button to access your workspace.
+Check your spam folder if it doesn't arrive within 2 minutes.
+[Use a different email address](http://localhost:3000/login)
+[Terms of Service](http://localhost:3000/login)
+[Privacy Policy](http://localhost:3000/login)
+[Security](http://localhost:3000/login)
