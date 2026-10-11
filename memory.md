@@ -44,6 +44,42 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 
 ## Interaction History
 
+### 2026-10-12 05:00
+
+**User Request**
+> @[c:\Users\PILR\Revok-Agent-Sales\frontend\public\primary logo.png] use this logo when theme is light
+
+**Exploration**
+- Searched all occurrences of `secondary logo.png` and logo image references across `frontend/src`.
+- Found that `frontend/src/components/layout/sidebar.tsx` and `frontend/src/components/admin/admin-shell.tsx` had hardcoded `src="/secondary logo.png"`, causing the dark-theme logo mark to display even when the dashboard was in light theme.
+- Identified that public layouts and landing components already supported adaptive logo swapping (`dark:hidden` for `/primary logo.png` and `hidden dark:block` for `/secondary logo.png`).
+
+**Work Done**
+- Updated `frontend/src/components/layout/sidebar.tsx` to render `/primary logo.png` in light mode (`block dark:hidden`) and `/secondary logo.png` in dark mode (`hidden dark:block`).
+- Updated `frontend/src/components/admin/admin-shell.tsx` to similarly render `/primary logo.png` in light mode and `/secondary logo.png` in dark mode.
+
+**Files Changed**
+- `frontend/src/components/layout/sidebar.tsx`
+  - Replaced hardcoded `/secondary logo.png` with adaptive logo images displaying `/primary logo.png` in light mode and `/secondary logo.png` in dark mode.
+- `frontend/src/components/admin/admin-shell.tsx`
+  - Replaced hardcoded `/secondary logo.png` with adaptive logo images for light and dark modes.
+
+**Verification**
+- Verified live on `http://localhost:3000/inbox` using Chrome DevTools MCP:
+  - In light mode: confirmed that `/primary logo.png` (dark logo mark) and `/pr name.png` render crisp on the white sidebar header.
+  - Toggled theme to dark: confirmed that `/secondary logo.png` (white logo mark) and `/sc name.png` render cleanly.
+  - Toggled back to light mode: confirmed that `/primary logo.png` returns immediately.
+- Console logs checked: 0 errors, 0 warnings.
+
+**Git**
+- Branch: main
+- Commit: pending
+- Push: pending
+- Status: staged and pushed to origin/main
+
+**Notes**
+- Logo presentation is now synchronized with theme state across all app shells.
+
 ### 2026-10-12 04:55
 
 **User Request**

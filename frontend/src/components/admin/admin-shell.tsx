@@ -87,9 +87,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       >
         <div className="flex h-16 items-center gap-3 border-b border-slate-800/80 px-5">
           <img
+            src="/primary logo.png"
+            alt="Revora"
+            className="w-7 h-7 object-contain shrink-0 block dark:hidden"
+          />
+          <img
             src="/secondary logo.png"
             alt="Revora"
-            className="w-7 h-7 object-contain shrink-0"
+            className="w-7 h-7 object-contain shrink-0 hidden dark:block"
           />
           <div className="min-w-0">
             <span className="font-extrabold text-sm tracking-tight text-white block">Revora</span>

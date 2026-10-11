@@ -83,9 +83,14 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
       <div className="h-16 flex items-center justify-between px-5 border-b border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-[#080C11] flex-shrink-0">
         <Link href={home} className="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
           <img
+            src="/primary logo.png"
+            alt="Revora"
+            className="w-7 h-7 object-contain group-hover:scale-105 transition-transform block dark:hidden"
+          />
+          <img
             src="/secondary logo.png"
             alt="Revora"
-            className="w-7 h-7 object-contain group-hover:scale-105 transition-transform"
+            className="w-7 h-7 object-contain group-hover:scale-105 transition-transform hidden dark:block"
           />
           <div>
             <img
