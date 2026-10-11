@@ -15,6 +15,8 @@ const MOVED: Record<string, string> = {
 };
 
 const nextConfig: NextConfig = {
+  // E2E builds into its own folder so `npm run test:e2e` never overwrites a running `next dev`.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   experimental: {
     cpus: 1,
     workerThreads: false,

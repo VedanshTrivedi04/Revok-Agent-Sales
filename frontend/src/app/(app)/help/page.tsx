@@ -14,7 +14,10 @@ import { ErrorState } from "../../../components/ui/error-state";
 
 type Catalog = components["schemas"]["AssistantCatalog"];
 type Question = components["schemas"]["AssistantQuestion"];
-type AskIn = components["schemas"]["AssistantAskIn"];
+// `params` has a server-side default, which the generated type reports as required.
+type AskIn = Omit<components["schemas"]["AssistantAskIn"], "params"> & {
+  params?: components["schemas"]["AssistantAskIn"]["params"];
+};
 type Answer = components["schemas"]["AssistantAnswer"];
 type Row = components["schemas"]["AnswerRow"];
 

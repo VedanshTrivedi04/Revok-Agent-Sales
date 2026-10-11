@@ -63,6 +63,7 @@ export default defineConfig({
         API_JWT_SECRET: SECRET,
         SESSION_SECRET: SECRET,
         NEXT_PUBLIC_APP_URL: `http://localhost:${WEB_PORT}`,
+        NEXT_DIST_DIR: ".next-e2e",
       },
       url: `http://localhost:${WEB_PORT}/login`,
       reuseExistingServer: !process.env.CI,

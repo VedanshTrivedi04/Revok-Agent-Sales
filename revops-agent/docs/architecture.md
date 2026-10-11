@@ -137,7 +137,7 @@ flowchart LR
 |---|---|---|
 | A. Public and auth | `/login` `/signup` `/invite/*` `/set-password` `/change-password` | everyone |
 | B. Onboarding | `/onboarding/*` | Owner/Admin full journey; others Slack, Google and first insights |
-| C. Work | `/today` `/findings/*` `/inbox/*` `/accounts/*` `/log/*` `/outcomes` `/review` `/runs/*` `/rules` `/team` `/settings/{profile,connections,notifications}` | Manager, Member, Viewer land here (`/today`); Owner/Admin can switch in. Gated by permissions |
+| C. Work | `/today` `/findings/*` `/inbox/*` `/accounts/*` `/log/*` `/outcomes` `/review` `/runs/*` `/rules` `/team` `/help` `/settings/{profile,connections,notifications}` | Manager, Member, Viewer land here (`/today`); Owner/Admin can switch in. Gated by permissions |
 | D. Control | `/control/overview` `/control/analytics/{pipeline,risk,findings,team,automation,data-health}` `/control/clients` `/control/members` `/control/{workspace,integrations,field-mapping,autonomy,api-keys,data}` | Owner and Admin (`analytics:view`); they land on `/control/overview` |
 | E. Platform Admin | `/admin/*` | platform operator only |
 | F. Slack | inside Slack | linked members: digest and Approve / Reject buttons that call the same approve API |
@@ -148,6 +148,13 @@ they land, comes from `GET /me` (`portals[]`, `home`), derived from permissions 
 Old workspace-settings URLs (`/settings/members`, `/settings/rules`, ...) redirect to their new place.
 Control analytics are read-only aggregates from `GET /api/v1/analytics/*` (`app/services/analytics.py`),
 computed inside the tenant session; nothing is precomputed or stored.
+
+Help (`/help`, Manager and above, `assistant:ask`) answers plain-language questions from the same
+tables: `GET /api/v1/assistant/catalog` lists the questions, `POST /api/v1/assistant/ask` takes one
+of them or typed text. A typed question is matched by keywords to a catalog question
+(`app/services/assistant.py::plan_question`), that question runs one fixed read-only query in the
+tenant session, and the answer text is built from the query's numbers. No model is involved, and a
+question that matches nothing is answered with the list of questions that can be asked.
 
 ## 6. Operations and delivery
 
