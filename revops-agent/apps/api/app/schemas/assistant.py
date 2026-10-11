@@ -1,5 +1,6 @@
-"""Help assistant: plain-language questions about the caller's own organization. Every number in an
-answer is computed from the operational tables at request time; nothing is generated or stored."""
+"""Riddhi, the workspace assistant: plain-language questions about the caller's own organization.
+Every number in an answer is computed from the operational tables at request time; nothing is
+generated or stored."""
 
 from datetime import datetime
 from typing import Literal, Self

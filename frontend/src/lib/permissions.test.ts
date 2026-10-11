@@ -52,7 +52,7 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
 
   const VIEWER_PERMISSIONS = ["view:accounts", "connect:own"];
 
-  describe("Help assistant", () => {
+  describe("Riddhi (workspace assistant)", () => {
     it("is offered to Manager and above, never to Member or Viewer", () => {
       expect(checkPermission(OWNER_PERMISSIONS, {}, "view:assistant")).toBe(true);
       expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:assistant")).toBe(true);

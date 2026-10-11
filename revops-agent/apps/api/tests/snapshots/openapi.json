@@ -10792,7 +10792,7 @@
   },
   "/api/v1/assistant/ask": {
    "post": {
-    "description": "Answer a question from the organization's own data (manager+). Read-only.",
+    "description": "Ask Riddhi a question about the organization's own data (manager+). Read-only.",
     "operationId": "assistant_ask",
     "requestBody": {
      "content": {
@@ -10826,15 +10826,15 @@
       "description": "Validation Error"
      }
     },
-    "summary": "Answer a question from the organization's own data (manager+). Read-only.",
+    "summary": "Ask Riddhi a question about the organization's own data (manager+). Read-only.",
     "tags": [
-     "C12 Help"
+     "C12 Riddhi"
     ]
    }
   },
   "/api/v1/assistant/catalog": {
    "get": {
-    "description": "Questions the assistant can answer, with their adjustable values (manager+).",
+    "description": "Questions Riddhi (the workspace assistant) can answer, with their values (manager+).",
     "operationId": "assistant_catalog",
     "responses": {
      "200": {
@@ -10848,9 +10848,9 @@
       "description": "Successful Response"
      }
     },
-    "summary": "Questions the assistant can answer, with their adjustable values (manager+).",
+    "summary": "Questions Riddhi (the workspace assistant) can answer, with their values (manager+).",
     "tags": [
-     "C12 Help"
+     "C12 Riddhi"
     ]
    }
   },

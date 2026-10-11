@@ -1,4 +1,4 @@
-"""Help assistant: a typed question -> one question of the backend's catalog and its numbers.
+"""Riddhi (the workspace assistant): a typed question -> one question of the backend's catalog and its numbers.
 
 The model never answers the question and never sees customer records: it gets the manager's own
 words and the list of questions the backend can compute, and returns an id plus up to three

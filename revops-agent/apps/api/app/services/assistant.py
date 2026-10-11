@@ -1,4 +1,5 @@
-"""Help assistant: answer a plain-language question from the organization's own data.
+"""Riddhi, the workspace assistant: answer a plain-language question from the organization's own
+data.
 
 A question becomes a `Plan` (one catalog question + its values), the plan runs a fixed read-only
 query inside the caller's tenant session (RLS), and the answer text is built from the numbers that
@@ -46,6 +47,7 @@ from app.utils.errors import AppError
 from app.utils.time import utcnow
 
 log = structlog.get_logger()
+ASSISTANT_NAME = "Riddhi"  # the name people see; the API and permission stay `assistant`
 Params = dict[ParamKey, int]
 
 
@@ -843,8 +845,9 @@ def unsupported(now: datetime) -> AssistantAnswer:
     return AssistantAnswer(
         status="unsupported",
         text=(
-            "That question is not supported yet. These are the questions that can be answered; "
-            "you can change the numbers in them, such as the risk score or the number of days."
+            f"{ASSISTANT_NAME} cannot answer that question yet. These are the questions that can "
+            "be answered; you can change the numbers in them, such as the risk score or the number "
+            "of days."
         ),
         suggestions=catalog().questions,
         as_of=now,

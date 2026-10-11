@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { signInAs } from "./helpers";
 
-test("a Manager asks the Help assistant and gets answers from the workspace data", async ({ page }) => {
+test("a Manager asks Riddhi and gets answers from the workspace data", async ({ page }) => {
   await signInAs(page, "manager");
-  await page.getByRole("link", { name: "Help", exact: true }).click();
-  await expect(page).toHaveURL(/\/help$/);
-  await expect(page.getByRole("heading", { name: "Help", level: 1 })).toBeVisible();
+  await page.getByRole("link", { name: "Riddhi", exact: true }).click();
+  await expect(page).toHaveURL(/\/riddhi$/);
+  await expect(page.getByRole("heading", { name: "Riddhi", level: 1 })).toBeVisible();
 
   // a catalog question: the seeded demo has open risk findings, Acme Corp at the top
   await page.getByRole("button", { name: "Which accounts have a risk score of 80 or higher?" }).click();
@@ -33,7 +33,7 @@ test("a Manager asks the Help assistant and gets answers from the workspace data
   await page.getByLabel("Your question").fill("what is the weather today");
   await page.keyboard.press("Enter");
   const third = page.getByRole("article").nth(3);
-  await expect(third.getByText(/not supported yet/i)).toBeVisible();
+  await expect(third.getByText(/riddhi cannot answer that question yet/i)).toBeVisible();
   await expect(third.getByRole("button", { name: /renewals are due/i })).toBeVisible();
 
   // rows link into the app
@@ -41,9 +41,10 @@ test("a Manager asks the Help assistant and gets answers from the workspace data
   await expect(page).toHaveURL(/\/accounts\//);
 });
 
-test("a Member has no Help entry and cannot open the page", async ({ page }) => {
+test("a Member has no Riddhi entry and cannot open the page", async ({ page }) => {
   await signInAs(page, "member");
-  await expect(page.getByRole("link", { name: "Help", exact: true })).toHaveCount(0);
-  await page.goto("/help");
+  await expect(page.getByRole("link", { name: "Riddhi", exact: true })).toHaveCount(0);
+  await page.goto("/help"); // the first address of this page forwards to its new one
+  await expect(page).toHaveURL(/\/riddhi$/);
   await expect(page.getByText(/you don't have access/i)).toBeVisible();
 });

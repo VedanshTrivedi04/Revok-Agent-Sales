@@ -1259,7 +1259,7 @@ uv run python scripts/check_openapi.py --update                   # after any co
   - Self-Hosted vLLM: Continuous batching and PagedAttention on self-hosted Qwen ~9B GPU instances handle overnight workloads across tens of thousands of accounts predictably without third-party API rate limits.
 
 
-## 19. Where agent responses come from, and the Help assistant (2026-10-12)
+## 19. Where agent responses come from, and Riddhi, the workspace assistant (2026-10-12)
 
 ### 19.1 State of AI in the code (corrects sections 1, 5.5 and 15, which predate `apps/ai`)
 - `D:\CDGI2026\apps\ai` (commit `139d075`) is the AI service: a LangGraph run per account, a
@@ -1275,9 +1275,13 @@ uv run python scripts/check_openapi.py --update                   # after any co
   A finding's `model` / `prompt_version` says which (`template` / `template@1` vs the model name).
 - In template mode `NullSignalExtractor` returns nothing, so signal rules R06/R07/R11/X03 never fire.
 
-### 19.2 Help assistant (Work portal, `/help`)
+### 19.2 Riddhi, the workspace assistant (Work portal, `/riddhi`)
+- Named Riddhi by the user on 2026-10-12. The name is UI text only (`frontend/src/lib/assistant.ts`,
+  `ASSISTANT_NAME` in `app/services/assistant.py`, page tag `C12 Riddhi`); API paths
+  (`/assistant/*`), the permission (`assistant:ask`) and module names keep `assistant`.
+  `/help` (its first address) redirects to `/riddhi`.
 - Permission `assistant:ask` (Owner, Admin, Manager). Frontend action `view:assistant`.
-- `GET /assistant/catalog`, `POST /assistant/ask` (`app/routes/assistant.py`, page tag `C12 Help`).
+- `GET /assistant/catalog`, `POST /assistant/ask` (`app/routes/assistant.py`, page tag `C12 Riddhi`).
 - `app/services/assistant.py`: 8 catalog questions (high-risk accounts, risk history, new risk
   findings, renewals due, pending approvals, expansion opportunities, decisions summary, quiet
   accounts).
@@ -1286,7 +1290,7 @@ uv run python scripts/check_openapi.py --update                   # after any co
   No model. Unmatched text returns `status: "unsupported"` with the catalog as suggestions.
 - "Risk score" = priority score of an account's open risk findings (highest counts).
 - Mock mode: `app/mocks/assistant.py` reuses the planner and answer text over the fixture store.
-- Tests: `tests/test_assistant.py`, `frontend/e2e/help.spec.ts`.
+- Tests: `tests/test_assistant.py`, `frontend/e2e/riddhi.spec.ts`.
 - Score history: migration `0008`, table `account_score_history` (model `AccountScoreDay`, RLS),
   one row per account per UTC day, upserted by `app/services/score_history.py::record_score_day`
   at the end of every account run (best effort, in a savepoint). The `risk_history` question
@@ -1302,7 +1306,7 @@ uv run python scripts/check_openapi.py --update                   # after any co
   final (unsupported). If the service or model does not answer (8 s backend timeout, 6 s budget in
   the service) the keyword match is used and the model is not asked again for 60 s.
   This is the one call where the backend sends text, not ids: the manager's own typed question.
-- Answers carry `interpreted_as` (the catalog question with the values used); the Help page shows
+- Answers carry `interpreted_as` (the catalog question with the values used); Riddhi's page shows
   it under a typed question as "Answered as: ...".
 - NOT verified against the real model: Qwen was down (GPU time expired) on 2026-10-12. When it is
   up: `cd apps/ai && uv run pytest -m live tests/live -k plan -q` (15 questions, English and

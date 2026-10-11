@@ -77,7 +77,7 @@ def test_e2e_live() -> None:
     assert r["gates"]["no_failed_runs"] and r["gates"]["no_backend_rejections"], r
 
 
-# ---- Help assistant planner (plan@1.0.0): the catalog mirrors the backend's app/services/assistant.py
+# ---- Planner for Riddhi, the workspace assistant (plan@1.0.0): the catalog mirrors the backend's app/services/assistant.py
 PLAN_CATALOG = [
     ("high_risk_accounts", "Which accounts have a risk score of 80 or higher?", ["min_score", "limit"]),
     ("risk_history", "Which accounts had a risk score of 80 or higher in the last 7 days?", ["days", "min_score", "limit"]),

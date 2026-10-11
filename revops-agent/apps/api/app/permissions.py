@@ -33,7 +33,7 @@ class Action(StrEnum):
     VIEW_ENTITY_REVIEW = "review:view"
     VIEW_RUNS = "runs:view"
     VIEW_ANALYTICS = "analytics:view"  # Control portal: org-wide analytics
-    ASK_ASSISTANT = "assistant:ask"  # Help: plain-language questions about the org's data
+    ASK_ASSISTANT = "assistant:ask"  # Riddhi (assistant): questions about the org's data
 
 
 A = Action

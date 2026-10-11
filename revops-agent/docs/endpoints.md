@@ -54,8 +54,8 @@
 | GET | `/api/v1/api-keys` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
 | POST | `/api/v1/api-keys` | B5 Usage Data | Vedansh | P1 | real | apikeys:manage |
 | DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
-| GET | `/api/v1/assistant/catalog` | C12 Help | Vedansh | P8 | real | assistant:ask |
-| POST | `/api/v1/assistant/ask` | C12 Help | Vedansh | P8 | real | assistant:ask |
+| GET | `/api/v1/assistant/catalog` | C12 Riddhi | Vedansh | P8 | real | assistant:ask |
+| POST | `/api/v1/assistant/ask` | C12 Riddhi | Vedansh | P8 | real | assistant:ask |
 | POST | `/api/v1/auth/login` | A2 Sign in | Vedansh | P1 | real | public |
 | POST | `/api/v1/auth/admin/login` | E0 Admin login | Vedansh | P5 | real | public |
 | POST | `/api/v1/auth/signup` | A3 Create account | Vedansh | P1 | real | public |

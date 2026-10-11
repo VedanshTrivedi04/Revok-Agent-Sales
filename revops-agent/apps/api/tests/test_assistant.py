@@ -1,4 +1,4 @@
-"""Help assistant: typed questions map to the right catalog question, every number comes from the
+"""Riddhi (workspace assistant): typed questions map to the right catalog question, every number comes from the
 caller's own tenant, and anything it cannot answer is said plainly instead of guessed."""
 
 from collections.abc import Callable
@@ -331,6 +331,7 @@ async def test_no_data_is_said_plainly(client_as: ClientAs) -> None:
 async def test_unsupported_question_lists_what_can_be_asked(client_as: ClientAs) -> None:
     data = await _ask(client_as("manager"), question="what is the weather in Indore")
     assert data["status"] == "unsupported" and data["question_id"] is None
+    assert data["text"].startswith("Riddhi cannot answer that question yet.")
     assert [s["id"] for s in data["suggestions"]] == [q.id for q in QUESTIONS]
 
 

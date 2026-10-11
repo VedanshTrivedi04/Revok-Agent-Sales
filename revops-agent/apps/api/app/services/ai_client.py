@@ -5,7 +5,7 @@ The backend never sends customer content here: only ids. The AI service reads wh
 module is optional work: when the AI service is off or unreachable the deterministic template
 explanation and template cards stay in place.
 
-The one thing sent besides ids is the question a manager typed into Help (`plan_question`): their
+The one thing sent besides ids is the question a manager typed to Riddhi (`plan_question`): their
 own words and the list of questions the backend can answer, never account data.
 """
 
@@ -20,7 +20,7 @@ from app.config import get_settings
 from app.utils.errors import TransientError
 
 log = structlog.get_logger()
-# Help planning is interactive: wait briefly, and after a failure leave the model alone for a
+# Planning a question for Riddhi is interactive: wait briefly, and after a failure leave the model alone for a
 # while so every question in that time is answered at once by the keyword match.
 PLAN_TIMEOUT_S = 8.0
 PLAN_PAUSE_S = 60.0
@@ -112,7 +112,7 @@ async def fetch_scores(*, org_id: UUID, account_id: UUID) -> dict[str, Any] | No
 async def plan_question(
     *, question: str, questions: list[dict[str, Any]], today: str
 ) -> dict[str, Any] | None:
-    """Which catalog question a typed Help question means: `{"question_id": id | None, "params"}`.
+    """Which catalog question a question typed to Riddhi means: `{"question_id": id | None, "params"}`.
     None when the service or the model did not answer (the caller then matches by keywords);
     after such a failure it returns None without calling for `PLAN_PAUSE_S`.
     Never raises, and never logs the question."""

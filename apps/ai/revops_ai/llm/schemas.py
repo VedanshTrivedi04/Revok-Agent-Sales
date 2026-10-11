@@ -87,7 +87,7 @@ class DraftOutput(BaseModel):
     actions: list[Proposal] = Field(min_length=1, max_length=4)
 
 
-# ---- Help assistant: typed question -> one catalog question and its numbers
+# ---- Riddhi (the workspace assistant): typed question -> one catalog question and its numbers
 class PlanOutput(BaseModel):
     question_id: str = Field(max_length=64)  # an id from the list in the prompt, or "none"
     min_score: int | None = None

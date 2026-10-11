@@ -5,7 +5,7 @@ from app.permissions import Action
 from app.schemas.assistant import AssistantAnswer, AssistantAskIn, AssistantCatalog
 from app.services import assistant as svc
 
-PAGE = "C12 Help"
+PAGE = "C12 Riddhi"
 
 
 @endpoint(
@@ -18,7 +18,7 @@ PAGE = "C12 Help"
     access=Action.ASK_ASSISTANT,
 )
 async def assistant_catalog() -> AssistantCatalog:
-    """Questions the assistant can answer, with their adjustable values (manager+)."""
+    """Questions Riddhi (the workspace assistant) can answer, with their values (manager+)."""
     raise NotImplementedError
 
 
@@ -37,7 +37,7 @@ async def assistant_catalog_real() -> AssistantCatalog:
     access=Action.ASK_ASSISTANT,
 )
 async def assistant_ask(body: AssistantAskIn) -> AssistantAnswer:
-    """Answer a question from the organization's own data (manager+). Read-only."""
+    """Ask Riddhi a question about the organization's own data (manager+). Read-only."""
     raise NotImplementedError
 
 

@@ -3,10 +3,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUp, ChevronRight, LifeBuoy } from "lucide-react";
+import { ArrowUp, ChevronRight, MessageCircleQuestion } from "lucide-react";
 import { PermissionGuard } from "../../../components/layout/permission-guard";
 import { fetchApi } from "../../../lib/api/client";
 import { queryKeys } from "../../../lib/api/query-keys";
+import { ASSISTANT_NAME } from "../../../lib/assistant";
 import type { components } from "../../../lib/api/schema";
 import { DateText } from "../../../components/ui/date-text";
 import { EmptyState } from "../../../components/ui/empty-state";
@@ -134,7 +135,7 @@ function TurnView({
         <div
           className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2"
           role="status"
-          aria-label="Looking up the answer"
+          aria-label={`${ASSISTANT_NAME} is looking up the answer`}
         >
           <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
           <div className="h-3 w-1/3 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
@@ -143,7 +144,7 @@ function TurnView({
 
       {turn.error && (
         <ErrorState
-          title="Could not get an answer"
+          title={`${ASSISTANT_NAME} could not get an answer`}
           message={turn.error}
           onRetry={() => onRetry(turn)}
         />
@@ -151,6 +152,9 @@ function TurnView({
 
       {answer && (
         <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-3">
+          <div className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider font-mono">
+            {ASSISTANT_NAME}
+          </div>
           {/* A typed question is matched to a catalog question: show which one was answered. */}
           {turn.body.question && answer.interpreted_as && (
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -174,7 +178,7 @@ function TurnView({
   );
 }
 
-export default function HelpPage() {
+export default function AssistantPage() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [draft, setDraft] = useState("");
   const nextId = useRef(1);
@@ -233,11 +237,11 @@ export default function HelpPage() {
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
           <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Help
+            {ASSISTANT_NAME}
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Ask about accounts, risk, renewals and approvals. Every answer is read from your
-            workspace data at the moment you ask.
+            Ask {ASSISTANT_NAME} about accounts, risk, renewals and approvals. Every answer is read
+            from your workspace data at the moment you ask.
           </p>
         </div>
 
@@ -249,17 +253,17 @@ export default function HelpPage() {
 
         <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-4">
           <form onSubmit={submit} className="flex items-center gap-2">
-            <label htmlFor="help-question" className="sr-only">
+            <label htmlFor="assistant-question" className="sr-only">
               Your question
             </label>
             <input
-              id="help-question"
+              id="assistant-question"
               type="text"
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               maxLength={500}
               autoComplete="off"
-              placeholder="Type a question, or pick one below"
+              placeholder={`Ask ${ASSISTANT_NAME} a question, or pick one below`}
               className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
             <button
@@ -304,8 +308,8 @@ export default function HelpPage() {
             {!catalog.isLoading && !catalog.error && questions.length === 0 && (
               <EmptyState
                 title="No questions available"
-                description="The backend did not return any questions the assistant can answer."
-                icon={<LifeBuoy className="w-6 h-6" aria-hidden="true" />}
+                description={`The backend did not return any questions ${ASSISTANT_NAME} can answer.`}
+                icon={<MessageCircleQuestion className="w-6 h-6" aria-hidden="true" />}
               />
             )}
 

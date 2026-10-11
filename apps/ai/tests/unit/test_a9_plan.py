@@ -1,4 +1,4 @@
-"""Help assistant planner: a typed question becomes one catalog question and its numbers, and
+"""Planner for Riddhi (the workspace assistant): a typed question becomes one catalog question and its numbers, and
 whatever the model returns can never leave the catalog the backend sent."""
 
 import asyncio

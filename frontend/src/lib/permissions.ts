@@ -107,7 +107,7 @@ export function checkPermission(
     case "view:settings_rules":
       return permSet.has("rules:edit");
 
-    // Help: plain-language questions about the workspace's data
+    // Riddhi, the workspace assistant: plain-language questions about the workspace's data
     case "view:assistant":
       return permSet.has("assistant:ask");
 

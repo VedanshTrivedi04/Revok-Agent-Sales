@@ -12,6 +12,7 @@ const MOVED: Record<string, string> = {
   "/settings/data": "/control/data",
   "/settings/rules": "/rules",
   "/control": "/control/overview",
+  "/help": "/riddhi",
 };
 
 const nextConfig: NextConfig = {

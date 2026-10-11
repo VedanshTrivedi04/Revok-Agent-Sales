@@ -30,13 +30,14 @@ import {
   Shield,
   Database,
   Building,
-  LifeBuoy,
+  MessageCircleQuestion,
 } from "lucide-react";
 import { useMe } from "../../lib/auth/session-context";
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "../../lib/api/client";
 import { queryKeys } from "../../lib/api/query-keys";
+import { ASSISTANT_NAME } from "../../lib/assistant";
 
 interface NavItem {
   name: string;
@@ -251,7 +252,7 @@ export function Sidebar() {
       title: "Personal",
       items: [
         { name: "My Settings", href: "/settings/profile", match: "/settings", icon: SlidersHorizontal, action: "view:settings_profile" },
-        { name: "Help", href: "/help", icon: LifeBuoy, action: "view:assistant" },
+        { name: ASSISTANT_NAME, href: "/riddhi", icon: MessageCircleQuestion, action: "view:assistant" },
       ],
     },
   ];

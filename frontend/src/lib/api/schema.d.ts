@@ -774,8 +774,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Answer a question from the organization's own data (manager+). Read-only.
-         * @description Answer a question from the organization's own data (manager+). Read-only.
+         * Ask Riddhi a question about the organization's own data (manager+). Read-only.
+         * @description Ask Riddhi a question about the organization's own data (manager+). Read-only.
          */
         post: operations["assistant_ask"];
         delete?: never;
@@ -792,8 +792,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Questions the assistant can answer, with their adjustable values (manager+).
-         * @description Questions the assistant can answer, with their adjustable values (manager+).
+         * Questions Riddhi (the workspace assistant) can answer, with their values (manager+).
+         * @description Questions Riddhi (the workspace assistant) can answer, with their values (manager+).
          */
         get: operations["assistant_catalog"];
         put?: never;
