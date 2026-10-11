@@ -12,8 +12,8 @@ interface Forbidden403Props {
 export function Forbidden403({
   title = "You don't have access. Ask an admin.",
   description = "This page or action requires higher permissions than your current role allows.",
-  homeHref = "/today",
-  homeLabel = "Back to Today",
+  homeHref = "/home",
+  homeLabel = "Back to home",
 }: Forbidden403Props) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">

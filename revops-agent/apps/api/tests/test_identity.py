@@ -50,6 +50,8 @@ async def test_get_me_cross_org_and_flags(
     assert data["org"]["id"] == str(org_a.org_id)
     assert "approve:any" in data["permissions"]
     assert "onboarding" in data and data["onboarding"] is not None
+    assert data["portals"] == ["control", "work"] and data["home"] == "/control/overview"
+    assert "analytics:view" in data["permissions"]
 
     # Check cross-org memberships list contains both orgs
     org_ids = [m["org_id"] for m in data["memberships"]]

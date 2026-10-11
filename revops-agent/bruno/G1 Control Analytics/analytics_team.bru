@@ -1,0 +1,20 @@
+meta {
+  name: analytics_team
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/analytics/team
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Per-person book of business, backlog and decision speed (admin+).
+  Page: G1 Control Analytics | Owner: V | Phase: P7 | Access: analytics:view
+}

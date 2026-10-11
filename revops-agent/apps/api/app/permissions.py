@@ -32,6 +32,7 @@ class Action(StrEnum):
     ORG_DELETE = "org:delete"  # delete org, transfer ownership
     VIEW_ENTITY_REVIEW = "review:view"
     VIEW_RUNS = "runs:view"
+    VIEW_ANALYTICS = "analytics:view"  # Control portal: org-wide analytics
 
 
 A = Action
@@ -40,7 +41,7 @@ _APPROVER = {A.APPROVE_OWN, A.EDIT_CARD, A.REVERT, A.RUN_NOW}
 _MANAGER = _VIEW_ALL | _APPROVER | {A.APPROVE_ANY, A.EDIT_RULES, A.VIEW_ENTITY_REVIEW, A.VIEW_RUNS}
 _ADMIN = _MANAGER | {
     A.MANAGE_INTEGRATIONS, A.EDIT_FIELD_MAPPING, A.EDIT_AUTONOMY,
-    A.MANAGE_MEMBERS, A.API_KEYS, A.DATA_EXPORT,
+    A.MANAGE_MEMBERS, A.API_KEYS, A.DATA_EXPORT, A.VIEW_ANALYTICS,
 }  # fmt: skip
 
 PERMISSIONS: dict[Role, frozenset[Action]] = {
@@ -72,6 +73,28 @@ def can_invite(inviter: Role | str, invitee: Role | str) -> bool:
         return Role(invitee) in INVITABLE_ROLES.get(Role(inviter), frozenset())
     except ValueError:
         return False
+
+
+# The two customer portals. Membership comes from permissions, so the web app never reads the role:
+# Control (analytics, members, clients, workspace setup) and Work (the daily approval loop).
+PORTAL_CONTROL, PORTAL_WORK = "control", "work"
+PORTAL_HOME: dict[str, str] = {PORTAL_CONTROL: "/control/overview", PORTAL_WORK: "/today"}
+
+
+def portals_for(role: Role | str) -> list[str]:
+    """Portals this role may enter, landing portal first."""
+    granted = PERMISSIONS[Role(role)]
+    portals = []
+    if A.VIEW_ANALYTICS in granted:
+        portals.append(PORTAL_CONTROL)
+    if A.VIEW_ACCOUNTS in granted:
+        portals.append(PORTAL_WORK)
+    return portals
+
+
+def home_for(role: Role | str) -> str:
+    """Where this role lands after sign-in."""
+    return PORTAL_HOME[portals_for(role)[0]]
 
 
 # For these actions a `member` may only act on resources they own (spec: "own").

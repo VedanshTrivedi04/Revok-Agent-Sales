@@ -20,6 +20,7 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
     "members:manage",
     "apikeys:manage",
     "data:export",
+    "analytics:view",
     "org:delete",
   ];
 
@@ -90,6 +91,14 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
       expect(checkPermission(ADMIN_PERMISSIONS, {}, "log:export")).toBe(true);
       expect(checkPermission(ADMIN_PERMISSIONS, {}, "mapping:edit")).toBe(true);
       expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:settings_data")).toBe(true);
+      // Control portal: analytics plus every workspace page
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:control")).toBe(true);
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:analytics")).toBe(true);
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:settings_general")).toBe(true);
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:settings_members")).toBe(true);
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:settings_integrations")).toBe(true);
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:settings_field_mapping")).toBe(true);
+      expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:settings_autonomy")).toBe(true);
       expect(checkPermission(ADMIN_PERMISSIONS, {}, "approve:card")).toBe(true);
       expect(checkPermission(ADMIN_PERMISSIONS, {}, "view:accounts")).toBe(true);
     });
@@ -126,15 +135,18 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
       expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_rules")).toBe(true);
       expect(checkPermission(MANAGER_PERMISSIONS, {}, "rules:edit")).toBe(true);
       expect(checkPermission(MANAGER_PERMISSIONS, {}, "edit:rules")).toBe(true);
-      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_general")).toBe(true);
-      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_members")).toBe(true);
-      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_integrations")).toBe(true);
-      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_field_mapping")).toBe(true);
-      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_autonomy")).toBe(true);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:rules")).toBe(true);
     });
 
     it("is strictly denied from configuring the workspace, managing members, exporting, or viewing D10/D11", () => {
-      // Hidden settings pages (D10, D11)
+      // The Control portal and every workspace page in it
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:control")).toBe(false);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:analytics")).toBe(false);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_general")).toBe(false);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_members")).toBe(false);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_integrations")).toBe(false);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_field_mapping")).toBe(false);
+      expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_autonomy")).toBe(false);
       expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_api_keys")).toBe(false);
       expect(checkPermission(MANAGER_PERMISSIONS, {}, "view:settings_data")).toBe(false);
 
@@ -236,7 +248,8 @@ describe("Permissions Matrix (spec.md §8, portals-and-impact.md §3)", () => {
       expect(checkPermission(MEMBER_PERMISSIONS, {}, "view:settings_profile")).toBe(true);
       expect(checkPermission(MEMBER_PERMISSIONS, {}, "view:settings_connections")).toBe(true);
       expect(checkPermission(MEMBER_PERMISSIONS, {}, "view:settings_notifications")).toBe(true);
-      expect(checkPermission(MEMBER_PERMISSIONS, {}, "view:settings_integrations")).toBe(true);
+      expect(checkPermission(MEMBER_PERMISSIONS, {}, "view:settings_integrations")).toBe(false);
+      expect(checkPermission(MEMBER_PERMISSIONS, {}, "view:control")).toBe(false);
     });
   });
 

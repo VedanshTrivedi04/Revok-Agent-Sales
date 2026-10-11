@@ -1,0 +1,20 @@
+meta {
+  name: analytics_automation
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/analytics/automation
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  How proposed actions were decided: approval, edit, failure and revert rates (admin+).
+  Page: G1 Control Analytics | Owner: V | Phase: P7 | Access: analytics:view
+}

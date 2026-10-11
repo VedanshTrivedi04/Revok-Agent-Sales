@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tax Invoice PI/2026-27/001</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  :root {
+    --navy: #030035;
+    --indigo: #4547a9;
+    --ink: #1b1b2f;
+    --muted: #6b6f85;
+    --line: #e3e4ee;
+    --tint: #f4f4fb;
+    --fill: #b45309;
+  }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    color: var(--ink);
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    height: 297mm;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 11mm 16mm 8mm;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .bar { position: absolute; top: 0; left: 0; right: 0; height: 5mm; background: var(--navy); }
+  .bar::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 38%; background: var(--indigo); }
+
+  header { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 6mm; }
+  .brand { display: flex; gap: 12px; align-items: center; }
+  .brand .logo { height: 18mm; overflow: hidden; flex: none; }
+  .brand img { height: 19.2mm; width: auto; margin-top: -0.7mm; display: block; }
+  .brand h1 { margin: 0; font-size: 15pt; letter-spacing: 0.2px; color: var(--navy); }
+  .brand p { margin: 1px 0 0; color: var(--muted); font-size: 9pt; }
+  .doc { text-align: right; }
+  .doc h2 { margin: 0; font-size: 21pt; letter-spacing: 3px; color: var(--indigo); font-weight: 700; }
+  .doc small { color: var(--muted); font-size: 8.5pt; letter-spacing: 1px; text-transform: uppercase; }
+
+  .meta { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 6mm; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .meta div { padding: 8px 12px; border-right: 1px solid var(--line); background: var(--tint); }
+  .meta div:last-child { border-right: 0; }
+  .label { display: block; font-size: 7.5pt; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .meta b { font-size: 10.5pt; color: var(--navy); }
+
+  .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 10mm; margin-top: 6mm; }
+  .parties h3 { margin: 0 0 4px; font-size: 7.5pt; letter-spacing: 1.2px; text-transform: uppercase; color: var(--indigo); border-bottom: 2px solid var(--indigo); padding-bottom: 4px; display: inline-block; }
+  .parties strong { display: block; font-size: 11.5pt; color: var(--navy); margin-top: 4px; }
+  .parties p { margin: 2px 0 0; color: #3a3d55; font-size: 9.5pt; }
+  .kv { margin-top: 5px; font-size: 9pt; }
+  .kv span { color: var(--muted); display: inline-block; width: 56px; }
+  .fill { color: var(--fill); font-style: italic; }
+
+  table.items { width: 100%; border-collapse: collapse; margin-top: 6mm; }
+  .items thead th { background: var(--navy); color: #fff; font-size: 8pt; letter-spacing: 0.8px; text-transform: uppercase; font-weight: 600; padding: 9px 10px; text-align: left; }
+  .items thead th:first-child { border-radius: 6px 0 0 0; }
+  .items thead th:last-child { border-radius: 0 6px 0 0; }
+  .items td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .items .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .items .c { text-align: center; }
+  .items td b { color: var(--navy); }
+  .items td small { display: block; color: var(--muted); font-size: 8.5pt; margin-top: 2px; }
+
+  .below { display: grid; grid-template-columns: 1fr 78mm; gap: 10mm; margin-top: 5mm; }
+  .words { font-size: 9pt; }
+  .words b { display: block; color: var(--navy); font-size: 10pt; margin-top: 2px; }
+  .bank { margin-top: 4mm; border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; font-size: 9pt; }
+  .bank .label { margin-bottom: 5px; color: var(--indigo); }
+  .bank table { border-collapse: collapse; }
+  .bank td { padding: 1px 0; }
+  .bank td:first-child { color: var(--muted); width: 92px; }
+
+  table.totals { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .totals td { padding: 6px 10px; font-size: 10pt; }
+  .totals td:last-child { text-align: right; white-space: nowrap; }
+  .totals tr.sub td { border-bottom: 1px solid var(--line); }
+  .totals tr.tax td { color: #3a3d55; }
+  .totals tr.grand td { background: var(--navy); color: #fff; font-size: 12pt; font-weight: 700; padding: 10px; }
+  .totals tr.grand td:first-child { border-radius: 6px 0 0 6px; }
+  .totals tr.grand td:last-child { border-radius: 0 6px 6px 0; }
+
+  .terms { margin-top: 5mm; font-size: 8.5pt; color: #3a3d55; }
+  .terms .label { color: var(--indigo); }
+  .terms ol { margin: 4px 0 0; padding-left: 16px; }
+  .terms li { margin-bottom: 2px; }
+
+  .sign { margin-top: auto; padding-top: 4mm; display: flex; justify-content: flex-end; }
+  .sign div { width: 70mm; text-align: center; font-size: 9pt; }
+  .sign .space { height: 12mm; }
+  .sign .rule { border-top: 1px solid var(--ink); padding-top: 4px; }
+  .sign b { color: var(--navy); }
+
+  footer { margin-top: 4mm; border-top: 1px solid var(--line); padding-top: 6px; display: flex; justify-content: space-between; font-size: 8pt; color: var(--muted); }
+
+  @media screen {
+    body { background: #e9eaf2; padding: 16px 0; }
+    .page { background: #fff; box-shadow: 0 4px 24px rgba(3, 0, 53, 0.12); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bar"></div>
+
+  <header>
+    <div class="brand">
+      <div class="logo"><img src="pragyan-logo.png" alt="Pragyan Innovations logo"></div>
+      <div>
+        <h1>Pragyan Innovations Pvt. Ltd.</h1>
+        <p>Makers of Revora, the revenue operations agent</p>
+      </div>
+    </div>
+    <div class="doc">
+      <h2>TAX INVOICE</h2>
+      <small>Original for recipient</small>
+    </div>
+  </header>
+
+  <section class="meta">
+    <div><span class="label">Invoice no.</span><b>PI/2026-27/001</b></div>
+    <div><span class="label">Invoice date</span><b>11 Oct 2026</b></div>
+    <div><span class="label">Due date</span><b>26 Oct 2026</b></div>
+    <div><span class="label">Billing period</span><b>11 Oct – 10 Nov 2026</b></div>
+  </section>
+
+  <section class="parties">
+    <div>
+      <h3>From</h3>
+      <strong>Pragyan Innovations Pvt. Ltd.</strong>
+      <p class="fill">[Registered office address, city, state, PIN]</p>
+      <div class="kv"><span>GSTIN</span><b class="fill">[Your GSTIN]</b></div>
+      <div class="kv"><span>PAN</span><b class="fill">[Your PAN]</b></div>
+      <div class="kv"><span>CIN</span><b class="fill">[Your CIN]</b></div>
+      <div class="kv"><span>Email</span><b class="fill">[billing email]</b></div>
+    </div>
+    <div>
+      <h3>Bill to</h3>
+      <strong>Infotech</strong>
+      <p class="fill">[Client's full legal name, billing address, city, state, PIN]</p>
+      <div class="kv"><span>GSTIN</span><b class="fill">[Client GSTIN]</b></div>
+      <div class="kv"><span>Contact</span><b class="fill">[Contact person, email]</b></div>
+      <div class="kv"><span>Supply</span><b class="fill">[Place of supply: state and code]</b></div>
+    </div>
+  </section>
+
+  <table class="items">
+    <thead>
+      <tr>
+        <th style="width:5%">#</th>
+        <th>Description</th>
+        <th style="width:9%">SAC</th>
+        <th class="c" style="width:6%">Qty</th>
+        <th class="num" style="width:14%">Rate (₹)</th>
+        <th class="num" style="width:15%">Amount (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>
+          <b>Revora Growth plan, monthly subscription</b>
+          <small>1 workspace, 15 seats, 500 monitored accounts. Nightly and on-demand agent runs, HubSpot, Gmail and Slack connectors, analytics and API keys.</small>
+        </td>
+        <td>997331</td>
+        <td class="c">1</td>
+        <td class="num">39,999.00</td>
+        <td class="num">39,999.00</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>
+          <b>Onboarding and setup, one-time</b>
+          <small>Workspace setup, integration connection, field mapping and team training.</small>
+        </td>
+        <td>998313</td>
+        <td class="c">1</td>
+        <td class="num">25,000.00</td>
+        <td class="num">25,000.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <section class="below">
+    <div>
+      <div class="words">
+        <span class="label">Amount in words</span>
+        <b>Rupees Seventy-Six Thousand Six Hundred Ninety-Eight and Eighty-Two Paise only</b>
+      </div>
+      <div class="bank">
+        <span class="label">Payment details</span>
+        <table>
+          <tr><td>Account name</td><td>Pragyan Innovations Pvt. Ltd.</td></tr>
+          <tr><td>Bank</td><td class="fill">[Bank name, branch]</td></tr>
+          <tr><td>Account no.</td><td class="fill">[Account number]</td></tr>
+          <tr><td>IFSC</td><td class="fill">[IFSC code]</td></tr>
+          <tr><td>UPI</td><td class="fill">[UPI ID, optional]</td></tr>
+        </table>
+      </div>
+    </div>
+    <table class="totals">
+      <tr class="sub"><td>Subtotal</td><td>₹ 64,999.00</td></tr>
+      <tr class="tax"><td>CGST @ 9%</td><td>₹ 5,849.91</td></tr>
+      <tr class="tax"><td>SGST @ 9%</td><td>₹ 5,849.91</td></tr>
+      <tr class="sub"><td>Total tax</td><td>₹ 11,699.82</td></tr>
+      <tr><td colspan="2" style="padding:3px"></td></tr>
+      <tr class="grand"><td>Total due</td><td>₹ 76,698.82</td></tr>
+    </table>
+  </section>
+
+  <section class="terms">
+    <span class="label">Terms</span>
+    <ol>
+      <li>Payment is due within 15 days of the invoice date. Please quote the invoice number with your payment.</li>
+      <li>The subscription renews monthly on the 11th until cancelled in writing with 30 days' notice.</li>
+      <li>Additional seats are billed at ₹999 per seat per month, and additional monitored accounts at ₹6,000 per 100 accounts per month.</li>
+      <li>The onboarding fee is charged once and is non-refundable after setup begins.</li>
+    </ol>
+  </section>
+
+  <div class="sign">
+    <div>
+      For <b>Pragyan Innovations Pvt. Ltd.</b>
+      <div class="space"></div>
+      <div class="rule">Authorised signatory</div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Pragyan Innovations Pvt. Ltd. · Revora</span>
+    <span>Invoice PI/2026-27/001 · Page 1 of 1</span>
+  </footer>
+</div>
+</body>
+</html>

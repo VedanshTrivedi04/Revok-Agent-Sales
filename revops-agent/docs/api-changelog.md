@@ -20,6 +20,7 @@
   after the provider redirect (`/onboarding/<step>` or Settings). The OAuth state carries it.
 - `GET /me`: `user.must_change_password` and `invitable_roles` (the roles this user may invite).
 - `POST /auth/login` response: `must_change_password`.
+- **`GET /admin/analytics?days=7..365`** (superadmin): platform-wide totals, daily growth and activity, approval funnel, decision stats, open findings by type/severity, integration health, sync results, most-fired rules and a per-org activity table. Counts and rates only.
 - Migration `0006`: `users.must_change_password`, table `password_tokens`.
 
 ### Changed

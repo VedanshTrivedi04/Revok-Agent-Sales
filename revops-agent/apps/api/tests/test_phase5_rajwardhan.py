@@ -118,6 +118,11 @@ def test_google_oauth_scopes_and_offline_consent() -> None:
 async def test_connect_integration_gcal_respects_meeting_request_flag(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    from app.config import get_settings
+
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
+    monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "test-client-secret")
+    get_settings.cache_clear()
     org_id = uuid4()
     user_id = uuid4()
     mock_session = AsyncMock()

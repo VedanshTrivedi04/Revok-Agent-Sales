@@ -50,6 +50,10 @@ export interface MeResponse {
   flags: Record<string, boolean>;
   /** Roles this user may grant by invite (from the API; never derived from the role string). */
   invitable_roles?: MeMembership["role"][];
+  /** Customer portals this user may enter, landing portal first (from the API, derived from permissions). */
+  portals?: Array<"control" | "work">;
+  /** The page this user lands on after sign-in. */
+  home?: string;
   slack_user_id?: string | null;
   onboarding?: {
     steps: Array<{ key: string; status: "todo" | "in_progress" | "done" | "skipped" }>;

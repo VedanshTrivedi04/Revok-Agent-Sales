@@ -4,6 +4,7 @@ from app.routes import (  # noqa: F401
     accounts,
     action_cards,
     admin,
+    analytics,
     api_keys,
     auth,
     autonomy,

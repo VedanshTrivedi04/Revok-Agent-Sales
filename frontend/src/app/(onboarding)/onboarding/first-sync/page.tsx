@@ -130,7 +130,7 @@ export default function OnboardingFirstSyncPage() {
       )}
 
       <Link
-        href="/today"
+        href="/home"
         className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bold ${
           ready
             ? "bg-[#0D3823] hover:bg-[#072115] text-[#CCFF00] shadow-md"

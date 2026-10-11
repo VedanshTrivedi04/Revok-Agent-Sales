@@ -180,6 +180,7 @@ ADMIN_SESSION_ALLOWED = {
     "app/services/identity.py": "cross-org memberships for /me",
     "app/services/slack.py": "Slack team -> org resolution for signed webhooks",
     "app/services/admin.py": "superadmin /admin routers",
+    "app/services/admin_analytics.py": "superadmin platform analytics: counts and rates across orgs, no content",
     "app/connectors/google/writes.py": "global feature-flag lookup (flags table has no RLS)",
     "app/workers/celery_app.py": "failed_jobs dead letter (global table)",
     "app/workers/tasks_maintenance.py": "platform fan-out over active/deleted orgs",

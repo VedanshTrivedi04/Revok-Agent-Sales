@@ -25,6 +25,8 @@ export interface GuardInput {
 
 export const ADMIN_HOME = "/admin/orgs";
 export const ADMIN_LOGIN = "/admin/login";
+/** Forwards to the landing page of the user's portal (Control or Work), as reported by the API. */
+export const CUSTOMER_HOME = "/home";
 const CUSTOMER_PUBLIC = ["/login", "/signup", "/invite", "/set-password"];
 const CUSTOMER_GUEST_ONLY = ["/login", "/signup"];
 
@@ -44,17 +46,18 @@ export function decideRoute(input: GuardInput): GuardDecision {
     return { action: "redirect", to: hasCustomerSession ? "/403" : ADMIN_LOGIN };
   }
 
-  if (pathname === "/" || pathname === "/403") return { action: "next" };
+  if (pathname === "/403") return { action: "next" };
+  if (hasAdminSession) return { action: "redirect", to: "/403?scope=platform" };
+  if (pathname === "/") return { action: "next" };
 
   if (within(pathname, CUSTOMER_PUBLIC)) {
     if (hasCustomerSession && within(pathname, CUSTOMER_GUEST_ONLY) && !hasInviteParam) {
-      return { action: "redirect", to: "/today" };
+      return { action: "redirect", to: CUSTOMER_HOME };
     }
     return { action: "next" };
   }
 
   if (hasCustomerSession) return { action: "next" };
-  if (hasAdminSession) return { action: "redirect", to: "/403?scope=platform" };
   const next = pathname === "/" ? "" : `?next=${encodeURIComponent(`${pathname}${search}`)}`;
   return { action: "redirect", to: `/login${next}` };
 }

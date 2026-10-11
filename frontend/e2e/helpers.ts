@@ -19,9 +19,18 @@ export async function signIn(page: Page, email: string, password = DEMO_PASSWORD
   await page.getByRole("button", { name: /sign in/i }).click();
 }
 
-export async function signInAs(page: Page, role: keyof typeof USERS) {
+/** Owner and Admin land in the Control portal; Manager, Member and Viewer in the Work portal. */
+export const HOME: Record<Exclude<keyof typeof USERS, "superadmin">, RegExp> = {
+  owner: /\/control\/overview/,
+  admin: /\/control\/overview/,
+  manager: /\/today/,
+  member: /\/today/,
+  viewer: /\/today/,
+};
+
+export async function signInAs(page: Page, role: keyof typeof HOME) {
   await signIn(page, USERS[role]);
-  await expect(page).toHaveURL(/\/today/);
+  await expect(page).toHaveURL(HOME[role]);
 }
 
 export async function signInAdmin(page: Page) {

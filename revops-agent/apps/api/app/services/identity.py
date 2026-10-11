@@ -11,7 +11,7 @@ from app.models.brain import Finding
 from app.models.integrations import FieldMapping, Integration
 from app.models.tenancy import Membership, Organization, User
 from app.models.timeline import UsageSnapshot
-from app.permissions import Role, invitable_roles_for, permissions_for
+from app.permissions import Role, home_for, invitable_roles_for, permissions_for, portals_for
 from app.schemas.identity import (
     Ack,
     MeMembership,
@@ -190,6 +190,8 @@ async def get_me(s: AsyncSession, user_id: UUID, org_id: UUID, role: Role) -> Me
         permissions=permissions_for(role),
         flags=flags,
         invitable_roles=invitable_roles_for(role),
+        portals=portals_for(role),
+        home=home_for(role),
         onboarding=onboarding,
     )
 

@@ -25,6 +25,7 @@ class RunStep(BaseModel):
     status: Literal["ok", "skipped", "failed"]
     duration_ms: int | None = None
     detail: str | None = None
+    data: dict[str, Any] = {}
 
 
 class RunDetail(RunOut):

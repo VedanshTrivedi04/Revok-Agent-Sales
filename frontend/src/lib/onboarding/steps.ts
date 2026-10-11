@@ -44,7 +44,7 @@ export function visibleSteps(isAdminFlow: boolean): OnboardingStep[] {
 export function nextPath(key: StepKey, isAdminFlow: boolean): string {
   const steps = visibleSteps(isAdminFlow);
   const i = steps.findIndex((s) => s.key === key);
-  return i >= 0 && i < steps.length - 1 ? steps[i + 1].path : "/today";
+  return i >= 0 && i < steps.length - 1 ? steps[i + 1].path : "/home";
 }
 
 /** Human messages for `?error=` codes the OAuth callback can return. */

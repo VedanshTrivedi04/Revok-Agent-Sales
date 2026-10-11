@@ -523,3 +523,69 @@ def test_web_return_url_sends_the_browser_back_where_it_came_from() -> None:
     assert web_return_url("slack", "onboarding") == f"{base}/onboarding/slack"
     assert web_return_url("hubspot", "settings") == f"{base}/settings/integrations"
     assert web_return_url("gmail", "settings") == f"{base}/settings/connections"
+
+
+# ------------------------------------------------------------------ integration readiness
+
+
+async def test_connect_says_so_when_the_provider_app_is_not_configured(
+    client_as: Callable[..., AsyncClient], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.config import get_settings
+
+    for var in ("HUBSPOT_CLIENT_ID", "HUBSPOT_CLIENT_SECRET", "SLACK_CLIENT_ID"):
+        monkeypatch.setenv(var, "")
+    get_settings.cache_clear()
+    r = await client_as("admin").post("/api/v1/integrations/hubspot/connect")
+    assert r.status_code == 503, r.text
+    err = r.json()["error"]
+    assert err["code"] == "not_configured"
+    assert err["details"]["missing"] == ["HUBSPOT_CLIENT_ID", "HUBSPOT_CLIENT_SECRET"]
+    r2 = await client_as("admin").post("/api/v1/integrations/slack/connect")
+    assert (
+        r2.status_code == 503 and "SLACK_SIGNING_SECRET" in r2.json()["error"]["details"]["missing"]
+    )
+
+
+def test_doctor_reports_missing_variables_and_the_urls_to_register() -> None:
+    from app.config import Settings
+    from scripts.integration_doctor import FAIL, PASS, run_checks
+
+    bare = Settings(_env_file=None, app_env="local", public_api_url="https://api.example.com")  # type: ignore[call-arg]
+    checks = run_checks(bare)
+    fails = {c.area for c in checks if c.level == FAIL}
+    assert fails == {"hubspot", "google", "slack"}
+    msgs = [c.message for c in checks]
+    assert any("https://api.example.com/api/v1/oauth/hubspot/callback" in m for m in msgs)
+    assert any("https://api.example.com/api/v1/oauth/gcal/callback" in m for m in msgs)
+    assert any("/api/v1/slack/interactions" in m for m in msgs)
+
+    ready = Settings(  # type: ignore[call-arg]
+        _env_file=None, app_env="local", public_api_url="https://api.example.com",
+        hubspot_client_id="a", hubspot_client_secret="b", google_client_id="c",
+        google_client_secret="d", slack_client_id="e", slack_client_secret="f",
+        slack_signing_secret="g",
+    )  # fmt: skip
+    only_prov = [c for c in run_checks(ready) if c.area in {"hubspot", "google", "slack"}]
+    assert not [c for c in only_prov if c.level == FAIL]
+    assert any(c.level == PASS and "client credentials" in c.message for c in only_prov)
+
+
+def test_doctor_slack_needs_public_https_and_valid_encryption_keys() -> None:
+    import base64
+
+    from app.config import Settings
+    from scripts.integration_doctor import FAIL, _valid_enc_keys, run_checks
+
+    prod = Settings(  # type: ignore[call-arg]
+        _env_file=None, app_env="local", public_api_url="http://localhost:8000",
+    )  # fmt: skip
+    slack = [c for c in run_checks(prod, {"slack"}) if "public HTTPS" in c.message]
+    assert slack and slack[0].level != "PASS"
+    assert FAIL in {c.level for c in run_checks(prod, {"slack"})}
+    assert _valid_enc_keys("k1:" + base64.b64encode(b"x" * 32).decode())
+    assert (
+        not _valid_enc_keys("k1:short")
+        and not _valid_enc_keys("")
+        and not _valid_enc_keys("nocolon")
+    )

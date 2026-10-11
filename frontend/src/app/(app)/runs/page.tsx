@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Activity, Loader2, RotateCw } from "lucide-react";
+import { Activity, Loader2, RotateCw, Workflow } from "lucide-react";
 import { toast } from "sonner";
 import { PermissionGuard } from "../../../components/layout/permission-guard";
 import { RunStatusPill } from "../../../components/runs/run-status-pill";
@@ -40,6 +41,7 @@ const STATUS_FILTERS: Array<{ key: string; label: string; value: string }> = [
 
 export default function RunsPage() {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -133,7 +135,11 @@ export default function RunsPage() {
                   {runs.map((run) => {
                     const usage = llmUsage(run);
                     return (
-                      <tr key={run.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <tr
+                        key={run.id}
+                        onClick={() => router.push(`/runs/${run.id}`)}
+                        className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
+                      >
                         <td className="py-3 px-4">
                           <Link href={`/runs/${run.id}`} className="font-semibold text-slate-900 dark:text-slate-100 hover:underline">
                             {run.account_name ?? "Workspace-wide"}
@@ -156,7 +162,14 @@ export default function RunsPage() {
                             <div className="text-[10px] text-slate-400">{usage.tokens.toLocaleString()} tokens</div>
                           )}
                         </td>
-                        <td className="py-3 px-4 text-right">
+                        <td className="py-3 px-4 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                          <Link
+                            href={`/runs/${run.id}`}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 mr-2 text-xs font-semibold rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          >
+                            <Workflow className="w-3 h-3" />
+                            View workflow
+                          </Link>
                           {canRetry(run.status) && (
                             <Can action="runs:retry">
                               <button

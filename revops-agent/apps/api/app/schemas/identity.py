@@ -61,6 +61,10 @@ class MeResponse(BaseModel):
     # Roles this user may grant by invite (Owner: admin/manager/member/viewer, Admin: manager/
     # member/viewer, everyone else: none). The UI offers exactly these and never infers it.
     invitable_roles: list[Role] = []
+    # Customer portals this user may enter (landing portal first) and the page they land on after
+    # sign-in. Both are derived from permissions; the UI routes on these, never on the role.
+    portals: list[Literal["control", "work"]] = []
+    home: str = "/today"
     onboarding: OnboardingOut | None = None
 
 
@@ -238,6 +242,8 @@ class AuthSession(BaseModel):
     needs_onboarding: bool = False
     # True while the user is on a temporary password and must choose their own before continuing.
     must_change_password: bool = False
+    # Landing page of the default workspace's portal (see MeResponse.home).
+    home: str = "/today"
 
 
 class SetPasswordIn(BaseModel):

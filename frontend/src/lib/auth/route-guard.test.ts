@@ -73,8 +73,8 @@ describe("customer routes", () => {
     for (const pathname of ["/login", "/signup", "/invite/abc", "/set-password"]) {
       expect(decideRoute({ pathname, ...none })).toEqual(next);
     }
-    expect(decideRoute({ pathname: "/login", ...customer })).toEqual(to("/today"));
-    expect(decideRoute({ pathname: "/signup", ...customer })).toEqual(to("/today"));
+    expect(decideRoute({ pathname: "/login", ...customer })).toEqual(to("/home"));
+    expect(decideRoute({ pathname: "/signup", ...customer })).toEqual(to("/home"));
     expect(decideRoute({ pathname: "/login", ...customer, hasInviteParam: true })).toEqual(next);
   });
 

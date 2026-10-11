@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.passwords import hash_password_async, verify_password_async
 from app.db.session import admin_session
 from app.models.tenancy import Membership, Organization, PasswordToken, User
-from app.permissions import Role
+from app.permissions import PORTAL_HOME, PORTAL_WORK, Role, home_for
 from app.schemas.identity import (
     Ack,
     AuthSession,
@@ -84,6 +84,7 @@ async def _session_for(user: User) -> AuthSession:
         memberships=memberships,
         needs_onboarding=not memberships and not user.is_superadmin,
         must_change_password=user.must_change_password,
+        home=home_for(default.role) if default else PORTAL_HOME[PORTAL_WORK],
     )
 
 

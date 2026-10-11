@@ -61,7 +61,7 @@ export function IntegrationBanner() {
       <div>
         {canManage ? (
           <Link
-            href="/settings/integrations"
+            href="/control/integrations"
             className="px-2.5 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors"
           >
             Reconnect

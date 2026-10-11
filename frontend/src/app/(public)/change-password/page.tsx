@@ -9,7 +9,7 @@ import { safeNextPath } from "../../../lib/auth/landing";
 const MIN_LENGTH = 10;
 
 function ChangePasswordForm() {
-  const next = safeNextPath(useSearchParams().get("next")) ?? "/today";
+  const next = safeNextPath(useSearchParams().get("next")) ?? "/home";
 
   const [current, setCurrent] = useState("");
   const [password, setPassword] = useState("");

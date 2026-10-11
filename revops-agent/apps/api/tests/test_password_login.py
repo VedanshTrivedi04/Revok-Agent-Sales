@@ -53,6 +53,8 @@ async def test_each_workspace_role_signs_in_and_gets_that_role(
     assert body["role"] == role
     assert body["is_superadmin"] is False and body["needs_onboarding"] is False
     assert [m["role"] for m in body["memberships"]] == [role]
+    # Owner and Admin land in the Control portal, everyone else in the Work portal
+    assert body["home"] == ("/control/overview" if role in ("owner", "admin") else "/today")
 
     # the identity from sign-in is enough to call the API; the role is re-read from the DB
     token = mint_jwt(UUID(body["user"]["id"]), UUID(body["org_id"]), role="owner")

@@ -22,7 +22,7 @@ from pydantic import ValidationError
 from app.auth.deps import current_membership, get_claims
 from app.config import get_settings
 from app.mocks import data as D
-from app.permissions import invitable_roles_for, permissions_for
+from app.permissions import home_for, invitable_roles_for, permissions_for, portals_for
 from app.schemas.action_payloads import ACTION_PAYLOADS
 from app.utils.errors import ERROR_CODES, AppError
 from app.utils.pagination import PageParams, decode_cursor, encode_cursor
@@ -168,6 +168,7 @@ async def _me(request: Request) -> dict[str, Any]:
         "org": {k: org[k] for k in ("id", "name", "status", "plan", "timezone", "currency")},
         "role": a["role"], "permissions": permissions_for(a["role"]),
         "invitable_roles": invitable_roles_for(a["role"]),
+        "portals": portals_for(a["role"]), "home": home_for(a["role"]),
         "flags": {f["key"]: f["default"] for f in s["admin"]["flags"]},
         "onboarding": org["onboarding"],
     }  # fmt: skip
@@ -1211,3 +1212,59 @@ def m_put_flag(request: Request, body: Any, **_: Any) -> Any:
     if body.per_org is not None:
         f["per_org"] = body.per_org
     return f
+
+
+from app.mocks import analytics as _analytics  # noqa: E402,F401  (registers /analytics mocks)
+
+
+@mock("admin_analytics")
+async def m_admin_analytics(request: Request, days: int = 30, **_: Any) -> Any:
+    from datetime import timedelta as _td
+
+    from app.services.admin_analytics import MAX_DAYS, MIN_DAYS
+
+    days = max(MIN_DAYS, min(MAX_DAYS, days))
+    end = D.NOW.date()
+    start = end - _td(days=days - 1)
+    every = [start + _td(days=i) for i in range(days)]
+    zero = {
+        "findings_created": 0, "cards_proposed": 0, "cards_approved": 0, "cards_rejected": 0,
+        "cards_executed": 0, "cards_failed": 0, "runs_completed": 0, "runs_failed": 0,
+    }  # fmt: skip
+    return {
+        "period": {"days": days, "start": start.isoformat(), "end": end.isoformat()},
+        "totals": {
+            "orgs_active": 1,
+            "orgs_suspended": 1,
+            "users": len(D.USERS),
+            "active_memberships": len(D.USERS),
+            "accounts": len(D.ACCOUNTS),
+            "open_findings": len(D.FINDINGS),
+            "pending_cards": 0,
+            "connected_integrations": 0,
+            "integrations_needing_attention": 0,
+            "failed_jobs": 0,
+        },  # fmt: skip
+        "growth": [{"date": d.isoformat(), "new_orgs": 0, "new_users": 0} for d in every],
+        "activity": [{"date": d.isoformat(), **zero} for d in every],
+        "funnel": {
+            "proposed": 0,
+            "decided": 0,
+            "approved": 0,
+            "rejected": 0,
+            "executed": 0,
+            "failed": 0,
+            "reverted": 0,
+            "expired": 0,
+        },  # fmt: skip
+        "decisions": {
+            "approval_rate": None,
+            "execution_success_rate": None,
+            "median_hours_to_decision": None,
+        },
+        "open_findings": [],
+        "integrations": [],
+        "sync": [{"date": d.isoformat(), "success": 0, "failed": 0} for d in every],
+        "rules": [],
+        "orgs": [],
+    }

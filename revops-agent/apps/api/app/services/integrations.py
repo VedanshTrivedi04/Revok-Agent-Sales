@@ -26,6 +26,7 @@ from app.schemas.integrations import (
     SyncTriggerOut,
 )
 from app.services import decision_log
+from app.services.integration_config import provider_config
 from app.services.provider_revoke import revoke_provider_tokens
 from app.utils.errors import AppError
 from app.utils.oauth_state import consume_state, create_state
@@ -99,6 +100,17 @@ async def connect_integration_service(
             status=403,
         )
 
+    # No client id/secret means the provider would show an error page to the user; say so here.
+    settings = get_settings()
+    cfg = provider_config(provider, settings)
+    if not cfg.configured:
+        raise AppError(
+            "not_configured",
+            f"{cfg.label} is not set up on this server yet. The platform team needs to add its "
+            "OAuth app credentials.",
+            details={"missing": cfg.missing},
+        )
+
     connector: Any
     if provider == "gcal":
         from app.connectors.google.client import GCalConnector
@@ -120,7 +132,6 @@ async def connect_integration_service(
         raise AppError("bad_request", f"Provider {provider} does not support OAuth")
 
     state = create_state(org_id, user_id, provider, return_to=return_to)
-    settings = get_settings()
     # Slack installs through its own callback, which records the team id that incoming webhooks
     # are resolved by; the generic callback would store a connection those webhooks cannot find.
     callback = "slack/oauth" if provider == "slack" else f"oauth/{provider}"

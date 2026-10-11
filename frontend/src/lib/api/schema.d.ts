@@ -292,6 +292,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Platform-wide growth, activity, approval funnel and integration health (counts only).
+         * @description Platform-wide growth, activity, approval funnel and integration health (counts only).
+         */
+        get: operations["admin_analytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/data-health": {
         parameters: {
             query?: never;
@@ -554,6 +574,146 @@ export interface paths {
          * @description Lift a suspension.
          */
         post: operations["unsuspend_org"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/automation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * How proposed actions were decided: approval, edit, failure and revert rates (admin+).
+         * @description How proposed actions were decided: approval, edit, failure and revert rates (admin+).
+         */
+        get: operations["analytics_automation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/data-health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Integration status, sync history, field coverage and event matching (admin+).
+         * @description Integration status, sync history, field coverage and event matching (admin+).
+         */
+        get: operations["analytics_data_health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/findings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * New findings over time, by severity, rule, category and status (admin+).
+         * @description New findings over time, by severity, rule, category and status (admin+).
+         */
+        get: operations["analytics_findings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Headline KPIs and trends for the whole organization (admin+).
+         * @description Headline KPIs and trends for the whole organization (admin+).
+         */
+        get: operations["analytics_overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/pipeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Open pipeline by stage and type, win rate, and the renewal calendar (admin+).
+         * @description Open pipeline by stage and type, win rate, and the renewal calendar (admin+).
+         */
+        get: operations["analytics_pipeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/risk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Risk heatmap (account x category) and the ARR vs priority map (admin+).
+         * @description Risk heatmap (account x category) and the ARR vs priority map (admin+).
+         */
+        get: operations["analytics_risk"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/team": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Per-person book of business, backlog and decision speed (admin+).
+         * @description Per-person book of business, backlog and decision speed (admin+).
+         */
+        get: operations["analytics_team"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1833,7 +1993,6 @@ export interface components {
     schemas: {
         /** AccountDetail */
         AccountDetail: {
-            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Arr */
             arr?: number | null;
             /** Crm Health */
@@ -1864,6 +2023,7 @@ export interface components {
              *     }
              */
             metrics: components["schemas"]["AccountMetrics"];
+            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Name */
             name: string;
             /**
@@ -1891,55 +2051,8 @@ export interface components {
              */
             status: "active" | "churned" | "prospect" | "archived";
         };
-        /** MlReason */
-        MlReason: {
-            /** Text */
-            text: string;
-            /**
-             * Direction
-             * @enum {string}
-             */
-            direction: "raises" | "lowers";
-        };
-        /** MlScore */
-        MlScore: {
-            /** Probability */
-            probability: number;
-            /**
-             * Band
-             * @enum {string}
-             */
-            band: "low" | "medium" | "high";
-            /**
-             * Reasons
-             * @default []
-             */
-            reasons: components["schemas"]["MlReason"][];
-        };
-        /**
-         * MlScores
-         * @description Statistical churn / expansion scores for an account (separate from rule findings).
-         */
-        MlScores: {
-            churn: components["schemas"]["MlScore"];
-            expansion: components["schemas"]["MlScore"];
-            /** View */
-            view: string;
-            /** Model Version */
-            model_version?: string | null;
-            /** Trained On */
-            trained_on?: string | null;
-            /**
-             * Synthetic
-             * @default false
-             */
-            synthetic: boolean;
-            /** Scored At */
-            scored_at?: string | null;
-        };
         /** AccountListItem */
         AccountListItem: {
-            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Arr */
             arr?: number | null;
             /** Crm Health */
@@ -1958,6 +2071,7 @@ export interface components {
             id: string;
             /** Last Activity At */
             last_activity_at?: string | null;
+            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Name */
             name: string;
             owner?: components["schemas"]["OwnerRef"] | null;
@@ -2010,7 +2124,6 @@ export interface components {
         };
         /** AccountSummary */
         AccountSummary: {
-            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Arr */
             arr?: number | null;
             /** Crm Health */
@@ -2020,6 +2133,7 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            ml_scores?: components["schemas"]["MlScores"] | null;
             /** Name */
             name: string;
             owner?: components["schemas"]["OwnerRef"] | null;
@@ -2042,6 +2156,51 @@ export interface components {
              * @default true
              */
             ok: boolean;
+        };
+        /** ActivityPoint */
+        ActivityPoint: {
+            /** Cards Approved */
+            cards_approved: number;
+            /** Cards Executed */
+            cards_executed: number;
+            /** Cards Failed */
+            cards_failed: number;
+            /** Cards Proposed */
+            cards_proposed: number;
+            /** Cards Rejected */
+            cards_rejected: number;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Findings Created */
+            findings_created: number;
+            /** Runs Completed */
+            runs_completed: number;
+            /** Runs Failed */
+            runs_failed: number;
+        };
+        /** AdminAnalytics */
+        AdminAnalytics: {
+            /** Activity */
+            activity: components["schemas"]["ActivityPoint"][];
+            decisions: components["schemas"]["DecisionStats"];
+            funnel: components["schemas"]["CardFunnel"];
+            /** Growth */
+            growth: components["schemas"]["GrowthPoint"][];
+            /** Integrations */
+            integrations: components["schemas"]["IntegrationHealth"][];
+            /** Open Findings */
+            open_findings: components["schemas"]["FindingCount"][];
+            /** Orgs */
+            orgs: components["schemas"]["OrgActivity"][];
+            period: components["schemas"]["AdminPeriod"];
+            /** Rules */
+            rules: components["schemas"]["RuleCount"][];
+            /** Sync */
+            sync: components["schemas"]["SyncPoint"][];
+            totals: components["schemas"]["AdminTotals"];
         };
         /** AdminJobOut */
         AdminJobOut: {
@@ -2220,6 +2379,151 @@ export interface components {
              */
             status: "active" | "suspended" | "deleted";
         };
+        /** AdminPeriod */
+        AdminPeriod: {
+            /** Days */
+            days: number;
+            /**
+             * End
+             * Format: date
+             */
+            end: string;
+            /**
+             * Start
+             * Format: date
+             */
+            start: string;
+        };
+        /** AdminTotals */
+        AdminTotals: {
+            /** Accounts */
+            accounts: number;
+            /** Active Memberships */
+            active_memberships: number;
+            /** Connected Integrations */
+            connected_integrations: number;
+            /** Failed Jobs */
+            failed_jobs: number;
+            /** Integrations Needing Attention */
+            integrations_needing_attention: number;
+            /** Open Findings */
+            open_findings: number;
+            /** Orgs Active */
+            orgs_active: number;
+            /** Orgs Suspended */
+            orgs_suspended: number;
+            /** Pending Cards */
+            pending_cards: number;
+            /** Users */
+            users: number;
+        };
+        /** AnalyticsAutomation */
+        AnalyticsAutomation: {
+            /** By Tier */
+            by_tier: components["schemas"]["TierRow"][];
+            /** By Type */
+            by_type: components["schemas"]["CardTypeRow"][];
+            /** Channels */
+            channels: components["schemas"]["CountSlice"][];
+            /** Rejection Reasons */
+            rejection_reasons: components["schemas"]["CountSlice"][];
+            totals: components["schemas"]["AutomationTotals"];
+            /** Trend */
+            trend: components["schemas"]["DecisionsWeek"][];
+            window: components["schemas"]["AnalyticsWindow"];
+        };
+        /** AnalyticsDataHealth */
+        AnalyticsDataHealth: {
+            /** Coverage */
+            coverage: components["schemas"]["CoverageRow"][];
+            /** Integrations */
+            integrations: components["schemas"]["IntegrationHealthRow"][];
+            matching: components["schemas"]["EventMatching"];
+            /** Runs */
+            runs: components["schemas"]["CountSlice"][];
+            /** Sync Trend */
+            sync_trend: components["schemas"]["SyncDay"][];
+            window: components["schemas"]["AnalyticsWindow"];
+        };
+        /** AnalyticsFindings */
+        AnalyticsFindings: {
+            /** By Category */
+            by_category: components["schemas"]["CountSlice"][];
+            /** By Rule */
+            by_rule: components["schemas"]["CountSlice"][];
+            /** By Status */
+            by_status: components["schemas"]["CountSlice"][];
+            /** By Type */
+            by_type: components["schemas"]["CountSlice"][];
+            /** Dismissed Reasons */
+            dismissed_reasons: components["schemas"]["CountSlice"][];
+            /** Total */
+            total: number;
+            /** Trend */
+            trend: components["schemas"]["SeverityWeek"][];
+            window: components["schemas"]["AnalyticsWindow"];
+        };
+        /** AnalyticsOverview */
+        AnalyticsOverview: {
+            /** Currency */
+            currency: string;
+            /** Decisions Trend */
+            decisions_trend: components["schemas"]["DecisionsWeek"][];
+            /** Findings Trend */
+            findings_trend: components["schemas"]["FindingsWeek"][];
+            kpis: components["schemas"]["OverviewKpis"];
+            /** Risk Levels */
+            risk_levels: components["schemas"]["CountSlice"][];
+            window: components["schemas"]["AnalyticsWindow"];
+        };
+        /** AnalyticsPipeline */
+        AnalyticsPipeline: {
+            /** Currency */
+            currency: string;
+            /** Deal Types */
+            deal_types: components["schemas"]["DealTypeRow"][];
+            /** Renewals */
+            renewals: components["schemas"]["RenewalMonth"][];
+            /** Stages */
+            stages: components["schemas"]["StageRow"][];
+            totals: components["schemas"]["PipelineTotals"];
+            window: components["schemas"]["AnalyticsWindow"];
+        };
+        /** AnalyticsRisk */
+        AnalyticsRisk: {
+            /** Bubbles */
+            bubbles: components["schemas"]["RiskBubble"][];
+            /** Categories */
+            categories: string[];
+            /** Currency */
+            currency: string;
+            /** Heatmap */
+            heatmap: components["schemas"]["HeatRow"][];
+            /** Risk Levels */
+            risk_levels: components["schemas"]["RiskLevelRow"][];
+        };
+        /** AnalyticsTeam */
+        AnalyticsTeam: {
+            /** Currency */
+            currency: string;
+            /** Members */
+            members: components["schemas"]["TeamMemberRow"][];
+            unassigned: components["schemas"]["Unassigned"];
+            window: components["schemas"]["AnalyticsWindow"];
+        };
+        /** AnalyticsWindow */
+        AnalyticsWindow: {
+            /**
+             * End
+             * Format: date
+             */
+            end: string;
+            /**
+             * Start
+             * Format: date
+             */
+            start: string;
+        };
         /** ApiKeyCreateIn */
         ApiKeyCreateIn: {
             /** Name */
@@ -2287,6 +2591,11 @@ export interface components {
          */
         AuthSession: {
             /**
+             * Home
+             * @default /today
+             */
+            home: string;
+            /**
              * Is Superadmin
              * @default false
              */
@@ -2326,6 +2635,31 @@ export interface components {
             id: string;
             /** Name */
             name?: string | null;
+        };
+        /** AutomationTotals */
+        AutomationTotals: {
+            /** Approval Rate */
+            approval_rate?: number | null;
+            /** Approved */
+            approved: number;
+            /** Edit Rate */
+            edit_rate?: number | null;
+            /** Edited */
+            edited: number;
+            /** Executed */
+            executed: number;
+            /** Expired */
+            expired: number;
+            /** Failed */
+            failed: number;
+            /** Median Decision Hours */
+            median_decision_hours?: number | null;
+            /** Proposed */
+            proposed: number;
+            /** Rejected */
+            rejected: number;
+            /** Reverted */
+            reverted: number;
         };
         /** AutonomyPolicyOut */
         AutonomyPolicyOut: {
@@ -2390,6 +2724,28 @@ export interface components {
              * Format: uuid
              */
             user_id: string;
+        };
+        /**
+         * CardFunnel
+         * @description Cards created in the period, by how far they got.
+         */
+        CardFunnel: {
+            /** Approved */
+            approved: number;
+            /** Decided */
+            decided: number;
+            /** Executed */
+            executed: number;
+            /** Expired */
+            expired: number;
+            /** Failed */
+            failed: number;
+            /** Proposed */
+            proposed: number;
+            /** Rejected */
+            rejected: number;
+            /** Reverted */
+            reverted: number;
         };
         /** CardOut */
         CardOut: {
@@ -2510,6 +2866,23 @@ export interface components {
              */
             reason: "wrong_action" | "wrong_content" | "not_now" | "already_done" | "other";
         };
+        /** CardTypeRow */
+        CardTypeRow: {
+            /** Approved */
+            approved: number;
+            /** Edited */
+            edited: number;
+            /** Failed */
+            failed: number;
+            /** Rejected */
+            rejected: number;
+            /** Reverted */
+            reverted: number;
+            /** Total */
+            total: number;
+            /** Type */
+            type: string;
+        };
         /** ChangePasswordIn */
         ChangePasswordIn: {
             /** Current Password */
@@ -2560,6 +2933,28 @@ export interface components {
             role_tags: string[];
             /** Title */
             title?: string | null;
+        };
+        /**
+         * CountSlice
+         * @description One slice of a breakdown (status, rule, category, channel...).
+         */
+        CountSlice: {
+            /** Count */
+            count: number;
+            /** Key */
+            key: string;
+        };
+        /** CoverageRow */
+        CoverageRow: {
+            /** Covered */
+            covered: number;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "arr" | "renewal_date" | "owner" | "contacts" | "usage_30d" | "activity_30d";
+            /** Total */
+            total: number;
         };
         /** CrmPropertyOut */
         CrmPropertyOut: {
@@ -2661,6 +3056,47 @@ export interface components {
             /** Stage Label */
             stage_label?: string | null;
         };
+        /** DealTypeRow */
+        DealTypeRow: {
+            /**
+             * Deal Type
+             * @enum {string}
+             */
+            deal_type: "new" | "renewal" | "expansion" | "other";
+            /** Lost Count */
+            lost_count: number;
+            /** Open Amount */
+            open_amount: number;
+            /** Open Count */
+            open_count: number;
+            /** Won Amount */
+            won_amount: number;
+            /** Won Count */
+            won_count: number;
+        };
+        /** DecisionStats */
+        DecisionStats: {
+            /** Approval Rate */
+            approval_rate?: number | null;
+            /** Execution Success Rate */
+            execution_success_rate?: number | null;
+            /** Median Hours To Decision */
+            median_hours_to_decision?: number | null;
+        };
+        /** DecisionsWeek */
+        DecisionsWeek: {
+            /** Approved */
+            approved: number;
+            /** Edited */
+            edited: number;
+            /** Rejected */
+            rejected: number;
+            /**
+             * Week
+             * Format: date
+             */
+            week: string;
+        };
         /** DismissIn */
         DismissIn: {
             /** Note */
@@ -2749,6 +3185,15 @@ export interface components {
              * @enum {string}
              */
             status: "passed" | "failed" | "running";
+        };
+        /** EventMatching */
+        EventMatching: {
+            /** Events */
+            events: number;
+            /** Open Reviews */
+            open_reviews: number;
+            /** Unmatched */
+            unmatched: number;
         };
         /** EvidenceOut */
         EvidenceOut: {
@@ -2879,6 +3324,21 @@ export interface components {
             renewal_date?: string | null;
             /** Seats */
             seats?: number | null;
+        };
+        /** FindingCount */
+        FindingCount: {
+            /** Count */
+            count: number;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "high" | "medium" | "low";
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "risk" | "expansion";
         };
         /** FindingDetail */
         FindingDetail: {
@@ -3022,6 +3482,18 @@ export interface components {
             /** Value At Stake */
             value_at_stake?: number | null;
         };
+        /** FindingsWeek */
+        FindingsWeek: {
+            /** Expansion */
+            expansion: number;
+            /** Risk */
+            risk: number;
+            /**
+             * Week
+             * Format: date
+             */
+            week: string;
+        };
         /** FlagOut */
         FlagOut: {
             /** Default */
@@ -3047,6 +3519,18 @@ export interface components {
                 [key: string]: boolean;
             } | null;
         };
+        /** GrowthPoint */
+        GrowthPoint: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** New Orgs */
+            new_orgs: number;
+            /** New Users */
+            new_users: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -3054,6 +3538,58 @@ export interface components {
         };
         /** HealthOut */
         HealthOut: {
+            /** Status */
+            status: string;
+        };
+        /** HeatCell */
+        HeatCell: {
+            /** Category */
+            category: string;
+            /** Findings */
+            findings: number;
+            /**
+             * Top Severity
+             * @enum {string}
+             */
+            top_severity: "high" | "medium" | "low";
+        };
+        /** HeatRow */
+        HeatRow: {
+            /**
+             * Account Id
+             * Format: uuid
+             */
+            account_id: string;
+            /** Account Name */
+            account_name: string;
+            /** Arr */
+            arr?: number | null;
+            /** Cells */
+            cells: components["schemas"]["HeatCell"][];
+            /** Priority Score */
+            priority_score?: number | null;
+        };
+        /** IntegrationHealth */
+        IntegrationHealth: {
+            /** Connected */
+            connected: number;
+            /** Disconnected */
+            disconnected: number;
+            /** Needs Attention */
+            needs_attention: number;
+            /** Provider */
+            provider: string;
+        };
+        /** IntegrationHealthRow */
+        IntegrationHealthRow: {
+            /** Count */
+            count: number;
+            /** Errors */
+            errors: number;
+            /** Last Success At */
+            last_success_at?: string | null;
+            /** Provider */
+            provider: string;
             /** Status */
             status: string;
         };
@@ -3370,6 +3906,11 @@ export interface components {
                 [key: string]: boolean;
             };
             /**
+             * Home
+             * @default /today
+             */
+            home: string;
+            /**
              * Invitable Roles
              * @default []
              */
@@ -3380,6 +3921,11 @@ export interface components {
             org: components["schemas"]["MeOrg"];
             /** Permissions */
             permissions: string[];
+            /**
+             * Portals
+             * @default []
+             */
+            portals: ("control" | "work")[];
             /**
              * Role
              * @enum {string}
@@ -3465,6 +4011,52 @@ export interface components {
             slack_user_id?: string | null;
             /** Status */
             status?: ("active" | "disabled") | null;
+        };
+        /** MlReason */
+        MlReason: {
+            /**
+             * Direction
+             * @enum {string}
+             */
+            direction: "raises" | "lowers";
+            /** Text */
+            text: string;
+        };
+        /** MlScore */
+        MlScore: {
+            /**
+             * Band
+             * @enum {string}
+             */
+            band: "low" | "medium" | "high";
+            /** Probability */
+            probability: number;
+            /**
+             * Reasons
+             * @default []
+             */
+            reasons: components["schemas"]["MlReason"][];
+        };
+        /**
+         * MlScores
+         * @description Statistical churn / expansion scores for an account (separate from rule findings).
+         */
+        MlScores: {
+            churn: components["schemas"]["MlScore"];
+            expansion: components["schemas"]["MlScore"];
+            /** Model Version */
+            model_version?: string | null;
+            /** Scored At */
+            scored_at?: string | null;
+            /**
+             * Synthetic
+             * @default false
+             */
+            synthetic: boolean;
+            /** Trained On */
+            trained_on?: string | null;
+            /** View */
+            view: string;
         };
         /** NotificationOut */
         NotificationOut: {
@@ -3576,6 +4168,31 @@ export interface components {
              */
             type: "risk" | "expansion";
         };
+        /** OrgActivity */
+        OrgActivity: {
+            /** Accounts */
+            accounts: number;
+            /** Cards Decided */
+            cards_decided: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Last Activity At */
+            last_activity_at?: string | null;
+            /** Members */
+            members: number;
+            /** Name */
+            name: string;
+            /** Open Findings */
+            open_findings: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "active" | "suspended" | "deleted";
+        };
         /** OrgCreateIn */
         OrgCreateIn: {
             /**
@@ -3674,6 +4291,29 @@ export interface components {
              * @default 2
              */
             nightly_hour: number;
+        };
+        /** OverviewKpis */
+        OverviewKpis: {
+            /** Accounts At Risk */
+            accounts_at_risk: number;
+            /** Accounts Total */
+            accounts_total: number;
+            /** Arr At Risk */
+            arr_at_risk: number;
+            /** Arr Total */
+            arr_total: number;
+            /** Expansion Value */
+            expansion_value: number;
+            /** Open Findings */
+            open_findings: number;
+            /** Open High Findings */
+            open_high_findings: number;
+            /** Pending Approvals */
+            pending_approvals: number;
+            /** Renewals Due 90D */
+            renewals_due_90d: number;
+            /** Renewals Due 90D Arr */
+            renewals_due_90d_arr: number;
         };
         /** OwnerRef */
         OwnerRef: {
@@ -3778,6 +4418,23 @@ export interface components {
             /** Proposed */
             proposed?: string | null;
         };
+        /** PipelineTotals */
+        PipelineTotals: {
+            /** Lost Amount */
+            lost_amount: number;
+            /** Lost Count */
+            lost_count: number;
+            /** Open Amount */
+            open_amount: number;
+            /** Open Count */
+            open_count: number;
+            /** Win Rate */
+            win_rate?: number | null;
+            /** Won Amount */
+            won_amount: number;
+            /** Won Count */
+            won_count: number;
+        };
         /** PreviewChange */
         PreviewChange: {
             /** After */
@@ -3801,6 +4458,56 @@ export interface components {
             };
             /** Status */
             status: string;
+        };
+        /** RenewalMonth */
+        RenewalMonth: {
+            /** Arr */
+            arr: number;
+            /** At Risk Arr */
+            at_risk_arr: number;
+            /** Count */
+            count: number;
+            /**
+             * Month
+             * Format: date
+             */
+            month: string;
+        };
+        /** RiskBubble */
+        RiskBubble: {
+            /**
+             * Account Id
+             * Format: uuid
+             */
+            account_id: string;
+            /** Account Name */
+            account_name: string;
+            /** Arr */
+            arr?: number | null;
+            /** Open Findings */
+            open_findings: number;
+            /** Priority Score */
+            priority_score: number;
+            /** Renewal In Days */
+            renewal_in_days?: number | null;
+            /** Risk Level */
+            risk_level?: ("high" | "medium" | "low") | null;
+        };
+        /** RiskLevelRow */
+        RiskLevelRow: {
+            /** Arr */
+            arr: number;
+            /** Count */
+            count: number;
+            /** Key */
+            key: string;
+        };
+        /** RuleCount */
+        RuleCount: {
+            /** Hits */
+            hits: number;
+            /** Rule Key */
+            rule_key: string;
         };
         /** RuleHitOut */
         RuleHitOut: {
@@ -3982,6 +4689,13 @@ export interface components {
         };
         /** RunStep */
         RunStep: {
+            /**
+             * Data
+             * @default {}
+             */
+            data?: {
+                [key: string]: unknown;
+            };
             /** Detail */
             detail?: string | null;
             /** Duration Ms */
@@ -4008,6 +4722,20 @@ export interface components {
             password: string;
             /** Token */
             token: string;
+        };
+        /** SeverityWeek */
+        SeverityWeek: {
+            /** High */
+            high: number;
+            /** Low */
+            low: number;
+            /** Medium */
+            medium: number;
+            /**
+             * Week
+             * Format: date
+             */
+            week: string;
         };
         /** SignupIn */
         SignupIn: {
@@ -4057,6 +4785,43 @@ export interface components {
              */
             until: string;
         };
+        /** StageRow */
+        StageRow: {
+            /** Label */
+            label: string;
+            /** Open Amount */
+            open_amount: number;
+            /** Open Count */
+            open_count: number;
+            /** Stage */
+            stage: string;
+        };
+        /** SyncDay */
+        SyncDay: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Failed */
+            failed: number;
+            /** Partial */
+            partial: number;
+            /** Success */
+            success: number;
+        };
+        /** SyncPoint */
+        SyncPoint: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Failed */
+            failed: number;
+            /** Success */
+            success: number;
+        };
         /** SyncRunOut */
         SyncRunOut: {
             /** Error */
@@ -4104,6 +4869,43 @@ export interface components {
              * Format: uuid
              */
             sync_run_id: string;
+        };
+        /** TeamMemberRow */
+        TeamMemberRow: {
+            /** Accounts Owned */
+            accounts_owned: number;
+            /** Approved */
+            approved: number;
+            /** Arr Owned */
+            arr_owned: number;
+            /** Median Decision Hours */
+            median_decision_hours?: number | null;
+            /** Name */
+            name: string;
+            /** Open Findings */
+            open_findings: number;
+            /** Pending Cards */
+            pending_cards: number;
+            /** Rejected */
+            rejected: number;
+            /** Role */
+            role: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
+        /** TierRow */
+        TierRow: {
+            /** Approved */
+            approved: number;
+            /** Rejected */
+            rejected: number;
+            /** Tier */
+            tier: number;
+            /** Total */
+            total: number;
         };
         /** TimelineEvent */
         TimelineEvent: {
@@ -4229,6 +5031,13 @@ export interface components {
             evidence_ids: string[];
             /** Text */
             text: string;
+        };
+        /** Unassigned */
+        Unassigned: {
+            /** Accounts */
+            accounts: number;
+            /** Arr */
+            arr: number;
         };
         /** UsageIngestOut */
         UsageIngestOut: {
@@ -4879,6 +5688,37 @@ export interface operations {
             };
         };
     };
+    admin_analytics: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAnalytics"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     data_health: {
         parameters: {
             query?: never;
@@ -5284,6 +6124,250 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AdminOrgOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_automation: {
+        parameters: {
+            query?: {
+                /** @description First day (default: 90 days ago) */
+                from?: string | null;
+                /** @description Last day (default: today, UTC) */
+                to?: string | null;
+                /** @description Only accounts owned by this user */
+                owner_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsAutomation"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_data_health: {
+        parameters: {
+            query?: {
+                /** @description First day (default: 90 days ago) */
+                from?: string | null;
+                /** @description Last day (default: today, UTC) */
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsDataHealth"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_findings: {
+        parameters: {
+            query?: {
+                /** @description First day (default: 90 days ago) */
+                from?: string | null;
+                /** @description Last day (default: today, UTC) */
+                to?: string | null;
+                /** @description Only accounts owned by this user */
+                owner_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsFindings"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_overview: {
+        parameters: {
+            query?: {
+                /** @description First day (default: 90 days ago) */
+                from?: string | null;
+                /** @description Last day (default: today, UTC) */
+                to?: string | null;
+                /** @description Only accounts owned by this user */
+                owner_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsOverview"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_pipeline: {
+        parameters: {
+            query?: {
+                /** @description First day (default: 90 days ago) */
+                from?: string | null;
+                /** @description Last day (default: today, UTC) */
+                to?: string | null;
+                /** @description Only accounts owned by this user */
+                owner_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsPipeline"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_risk: {
+        parameters: {
+            query?: {
+                /** @description Only accounts owned by this user */
+                owner_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsRisk"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_team: {
+        parameters: {
+            query?: {
+                /** @description First day (default: 90 days ago) */
+                from?: string | null;
+                /** @description Last day (default: today, UTC) */
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsTeam"];
                 };
             };
             /** @description Validation Error */

@@ -4,6 +4,8 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys, invalidateAfterCardDecision, invalidateAfterFindingDecision } from "../api/query-keys";
 import { toast } from "sonner";
+import { isRunStepEvent } from "../agent-flow";
+import { finishRun, pushStepEvent } from "./run-live-store";
 
 interface RealtimeContextType {
   isConnected: boolean;
@@ -72,9 +74,31 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
           }
         });
 
+        // Live agent progress: every step of a run reports start / result with its real data.
+        es.addEventListener("run.step", (event: MessageEvent) => {
+          updateEventId(event);
+          try {
+            const payload = JSON.parse(event.data);
+            if (isRunStepEvent(payload?.data)) pushStepEvent(payload.data);
+          } catch {
+            // malformed event: the run page falls back to polling the persisted run
+          }
+        });
+
         es.addEventListener("run.updated", (event: MessageEvent) => {
           updateEventId(event);
           queryClient.invalidateQueries({ queryKey: queryKeys.runs() });
+          try {
+            const payload = JSON.parse(event.data);
+            const run = payload?.data;
+            if (run?.id) {
+              finishRun(run.account_id, run.id);
+              queryClient.invalidateQueries({ queryKey: queryKeys.runItem(run.id) });
+              if (run.account_id) queryClient.invalidateQueries({ queryKey: queryKeys.account(run.account_id) });
+            }
+          } catch {
+            // ignore JSON parse error
+          }
         });
 
         es.addEventListener("account.updated", (event: MessageEvent) => {

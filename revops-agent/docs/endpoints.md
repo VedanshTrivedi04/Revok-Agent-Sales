@@ -43,6 +43,14 @@
 | GET | `/api/v1/admin/flags` | E Admin Console | Vedansh | P5 | real | superadmin |
 | PUT | `/api/v1/admin/flags` | E Admin Console | Vedansh | P5 | real | superadmin |
 | GET | `/api/v1/admin/data-health` | E Admin Console | Rajwardhan | P6 | real | superadmin |
+| GET | `/api/v1/admin/analytics` | E Admin Console | Vedansh | P7 | real | superadmin |
+| GET | `/api/v1/analytics/overview` | G1 Control Analytics | Vedansh | P7 | real | analytics:view |
+| GET | `/api/v1/analytics/pipeline` | G1 Control Analytics | Vedansh | P7 | real | analytics:view |
+| GET | `/api/v1/analytics/risk` | G1 Control Analytics | Vedansh | P7 | real | analytics:view |
+| GET | `/api/v1/analytics/findings` | G1 Control Analytics | Vedansh | P7 | real | analytics:view |
+| GET | `/api/v1/analytics/team` | G1 Control Analytics | Vedansh | P7 | real | analytics:view |
+| GET | `/api/v1/analytics/automation` | G1 Control Analytics | Vedansh | P7 | real | analytics:view |
+| GET | `/api/v1/analytics/data-health` | G1 Control Analytics | Vedansh | P7 | real | analytics:view |
 | GET | `/api/v1/api-keys` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |
 | POST | `/api/v1/api-keys` | B5 Usage Data | Vedansh | P1 | real | apikeys:manage |
 | DELETE | `/api/v1/api-keys/{key_id}` | D10 API Keys | Vedansh | P1 | real | apikeys:manage |

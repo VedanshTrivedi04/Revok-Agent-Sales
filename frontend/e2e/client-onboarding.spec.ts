@@ -32,12 +32,12 @@ test("onboard a client with a temporary password, then the Owner sets their own"
   await page.locator("#password").fill(newPassword);
   await page.locator("#confirm").fill(newPassword);
   await page.getByRole("button", { name: /change password/i }).click();
-  await expect(page).toHaveURL(/\/today/);
+  await expect(page).toHaveURL(/\/control\/overview/); // a workspace Owner lands in the Control portal
 
   // The temporary password no longer works; the new one does
   await signOut(page);
   await signIn(page, email, temp);
   await expect(formAlert(page)).toContainText(/incorrect email or password/i);
   await signIn(page, email, newPassword);
-  await expect(page).toHaveURL(/\/today/);
+  await expect(page).toHaveURL(/\/control\/overview/); // a workspace Owner lands in the Control portal
 });

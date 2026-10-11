@@ -1,0 +1,20 @@
+meta {
+  name: analytics_pipeline
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/analytics/pipeline
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Open pipeline by stage and type, win rate, and the renewal calendar (admin+).
+  Page: G1 Control Analytics | Owner: V | Phase: P7 | Access: analytics:view
+}

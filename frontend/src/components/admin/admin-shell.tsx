@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BarChart3,
   Building2,
   Cpu,
   FlaskConical,
@@ -27,6 +28,7 @@ interface AdminNavItem {
 }
 
 const NAV: AdminNavItem[] = [
+  { name: "Analytics", href: "/admin/analytics", icon: BarChart3, permission: "platform:admin" },
   { name: "Orgs", href: "/admin/orgs", icon: Building2, permission: "platform:orgs" },
   { name: "Jobs", href: "/admin/jobs", icon: ListChecks, permission: "platform:jobs" },
   { name: "LLM health", href: "/admin/llm", icon: Cpu, permission: "platform:admin" },

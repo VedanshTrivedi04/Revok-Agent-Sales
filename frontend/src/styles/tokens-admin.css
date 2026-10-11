@@ -73,3 +73,26 @@
 .admin-theme ::-webkit-scrollbar-thumb:hover {
   background: var(--adm-accent);
 }
+
+/* ---- Platform Admin charts -------------------------------------------------------------
+   The admin portal is always dark, so chart colors are fixed here instead of following the OS
+   theme. The four series hues are the dark steps of the validated reference palette, checked
+   against this surface (#10261c) with the dataviz validator: lightness band, chroma floor,
+   adjacent CVD separation (worst dE 8.4) and 3:1 contrast all pass. Status colors reuse the
+   portal tokens and always appear with a text label. */
+.admin-theme {
+  --viz-surface: var(--adm-surface);
+  --viz-ink: var(--adm-text);
+  --viz-ink-2: #c5ddd0;
+  --viz-muted: var(--adm-text-muted);
+  --viz-grid: rgba(148, 185, 166, 0.14);
+  --viz-axis: rgba(148, 185, 166, 0.35);
+  --viz-1: #3987e5;
+  --viz-2: #d95926;
+  --viz-3: #199e70;
+  --viz-4: #c98500;
+  --viz-good: var(--adm-ok);
+  --viz-warning: var(--adm-warn);
+  --viz-critical: var(--adm-danger);
+  --viz-neutral: #4b6b5a;
+}

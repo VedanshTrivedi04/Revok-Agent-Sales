@@ -3,7 +3,7 @@
 Subscribes to Redis pub/sub on channel org:{org_id} and streams Server-Sent Events.
 
 Events:
-  card.updated, finding.updated, run.updated, sync.updated,
+  card.updated, finding.updated, run.step, run.updated, sync.updated,
   notification.created, member.updated, org.updated, review.updated
 
 Payload: {type, id, ts, data}

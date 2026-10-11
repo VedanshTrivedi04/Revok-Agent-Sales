@@ -32,7 +32,7 @@ export function Topbar() {
     try {
       await fetchApi("/auth/switch-org", { method: "POST", body: JSON.stringify({ org_id: orgId }) });
       queryClient.clear(); // per portals-and-impact.md §8: clear entire query cache on org switch
-      window.location.assign("/today"); // fresh boot under the new workspace
+      window.location.assign("/home"); // fresh boot under the new workspace, in that role's portal
     } catch (err) {
       handleApiErrorToast(err);
     }

@@ -1,0 +1,20 @@
+meta {
+  name: admin_analytics
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{baseUrl}}/api/v1/admin/analytics
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Platform-wide growth, activity, approval funnel and integration health (counts only).
+  Page: E Admin Console | Owner: V | Phase: P7 | Access: superadmin
+}

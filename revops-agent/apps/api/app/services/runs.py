@@ -91,6 +91,7 @@ async def get_run_service(
             status=cast(Any, s.get("status", "ok")),
             duration_ms=s.get("duration_ms"),
             detail=s.get("detail"),
+            data=s.get("data") or {},
         )
         for s in raw_steps
         if isinstance(s, dict)

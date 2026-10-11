@@ -16,6 +16,9 @@ import { queryKeys } from "../../../../lib/api/query-keys";
 import { Can } from "../../../../lib/auth/session-context";
 import { canRetry, formatDuration, llmUsage, ruleHits, runDurationMs, type RunDetail } from "../../../../lib/runs";
 import { RunStatusPill } from "../../../../components/runs/run-status-pill";
+import { AgentFlow } from "../../../../components/agent/agent-flow";
+import { flowFromRun } from "../../../../lib/agent-flow";
+import { useLiveRun } from "../../../../lib/realtime/run-live-store";
 
 const STEP_TONE: Record<string, string> = {
   ok: "text-green-700 dark:text-green-400",
@@ -34,6 +37,8 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
     // Keep watching a run that has not finished.
     refetchInterval: (q) => (q.state.data && ["queued", "running"].includes(q.state.data.status) ? 3000 : false),
   });
+  // While the run executes its steps arrive live; once it is committed the stored record is the truth.
+  const live = useLiveRun(run?.account_id ?? "");
 
   const retry = useMutation({
     mutationFn: () => fetchApi<{ agent_run_id: string }>(`/runs/${id}/retry`, { method: "POST" }),
@@ -144,6 +149,11 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
             </div>
           )}
         </div>
+
+        <AgentFlow
+          flow={!["completed", "failed", "skipped"].includes(run.status) && live?.runId === run.id ? live : flowFromRun(run)}
+          caption={["completed", "failed", "skipped"].includes(run.status) ? "Recorded run" : "Live"}
+        />
 
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs space-y-3">
           <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">Steps</h2>

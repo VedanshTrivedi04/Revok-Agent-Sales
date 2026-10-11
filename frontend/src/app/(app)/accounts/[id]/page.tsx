@@ -16,6 +16,8 @@ import { MlScoresCard, type MlScores } from "../../../../components/ui/ml-score"
 import { TableSkeleton } from "../../../../components/ui/table-skeleton";
 import { EmptyState } from "../../../../components/ui/empty-state";
 import { ErrorState } from "../../../../components/ui/error-state";
+import { AccountAgentFlow } from "../../../../components/agent/account-agent-flow";
+import { beginRun } from "../../../../lib/realtime/run-live-store";
 import { toast } from "sonner";
 import { handleApiErrorToast } from "../../../../lib/api/error";
 import {
@@ -121,6 +123,7 @@ export default function AccountDetailPage({
         method: "POST",
       }),
     onSuccess: (data) => {
+      beginRun(accountId, data.agent_run_id);
       toast.success("Analysis triggered successfully", {
         description: `Agent run queued (ID: ${data.agent_run_id.slice(0, 8)}...)`,
       });
@@ -272,6 +275,9 @@ export default function AccountDetailPage({
 
         {/* Predicted churn / expansion (ML model; absent until the account has been scored) */}
         {account.ml_scores && <MlScoresCard scores={account.ml_scores} />}
+
+        {/* What the agent does for this account: live while a run executes, the last run otherwise */}
+        <AccountAgentFlow accountId={accountId} />
 
         {/* Tab Navigation */}
         <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 text-xs font-semibold">

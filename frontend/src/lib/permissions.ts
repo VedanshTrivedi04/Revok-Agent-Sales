@@ -15,6 +15,9 @@ export type AppAction =
   | "view:review"
   | "view:runs"
   | "view:team"
+  | "view:control"
+  | "view:analytics"
+  | "view:rules"
   | "view:settings_profile"
   | "view:settings_connections"
   | "view:settings_notifications"
@@ -94,27 +97,34 @@ export function checkPermission(
     case "view:team":
       return permSet.has("review:view") || permSet.has("runs:view");
 
-    // Settings sub-pages
+    // The two customer portals (the API also reports them as `me.portals`)
+    case "view:control":
+    case "view:analytics":
+      return permSet.has("analytics:view");
+
+    case "view:rules":
+    case "view:settings_rules":
+      return permSet.has("rules:edit");
+
+    // Personal settings (Work portal)
     case "view:settings_profile":
     case "view:settings_connections":
     case "view:settings_notifications":
       return permSet.has("connect:own") || permSet.has("view:accounts");
 
+    // Workspace pages live in the Control portal: only people who can change them see them
     case "view:settings_integrations":
-      return permSet.has("view:accounts");
+      return permSet.has("integrations:manage");
 
     case "view:settings_general":
     case "view:settings_members":
-      return permSet.has("members:manage") || permSet.has("rules:edit");
+      return permSet.has("members:manage");
 
     case "view:settings_field_mapping":
-      return permSet.has("mapping:edit") || permSet.has("rules:edit");
-
-    case "view:settings_rules":
-      return permSet.has("rules:edit");
+      return permSet.has("mapping:edit");
 
     case "view:settings_autonomy":
-      return permSet.has("autonomy:edit") || permSet.has("rules:edit");
+      return permSet.has("autonomy:edit");
 
     case "view:settings_api_keys":
       return permSet.has("apikeys:manage");

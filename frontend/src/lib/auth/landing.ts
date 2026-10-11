@@ -25,5 +25,6 @@ export function landingPathFor(
   }
   if (opts.inviteToken) return `/invite/${encodeURIComponent(opts.inviteToken)}`;
   if (session.needs_onboarding) return "/onboarding/org";
-  return opts.nextPath || "/today";
+  // `home` is the landing page of the user's portal (Control or Work), reported by the API.
+  return opts.nextPath || session.home || "/today";
 }

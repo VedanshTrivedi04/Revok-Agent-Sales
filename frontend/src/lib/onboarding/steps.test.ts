@@ -19,7 +19,7 @@ describe("onboarding steps", () => {
   it("walks forward per flow and ends on Today", () => {
     expect(nextPath("org", true)).toBe("/onboarding/hubspot");
     expect(nextPath("hubspot", true)).toBe("/onboarding/field-mapping");
-    expect(nextPath("first-sync", true)).toBe("/today");
+    expect(nextPath("first-sync", true)).toBe("/home");
     expect(nextPath("slack", false)).toBe("/onboarding/google");
     expect(nextPath("google", false)).toBe("/onboarding/first-sync");
   });

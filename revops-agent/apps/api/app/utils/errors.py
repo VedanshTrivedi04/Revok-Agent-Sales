@@ -50,6 +50,10 @@ ERROR_CODES: dict[str, tuple[int, str]] = {
     "payload_too_large": (413, "The upload exceeds the size or row limit."),
     "internal_error": (500, "Unexpected server error."),
     "not_implemented": (501, "The endpoint is part of the contract but not built yet."),
+    "not_configured": (
+        503,
+        "This integration has no OAuth app configured on the server (client id / secret missing).",
+    ),
     "provider_error": (502, "An upstream provider (HubSpot, Google, Slack) returned an error."),
 }
 

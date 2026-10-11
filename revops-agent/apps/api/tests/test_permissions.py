@@ -7,7 +7,9 @@ from app.permissions import (
     Role,
     can,
     has_permission,
+    home_for,
     permissions_for,
+    portals_for,
 )
 
 Y, N, W = "Y", "N", "own"  # W = member allowed only on own resources
@@ -30,6 +32,7 @@ MATRIX: dict[Action, tuple[str, str, str, str, str]] = {
     Action.ORG_DELETE: (Y, N, N, N, N),
     Action.VIEW_ENTITY_REVIEW: (Y, Y, Y, N, N),
     Action.VIEW_RUNS: (Y, Y, Y, N, N),
+    Action.VIEW_ANALYTICS: (Y, Y, N, N, N),
 }
 ROLES = [Role.OWNER, Role.ADMIN, Role.MANAGER, Role.MEMBER, Role.VIEWER]
 
@@ -65,3 +68,13 @@ def test_permissions_for_lists_role_actions_sorted() -> None:
     assert permissions_for("viewer") == ["connect:own", "view:accounts"]
     assert "org:delete" in permissions_for("owner") and "org:delete" not in permissions_for("admin")
     assert set(PERMISSIONS) == set(Role)
+
+
+@pytest.mark.parametrize("role", ROLES)
+def test_portals_and_home_follow_permissions(role: Role) -> None:
+    if role in (Role.OWNER, Role.ADMIN):
+        assert portals_for(role) == ["control", "work"]
+        assert home_for(role) == "/control/overview"
+    else:
+        assert portals_for(role) == ["work"]
+        assert home_for(role) == "/today"

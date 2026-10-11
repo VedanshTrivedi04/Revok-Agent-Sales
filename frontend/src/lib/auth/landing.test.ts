@@ -9,6 +9,7 @@ const session = (over: Partial<AuthSessionOut> = {}): AuthSessionOut => ({
   memberships: [],
   needs_onboarding: false,
   must_change_password: false,
+  home: "/today",
   ...over,
 });
 
@@ -16,6 +17,12 @@ describe("landingPathFor", () => {
   it("goes to Today by default and honours a safe next path", () => {
     expect(landingPathFor(session())).toBe("/today");
     expect(landingPathFor(session(), { nextPath: "/inbox" })).toBe("/inbox");
+  });
+
+  it("lands in the portal the API reports, unless a next path was asked for", () => {
+    const control = session({ home: "/control/overview" });
+    expect(landingPathFor(control)).toBe("/control/overview");
+    expect(landingPathFor(control, { nextPath: "/inbox" })).toBe("/inbox");
   });
 
   it("sends brand-new users to workspace creation, and invited users to their invite", () => {

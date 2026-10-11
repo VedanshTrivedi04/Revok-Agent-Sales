@@ -25,6 +25,7 @@ export const queryKeys = {
   fieldMapping: () => ["field-mapping"] as const,
   apiKeys: () => ["api-keys"] as const,
   outcomes: () => ["outcomes"] as const,
+  analytics: (view: string, query = "") => ["analytics", view, query] as const,
 };
 
 /**

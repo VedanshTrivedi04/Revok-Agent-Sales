@@ -1,10 +1,11 @@
 from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import Depends, Request
+from fastapi import Depends, Query, Request
 
 from app.auth.deps import get_claims
 from app.contract import endpoint, real
+from app.schemas.admin_analytics import AdminAnalytics
 from app.schemas.identity import Ack
 from app.schemas.ops import (
     AdminJobOut,
@@ -21,6 +22,7 @@ from app.schemas.ops import (
     LlmHealthOut,
 )
 from app.services import admin as admin_service
+from app.services.admin_analytics import build_admin_analytics
 from app.utils.pagination import Page, PageParams, page_params
 
 PAGE = "E Admin Console"
@@ -181,6 +183,16 @@ async def data_health() -> DataHealthOut:
     raise NotImplementedError
 
 
+@endpoint(
+    "GET", "/admin/analytics", group="admin", page=PAGE, owner="V", phase=7, access="superadmin"
+)
+async def admin_analytics(
+    days: Annotated[int, Query(ge=7, le=365)] = 30,
+) -> AdminAnalytics:
+    """Platform-wide growth, activity, approval funnel and integration health (counts only)."""
+    raise NotImplementedError
+
+
 # ---------------------------------------------------------------------------
 # Real Handlers
 # ---------------------------------------------------------------------------
@@ -260,3 +272,8 @@ async def put_flag_real(request: Request, body: FlagPutIn, **_: Any) -> FlagOut:
 @real("data_health")
 async def data_health_real(request: Request, **_: Any) -> DataHealthOut:
     return await admin_service.get_data_health()
+
+
+@real("admin_analytics")
+async def admin_analytics_real(request: Request, days: int = 30, **_: Any) -> AdminAnalytics:
+    return await build_admin_analytics(days)

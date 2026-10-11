@@ -1,0 +1,20 @@
+meta {
+  name: analytics_data_health
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/v1/analytics/data-health
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Integration status, sync history, field coverage and event matching (admin+).
+  Page: G1 Control Analytics | Owner: V | Phase: P7 | Access: analytics:view
+}

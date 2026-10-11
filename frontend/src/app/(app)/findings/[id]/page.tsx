@@ -193,7 +193,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
             <div className="flex flex-wrap items-center gap-2">
               {ruleHits[0] && (
                 <Can action="rules:edit">
-                  <Link href={`/settings/rules#${ruleHits[0].rule_key}`} className={secondaryBtn}>
+                  <Link href={`/rules#${ruleHits[0].rule_key}`} className={secondaryBtn}>
                     <Sliders className="w-3.5 h-3.5" />
                     <span>Edit rule</span>
                   </Link>
