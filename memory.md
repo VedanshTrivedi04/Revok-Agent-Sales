@@ -1399,12 +1399,87 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 - Remote: origin/main
 - Status: cleanly pushed to GitHub
 
+### 2026-10-12 09:30
+
+**User Request**
+> bhai each and every device par responsive hona chaiye - mobile , tab , ipad, laptops different screens etc so user have smooth experinecne
+
+**Exploration**
+- Emulated and audited actual devices via Chrome DevTools MCP:
+  - Mobile Phones: 320x568 (iPhone SE / compact Android) and 375x667 (iPhone standard)
+  - Tablets / iPads: 768x1024 (iPad portrait), 1024x768 (iPad landscape)
+  - Laptops / Desktops: 1440x900 (standard laptop) and 1920x1080 (widescreen desktop)
+- Identified responsiveness edge cases across views:
+  - Missing Next.js official `export const viewport: Viewport` meta tag in `layout.tsx`, which can cause mobile Safari/Chrome to scale unpredictably.
+  - Topbar header on < 400px devices: unconstrained Org Switcher text and role badge pushed right-side icons into overflowing.
+  - Table columns squishing: `/control/clients`, `/control/members`, `/log`, `/findings/[id]`, `/inbox/[id]`, `/control/api-keys`, `/control/integrations`, and `ChartCard` data tables lacked minimum column widths or overflow containers.
+  - Filter bar alignment in `analytics-page.tsx`: staggered awkward wrapping on narrow mobile screens.
+  - Badges in `rules/page.tsx` and controls in `riddhi/page.tsx`: flex-wrap missing, risking line overflow.
+  - Outcomes cards grid: `sm:grid-cols-3` squished cards on 640px–768px tablet viewports.
+
+**Work Done**
+- `frontend/src/app/layout.tsx`:
+  - Added Next.js official `export const viewport: Viewport` with `width: "device-width", initialScale: 1, maximumScale: 5, viewportFit: "cover"`.
+- `frontend/src/components/layout/topbar.tsx`:
+  - Truncated org name with `max-w-[75px] xs:max-w-[105px] sm:max-w-[150px] md:max-w-none`.
+  - Added `max-w-[calc(100vw-2rem)]` to Org and User dropdown menus.
+  - Hidden redundant topbar role badge on `< sm` (already visible in drawer).
+- `frontend/src/components/layout/sidebar.tsx`:
+  - Added `pb-6` and `overscroll-contain` to navigation list for smooth touch scrolling.
+- `frontend/src/components/charts/analytics-page.tsx`:
+  - Fluidified Period and Account Owner filter controls with full-width mobile alignment.
+- Table Responsiveness:
+  - `control/clients/page.tsx`: Added `min-w-[760px]`.
+  - `control/members/page.tsx`: Added `min-w-[650px]` and responsive header wrap.
+  - `log/page.tsx`: Replaced `overflow-hidden` with `overflow-x-auto` and added `min-w-[680px]`.
+  - `findings/[id]/page.tsx`: Added `min-w-[560px]`.
+  - `inbox/[id]/page.tsx`: Added `min-w-[480px]`.
+  - `control/api-keys/page.tsx`: Added `min-w-[600px]`.
+  - `control/integrations/page.tsx`: Wrapped sync history table with `overflow-x-auto` and `min-w-[280px]`.
+  - `components/charts/chart-card.tsx`: Added `min-w-[420px]` to DataTable.
+  - `components/charts/heatmap.tsx`: Added `min-w-[520px]`.
+- Content Views:
+  - `rules/page.tsx`: Added `flex-wrap` to rule tags.
+  - `outcomes/page.tsx`: Changed grid to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5`.
+  - `review/page.tsx`: Added `flex-wrap` to candidate match dropdown and action buttons.
+  - `riddhi/page.tsx`: Added `flex-wrap` to language and voice controls.
+
+**Files Changed**
+- `frontend/src/app/layout.tsx`
+- `frontend/src/components/layout/topbar.tsx`
+- `frontend/src/components/layout/sidebar.tsx`
+- `frontend/src/components/charts/analytics-page.tsx`
+- `frontend/src/app/(control)/control/clients/page.tsx`
+- `frontend/src/app/(control)/control/members/page.tsx`
+- `frontend/src/app/(app)/log/page.tsx`
+- `frontend/src/app/(app)/findings/[id]/page.tsx`
+- `frontend/src/app/(app)/inbox/[id]/page.tsx`
+- `frontend/src/app/(control)/control/api-keys/page.tsx`
+- `frontend/src/app/(control)/control/integrations/page.tsx`
+- `frontend/src/components/charts/chart-card.tsx`
+- `frontend/src/components/charts/heatmap.tsx`
+- `frontend/src/app/(app)/rules/page.tsx`
+- `frontend/src/app/(app)/outcomes/page.tsx`
+- `frontend/src/app/(app)/review/page.tsx`
+- `frontend/src/app/(app)/riddhi/page.tsx`
+- `memory.md`
+
+**Verification**
+- Chrome DevTools visual testing:
+  - 320x568 (compact mobile): Zero horizontal overflow in header, filter bar stacked cleanly, cards fit within screen.
+  - 375x667 (iPhone SE): Clean topbar, horizontal table swipe tested and verified (scrolled 320px smoothly).
+  - 768x1024 (iPad portrait): 2-column cards, hamburger drawer, spacious layout.
+  - 1440x900 (Laptop): Persistent sidebar, 4-column metric cards, dual-column chart layout.
+  - 1920x1080 (Large monitor): Full-width dashboard with rich aesthetic.
+- Vitest: `pnpm test` passed 99/99 tests across 17 files.
+- Production build: `pnpm run build` compiled 61/61 routes cleanly with 0 errors.
+
+**Git**
+- Branch: main
+- Commit: <commit-hash>
+- Push: successful
+- Remote: origin/main
+- Status: cleanly pushed to GitHub
+
 **Notes**
-- Zero dummy data used anywhere; all data streams remain dynamic via FastAPI backend.
-
-
-
-
-
-
-
+- Zero dummy data used; all dynamic data feeds remain authentic via FastAPI backend.

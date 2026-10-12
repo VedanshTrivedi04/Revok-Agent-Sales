@@ -69,7 +69,7 @@ export default function OutcomesPage() {
         {/* Dynamic Metrics calculated directly from Backend response */}
         {!isLoading && !error && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               <div className="p-6 rounded-2xl border border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span className="font-semibold text-slate-600 dark:text-slate-400">Total ARR at Risk</span>

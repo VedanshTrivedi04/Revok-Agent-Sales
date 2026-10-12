@@ -63,7 +63,7 @@ export function Legend({ items }: { items: LegendItem[] }) {
 function DataTable({ table }: { table: ChartTable }) {
   return (
     <div className="max-h-80 overflow-auto rounded-xl border border-[#E2ECE5] dark:border-slate-800">
-      <table className="w-full text-left text-xs">
+      <table className="w-full min-w-[420px] text-left text-xs">
         <thead className="sticky top-0 bg-[#F7FAF8] dark:bg-slate-800 text-slate-600 dark:text-slate-300">
           <tr>
             {table.columns.map((c, i) => (

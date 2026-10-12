@@ -170,8 +170,8 @@ export default function ReviewPage() {
                   </div>
 
                   <div className="pt-3 border-t border-[#EDF2EE] dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 shrink-0">
                         Match with:
                       </label>
                       <select
@@ -182,7 +182,7 @@ export default function ReviewPage() {
                             [rev.id]: e.target.value,
                           })
                         }
-                        className="px-3 py-1.5 text-xs rounded-xl border border-[#DEE5E1] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0D3B36] focus:border-[#0D3B36]"
+                        className="px-3 py-1.5 text-xs rounded-xl border border-[#DEE5E1] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0D3B36] focus:border-[#0D3B36] flex-1 sm:flex-none max-w-full"
                       >
                         {candidates.length === 0 ? (
                           <option value="">No candidates found</option>
@@ -196,7 +196,7 @@ export default function ReviewPage() {
                       </select>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => ignoreMutation.mutate(rev.id)}

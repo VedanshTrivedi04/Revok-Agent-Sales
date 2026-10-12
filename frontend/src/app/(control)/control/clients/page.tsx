@@ -193,7 +193,7 @@ export default function ClientsPage() {
 
       {!isLoading && !error && accounts.length > 0 && (
         <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-          <table className="w-full text-left text-xs">
+          <table className="w-full min-w-[760px] text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 font-mono uppercase text-[10px]">
               <tr>
                 <th scope="col" className="p-3.5 pl-4">Client</th>

@@ -59,7 +59,7 @@ export function Heatmap({ columns, rows, unit, label }: HeatmapProps) {
   return (
     <div ref={ref} className="relative">
       <div className="overflow-x-auto">
-        <table className="w-full border-separate border-spacing-0.5 text-xs" aria-label={label}>
+        <table className="w-full min-w-[520px] border-separate border-spacing-0.5 text-xs" aria-label={label}>
           <thead>
             <tr>
               <th scope="col" className="w-40" />

@@ -350,7 +350,7 @@ export default function AssistantPage() {
           </div>
 
           {/* Language Selector + Voice Toggle */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {/* Indian Language Selector */}
             <div className="relative inline-flex items-center">
               <Globe className="w-3.5 h-3.5 absolute left-2.5 text-[#6A7B76] pointer-events-none" />

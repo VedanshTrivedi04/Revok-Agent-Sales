@@ -60,14 +60,16 @@ export function Topbar() {
           <button
             type="button"
             onClick={() => setIsOrgMenuOpen(!isOrgMenuOpen)}
-            className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-[#DEE5E1] dark:border-slate-800 bg-white dark:bg-[#0D1522] hover:border-[#0D3B36] hover:bg-[#F2F7F4] dark:hover:bg-slate-800/80 transition-all text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs"
+            className="flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1.5 rounded-full border border-[#DEE5E1] dark:border-slate-800 bg-white dark:bg-[#0D1522] hover:border-[#0D3B36] hover:bg-[#F2F7F4] dark:hover:bg-slate-800/80 transition-all text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs max-w-[140px] sm:max-w-[200px] md:max-w-none"
             aria-expanded={isOrgMenuOpen}
           >
-            <div className="w-5 h-5 rounded-full bg-[#EAF5EE] dark:bg-emerald-950/60 text-[#0D3B36] dark:text-emerald-400 flex items-center justify-center font-bold text-[10px]">
+            <div className="w-5 h-5 rounded-full bg-[#EAF5EE] dark:bg-emerald-950/60 text-[#0D3B36] dark:text-emerald-400 flex items-center justify-center font-bold text-[10px] shrink-0">
               <Building className="w-3 h-3" />
             </div>
-            <span>{me?.org?.name || (isLoading ? "Loading..." : "Workspace")}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+            <span className="truncate max-w-[75px] xs:max-w-[105px] sm:max-w-[150px] md:max-w-none">
+              {me?.org?.name || (isLoading ? "Loading..." : "Workspace")}
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
           </button>
 
           {isOrgMenuOpen && (
@@ -77,7 +79,7 @@ export function Topbar() {
                 onClick={() => setIsOrgMenuOpen(false)}
                 aria-hidden="true"
               />
-              <div className="absolute left-0 mt-1.5 w-60 rounded-2xl bg-white dark:bg-[#0D1522] border border-[#DEE5E1] dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1 text-xs">
+              <div className="absolute left-0 mt-1.5 w-60 max-w-[calc(100vw-2rem)] rounded-2xl bg-white dark:bg-[#0D1522] border border-[#DEE5E1] dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1 text-xs">
                 <div className="px-3 py-1.5 text-[10px] uppercase font-mono font-bold text-slate-400 dark:text-slate-500">
                   Organizations
                 </div>
@@ -109,11 +111,11 @@ export function Topbar() {
             const isOwner = me?.role === "owner" || activeRole?.toLowerCase() === "owner";
             router.push(isOwner ? "/control/clients" : "/accounts");
           }}
-          className="hidden sm:flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#DEE5E1] dark:border-slate-800 bg-[#F5F8F6] dark:bg-[#0D1522] text-slate-500 dark:text-slate-400 text-xs hover:border-[#0D3B36] hover:bg-white dark:hover:border-emerald-500/50 transition-all min-w-[240px] shadow-2xs"
+          className="hidden sm:flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#DEE5E1] dark:border-slate-800 bg-[#F5F8F6] dark:bg-[#0D1522] text-slate-500 dark:text-slate-400 text-xs hover:border-[#0D3B36] hover:bg-white dark:hover:border-emerald-500/50 transition-all min-w-[200px] md:min-w-[240px] shadow-2xs"
         >
-          <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-          <span className="flex-1 text-left">Search accounts...</span>
-          <kbd className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-white dark:bg-slate-800 border border-[#DEE5E1] dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-3xs">
+          <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+          <span className="flex-1 text-left truncate">Search accounts...</span>
+          <kbd className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-white dark:bg-slate-800 border border-[#DEE5E1] dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-3xs shrink-0">
             ⌘K
           </kbd>
         </button>
@@ -122,7 +124,7 @@ export function Topbar() {
       {/* Right: Authenticated Role Badge + Theme Toggle + Notifications Bell + User Menu */}
       <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         {activeRole && (
-          <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-full bg-[#EAF5EE] dark:bg-emerald-950/40 border border-[#CFE7D6] dark:border-emerald-800/60 text-xs shadow-2xs">
+          <div className="hidden sm:flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 rounded-full bg-[#EAF5EE] dark:bg-emerald-950/40 border border-[#CFE7D6] dark:border-emerald-800/60 text-xs shadow-2xs">
             <ShieldCheck className="w-3.5 h-3.5 text-[#0D3B36] dark:text-emerald-400 shrink-0" />
             <span className="text-[11px] font-medium text-emerald-900 dark:text-emerald-300 hidden md:inline">Role:</span>
             <span className="text-[10px] sm:text-xs font-bold text-[#0D3B36] dark:text-emerald-400 capitalize">
@@ -162,7 +164,7 @@ export function Topbar() {
                 onClick={() => setIsUserMenuOpen(false)}
                 aria-hidden="true"
               />
-              <div className="absolute right-0 mt-1.5 w-56 rounded-2xl bg-white dark:bg-[#0D1522] border border-slate-200/90 dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1 text-xs">
+              <div className="absolute right-0 mt-1.5 w-56 max-w-[calc(100vw-2rem)] rounded-2xl bg-white dark:bg-[#0D1522] border border-slate-200/90 dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1 text-xs">
                 <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
                   <div className="font-semibold text-slate-900 dark:text-slate-100">
                     {me?.user?.name || me?.user?.email || (isLoading ? "Loading..." : "Signed in")}

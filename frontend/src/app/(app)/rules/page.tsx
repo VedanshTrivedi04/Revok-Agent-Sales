@@ -137,7 +137,7 @@ export default function RulesSettingsPage() {
           {rules.map((rule) => (
             <div key={rule.key} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1.5 max-w-2xl">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-xs font-bold text-[#143C2E]">
                     {rule.key}
                   </span>

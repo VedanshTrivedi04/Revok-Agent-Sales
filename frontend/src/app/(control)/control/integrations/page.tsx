@@ -84,31 +84,33 @@ function SyncHistory({ integrationId }: { integrationId: string }) {
   if (error) return <p className="text-[11px] text-rose-600">Could not load sync history.</p>;
   if (!data || data.length === 0) return <p className="text-[11px] text-slate-400">No syncs yet.</p>;
   return (
-    <table className="w-full text-[11px]">
-      <thead className="text-slate-400 text-left">
-        <tr>
-          <th className="py-1 font-medium">Started</th>
-          <th className="py-1 font-medium">Status</th>
-          <th className="py-1 font-medium">Result</th>
-        </tr>
-      </thead>
-      <tbody className="text-slate-600 dark:text-slate-300">
-        {data.slice(0, 8).map((r) => {
-          const total = Object.entries(r.stats)
-            .filter(([k]) => k.endsWith("_upserted") || k.endsWith("_inserted"))
-            .reduce((n, [, v]) => n + v, 0);
-          return (
-            <tr key={r.id} className="border-t border-slate-100 dark:border-slate-800">
-              <td className="py-1">
-                <DateText date={r.started_at} />
-              </td>
-              <td className="py-1 capitalize">{r.status}</td>
-              <td className="py-1">{r.error ? <span className="text-rose-600">{r.error}</span> : `${total} records changed`}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[280px] text-[11px]">
+        <thead className="text-slate-400 text-left">
+          <tr>
+            <th className="py-1 font-medium">Started</th>
+            <th className="py-1 font-medium">Status</th>
+            <th className="py-1 font-medium">Result</th>
+          </tr>
+        </thead>
+        <tbody className="text-slate-600 dark:text-slate-300">
+          {data.slice(0, 8).map((r) => {
+            const total = Object.entries(r.stats)
+              .filter(([k]) => k.endsWith("_upserted") || k.endsWith("_inserted"))
+              .reduce((n, [, v]) => n + v, 0);
+            return (
+              <tr key={r.id} className="border-t border-slate-100 dark:border-slate-800">
+                <td className="py-1">
+                  <DateText date={r.started_at} />
+                </td>
+                <td className="py-1 capitalize">{r.status}</td>
+                <td className="py-1">{r.error ? <span className="text-rose-600">{r.error}</span> : `${total} records changed`}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

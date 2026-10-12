@@ -304,7 +304,7 @@ export default function FindingDetailPage({ params }: { params: Promise<{ id: st
           <div className={card}>
             <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">Evidence</h2>
             <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+              <table className="w-full min-w-[560px] text-xs">
                 <thead>
                   <tr className="text-left text-slate-500 border-b border-slate-100 dark:border-slate-800">
                     <th className="py-2 pr-3 font-semibold">Key</th>

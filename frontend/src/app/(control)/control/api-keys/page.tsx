@@ -135,7 +135,7 @@ export default function ApiKeysSettingsPage() {
         ) : (
           <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full min-w-[600px] text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/20 text-slate-500 font-semibold">
                     <th className="py-3 px-5">Name & Prefix</th>

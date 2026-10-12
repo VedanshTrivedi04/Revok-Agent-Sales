@@ -45,11 +45,11 @@ export function AnalyticsPage({ title, description, filters = { range: true, own
         </div>
 
         {(filters.range || filters.owner) && (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             {filters.range && (
-              <label className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                <span>Period</span>
-                <select className={selectClass} value={days} onChange={(e) => setDays(Number(e.target.value))}>
+              <label className="flex items-center justify-between sm:justify-start gap-2 text-xs text-slate-500 dark:text-slate-400 flex-1 sm:flex-none">
+                <span className="shrink-0 font-medium">Period</span>
+                <select className={`${selectClass} flex-1 sm:flex-none`} value={days} onChange={(e) => setDays(Number(e.target.value))}>
                   {RANGE_PRESETS.map((p) => (
                     <option key={p.days} value={p.days}>
                       {p.label}
@@ -59,9 +59,9 @@ export function AnalyticsPage({ title, description, filters = { range: true, own
               </label>
             )}
             {filters.owner && (
-              <label className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                <span>Account owner</span>
-                <select className={selectClass} value={ownerId ?? ""} onChange={(e) => setOwnerId(e.target.value || null)}>
+              <label className="flex items-center justify-between sm:justify-start gap-2 text-xs text-slate-500 dark:text-slate-400 flex-1 sm:flex-none">
+                <span className="shrink-0 font-medium">Account owner</span>
+                <select className={`${selectClass} flex-1 sm:flex-none`} value={ownerId ?? ""} onChange={(e) => setOwnerId(e.target.value || null)}>
                   <option value="">Everyone</option>
                   {owners.map((m) => (
                     <option key={m.user_id} value={m.user_id}>

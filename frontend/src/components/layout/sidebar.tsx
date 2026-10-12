@@ -169,7 +169,7 @@ function SidebarContent({
       )}
 
       {/* Navigation List */}
-      <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 pb-6 space-y-4 overflow-y-auto overscroll-contain">
         {visible.map((section) => (
           <div key={section.title} className="space-y-1">
             <div className="px-3 pb-1 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider font-mono">

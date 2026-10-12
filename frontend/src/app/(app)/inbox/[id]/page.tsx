@@ -447,7 +447,7 @@ export default function CardDetailPage({ params }: { params: Promise<{ id: strin
             {card.type === "crm_field_update" && (
               <div className="space-y-3">
                 <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
-                  <table className="w-full">
+                  <table className="w-full min-w-[480px] text-xs">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-left">
                       <tr>
                         <th className="px-3 py-2 font-semibold">Field</th>
