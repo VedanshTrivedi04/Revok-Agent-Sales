@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Sidebar } from "../../components/layout/sidebar";
 import { Topbar } from "../../components/layout/topbar";
 import { IntegrationBanner } from "../../components/layout/integration-banner";
@@ -9,10 +10,25 @@ import { RiddhiFloatingAssistant } from "../../components/assistant/riddhi-float
 import { useMe } from "../../lib/auth/session-context";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { me, isLoading } = useMe();
+  const router = useRouter();
+  const { me, activeRole, isLoading } = useMe();
+
+  const isOwner = me?.role === "owner" || activeRole?.toLowerCase() === "owner";
+  const hasWorkAccess = !isOwner && (me?.portals ? me.portals.includes("work") : true);
+
+  useEffect(() => {
+    if (!isLoading && me && !hasWorkAccess) {
+      router.replace(me.home || "/control/overview");
+    }
+  }, [isLoading, me, hasWorkAccess, router]);
 
   if (!isLoading && me?.org && (me.org.status === "suspended" || me.org.status === "deleted")) {
     return <OrgStatusNotice status={me.org.status} orgName={me.org.name} />;
+  }
+
+  // Prevent flashing Work content while redirecting Owner to Control
+  if (!isLoading && me && !hasWorkAccess) {
+    return null;
   }
 
   return (

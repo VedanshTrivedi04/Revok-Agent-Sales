@@ -73,7 +73,10 @@ def test_permissions_for_lists_role_actions_sorted() -> None:
 
 @pytest.mark.parametrize("role", ROLES)
 def test_portals_and_home_follow_permissions(role: Role) -> None:
-    if role in (Role.OWNER, Role.ADMIN):
+    if role is Role.OWNER:
+        assert portals_for(role) == ["control"]
+        assert home_for(role) == "/control/overview"
+    elif role is Role.ADMIN:
         assert portals_for(role) == ["control", "work"]
         assert home_for(role) == "/control/overview"
     else:

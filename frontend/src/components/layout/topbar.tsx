@@ -93,7 +93,10 @@ export function Topbar() {
         {/* Global Search button / ⌘K */}
         <button
           type="button"
-          onClick={() => router.push("/accounts")}
+          onClick={() => {
+            const isOwner = me?.role === "owner" || activeRole?.toLowerCase() === "owner";
+            router.push(isOwner ? "/control/clients" : "/accounts");
+          }}
           className="hidden sm:flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#DEE5E1] dark:border-slate-800 bg-[#F5F8F6] dark:bg-[#0D1522] text-slate-500 dark:text-slate-400 text-xs hover:border-[#0D3B36] hover:bg-white dark:hover:border-emerald-500/50 transition-all min-w-[240px] shadow-2xs"
         >
           <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />

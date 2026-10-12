@@ -67,8 +67,12 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
   const pathname = usePathname();
   const { can, me, activeRole, isLoading } = useMe();
   const home = PORTALS[portal].href;
-  // Which portals exist for this user comes from the API (`me.portals`), never from the role name.
-  const portals = (me?.portals ?? []).filter((p): p is Portal => p in PORTALS);
+  // Which portals exist for this user comes from the API (`me.portals`).
+  // Owner only has access to Control portal (no Work portal).
+  const isOwner = me?.role === "owner" || activeRole?.toLowerCase() === "owner";
+  const portals = (me?.portals ?? [])
+    .filter((p): p is Portal => p in PORTALS)
+    .filter((p) => !(isOwner && p === "work"));
 
   // Filter items strictly using can(action) - hidden items are never rendered
   const visible = sections

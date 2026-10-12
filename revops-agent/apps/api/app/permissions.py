@@ -86,7 +86,10 @@ PORTAL_HOME: dict[str, str] = {PORTAL_CONTROL: "/control/overview", PORTAL_WORK:
 
 def portals_for(role: Role | str) -> list[str]:
     """Portals this role may enter, landing portal first."""
-    granted = PERMISSIONS[Role(role)]
+    r = Role(role)
+    if r is Role.OWNER:
+        return [PORTAL_CONTROL]
+    granted = PERMISSIONS[r]
     portals = []
     if A.VIEW_ANALYTICS in granted:
         portals.append(PORTAL_CONTROL)
