@@ -9,8 +9,10 @@ import {
   LogOut,
   ShieldCheck,
   Check,
+  Menu,
 } from "lucide-react";
 import { useMe } from "../../lib/auth/session-context";
+import { useMobileNav } from "./mobile-nav-context";
 import Link from "next/link";
 
 import { useRouter } from "next/navigation";
@@ -24,6 +26,7 @@ export function Topbar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { me, activeRole, signOut, isLoading } = useMe();
+  const { open: openMobileNav } = useMobileNav();
   const [isOrgMenuOpen, setIsOrgMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
@@ -40,9 +43,18 @@ export function Topbar() {
   };
 
   return (
-    <header className="h-16 border-b border-[#E2ECE5] dark:border-slate-800/80 bg-white/95 dark:bg-[#080C11]/90 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_0_0_#E2ECE5] dark:shadow-none transition-colors">
-      {/* Left: Org Switcher & Search */}
-      <div className="flex items-center gap-4">
+    <header className="h-16 border-b border-[#E2ECE5] dark:border-slate-800/80 bg-white/95 dark:bg-[#080C11]/90 backdrop-blur-md px-3.5 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_0_0_#E2ECE5] dark:shadow-none transition-colors">
+      {/* Left: Mobile Nav Toggle & Org Switcher & Search */}
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+        {/* Mobile Hamburger Trigger (visible on < lg screens) */}
+        <button
+          type="button"
+          onClick={openMobileNav}
+          aria-label="Open navigation menu"
+          className="lg:hidden p-2 -ml-1 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0D1522] text-slate-700 dark:text-slate-200 hover:bg-[#F2F7F4] dark:hover:bg-slate-800 transition-colors shadow-2xs shrink-0 cursor-pointer"
+        >
+          <Menu className="w-4 h-4" />
+        </button>
         {/* Org Switcher */}
         <div className="relative">
           <button
@@ -108,12 +120,12 @@ export function Topbar() {
       </div>
 
       {/* Right: Authenticated Role Badge + Theme Toggle + Notifications Bell + User Menu */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         {activeRole && (
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5EE] dark:bg-emerald-950/40 border border-[#CFE7D6] dark:border-emerald-800/60 text-xs shadow-2xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#0D3B36] dark:text-emerald-400" />
-            <span className="text-[11px] font-medium text-emerald-900 dark:text-emerald-300 hidden sm:inline">Role:</span>
-            <span className="text-xs font-bold text-[#0D3B36] dark:text-emerald-400 capitalize">
+          <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-full bg-[#EAF5EE] dark:bg-emerald-950/40 border border-[#CFE7D6] dark:border-emerald-800/60 text-xs shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#0D3B36] dark:text-emerald-400 shrink-0" />
+            <span className="text-[11px] font-medium text-emerald-900 dark:text-emerald-300 hidden md:inline">Role:</span>
+            <span className="text-[10px] sm:text-xs font-bold text-[#0D3B36] dark:text-emerald-400 capitalize">
               {activeRole}
             </span>
           </div>

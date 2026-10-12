@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -12,6 +12,8 @@ import {
   ListChecks,
   LogOut,
   Loader2,
+  Menu,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { useAdmin } from "../../lib/auth/admin-session";
@@ -19,6 +21,7 @@ import { environmentLabel } from "../../lib/admin/environment";
 import { InternalBadge } from "./internal-badge";
 import { AdminForbidden } from "./admin-forbidden";
 import { ErrorState } from "../ui/error-state";
+import clsx from "clsx";
 
 interface AdminNavItem {
   name: string;
@@ -56,6 +59,7 @@ function EnvironmentChip({ environment }: { environment: string | undefined }) {
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { admin, can, isLoading, isForbidden, error, refetch, signOut } = useAdmin();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -79,13 +83,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   const visible = NAV.filter((item) => can(item.permission));
 
-  return (
-    <div className="flex min-h-screen bg-[#FAF9F5] text-slate-900 selection:bg-emerald-600 selection:text-white">
-      <aside
-        className="sticky top-0 flex h-screen w-64 flex-shrink-0 flex-col border-r border-slate-800/80 bg-[#080C11] text-slate-300 z-30"
-        aria-label="Platform Admin navigation"
-      >
-        <div className="flex h-16 items-center gap-3 border-b border-slate-800/80 px-5">
+  const navContent = (onClose?: () => void) => (
+    <div className="flex flex-col h-full overflow-hidden bg-[#080C11] text-slate-300">
+      <div className="flex h-16 items-center justify-between border-b border-slate-800/80 px-5">
+        <div className="flex items-center gap-3">
           <img
             src="/primary logo.png"
             alt="Revora"
@@ -103,49 +104,107 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </span>
           </div>
         </div>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close navigation"
+            className="p-1.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
 
-        <nav className="flex-1 space-y-1.5 px-3 py-4">
-          {visible.map((item) => {
-            const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all ${
-                  active
-                    ? "bg-[#143C2E] text-white font-bold shadow-xs ring-1 ring-emerald-500/30"
-                    : "text-slate-400 hover:bg-slate-900/60 hover:text-white"
-                }`}
-              >
-                <Icon className={`h-4 w-4 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`} aria-hidden="true" />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
+      <nav className="flex-1 space-y-1.5 px-3 py-4 overflow-y-auto">
+        {visible.map((item) => {
+          const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onClose}
+              aria-current={active ? "page" : undefined}
+              className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all ${
+                active
+                  ? "bg-[#143C2E] text-white font-bold shadow-xs ring-1 ring-emerald-500/30"
+                  : "text-slate-400 hover:bg-slate-900/60 hover:text-white"
+              }`}
+            >
+              <Icon className={`h-4 w-4 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`} aria-hidden="true" />
+              <span>{item.name}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
-        <p className="border-t border-slate-800/80 p-4 text-[11px] leading-relaxed text-slate-500">
-          Counts, statuses and error text only. Customer content is never shown here.
-        </p>
+      <p className="border-t border-slate-800/80 p-4 text-[11px] leading-relaxed text-slate-500">
+        Counts, statuses and error text only. Customer content is never shown here.
+      </p>
+    </div>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-[#FAF9F5] text-slate-900 selection:bg-emerald-600 selection:text-white">
+      {/* Desktop Persistent Sidebar */}
+      <aside
+        className="hidden lg:flex sticky top-0 h-screen w-64 flex-shrink-0 flex-col border-r border-slate-800/80 bg-[#080C11] text-slate-300 z-30 select-none"
+        aria-label="Platform Admin navigation"
+      >
+        {navContent()}
       </aside>
 
+      {/* Mobile Drawer */}
+      <div
+        className={clsx(
+          "fixed inset-0 z-50 lg:hidden transition-all duration-300",
+          mobileOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
+        )}
+      >
+        <div
+          className={clsx(
+            "fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300",
+            mobileOpen ? "opacity-100" : "opacity-0"
+          )}
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+        <aside
+          className={clsx(
+            "fixed inset-y-0 left-0 w-72 max-w-[85vw] flex flex-col bg-[#080C11] shadow-2xl border-r border-slate-800 transition-transform duration-300 ease-out select-none",
+            mobileOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+          aria-label="Mobile Admin Navigation Drawer"
+        >
+          {navContent(() => setMobileOpen(false))}
+        </aside>
+      </div>
+
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-slate-200/90 bg-[#FAF9F5]/90 px-6 backdrop-blur">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-slate-200/90 bg-[#FAF9F5]/90 px-3.5 sm:px-6 backdrop-blur">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Hamburger for mobile */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open admin navigation menu"
+              className="lg:hidden p-2 -ml-1 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 transition-colors shadow-2xs shrink-0 cursor-pointer"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
             <InternalBadge />
             <EnvironmentChip environment={admin.environment} />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right leading-tight">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="text-right leading-tight hidden sm:block">
               <div className="text-xs font-bold text-slate-900">{admin.name || "Platform operator"}</div>
               <div className="text-[11px] text-slate-500 font-mono">{admin.email}</div>
             </div>
             <button
               type="button"
               onClick={() => void signOut()}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition-all"
+              className="inline-flex cursor-pointer items-center gap-1.5 sm:gap-2 rounded-xl border border-slate-200/90 bg-white px-3 sm:px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition-all"
             >
               <LogOut className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
               <span>Sign out</span>
@@ -153,8 +212,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 p-6 lg:p-8 bg-[#FAF9F5]">
-          <div className="mx-auto max-w-7xl space-y-6">{children}</div>
+        <main className="flex-1 p-3.5 sm:p-5 lg:p-8 bg-[#FAF9F5]">
+          <div className="mx-auto max-w-7xl space-y-5 sm:space-y-6">{children}</div>
         </main>
       </div>
     </div>

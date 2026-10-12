@@ -117,7 +117,11 @@ export function StatTile({ label, value, hint, href, flag, featured = false, tre
 }
 
 export function StatRow({ children }: { children: React.ReactNode }) {
-  return <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{children}</div>;
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+      {children}
+    </div>
+  );
 }
 
 interface MeterProps {

@@ -104,7 +104,7 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
             )}
           </div>
 
-          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+          <dl className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4 text-xs">
             <div>
               <dt className="text-slate-400">Started</dt>
               <dd className="font-medium text-slate-900 dark:text-slate-100">
@@ -166,7 +166,7 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
           ) : (
             <ol className="space-y-2">
               {run.steps.map((s, i) => (
-                <li key={`${s.name}-${i}`} className="grid grid-cols-[8rem_1fr_5rem] items-center gap-3 text-xs">
+                <li key={`${s.name}-${i}`} className="grid grid-cols-[minmax(5.5rem,7rem)_1fr_4rem] sm:grid-cols-[8rem_1fr_5rem] items-center gap-2 sm:gap-3 text-xs">
                   <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">{s.name}</span>
                   <span className="h-2 rounded bg-slate-100 dark:bg-slate-800 overflow-hidden">
                     <span

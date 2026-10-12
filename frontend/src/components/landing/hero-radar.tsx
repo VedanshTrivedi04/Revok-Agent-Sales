@@ -38,17 +38,17 @@ export function HeroRadar({
       <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-emerald-200/50 via-teal-100/30 to-emerald-50/20 blur-3xl pointer-events-none" />
 
       {/* Concentric Orbital Rings */}
-      <div className="absolute w-[440px] h-[440px] rounded-full border border-emerald-300/40 pointer-events-none" />
-      <div className="absolute w-[340px] h-[340px] rounded-full border border-emerald-400/30 pointer-events-none" />
-      <div className="absolute w-[230px] h-[230px] rounded-full border border-emerald-500/25 border-dashed pointer-events-none" />
+      <div className="absolute w-[88%] h-[88%] rounded-full border border-emerald-300/40 pointer-events-none" />
+      <div className="absolute w-[68%] h-[68%] rounded-full border border-emerald-400/30 pointer-events-none" />
+      <div className="absolute w-[46%] h-[46%] rounded-full border border-emerald-500/25 border-dashed pointer-events-none" />
 
       {/* 360-degree Sweeping Radar Scanner Line */}
-      <div className="absolute w-[440px] h-[440px] rounded-full overflow-hidden pointer-events-none animate-radar-sweep opacity-30">
+      <div className="absolute w-[88%] h-[88%] rounded-full overflow-hidden pointer-events-none animate-radar-sweep opacity-30">
         <div className="w-1/2 h-1/2 bg-gradient-to-br from-emerald-500/60 via-teal-400/20 to-transparent origin-bottom-right" />
       </div>
 
       {/* Subtle pulsing outer ring */}
-      <div className="absolute w-[390px] h-[390px] rounded-full border border-emerald-500/20 animate-radar-pulse pointer-events-none" />
+      <div className="absolute w-[78%] h-[78%] rounded-full border border-emerald-500/20 animate-radar-pulse pointer-events-none" />
 
       {/* Active Laser Connection Line to Selected Signal */}
       <svg

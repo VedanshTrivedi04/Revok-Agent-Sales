@@ -361,18 +361,18 @@ export function RiddhiFloatingAssistant() {
     <>
       {/* 1. Sticky Floating Chatbot Logo Button (Shown when closed) */}
       {mode === "closed" && (
-        <div className="fixed bottom-6 right-6 z-50">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40">
           <button
             type="button"
             onClick={() => setMode("compact")}
-            className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-[#0D3B36] via-[#114E45] to-[#0A332E] text-white shadow-xl hover:shadow-2xl border-2 border-emerald-400/50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="group relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#0D3B36] via-[#114E45] to-[#0A332E] text-white shadow-xl hover:shadow-2xl border-2 border-emerald-400/50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             aria-label="Open Riddhi AI Assistant"
           >
             {/* Ambient Pulse Ping */}
             <span className="absolute -inset-1 rounded-full bg-emerald-500/20 animate-ping opacity-60 pointer-events-none" />
 
             {/* Chatbot Logo Image */}
-            <div className="relative w-10 h-10 flex items-center justify-center">
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center">
               <Image
                 src="/chatbot.png"
                 alt={`${ASSISTANT_NAME} AI`}
@@ -384,12 +384,12 @@ export function RiddhiFloatingAssistant() {
             </div>
 
             {/* Online Beacon Status Badge */}
-            <span className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-[#10B981] border-2 border-white dark:border-slate-900 shadow-xs flex items-center justify-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+            <span className="absolute top-0 right-0 w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-[#10B981] border-2 border-white dark:border-slate-900 shadow-xs flex items-center justify-center">
+              <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-white" />
             </span>
 
             {/* Hover Tooltip Pill */}
-            <span className="absolute right-16 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-[#0D3B36] text-white text-xs font-semibold shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-emerald-400/30">
+            <span className="hidden sm:inline-block absolute right-16 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-[#0D3B36] text-white text-xs font-semibold shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-emerald-400/30">
               Ask {ASSISTANT_NAME} AI
             </span>
           </button>
@@ -413,7 +413,7 @@ export function RiddhiFloatingAssistant() {
             className={clsx(
               "z-50 bg-white dark:bg-[#090E17] border border-[#DEE5E1] dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-out",
               mode === "compact" &&
-                "fixed bottom-6 right-6 w-[92vw] sm:w-[440px] md:w-[460px] h-[640px] max-h-[86vh] rounded-3xl animate-in fade-in slide-in-from-bottom-5 zoom-in-95",
+                "fixed bottom-3 right-3 sm:bottom-6 sm:right-6 w-[calc(100vw-1.5rem)] sm:w-[440px] md:w-[460px] max-w-[460px] h-[min(620px,calc(100vh-2rem))] max-h-[88vh] rounded-2xl sm:rounded-3xl animate-in fade-in slide-in-from-bottom-5 zoom-in-95",
               mode === "fullscreen" &&
                 "fixed inset-0 sm:inset-4 md:inset-6 w-auto h-auto rounded-none sm:rounded-3xl animate-in fade-in zoom-in-95"
             )}
@@ -445,15 +445,15 @@ export function RiddhiFloatingAssistant() {
               </div>
 
               {/* Right Controls: Language, Audio, Fullscreen & Close */}
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                 {/* Language Select Pill */}
                 <div className="relative inline-flex items-center">
-                  <Globe className="w-3 h-3 absolute left-2 text-slate-500 pointer-events-none" />
+                  <Globe className="w-3 h-3 absolute left-1.5 sm:left-2 text-slate-500 pointer-events-none" />
                   <select
                     aria-label="Language"
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
-                    className="pl-6 pr-5 py-1 rounded-full border border-[#E2ECE5] dark:border-slate-700 bg-white dark:bg-slate-800 text-[10px] font-semibold text-slate-800 dark:text-slate-200 cursor-pointer appearance-none focus:outline-none"
+                    className="pl-5 sm:pl-6 pr-4 sm:pr-5 py-1 rounded-full border border-[#E2ECE5] dark:border-slate-700 bg-white dark:bg-slate-800 text-[10px] font-semibold text-slate-800 dark:text-slate-200 cursor-pointer appearance-none focus:outline-none max-w-[84px] sm:max-w-none"
                   >
                     {INDIAN_LANGUAGES.map((l) => (
                       <option key={l.code} value={l.code}>

@@ -119,7 +119,7 @@ export default function RunsPage() {
         {!isLoading && !error && runs.length > 0 && (
           <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full min-w-[700px] text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-500 font-semibold font-mono text-[10px] uppercase">
                     <th className="py-3 px-4">Account</th>

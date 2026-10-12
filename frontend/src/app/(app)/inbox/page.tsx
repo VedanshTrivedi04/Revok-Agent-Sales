@@ -282,12 +282,12 @@ export default function InboxPage() {
 
         {/* Bulk Action Bar (When Items Selected) */}
         {selectedCardIds.size > 0 && statusTab === "pending_approval" && (
-          <div className="p-3 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 flex items-center justify-between text-xs animate-in">
+          <div className="p-3 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-in">
             <div className="flex items-center gap-2 text-emerald-900 dark:text-emerald-200 font-semibold">
-              <CheckSquare className="w-4 h-4 text-[#143C2E] dark:text-emerald-400" />
+              <CheckSquare className="w-4 h-4 text-[#143C2E] dark:text-emerald-400 shrink-0" />
               <span>{selectedCardIds.size} cards selected</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Can action="assign:card">
                 <button
                   type="button"
@@ -432,7 +432,7 @@ export default function InboxPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex flex-wrap items-center gap-2 shrink-0">
                       {card.status === "pending_approval" && (
                         <>
                           {card.tier === 3 ? (

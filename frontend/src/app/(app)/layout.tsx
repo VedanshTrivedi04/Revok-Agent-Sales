@@ -6,6 +6,7 @@ import { Sidebar } from "../../components/layout/sidebar";
 import { Topbar } from "../../components/layout/topbar";
 import { IntegrationBanner } from "../../components/layout/integration-banner";
 import { OrgStatusNotice } from "../../components/layout/org-status-notice";
+import { MobileNavProvider } from "../../components/layout/mobile-nav-context";
 import { RiddhiFloatingAssistant } from "../../components/assistant/riddhi-floating-assistant";
 import { useMe } from "../../lib/auth/session-context";
 
@@ -32,26 +33,28 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F2F5F3] dark:bg-[#070B11] text-slate-900 dark:text-slate-100 selection:bg-[#0D3B36] selection:text-white transition-colors duration-150">
-      {/* App Sidebar */}
-      <Sidebar />
+    <MobileNavProvider>
+      <div className="flex h-screen overflow-hidden bg-[#F2F5F3] dark:bg-[#070B11] text-slate-900 dark:text-slate-100 selection:bg-[#0D3B36] selection:text-white transition-colors duration-150">
+        {/* App Sidebar (desktop aside + mobile sliding drawer) */}
+        <Sidebar />
 
-      {/* Main Content Area */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        {/* Topbar */}
-        <Topbar />
+        {/* Main Content Area */}
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          {/* Topbar with mobile hamburger toggle */}
+          <Topbar />
 
-        {/* Dynamic Integration Alert Banner */}
-        <IntegrationBanner />
+          {/* Dynamic Integration Alert Banner */}
+          <IntegrationBanner />
 
-        {/* Scrollable Page Body */}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[#F2F5F3] dark:bg-[#070B11] transition-colors duration-150">
-          <div className="max-w-7xl mx-auto space-y-6">{children}</div>
-        </main>
+          {/* Scrollable Page Body */}
+          <main className="flex-1 overflow-y-auto p-3.5 sm:p-5 lg:p-8 bg-[#F2F5F3] dark:bg-[#070B11] transition-colors duration-150">
+            <div className="max-w-7xl mx-auto space-y-5 sm:space-y-6">{children}</div>
+          </main>
+        </div>
+
+        {/* Sticky Bottom-Right Riddhi AI Chatbot */}
+        <RiddhiFloatingAssistant />
       </div>
-
-      {/* Sticky Bottom-Right Riddhi AI Chatbot */}
-      <RiddhiFloatingAssistant />
-    </div>
+    </MobileNavProvider>
   );
 }

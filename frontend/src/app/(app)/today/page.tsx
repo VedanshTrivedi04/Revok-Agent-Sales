@@ -221,7 +221,7 @@ export default function TodayPage() {
                     </div>
 
                     {/* Financial ARR & Date Primitives */}
-                    <div className="flex items-center gap-6 text-right">
+                    <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-left sm:text-right pt-2 lg:pt-0 border-t border-slate-100 dark:border-slate-800 lg:border-t-0">
                       <div>
                         <div className="text-[10px] text-slate-400 uppercase font-mono">
                           {isExpansion ? "Expansion Potential" : "ARR at Stake"}
@@ -268,7 +268,7 @@ export default function TodayPage() {
 
                   {/* Action & Permission row */}
                   <div className="pt-3 border-t border-[#EAEFEA] dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-slate-500">
                       <span>
                         Pending Action Cards:{" "}
                         <span className="font-semibold text-slate-800 dark:text-slate-200">
@@ -285,7 +285,7 @@ export default function TodayPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {/* Snooze Finding (Own rows for Member, any for Manager/Admin) */}
                       {item.finding_id && (
                         <CanAct action="snooze:finding" entity={account}>

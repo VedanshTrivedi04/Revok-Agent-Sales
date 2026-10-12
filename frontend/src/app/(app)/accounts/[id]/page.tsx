@@ -285,7 +285,7 @@ export default function AccountDetailPage({
         <AccountAgentFlow accountId={accountId} onActual={setActualFlow} onShown={setShownFlow} />
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-[#E2ECE5] dark:border-slate-800 gap-6 text-xs font-semibold">
+        <div className="flex border-b border-[#E2ECE5] dark:border-slate-800 gap-4 sm:gap-6 text-xs font-semibold overflow-x-auto whitespace-nowrap scrollbar-none pb-0.5">
           <button
             type="button"
             onClick={() => setActiveTab("overview")}

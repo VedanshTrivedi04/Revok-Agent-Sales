@@ -124,8 +124,8 @@ export default function AccountsPage() {
 
         {/* Dynamic Table */}
         {listMode && !isLoading && !error && accounts.length > 0 && (
-          <div className="overflow-hidden rounded-2xl border border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto rounded-2xl border border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+            <table className="w-full min-w-[700px] text-left text-xs">
               <thead className="bg-[#0D3B36] text-white font-mono uppercase text-[11px] tracking-wider">
                 <tr>
                   <th className="p-3.5 pl-4 text-white font-semibold">Account</th>

@@ -62,8 +62,21 @@ const PORTALS = {
 
 type Portal = keyof typeof PORTALS;
 
-/** Shared chrome of both customer portals: brand, portal switcher, permission-filtered nav, user. */
-function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSection[] }) {
+import { useMobileNav } from "./mobile-nav-context";
+import { X } from "lucide-react";
+
+/** Core layout content of the sidebar (brand, switcher, nav links, donezo user profile). */
+function SidebarContent({
+  portal,
+  sections,
+  onClose,
+  showCloseButton = false,
+}: {
+  portal: Portal;
+  sections: NavSection[];
+  onClose?: () => void;
+  showCloseButton?: boolean;
+}) {
   const pathname = usePathname();
   const { can, me, activeRole, isLoading } = useMe();
   const home = PORTALS[portal].href;
@@ -75,19 +88,19 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
     .filter((p): p is Portal => p in PORTALS)
     .filter((p) => (isOwner ? p === "control" : p === "work"));
 
-  // Filter items strictly using can(action) - hidden items are never rendered
   const visible = sections
     .map((s) => ({ ...s, items: s.items.filter((item) => can(item.action)) }))
     .filter((s) => s.items.length > 0);
 
   return (
-    <aside
-      className="w-64 flex-shrink-0 flex flex-col border-r border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-[#080C11] text-slate-800 dark:text-slate-100 h-full select-none shadow-[1px_0_0_0_#E2ECE5] dark:shadow-none"
-      aria-label="Main Navigation"
-    >
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-5 border-b border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-[#080C11] flex-shrink-0">
-        <Link href={home} className="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+        <Link
+          href={home}
+          onClick={onClose}
+          className="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group"
+        >
           <img
             src="/primary logo.png"
             alt="Revora"
@@ -114,20 +127,38 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
             </div>
           </div>
         </Link>
+
+        {showCloseButton && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close navigation"
+            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Portal switcher: only for people who may enter both portals */}
       {portals.length > 1 && (
         <div className="px-3 pt-3 flex-shrink-0">
-          <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#F0F5F2] dark:bg-slate-900/90 border border-[#DEE7E1] dark:border-slate-800/80 p-1" role="group" aria-label="Portal">
+          <div
+            className="grid grid-cols-2 gap-1 rounded-xl bg-[#F0F5F2] dark:bg-slate-900/90 border border-[#DEE7E1] dark:border-slate-800/80 p-1"
+            role="group"
+            aria-label="Portal"
+          >
             {portals.map((p) => (
               <Link
                 key={p}
                 href={PORTALS[p].href}
+                onClick={onClose}
                 aria-current={p === portal ? "page" : undefined}
                 className={clsx(
                   "rounded-lg px-2 py-1.5 text-center text-[11px] font-semibold transition-all",
-                  p === portal ? "bg-[#0D3B36] text-white shadow-xs" : "text-slate-500 hover:text-[#0D3B36] dark:text-slate-400 dark:hover:text-white"
+                  p === portal
+                    ? "bg-[#0D3B36] text-white shadow-xs"
+                    : "text-slate-500 hover:text-[#0D3B36] dark:text-slate-400 dark:hover:text-white"
                 )}
               >
                 {PORTALS[p].label}
@@ -155,6 +186,7 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={onClose}
                   className={clsx(
                     "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group border",
                     isActive
@@ -238,7 +270,53 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
           </div>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+}
+
+/** Shared chrome of both customer portals: brand, portal switcher, permission-filtered nav, user. */
+function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSection[] }) {
+  const { isOpen, close } = useMobileNav();
+
+  return (
+    <>
+      {/* Desktop Persistent Sidebar (hidden on < lg screens) */}
+      <aside
+        className="hidden lg:flex w-64 flex-shrink-0 flex-col border-r border-[#E2ECE5] dark:border-slate-800 bg-white dark:bg-[#080C11] text-slate-800 dark:text-slate-100 h-full select-none shadow-[1px_0_0_0_#E2ECE5] dark:shadow-none"
+        aria-label="Main Navigation"
+      >
+        <SidebarContent portal={portal} sections={sections} />
+      </aside>
+
+      {/* Mobile Drawer (visible only on < lg screens when open) */}
+      <div
+        className={clsx(
+          "fixed inset-0 z-50 lg:hidden transition-all duration-300",
+          isOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
+        )}
+      >
+        {/* Backdrop */}
+        <div
+          className={clsx(
+            "fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300",
+            isOpen ? "opacity-100" : "opacity-0"
+          )}
+          onClick={close}
+          aria-hidden="true"
+        />
+
+        {/* Sliding Drawer Container */}
+        <aside
+          className={clsx(
+            "fixed inset-y-0 left-0 w-72 max-w-[85vw] flex flex-col bg-white dark:bg-[#080C11] text-slate-800 dark:text-slate-100 shadow-2xl border-r border-[#E2ECE5] dark:border-slate-800 transition-transform duration-300 ease-out select-none",
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+          aria-label="Mobile Navigation Drawer"
+        >
+          <SidebarContent portal={portal} sections={sections} onClose={close} showCloseButton />
+        </aside>
+      </div>
+    </>
   );
 }
 
