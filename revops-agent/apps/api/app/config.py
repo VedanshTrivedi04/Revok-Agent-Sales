@@ -31,6 +31,12 @@ class Settings(BaseSettings):
 
     smtp_host: str = "localhost"
     smtp_port: int = 1025
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_use_tls: bool = False
+    smtp_from_email: str = "notifications@revops.internal"
+    resend_api_key: str = ""
+    email_provider: Literal["smtp", "resend", "console"] = "smtp"
 
     mock_api: bool = False
     rate_limit_enabled: bool = True

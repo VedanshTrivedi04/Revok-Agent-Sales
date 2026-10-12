@@ -22,7 +22,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.audit import Notification
-from app.models.tenancy import Membership
+from app.models.tenancy import Membership, Organization, User
+from app.services.email import get_email_sender
 from app.services.notifications import notify
 from app.utils.events import publish
 
@@ -91,6 +92,28 @@ async def on_high_finding(
             link=f"/findings/{finding_id}",
         )
         notifs.append(n)
+
+    # Dispatch instant email alerts to recipients with email addresses
+    try:
+        org_name = (await s.scalar(select(Organization.name).where(Organization.id == org_id))) or "Revora Workspace"
+        users_stmt = select(User).where(User.id.in_(list(target_user_ids)))
+        user_rows = (await s.execute(users_stmt)).scalars().all()
+        sender = get_email_sender()
+        for u in user_rows:
+            if u.email:
+                try:
+                    await sender.send_high_risk_alert(
+                        to_email=u.email,
+                        user_name=u.name or u.email,
+                        org_name=org_name,
+                        account_name=account_name,
+                        finding_title=title,
+                        finding_id=str(finding_id),
+                    )
+                except Exception as ex:
+                    log.warning("high_risk_alert_email_failed", error=str(ex), user_id=str(u.id))
+    except Exception as e:
+        log.warning("high_risk_email_dispatch_error", error=str(e))
 
     await publish(
         org_id,

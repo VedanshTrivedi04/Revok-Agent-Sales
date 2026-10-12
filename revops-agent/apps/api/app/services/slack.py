@@ -540,7 +540,7 @@ async def select_digest_items(
 
 async def send_user_daily_digest(org_id: UUID, user_id: UUID) -> bool:
     """
-    Gathers digest items, evaluates sending criteria, and sends DM to user via Slack.
+    Gathers digest items, evaluates sending criteria, and delivers daily briefing via Slack or Email.
     Returns True if sent, False if suppressed or failed.
     """
     async with org_session(org_id) as s:
@@ -559,36 +559,62 @@ async def send_user_daily_digest(org_id: UUID, user_id: UUID) -> bool:
 
         member, user = res
         slack_user_id = member.slack_user_id
-        if not slack_user_id:
-            # User has no linked Slack user ID
-            return False
+        prefs = member.notification_prefs or {}
+        digest_channel = prefs.get("digest_channel", "slack" if slack_user_id else "email")
+
+        # If user preferred Slack but has no Slack linked, fallback to email if email exists
+        if digest_channel == "slack" and not slack_user_id:
+            if not user.email:
+                return False
+            digest_channel = "email"
 
         findings, pending_cards = await select_digest_items(s, org_id, user_id, member.crm_owner_id)
 
         # algorithm.md §15: send ONLY if items non-empty OR pending cards > 0
         if not findings and pending_cards == 0:
-            log.info("slack_digest_suppressed", user_id=str(user_id), org_id=str(org_id))
+            log.info("digest_suppressed", user_id=str(user_id), org_id=str(org_id))
             return False
 
     settings = get_settings()
-    blocks = build_digest_blocks(
-        user_name=user.name or user.email,
-        findings=findings,
-        pending_cards_count=pending_cards,
-        base_url=settings.web_url,
-    )
 
-    bot_token = await get_slack_bot_token(org_id)
-    connector: SlackConnector = get_connector("slack")  # type: ignore[assignment]
+    if digest_channel == "email" and user.email:
+        from app.models.tenancy import Organization
+        from app.services.email import get_email_sender
 
-    resp = await connector.chat_post_message(
-        token=bot_token or "xoxb-mock-token",
-        channel=slack_user_id,
-        text="☀️ Your RevOps Daily Digest is ready",
-        blocks=blocks,
-    )
+        async with org_session(org_id) as s:
+            org_name = (await s.scalar(select(Organization.name).where(Organization.id == org_id))) or "Revora Workspace"
 
-    sent = bool(resp.get("ok"))
+        sender = get_email_sender()
+        await sender.send_digest(
+            to_email=user.email,
+            user_name=user.name or user.email,
+            org_name=org_name,
+            findings=findings,
+            pending_cards_count=pending_cards,
+        )
+        sent = True
+        channel_label = "Email"
+    else:
+        blocks = build_digest_blocks(
+            user_name=user.name or user.email,
+            findings=findings,
+            pending_cards_count=pending_cards,
+            base_url=settings.web_url,
+        )
+
+        bot_token = await get_slack_bot_token(org_id)
+        connector: SlackConnector = get_connector("slack")  # type: ignore[assignment]
+
+        resp = await connector.chat_post_message(
+            token=bot_token or "xoxb-mock-token",
+            channel=slack_user_id,
+            text="☀️ Your RevOps Daily Digest is ready",
+            blocks=blocks,
+        )
+
+        sent = bool(resp.get("ok"))
+        channel_label = "Slack"
+
     if sent:
         async with org_session(org_id) as s:
             notif = Notification(
@@ -597,7 +623,7 @@ async def send_user_daily_digest(org_id: UUID, user_id: UUID) -> bool:
                 user_id=user_id,
                 kind="digest",
                 title="Daily digest sent",
-                body=f"Sent via Slack ({len(findings)} findings, {pending_cards} pending cards)",
+                body=f"Sent via {channel_label} ({len(findings)} findings, {pending_cards} pending cards)",
                 link="/today",
                 created_at=utcnow(),
             )

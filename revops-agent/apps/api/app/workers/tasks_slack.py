@@ -63,11 +63,10 @@ async def run_daily_digest_fanout() -> dict[str, int]:
         orgs = (await s.execute(orgs_stmt)).scalars().all()
 
         for org in orgs:
-            # Fetch active members with linked Slack accounts
+            # Fetch active members scheduled for daily digest (Slack or Email)
             members_stmt = select(Membership).where(
                 Membership.org_id == org.id,
                 Membership.status == "active",
-                Membership.slack_user_id.isnot(None),
             )
             members = (await s.execute(members_stmt)).scalars().all()
 

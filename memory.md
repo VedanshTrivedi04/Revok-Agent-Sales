@@ -1483,3 +1483,70 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 
 **Notes**
 - Zero dummy data used; all dynamic data feeds remain authentic via FastAPI backend.
+
+### 2026-10-12 10:11
+
+**User Request**
+> Implement the complete email service for all 4 core use cases (Invitations, Password Setup, 9:00 AM Morning Revenue Digest, Instant High-Risk Churn Alerts) with support for Gmail SMTP and Resend.
+
+**Exploration**
+- Inspected `apps/api/app/services/email.py`: previously only had basic invite and password console/smtp stubs with plain text.
+- Inspected `apps/api/app/config.py`: lacked credentials and flags for authenticated SMTP, TLS, and Resend.
+- Inspected `apps/api/app/services/notification_hooks.py`: `on_high_finding` dispatched in-app notifications and SSE but lacked urgent email dispatch to account owners/executives.
+- Inspected `apps/api/app/services/slack.py` and `app/workers/tasks_slack.py`: `send_user_daily_digest` and `run_daily_digest_fanout` were strictly bound to Slack DMs even though `Membership.notification_prefs` supported `digest_channel: "email"`.
+- Inspected `tests/test_config.py`: enforced strict documentation of all `Settings.model_fields` in `revops-agent/.env.example`.
+
+**Work Done**
+- **Config & Settings** (`revops-agent/apps/api/app/config.py` & `revops-agent/.env.example`):
+  - Added `smtp_user`, `smtp_password`, `smtp_use_tls`, `smtp_from_email`, `resend_api_key`, `email_provider`.
+  - Documented all settings in `.env.example`.
+- **Email Service Core** (`revops-agent/apps/api/app/services/email.py`):
+  - Added responsive Revora HTML container shell with brand colors, header banner, footer attestations, and styled CTA buttons.
+  - Implemented `_invite_text` & HTML template.
+  - Implemented `_set_password_text` & HTML template.
+  - Implemented `_digest_text` & HTML briefing template with open risk counters, awaiting approval badge, and findings table with severity pills and inspection links.
+  - Implemented `_high_risk_alert_text` & HTML urgent alert template with high-churn warning callout, account summary, and direct `/findings/{id}` action button.
+  - Upgraded `SmtpSender` to support multipart `text/plain` + `text/html`, STARTTLS (port 587/465), and authentication (fully compatible with Gmail `smtp.gmail.com`).
+  - Upgraded `ResendSender` to send both plain text and HTML payloads via Resend REST API.
+  - Updated `ConsoleSender` to log all 4 email actions cleanly during local/test execution.
+  - Updated `get_email_sender()` factory to resolve `ConsoleSender`, `ResendSender`, or `SmtpSender` dynamically.
+- **Instant High-Risk Email Alert Hook** (`revops-agent/apps/api/app/services/notification_hooks.py`):
+  - Wired `on_high_finding` to look up recipient emails from `User` table and invoke `get_email_sender().send_high_risk_alert(...)` for all account owners and managers.
+- **Daily Revenue Digest Email Channel** (`revops-agent/apps/api/app/services/slack.py` & `app/workers/tasks_slack.py`):
+  - Updated `send_user_daily_digest` to check `digest_channel`: if `"email"`, formats and dispatches the morning revenue briefing via `send_digest(...)` and logs a Notification record.
+  - Updated `run_daily_digest_fanout` to schedule hourly fanout across all active members (supporting both Email and Slack preferences at their local 9:00 AM).
+- **Unit Test Coverage** (`revops-agent/apps/api/tests/test_email_service.py`):
+  - Added unit test suite covering URL helpers, templates, `ConsoleSender`, `SmtpSender` (multipart/STARTTLS mocking), `ResendSender` (payload mocking), and config validation.
+
+**Files Changed**
+- `revops-agent/apps/api/app/config.py`
+  - Added SMTP authentication, TLS, and Resend configuration fields.
+- `revops-agent/.env.example`
+  - Documented new email environment variables.
+- `revops-agent/apps/api/app/services/email.py`
+  - Expanded email protocol, responsive HTML templating, and senders for all 4 use cases.
+- `revops-agent/apps/api/app/services/notification_hooks.py`
+  - Dispatched high-risk churn email alerts on high severity findings.
+- `revops-agent/apps/api/app/services/slack.py`
+  - Supported email delivery option in daily revenue digest.
+- `revops-agent/apps/api/app/workers/tasks_slack.py`
+  - Fanned out daily digest to active members across both Slack and Email channels.
+- `revops-agent/apps/api/tests/test_email_service.py`
+  - Comprehensive unit tests for email templates and senders.
+- `memory.md`
+  - Updated project memory and interaction history.
+
+**Verification**
+- `py_compile`: All modified Python files compiled cleanly with 0 syntax errors.
+- Pytest: `pytest tests/test_config.py tests/test_email_service.py` passed 9/9 tests (100% green).
+
+**Git**
+- Branch: main
+- Commit: (pending)
+- Push: (pending)
+- Status: staged and verified
+
+**Notes**
+- Zero dummy data used.
+- Ready for production credentials in `.env` (Gmail SMTP or Resend).
+
