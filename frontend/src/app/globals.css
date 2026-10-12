@@ -297,3 +297,33 @@ input[type="range"].revops-slider::-moz-range-thumb {
     --viz-track: #142B23;
   }
 }
+
+/* Chatbot reflective light-sweep and glowing blinking aura */
+@keyframes light-sweep {
+  0% { transform: translateX(-160%) skewX(-25deg); opacity: 0; }
+  15% { opacity: 0.85; }
+  45% { transform: translateX(260%) skewX(-25deg); opacity: 0.85; }
+  50%, 100% { transform: translateX(260%) skewX(-25deg); opacity: 0; }
+}
+
+@keyframes purple-blink {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.45));
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 28px rgba(192, 132, 252, 0.95)) drop-shadow(0 0 45px rgba(147, 51, 234, 0.75));
+  }
+}
+
+.animate-light-sweep {
+  animation: light-sweep 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-purple-blink {
+  animation: purple-blink 1.8s ease-in-out infinite;
+}
+

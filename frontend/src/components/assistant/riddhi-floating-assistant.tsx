@@ -365,39 +365,55 @@ export function RiddhiFloatingAssistant() {
 
   return (
     <>
-      {/* 1. Sticky Floating Chatbot Logo Button (Shown when closed) */}
+      {/* 1. Sticky Floating Chatbot Trigger Pill (Shown when closed) */}
       {mode === "closed" && (
         <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40">
           <button
             type="button"
             onClick={() => setMode("compact")}
-            className="group relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#0D3B36] via-[#114E45] to-[#0A332E] text-white shadow-xl hover:shadow-2xl border-2 border-emerald-400/50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
-            aria-label="Open Riddhi AI Assistant"
+            className="group relative inline-flex items-center gap-2.5 sm:gap-3 pl-2.5 sm:pl-3 pr-3.5 sm:pr-4 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#1E0538] via-[#2E0854] to-[#4A0E78] text-white shadow-[0_8px_30px_rgba(74,14,120,0.65)] hover:shadow-[0_12px_40px_rgba(123,31,162,0.85)] border border-purple-400/40 hover:border-purple-300/80 hover:scale-[1.04] active:scale-95 transition-all duration-300 cursor-pointer select-none overflow-hidden"
+            aria-label={`Open Ask ${ASSISTANT_NAME} AI Assistant`}
           >
-            {/* Ambient Pulse Ping */}
-            <span className="absolute -inset-1 rounded-full bg-emerald-500/20 animate-ping opacity-60 pointer-events-none" />
+            {/* Blinking Pulsing Glowing Aura */}
+            <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#6A0DAD] via-[#9C27B0] to-[#E040FB] blur-md animate-purple-blink pointer-events-none" />
 
-            {/* Chatbot Logo Image */}
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center">
+            {/* Reflecting Top Gloss (Glass Specular Highlight) */}
+            <span className="absolute inset-x-2 top-0.5 h-[46%] rounded-t-full bg-gradient-to-b from-white/35 via-white/10 to-transparent pointer-events-none z-10" />
+
+            {/* Reflecting Animated Light Sweep (Shimmer Glint) */}
+            <span className="absolute inset-0 rounded-full overflow-hidden pointer-events-none z-10">
+              <span className="absolute inset-y-0 w-2/3 bg-gradient-to-r from-transparent via-white/45 to-transparent animate-light-sweep" />
+            </span>
+
+            {/* Chatbot Avatar */}
+            <div className="relative z-20 w-7 h-7 sm:w-8 sm:h-8 shrink-0 flex items-center justify-center">
               <Image
                 src="/chatbot.png"
                 alt={`${ASSISTANT_NAME} AI`}
-                width={44}
-                height={44}
-                className="w-full h-full object-contain drop-shadow-md group-hover:scale-110 transition-transform select-none"
+                width={34}
+                height={34}
+                className="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform select-none"
                 priority
               />
             </div>
 
-            {/* Online Beacon Status Badge */}
-            <span className="absolute top-0 right-0 w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-[#10B981] border-2 border-white dark:border-slate-900 shadow-xs flex items-center justify-center">
-              <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-white" />
-            </span>
+            {/* Text Label + Blinking Live Beacon */}
+            <div className="relative z-20 flex items-center gap-1.5">
+              <span className="text-white font-semibold text-sm sm:text-[15px] tracking-wide select-none drop-shadow-sm">
+                Ask {ASSISTANT_NAME}
+              </span>
+              {/* Blinking Beacon Dot */}
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-90" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-fuchsia-300 shadow-[0_0_8px_#E040FB]" />
+              </span>
+            </div>
 
-            {/* Hover Tooltip Pill */}
-            <span className="hidden sm:inline-block absolute right-16 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-[#0D3B36] text-white text-xs font-semibold shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-emerald-400/30">
-              Ask {ASSISTANT_NAME} AI
-            </span>
+            {/* Chevron Right Arrow */}
+            <ChevronRight
+              className="relative z-20 w-4 h-4 sm:w-4.5 sm:h-4.5 text-white/90 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0 stroke-[2.5]"
+              aria-hidden="true"
+            />
           </button>
         </div>
       )}
