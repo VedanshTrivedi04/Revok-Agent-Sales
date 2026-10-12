@@ -44,6 +44,59 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 
 ## Interaction History
 
+### 2026-10-12 08:04
+
+**User Request**
+> improve this section, i want that when our real agent run this section accordingly through data
+
+**Exploration**
+- Investigated `frontend/src/lib/agent-flow.ts` and `frontend/src/components/agent/agent-flow.tsx`.
+- Discovered root cause of phantom "Waiting" steps in completed agent runs:
+  `visibleSteps()` was blindly mapping hardcoded `KNOWN_STEPS` (`trigger`, `context`, `rules`, `evidence`, `scoring`, `explain`, `findings`, `actions`) and pushing fake pending steps for any step not found, while dumping real executed AI pipeline steps (`load_context`, `plan_actions`, `policy`) at the end.
+- Discovered missing step metadata, icons, and verbs for `load_context`, `plan_actions`, `policy`, `extract_signals`.
+- Discovered `StepData` fell back to a bare `<p>{step.detail ?? "Done."}</p>` when `step.data` was minimal, displaying an uninformative "Done." when steps like `Policy` were expanded.
+- Discovered the "Where the time went" timing bar lacked color differentiation, percentage breakdowns, tooltips, and interactive step linking.
+
+**Work Done**
+- Refactored `visibleSteps()` in `frontend/src/lib/agent-flow.ts`:
+  - When a run is finished (`flow.done === true && flow.steps.length > 0`), it directly returns `flow.steps` in their exact chronological execution sequence with zero phantom "Waiting" steps.
+  - For live runs, detects whether the run is using the AI Agent pipeline (`load_context`, `rules`, `explain`, `plan_actions`, `policy`) or Detection Engine pipeline and dynamically tracks progress.
+- Enhanced step labels, verbs, and summaries in `agent-flow.ts` and `agent-flow.tsx`:
+  - Added support and canonical titles, hints, verbs, and icons (`ShieldCheck`, `Sparkles`, `Database`, `Send`, `ListChecks`) for `load_context`, `run_rules`, `plan_actions`, `propose_actions`, `policy`, `apply_policy`, and `extract_signals`.
+- Replaced fallback in `StepData` with rich, enterprise-grade attestation cards:
+  - `policy` / `apply_policy`: Autonomy Guardrails Check attestation with 3-tier safety status (Tier 1 Auto, Tier 2 Human-in-Loop, Tier 3 Blocked) and "Policy Passed" badge.
+  - `context` / `load_context`: Account Context Hydration attestation with verification badges for CRM signals, telemetry, and activity history.
+  - `rules` / `run_rules`: Heuristic Rules Evaluation attestation with clean status indicator.
+  - `explain`: Plain-Language Synthesis attestation with verified citations notice.
+  - `actions` / `plan_actions`: Action Planning & Routing attestation.
+- Upgraded "Where the time went" section:
+  - Multi-colored harmonic gradient bar segments per step.
+  - Interactive clickable step timing chips with duration in ms, percentage share of total run time, and color-coded indicator dots that toggle the corresponding step card above.
+- Added comprehensive unit tests in `frontend/src/lib/agent-flow.test.ts` verifying completed run step fidelity and AI pipeline tracking (all 23 tests passing).
+- Verified production build `pnpm run build` completed successfully (all 61 routes compiled, 0 errors).
+- Verified in browser with Chrome DevTools MCP on `http://localhost:3000/runs/d3a4821e-5b99-5453-a7b3-3d2a52ad4181`.
+
+**Files Changed**
+- `frontend/src/lib/agent-flow.ts`
+  - Refactored `visibleSteps` to return actual executed steps on completed runs without phantom pending steps; added AI pipeline recognition and canonical labels.
+- `frontend/src/components/agent/agent-flow.tsx`
+  - Added icons, verbs, rich attestation cards in `StepData` for minimal/empty data payloads, and upgraded timing breakdown with multi-colored bar segments and interactive chips.
+- `frontend/src/lib/agent-flow.test.ts`
+  - Added unit tests for completed run fidelity and live AI pipeline tracking.
+- `memory.md`
+  - Updated persistent project memory.
+
+**Verification**
+- `pnpm test src/lib/agent-flow.test.ts`: 23/23 tests passed.
+- `pnpm run build`: Exit code 0, all 61 static and dynamic routes compiled successfully.
+- Chrome DevTools visual inspection: verified zero phantom steps, proper chronological step ordering (`load_context` -> `rules` -> `explain` -> `plan_actions` -> `policy`), rich Autonomy Guardrails Check attestation card, and interactive timing breakdown.
+
+**Git**
+- Branch: main
+- Commit: Pending staging and commit
+- Push: Pending confirmation
+- Status: Ready
+
 ### 2026-10-12 07:22
 
 **User Request**

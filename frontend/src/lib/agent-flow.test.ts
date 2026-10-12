@@ -83,6 +83,46 @@ describe("flowPhase / visibleSteps", () => {
       "trigger", "context", "rules", "evidence", "scoring", "explain", "findings", "actions", "ai",
     ]);
   });
+
+  it("never includes phantom pending steps when a run is finished", () => {
+    const realRun = flowFromRun({
+      id: "r1",
+      account_id: "a1",
+      status: "completed",
+      error: null,
+      steps: [
+        { name: "load_context", status: "ok", duration_ms: 120, data: {} },
+        { name: "rules", status: "ok", duration_ms: 160, data: {} },
+        { name: "explain", status: "ok", duration_ms: 200, data: {} },
+        { name: "plan_actions", status: "ok", duration_ms: 240, data: {} },
+        { name: "policy", status: "ok", duration_ms: 280, data: {} },
+      ],
+    });
+    const visible = visibleSteps(realRun);
+    expect(visible.map((s) => s.name)).toEqual([
+      "load_context",
+      "rules",
+      "explain",
+      "plan_actions",
+      "policy",
+    ]);
+    expect(visible.every((s) => s.status === "ok")).toBe(true);
+    expect(visible.some((s) => s.status === "pending")).toBe(false);
+  });
+
+  it("tracks the AI pipeline when AI markers are present during live run", () => {
+    const liveAiFlow = applyStepEvent(undefined, evt({ step: "load_context", status: "ok", seq: 1 }));
+    const visible = visibleSteps(liveAiFlow);
+    expect(visible.map((s) => s.name)).toEqual([
+      "load_context",
+      "rules",
+      "explain",
+      "plan_actions",
+      "policy",
+    ]);
+    expect(visible[0].status).toBe("ok");
+    expect(visible[1].status).toBe("pending");
+  });
 });
 
 describe("flowFromRun", () => {

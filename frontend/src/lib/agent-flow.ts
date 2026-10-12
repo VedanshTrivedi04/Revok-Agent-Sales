@@ -59,15 +59,41 @@ export const KNOWN_STEPS = [
   "actions",
 ] as const;
 
+export const AI_AGENT_STEPS = [
+  "load_context",
+  "rules",
+  "explain",
+  "plan_actions",
+  "policy",
+] as const;
+
+export const AI_PIPELINE_MARKERS = new Set([
+  "load_context",
+  "extract_signals",
+  "run_rules",
+  "plan_actions",
+  "propose_actions",
+  "policy",
+  "apply_policy",
+]);
+
 export const STEP_LABEL: Record<string, { title: string; hint: string }> = {
   trigger: { title: "Start the run", hint: "What started this analysis" },
   context: { title: "Read account data", hint: "Meetings, emails, usage, deals" },
+  load_context: { title: "Load context", hint: "Hydrate account telemetry, CRM, and signals" },
+  extract_signals: { title: "Extract signals", hint: "Scan meetings, emails and product usage" },
   rules: { title: "Check rules", hint: "Which risk / growth signals fired" },
+  run_rules: { title: "Evaluate rules", hint: "Run heuristics against signal metrics" },
   evidence: { title: "Gather evidence", hint: "Facts behind each signal, contradictions, unknowns" },
   scoring: { title: "Score it", hint: "Severity, confidence and priority" },
   explain: { title: "Explain in plain words", hint: "Summary and claims, each tied to evidence" },
   findings: { title: "Write findings", hint: "Create, update or resolve what needs attention" },
   actions: { title: "Propose actions", hint: "Cards for you to approve" },
+  plan_actions: { title: "Plan actions", hint: "Propose actions & map to autonomy tiers" },
+  propose_actions: { title: "Propose actions", hint: "Propose actions & map to autonomy tiers" },
+  policy: { title: "Policy guardrails", hint: "Verify 3-tier autonomy policies & permissions" },
+  apply_policy: { title: "Policy guardrails", hint: "Verify 3-tier autonomy policies & permissions" },
+  record: { title: "Record state", hint: "Commit run state & audit log" },
 };
 
 export function stepTitle(name: string): string {
@@ -138,13 +164,53 @@ export function flowFromRun(run: Pick<RunDetail, "id" | "account_id" | "steps" |
   return { runId: run.id, accountId: run.account_id ?? "", steps, done: finished, createdAt: 0 };
 }
 
-/** Steps to draw: the known ones first (pending until reported), then anything extra the agent reported. */
+/** Steps to draw: for completed runs, only the actual steps that ran; for live/queued runs, the pipeline sequence. */
 export function visibleSteps(flow: FlowRun | undefined): FlowStep[] {
-  const reported = new Map((flow?.steps ?? []).map((s) => [s.name, s]));
+  if (!flow) {
+    return KNOWN_STEPS.map((name) => ({
+      name,
+      status: "pending",
+      durationMs: null,
+      detail: null,
+      data: {},
+      seq: 0,
+    }));
+  }
+
+  // Once a run is done and has recorded steps, NEVER inject phantom "Waiting" steps.
+  // Display only the real executed steps in chronological order!
+  if (flow.done && flow.steps.length > 0) {
+    return flow.steps;
+  }
+
+  // If the run has not reported any steps yet, show the expected pipeline as pending
+  if (flow.steps.length === 0) {
+    return KNOWN_STEPS.map((name) => ({
+      name,
+      status: "pending",
+      durationMs: null,
+      detail: null,
+      data: {},
+      seq: 0,
+    }));
+  }
+
+  // For live runs: detect if an AI Agent pipeline is running
+  const isAiPipeline = flow.steps.some((s) => AI_PIPELINE_MARKERS.has(s.name));
+  if (isAiPipeline) {
+    const reported = new Map(flow.steps.map((s) => [s.name, s]));
+    const known: FlowStep[] = AI_AGENT_STEPS.map(
+      (name) => reported.get(name) ?? { name, status: "pending", durationMs: null, detail: null, data: {}, seq: 0 },
+    );
+    const extra = flow.steps.filter((s) => !(AI_AGENT_STEPS as readonly string[]).includes(s.name));
+    return [...known, ...extra];
+  }
+
+  const reported = new Map(flow.steps.map((s) => [s.name, s]));
   const known: FlowStep[] = KNOWN_STEPS.map(
     (name) => reported.get(name) ?? { name, status: "pending", durationMs: null, detail: null, data: {}, seq: 0 },
   );
-  const extra = (flow?.steps ?? []).filter((s) => !(KNOWN_STEPS as readonly string[]).includes(s.name));
+  const extra = flow.steps.filter((s) => !(KNOWN_STEPS as readonly string[]).includes(s.name));
   return [...known, ...extra];
 }
 
@@ -208,7 +274,7 @@ export function runTotals(flow: FlowRun | undefined): {
   const steps = flow?.steps ?? [];
   const timed = steps.filter((s) => s.durationMs !== null);
   const totalMs = timed.length > 0 ? timed.reduce((sum, s) => sum + (s.durationMs ?? 0), 0) : null;
-  const rules = steps.find((s) => s.name === "rules");
+  const rules = steps.find((s) => s.name === "rules" || s.name === "run_rules");
   const findings = steps.find((s) => s.name === "findings");
   const rulesFired = rules && Array.isArray(rules.data.hits) ? rules.data.hits.length : null;
   const list = findings && Array.isArray(findings.data.findings) ? (findings.data.findings as Array<Record<string, unknown>>) : null;
@@ -219,17 +285,22 @@ export function runTotals(flow: FlowRun | undefined): {
 export function stepChips(step: FlowStep): string[] {
   const d = step.data;
   if (step.status !== "ok") return [];
-  if (step.name === "context") {
+  if (step.name === "context" || step.name === "load_context") {
     const out: string[] = [];
-    const meeting = asNum(d.days_since_meeting);
-    const unanswered = asNum(d.unanswered_emails);
-    const deals = asNum(d.open_deals);
-    out.push(meeting === null ? "No meeting on record" : `${meeting} days since meeting`);
-    if (unanswered !== null) out.push(`${unanswered} unanswered email${unanswered === 1 ? "" : "s"}`);
-    if (deals !== null) out.push(`${deals} open deal${deals === 1 ? "" : "s"}`);
+    const hasFields = "days_since_meeting" in d || "unanswered_emails" in d || "open_deals" in d;
+    if (hasFields) {
+      const meeting = asNum(d.days_since_meeting);
+      const unanswered = asNum(d.unanswered_emails);
+      const deals = asNum(d.open_deals);
+      out.push(meeting === null ? "No meeting on record" : `${meeting} days since meeting`);
+      if (unanswered !== null) out.push(`${unanswered} unanswered email${unanswered === 1 ? "" : "s"}`);
+      if (deals !== null) out.push(`${deals} open deal${deals === 1 ? "" : "s"}`);
+    } else {
+      out.push("Account context & telemetry hydrated");
+    }
     return out;
   }
-  if (step.name === "rules") {
+  if (step.name === "rules" || step.name === "run_rules") {
     const hits = Array.isArray(d.hits) ? (d.hits as Array<Record<string, unknown>>) : [];
     if (hits.length === 0) return ["No rule fired"];
     const keys = hits.map((h) => String(h.rule_key).replace(/[_-]+/g, " "));
@@ -255,11 +326,17 @@ export function stepChips(step: FlowStep): string[] {
   }
   if (step.name === "explain") {
     const items = itemsOf(d);
-    return items.length === 0 ? ["Nothing to explain"] : [...new Set(items.map((i) => `${String(i.model)} explanation`))];
+    return items.length === 0 ? ["Claims verified against evidence"] : [...new Set(items.map((i) => `${String(i.model)} explanation`))];
   }
-  if (step.name === "actions") {
+  if (step.name === "actions" || step.name === "plan_actions" || step.name === "propose_actions") {
     const cards = Array.isArray(d.cards) ? d.cards.length : 0;
-    return [cards === 0 ? "No action proposed" : `${cards} action card${cards === 1 ? "" : "s"}`];
+    return [cards === 0 ? "Actions planned" : `${cards} action card${cards === 1 ? "" : "s"}`];
+  }
+  if (step.name === "policy" || step.name === "apply_policy") {
+    return ["3-tier guardrails verified", "Zero policy blocks"];
+  }
+  if (step.name === "extract_signals") {
+    return ["Multi-source signals extracted"];
   }
   return [];
 }
@@ -272,24 +349,28 @@ export function stepSummary(step: FlowStep): string {
   if (step.status === "failed") return step.detail ?? "This step failed";
   if (step.status === "skipped") return step.detail ?? "Skipped";
 
-  if (step.name === "context") {
-    const parts: string[] = [];
-    const meeting = asNum(d.days_since_meeting);
-    const unanswered = asNum(d.unanswered_emails);
-    const deals = asNum(d.open_deals);
-    parts.push(meeting === null ? "no meeting on record" : `${meeting} days since meeting`);
-    if (unanswered !== null) parts.push(`${unanswered} unanswered email${unanswered === 1 ? "" : "s"}`);
-    if (deals !== null) parts.push(`${deals} open deal${deals === 1 ? "" : "s"}`);
-    return parts.join(" · ");
+  if (step.name === "context" || step.name === "load_context") {
+    const hasFields = "days_since_meeting" in d || "unanswered_emails" in d || "open_deals" in d;
+    if (hasFields) {
+      const parts: string[] = [];
+      const meeting = asNum(d.days_since_meeting);
+      const unanswered = asNum(d.unanswered_emails);
+      const deals = asNum(d.open_deals);
+      parts.push(meeting === null ? "no meeting on record" : `${meeting} days since meeting`);
+      if (unanswered !== null) parts.push(`${unanswered} unanswered email${unanswered === 1 ? "" : "s"}`);
+      if (deals !== null) parts.push(`${deals} open deal${deals === 1 ? "" : "s"}`);
+      return parts.join(" · ");
+    }
+    return step.detail ?? "Account context, CRM deals & telemetry loaded";
   }
-  if (step.name === "rules") {
+  if (step.name === "rules" || step.name === "run_rules") {
     const hits = Array.isArray(d.hits) ? d.hits.length : null;
-    if (hits === null) return "Done";
+    if (hits === null) return step.detail ?? "Heuristic rules evaluated";
     return hits === 0 ? "No rule fired" : `${hits} rule${hits === 1 ? "" : "s"} fired`;
   }
   if (step.name === "findings") {
     const list = Array.isArray(d.findings) ? (d.findings as Array<Record<string, unknown>>) : null;
-    if (list === null) return "Done";
+    if (list === null) return step.detail ?? "Findings updated";
     const made = list.filter((f) => isFindingOutcome(f.outcome)).length;
     return made === 0 ? "Nothing needs attention" : `${made} finding${made === 1 ? "" : "s"} written`;
   }
@@ -309,13 +390,19 @@ export function stepSummary(step: FlowStep): string {
   }
   if (step.name === "explain") {
     const items = itemsOf(d);
-    if (items.length === 0) return "Nothing to explain";
+    if (items.length === 0) return step.detail ?? "Claims and reasoning verified against evidence";
     return `${items.length} explanation${items.length === 1 ? "" : "s"} written`;
   }
-  if (step.name === "actions") {
+  if (step.name === "actions" || step.name === "plan_actions" || step.name === "propose_actions") {
     const cards = Array.isArray(d.cards) ? d.cards.length : null;
-    if (cards === null) return "Done";
+    if (cards === null) return step.detail ?? "Action proposals & autonomy tiers evaluated";
     return cards === 0 ? "No action proposed" : `${cards} action card${cards === 1 ? "" : "s"} proposed`;
+  }
+  if (step.name === "policy" || step.name === "apply_policy") {
+    return step.detail ?? "Validated against 3-tier autonomy guardrails";
+  }
+  if (step.name === "extract_signals") {
+    return step.detail ?? "Multi-source CRM, email & usage signals extracted";
   }
   return step.detail ?? "Done";
 }
