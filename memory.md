@@ -1579,4 +1579,28 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 **Notes**
 - Both Google OAuth and Gmail SMTP transactional pipeline are 100% verified and active.
 
+### 2026-10-12 10:49
+
+**User Request**
+> Send all 4 sample demo emails (Invitation, Password Setup, Daily Revenue Morning Digest, High-Risk Churn Alert) to `vednashtrivediindore@gmail.com` and `rajvardhansinghchawda@gmail.com`.
+
+**Work Done & Verification**
+- Created `scripts/send_demo_samples.py` with sample enterprise finding data (Acme Global Enterprise, Initech Cloud Systems, Stark Logistics).
+- Dispatched all 4 branded HTML email templates sequentially to both recipients via live Gmail SMTP:
+  1. Team Member Invitation (`invite_email_sent_smtp`) -> Delivered to both.
+  2. Password Setup & Auth Recovery (`set_password_email_sent_smtp`) -> Delivered to both.
+  3. Daily Revenue Morning Digest Briefing (`digest_email_sent_smtp`) -> Delivered to both.
+  4. Instant High-Risk Churn Alert (`high_risk_alert_email_sent_smtp`) -> Delivered to both.
+- Verified 100% successful transmission with code 0 (`All sample demo emails successfully dispatched to both recipients!`).
+
+**Git**
+- Branch: main
+- Commit: (pending)
+- Push: (pending)
+- Status: staged and verified
+
+**Notes**
+- All 8 demo emails delivered live.
+
+
 
