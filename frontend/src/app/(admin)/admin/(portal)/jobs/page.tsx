@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ import type { AdminJobOut, AdminPage, AdminOrgOut } from "../../../../../lib/adm
 import { RelativeTime } from "../../../../../components/ui/date-text";
 import { ErrorState } from "../../../../../components/ui/error-state";
 
-export default function AdminJobsPage() {
+function AdminJobsContent() {
   const searchParams = useSearchParams();
   const initialOrgId = searchParams.get("org_id") || "";
   const queryClient = useQueryClient();
@@ -576,5 +576,19 @@ export default function AdminJobsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminJobsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+          <span>Loading background jobs...</span>
+        </div>
+      }
+    >
+      <AdminJobsContent />
+    </Suspense>
   );
 }

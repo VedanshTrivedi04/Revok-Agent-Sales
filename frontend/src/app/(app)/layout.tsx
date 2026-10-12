@@ -5,6 +5,7 @@ import { Sidebar } from "../../components/layout/sidebar";
 import { Topbar } from "../../components/layout/topbar";
 import { IntegrationBanner } from "../../components/layout/integration-banner";
 import { OrgStatusNotice } from "../../components/layout/org-status-notice";
+import { RiddhiFloatingAssistant } from "../../components/assistant/riddhi-floating-assistant";
 import { useMe } from "../../lib/auth/session-context";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -32,6 +33,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="max-w-7xl mx-auto space-y-6">{children}</div>
         </main>
       </div>
+
+      {/* Sticky Bottom-Right Riddhi AI Chatbot */}
+      <RiddhiFloatingAssistant />
     </div>
   );
 }

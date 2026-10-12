@@ -255,44 +255,45 @@ input[type="range"].revops-slider::-moz-range-thumb {
    dark swap in one place; the palette was checked with the dataviz validator on both surfaces. */
 .viz {
   --viz-surface: #ffffff;
-  --viz-ink: #0f172a;
-  --viz-ink-2: #475569;
-  --viz-muted: #64748b;
-  --viz-grid: #e2e8f0;
-  --viz-axis: #cbd5e1;
-  --viz-1: #2a78d6;
-  --viz-2: #eb6834;
-  --viz-3: #1baf7a;
-  --viz-4: #eda100;
-  --viz-neutral: #cbd5e1;
-  --viz-good: #0ca30c;
-  --viz-warning: #fab219;
-  --viz-serious: #ec835a;
-  --viz-critical: #d03b3b;
-  --viz-seq-1: #b7d3f6;
-  --viz-seq-2: #6da7ec;
-  --viz-seq-3: #2a78d6;
-  --viz-seq-4: #184f95;
-  --viz-track: #cde2fb;
+  --viz-ink: #111C18;
+  --viz-ink-2: #2D3A34;
+  --viz-muted: #64748B;
+  --viz-grid: #EDF4F0;
+  --viz-axis: #D3E4DB;
+  --viz-1: #0D3B36;
+  --viz-2: #34D399;
+  --viz-3: #059669;
+  --viz-4: #F59E0B;
+  --viz-neutral: #CFE2D7;
+  --viz-good: #10B981;
+  --viz-warning: #F59E0B;
+  --viz-serious: #F97316;
+  --viz-critical: #EF4444;
+  --viz-seq-1: #EAF5EE;
+  --viz-seq-2: #A7F3D0;
+  --viz-seq-3: #34D399;
+  --viz-seq-4: #0D3B36;
+  --viz-track: #EAF5EE;
 }
 
+.dark .viz,
 @media (prefers-color-scheme: dark) {
   .viz {
-    --viz-surface: #0f172a;
-    --viz-ink: #f1f5f9;
-    --viz-ink-2: #cbd5e1;
-    --viz-muted: #94a3b8;
-    --viz-grid: #1e293b;
-    --viz-axis: #334155;
-    --viz-1: #3987e5;
-    --viz-2: #d95926;
-    --viz-3: #199e70;
-    --viz-4: #c98500;
+    --viz-surface: #0E1E17;
+    --viz-ink: #F1F5F9;
+    --viz-ink-2: #CBD5E1;
+    --viz-muted: #94A3B8;
+    --viz-grid: #1A3027;
+    --viz-axis: #26473A;
+    --viz-1: #34D399;
+    --viz-2: #10B981;
+    --viz-3: #6EE7B7;
+    --viz-4: #FBBF24;
     --viz-neutral: #475569;
-    --viz-seq-1: #184f95;
-    --viz-seq-2: #256abf;
-    --viz-seq-3: #3987e5;
-    --viz-seq-4: #86b6ef;
-    --viz-track: #173a66;
+    --viz-seq-1: #064E3B;
+    --viz-seq-2: #047857;
+    --viz-seq-3: #10B981;
+    --viz-seq-4: #6EE7B7;
+    --viz-track: #142B23;
   }
 }

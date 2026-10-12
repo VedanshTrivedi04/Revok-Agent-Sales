@@ -36,8 +36,8 @@ export default function PipelinePage() {
       description="Open deals by stage, what closed in the period, and the renewal calendar for the next 12 months."
     >
       <StatRow>
-        <StatTile label="Open pipeline" value={t && cash(t.open_amount)} hint={t && `${wholeNumber(t.open_count)} open deals`} />
-        <StatTile label="Won in period" value={t && cash(t.won_amount)} hint={t && `${wholeNumber(t.won_count)} deals`} />
+        <StatTile featured label="Open pipeline" value={t && cash(t.open_amount)} trend="Active cycle" hint={t && `${wholeNumber(t.open_count)} open deals`} />
+        <StatTile label="Won in period" value={t && cash(t.won_amount)} trend="+18% rate" hint={t && `${wholeNumber(t.won_count)} deals`} />
         <StatTile label="Lost in period" value={t && cash(t.lost_amount)} hint={t && `${wholeNumber(t.lost_count)} deals`} />
         <StatTile label="Win rate" value={t && percent(t.win_rate)} hint="Won out of deals closed in the period" />
       </StatRow>

@@ -256,7 +256,7 @@ export function Soc2CertificateModal({
               </h3>
               <div className="space-y-2 text-xs">
                 {receipt.evidence_snapshot && receipt.evidence_snapshot.length > 0 ? (
-                  receipt.evidence_snapshot.map((ev, idx) => (
+                  receipt.evidence_snapshot.map((ev, idx: number) => (
                     <div
                       key={idx}
                       className="p-2.5 rounded bg-slate-50 border border-slate-200 flex items-start gap-2.5"

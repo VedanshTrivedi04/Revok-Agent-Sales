@@ -30,14 +30,15 @@ import {
   Shield,
   Database,
   Building,
-  MessageCircleQuestion,
+  Smartphone,
+  Download,
+  Check,
 } from "lucide-react";
 import { useMe } from "../../lib/auth/session-context";
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "../../lib/api/client";
 import { queryKeys } from "../../lib/api/query-keys";
-import { ASSISTANT_NAME } from "../../lib/assistant";
 
 interface NavItem {
   name: string;
@@ -184,26 +185,50 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
         ))}
       </nav>
 
-      {/* User Status / Footer */}
+      {/* Sidebar Bottom: Compact Donezo Card for Name and Role */}
       <div className="p-3 border-t border-[#E2ECE5] dark:border-slate-800/80 bg-white dark:bg-[#06090D] flex-shrink-0">
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#F5F8F6] dark:bg-slate-900/90 border border-[#E2ECE5] dark:border-slate-800/80 text-xs">
-          <div className="w-6 h-6 rounded-full bg-[#0D3B36] dark:bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] flex-shrink-0 shadow-2xs">
-            {me?.user?.name
-              ? me.user.name.charAt(0).toUpperCase()
-              : me?.user?.email
-              ? me.user.email.charAt(0).toUpperCase()
-              : "U"}
-          </div>
-          <div className="overflow-hidden flex-1 min-w-0">
-            <div className="text-[11px] font-semibold text-slate-900 dark:text-slate-200 truncate">
-              {isLoading ? (
-                <span className="inline-block w-20 h-3 bg-slate-200 animate-pulse rounded" />
-              ) : (
-                me?.user?.name || me?.user?.email || "Signed in"
-              )}
+        <div className="relative overflow-hidden rounded-2xl p-2.5 bg-gradient-to-br from-[#071F18] via-[#0D3B36] to-[#041510] text-white shadow-md border border-[#165044]">
+          {/* Abstract 3D Glowing Emerald Ribbon Waves (Donezo style) */}
+          <svg
+            className="absolute -right-2 -bottom-2 w-24 h-24 pointer-events-none opacity-25"
+            viewBox="0 0 100 100"
+            fill="none"
+          >
+            <path d="M10,95 C35,35 65,85 100,20" stroke="#34D399" strokeWidth="2.5" />
+            <path d="M20,105 C45,45 75,95 110,30" stroke="#10B981" strokeWidth="2" />
+            <path d="M0,85 C25,25 55,75 90,10" stroke="#059669" strokeWidth="1.5" />
+            <path d="M30,115 C55,55 85,105 120,40" stroke="#6EE7B7" strokeWidth="1" />
+          </svg>
+
+          {/* User Name & Role Layout */}
+          <div className="relative z-10 flex items-center gap-2.5">
+            {/* Avatar Initial Circle */}
+            <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-xs border border-white/20 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-xs">
+              {me?.user?.name
+                ? me.user.name.charAt(0).toUpperCase()
+                : me?.user?.email
+                ? me.user.email.charAt(0).toUpperCase()
+                : "U"}
             </div>
-            <div className="text-[10px] text-[#0D3B36] dark:text-emerald-400 truncate capitalize font-mono font-medium">
-              Role: {me?.role || activeRole || "—"}
+
+            {/* Name and Role text */}
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-bold text-white truncate leading-tight flex items-baseline gap-1">
+                <span className="text-[10px] font-semibold text-emerald-300/80 uppercase tracking-wide">Name:</span>
+                <span className="truncate">
+                  {isLoading ? (
+                    <span className="inline-block w-16 h-2.5 bg-white/20 animate-pulse rounded" />
+                  ) : (
+                    me?.user?.name || me?.user?.email || "Signed in"
+                  )}
+                </span>
+              </div>
+              <div className="text-[11px] text-emerald-200/90 font-medium truncate mt-1 flex items-center gap-1.5">
+                <span className="text-[10px] font-semibold text-emerald-300/80 uppercase tracking-wide">Role:</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-white/15 text-emerald-200 text-[10px] font-mono capitalize font-bold tracking-wide border border-white/10">
+                  {me?.role || activeRole || "—"}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -268,7 +293,6 @@ export function Sidebar() {
       title: "Personal",
       items: [
         { name: "My Settings", href: "/settings/profile", match: "/settings", icon: SlidersHorizontal, action: "view:settings_profile" },
-        { name: ASSISTANT_NAME, href: "/riddhi", icon: MessageCircleQuestion, action: "view:assistant" },
       ],
     },
   ];

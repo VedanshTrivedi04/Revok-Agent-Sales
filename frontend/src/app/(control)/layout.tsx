@@ -6,6 +6,7 @@ import { Topbar } from "../../components/layout/topbar";
 import { IntegrationBanner } from "../../components/layout/integration-banner";
 import { OrgStatusNotice } from "../../components/layout/org-status-notice";
 import { PermissionGuard } from "../../components/layout/permission-guard";
+import { RiddhiFloatingAssistant } from "../../components/assistant/riddhi-floating-assistant";
 import { AnalyticsFilterProvider } from "../../lib/analytics/use-analytics";
 import { useMe } from "../../lib/auth/session-context";
 
@@ -36,6 +37,9 @@ export default function ControlLayout({ children }: { children: React.ReactNode 
           </div>
         </main>
       </div>
+
+      {/* Sticky Bottom-Right Riddhi AI Chatbot */}
+      <RiddhiFloatingAssistant />
     </div>
   );
 }

@@ -10,41 +10,109 @@ interface StatTileProps {
   href?: string;
   /** Marks a number that needs attention; shown as a labelled dot, not as colored text. */
   flag?: "attention" | "good";
+  /** Renders the prominent deep pine green card from the Donezo design */
+  featured?: boolean;
+  trend?: string;
 }
 
 /** A single current value. When the form is one number, the number is the chart. */
-export function StatTile({ label, value, hint, href, flag }: StatTileProps) {
-  const body = (
+export function StatTile({ label, value, hint, href, flag, featured = false, trend }: StatTileProps) {
+  const content = (
     <div
       className={clsx(
-        "viz h-full rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs",
-        href && "transition-colors hover:border-slate-300 dark:hover:border-slate-700"
+        "viz relative flex h-full flex-col justify-between rounded-3xl p-5 transition-all duration-200",
+        featured
+          ? "bg-gradient-to-br from-[#0D3B36] via-[#114941] to-[#0A332E] text-white shadow-md border border-[#17564C] hover:shadow-lg"
+          : "bg-white dark:bg-slate-900 border border-[#E2ECE5] dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-[#CFE2D7] dark:hover:border-slate-700",
+        href && "cursor-pointer group"
       )}
     >
-      <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-        {flag && (
+      {/* Top Header Row with Label & Circular Arrow Button */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
+          {flag && (
+            <span
+              aria-hidden="true"
+              className="inline-block h-2 w-2 rounded-full shrink-0"
+              style={{ backgroundColor: flag === "attention" ? "var(--viz-critical)" : "var(--viz-good)" }}
+            />
+          )}
           <span
-            aria-hidden="true"
-            className="inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: flag === "attention" ? "var(--viz-critical)" : "var(--viz-good)" }}
-          />
-        )}
-        <span>{label}</span>
+            className={clsx(
+              "text-sm font-medium truncate",
+              featured ? "text-emerald-100/90" : "text-slate-600 dark:text-slate-400"
+            )}
+          >
+            {label}
+          </span>
+        </div>
+
+        {/* Circular Action / Link Indicator */}
+        <div
+          className={clsx(
+            "h-7 w-7 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110",
+            featured
+              ? "bg-white/15 text-white border border-white/20"
+              : "border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300"
+          )}
+        >
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7" />
+            <polyline points="7 7 17 7 17 17" />
+          </svg>
+        </div>
       </div>
-      {value === undefined ? (
-        <div className="mt-2 h-7 w-24 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
-      ) : (
-        <div className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">{value}</div>
+
+      {/* Main Metric Value */}
+      <div className="mt-3">
+        {value === undefined ? (
+          <div
+            className={clsx(
+              "h-9 w-28 animate-pulse rounded-lg",
+              featured ? "bg-white/20" : "bg-slate-100 dark:bg-slate-800"
+            )}
+          />
+        ) : (
+          <div
+            className={clsx(
+              "text-3xl font-bold tracking-tight",
+              featured ? "text-white" : "text-[#111C18] dark:text-slate-100"
+            )}
+          >
+            {value}
+          </div>
+        )}
+      </div>
+
+      {/* Footer Hint / Badge */}
+      {(hint || trend) && (
+        <div className="mt-3 pt-1">
+          {featured ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 text-emerald-200 text-xs font-medium border border-white/10">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#34D399]" />
+              {trend || hint}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+              {trend && (
+                <span className="px-2 py-0.5 rounded-full bg-[#EAF5EE] dark:bg-slate-800 text-[#0D3B36] dark:text-emerald-300 font-medium">
+                  {trend}
+                </span>
+              )}
+              {hint}
+            </span>
+          )}
+        </div>
       )}
-      {hint && <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{hint}</div>}
     </div>
   );
+
   return href ? (
-    <Link href={href} className="block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E]">
-      {body}
+    <Link href={href} className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-[#143C2E] rounded-3xl">
+      {content}
     </Link>
   ) : (
-    body
+    content
   );
 }
 
@@ -58,28 +126,30 @@ interface MeterProps {
   total: number;
 }
 
-/** One ratio against its limit; the track is a lighter step of the fill's own hue. */
+/** One ratio against its limit; styled as a sleek rounded capsule meter. */
 export function Meter({ label, covered, total }: MeterProps) {
-  const ratio = total > 0 ? covered / total : 0;
+  const ratio = total > 0 ? Math.min(1, Math.max(0, covered / total)) : 0;
   return (
     <div>
-      <div className="mb-1 flex items-baseline justify-between gap-3 text-xs">
-        <span className="text-slate-700 dark:text-slate-200">{label}</span>
+      <div className="mb-1.5 flex items-baseline justify-between gap-3 text-xs">
+        <span className="font-medium text-slate-700 dark:text-slate-200">{label}</span>
         <span className="tabular-nums text-slate-500 dark:text-slate-400">
           <span className="font-semibold text-slate-900 dark:text-slate-100">{total > 0 ? `${Math.round(ratio * 100)}%` : "—"}</span>
           {total > 0 && ` · ${covered} of ${total}`}
         </span>
       </div>
       <div
-        className="h-2 overflow-hidden rounded-full"
-        style={{ backgroundColor: "var(--viz-track)" }}
+        className="h-3 w-full overflow-hidden rounded-full p-0.5 border border-[#E2ECE5] dark:border-slate-800 bg-[#EAF5EE] dark:bg-slate-800/80"
         role="meter"
         aria-label={label}
         aria-valuemin={0}
         aria-valuemax={total}
         aria-valuenow={covered}
       >
-        <div className="h-full rounded-full" style={{ width: `${ratio * 100}%`, backgroundColor: "var(--viz-1)" }} />
+        <div
+          className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-[#0D3B36] to-[#34D399]"
+          style={{ width: `${ratio * 100}%` }}
+        />
       </div>
     </div>
   );
@@ -92,31 +162,35 @@ export interface Share {
   color: string;
 }
 
-/** Part-to-whole as one stacked bar; every share is also written out beside its key. */
+/** Part-to-whole as one stacked capsule bar; every share is also written out beside its key. */
 export function ShareBar({ shares, format, label }: { shares: Share[]; format: (value: number) => string; label: string }) {
   const total = shares.reduce((sum, s) => sum + s.value, 0);
   const present = shares.filter((s) => s.value > 0);
   return (
     <div>
-      <div className="flex h-4 items-stretch gap-0.5" role="img" aria-label={label}>
-        {present.map((s, i) => (
+      <div
+        className="flex h-5 w-full items-stretch gap-1 rounded-full p-0.5 border border-[#E2ECE5] dark:border-slate-800 bg-[#EAF5EE] dark:bg-slate-800/80 overflow-hidden"
+        role="img"
+        aria-label={label}
+      >
+        {present.map((s) => (
           <div
             key={s.key}
             title={`${s.label}: ${format(s.value)}`}
+            className="rounded-full transition-all duration-300"
             style={{
               width: `${(s.value / total) * 100}%`,
               backgroundColor: s.color,
-              borderRadius: `${i === 0 ? "4px" : 0} ${i === present.length - 1 ? "4px 4px" : "0 0"} ${i === 0 ? "4px" : 0}`,
             }}
           />
         ))}
       </div>
-      <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-xs">
+      <ul className="mt-3.5 grid grid-cols-2 gap-x-6 gap-y-2 text-xs">
         {shares.map((s) => (
           <li key={s.key} className="flex items-center justify-between gap-3">
-            <span className="inline-flex min-w-0 items-center gap-1.5 text-slate-600 dark:text-slate-300">
-              <span aria-hidden="true" className="inline-block h-2.5 w-2.5 flex-shrink-0 rounded-xs" style={{ backgroundColor: s.color }} />
-              <span className="truncate">{s.label}</span>
+            <span className="inline-flex min-w-0 items-center gap-2 text-slate-600 dark:text-slate-300">
+              <span aria-hidden="true" className="inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ backgroundColor: s.color }} />
+              <span className="truncate font-medium">{s.label}</span>
             </span>
             <span className="tabular-nums text-slate-500 dark:text-slate-400">
               <span className="font-semibold text-slate-900 dark:text-slate-100">{format(s.value)}</span>

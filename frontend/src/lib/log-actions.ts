@@ -9,6 +9,40 @@ import type { components } from "./api/schema";
 type VerifyOut = components["schemas"]["LogVerifyOut"];
 type ExportOut = components["schemas"]["LogExportOut"];
 
+export interface Soc2EvidenceItem {
+  source?: string;
+  type?: string;
+  excerpt?: string;
+  title?: string;
+  note?: string;
+  [key: string]: unknown;
+}
+
+export interface Soc2Receipt {
+  receipt_id: string;
+  entry_id: string | number;
+  standard?: string;
+  event: string;
+  account_name?: string;
+  account_id?: string;
+  entity_id?: string;
+  timestamp: string;
+  summary?: string;
+  org_id: string;
+  actor_name?: string;
+  actor_type?: string;
+  actor_role?: string;
+  autonomy_tier?: number;
+  approval_status: string;
+  entry_hash: string;
+  prev_hash: string;
+  chain_algorithm?: string;
+  chain_status?: string;
+  evidence_snapshot?: Soc2EvidenceItem[];
+  tamper_verification_cli?: string;
+  [key: string]: unknown;
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /** Re-checks the decision log's hash chain on the server and reports what it actually found. */

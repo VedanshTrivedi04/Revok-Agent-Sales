@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowUp,
@@ -170,8 +171,13 @@ function TurnView({
       {answer && (
         <div className="p-5 rounded-2xl border border-[#E2ECE5] bg-white shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <div className="text-[10px] font-semibold text-[#0D3B36] uppercase tracking-wider font-mono">
-              {ASSISTANT_NAME}
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-5 rounded-full overflow-hidden bg-[#0D3B36] p-0.5 flex items-center justify-center shrink-0">
+                <Image src="/chatbot.png" alt="" width={20} height={20} className="w-full h-full object-contain" />
+              </div>
+              <span className="text-[10px] font-semibold text-[#0D3B36] uppercase tracking-wider font-mono">
+                {ASSISTANT_NAME}
+              </span>
             </div>
 
             {/* Audio Readout Controls */}
@@ -329,8 +335,11 @@ export default function AssistantPage() {
         {/* Header with Assistant title, Indian Language Selector and Voice Controls */}
         <div className="pb-4 border-b border-[#E2ECE5] flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#111C18] flex items-center gap-2">
-              {ASSISTANT_NAME}
+            <h1 className="text-2xl font-bold tracking-tight text-[#111C18] flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0D3B36] to-[#0A332E] border border-emerald-400/40 p-0.5 flex items-center justify-center shadow-xs shrink-0 overflow-hidden">
+                <Image src="/chatbot.png" alt={ASSISTANT_NAME} width={36} height={36} className="w-full h-full object-contain" priority />
+              </div>
+              <span>{ASSISTANT_NAME}</span>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#EAF5EE] text-[#0D3B36] border border-[#CDE1D6]">
                 Voice Enabled
               </span>

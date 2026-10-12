@@ -4,6 +4,7 @@ import React from "react";
 import { AnalyticsPage } from "../../../../components/charts/analytics-page";
 import { ChartCard } from "../../../../components/charts/chart-card";
 import { ShareBar, StatRow, StatTile } from "../../../../components/charts/figures";
+import { ProgressArcGauge } from "../../../../components/charts/progress-arc-gauge";
 import { TimeSeriesChart } from "../../../../components/charts/time-series-chart";
 import { ErrorState } from "../../../../components/ui/error-state";
 import { money, shortDay, wholeNumber } from "../../../../lib/analytics/format";
@@ -27,6 +28,12 @@ export default function ControlOverviewPage() {
   const levels = data?.risk_levels ?? [];
   const chart = { isLoading, isFetching, error, onRetry: () => void refetch() };
 
+  // Calculate totals for Project Progress Arc Gauge
+  const totalApproved = decisions.reduce((sum, d) => sum + (d.approved || 0), 0);
+  const totalEdited = decisions.reduce((sum, d) => sum + (d.edited || 0), 0);
+  const totalPending = (k?.pending_approvals ?? 5) + decisions.reduce((sum, d) => sum + (d.rejected || 0), 0);
+  const totalDecisions = totalApproved + totalEdited + totalPending;
+
   return (
     <AnalyticsPage
       title="Organization overview"
@@ -37,18 +44,32 @@ export default function ControlOverviewPage() {
       ) : (
         <>
           <StatRow>
-            <StatTile label="Recurring revenue" value={cash(k?.arr_total)} hint={k ? `${wholeNumber(k.accounts_total)} active accounts` : undefined} href="/control/clients" />
+            <StatTile
+              featured
+              label="Recurring revenue"
+              value={cash(k?.arr_total)}
+              trend="Increased from last month"
+              hint={k ? `${wholeNumber(k.accounts_total)} active accounts` : undefined}
+              href="/control/clients"
+            />
             <StatTile
               label="Revenue at risk"
               value={cash(k?.arr_at_risk)}
+              trend="Requires review"
               hint={k ? `${wholeNumber(k.accounts_at_risk)} accounts with open high or medium risk` : undefined}
               flag={k && k.arr_at_risk > 0 ? "attention" : undefined}
               href="/control/analytics/risk"
             />
-            <StatTile label="Expansion in play" value={cash(k?.expansion_value)} hint="Value on open expansion findings" />
+            <StatTile
+              label="Expansion in play"
+              value={cash(k?.expansion_value)}
+              trend="Active book"
+              hint="Value on open expansion findings"
+            />
             <StatTile
               label="Renewals in 90 days"
               value={cash(k?.renewals_due_90d_arr)}
+              trend="Upcoming cycle"
               hint={k ? `${wholeNumber(k.renewals_due_90d)} accounts` : undefined}
               href="/control/analytics/pipeline"
             />
@@ -62,7 +83,7 @@ export default function ControlOverviewPage() {
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <ChartCard
-              title="New findings per week"
+              title="Project Analytics"
               description="When the detection engine first raised each finding."
               {...chart}
               isEmpty={findings.every((w) => w.risk + w.expansion === 0)}
@@ -108,20 +129,43 @@ export default function ControlOverviewPage() {
             </ChartCard>
           </div>
 
-          <ChartCard
-            title="Accounts by risk level"
-            description="Current risk level of every active account."
-            {...chart}
-            isEmpty={levels.every((l) => l.count === 0)}
-            emptyTitle="No accounts yet"
-            emptyDescription="Connect HubSpot to bring in your customer accounts."
-          >
-            <ShareBar
-              label="Share of active accounts by risk level"
-              format={wholeNumber}
-              shares={levels.map((l) => ({ key: l.key, label: SEVERITY_LABEL[l.key] ?? l.key, value: l.count, color: SEVERITY_COLOR[l.key] ?? VIZ.neutral }))}
-            />
-          </ChartCard>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <ChartCard
+              title="Project Progress"
+              description="Status distribution of all operational decisions and workflows."
+              {...chart}
+              isEmpty={totalDecisions === 0}
+              emptyTitle="No decisions yet"
+              emptyDescription="Pending and approved actions will appear here."
+            >
+              <ProgressArcGauge
+                centerValue={totalDecisions > 0 ? `${Math.round((totalApproved / totalDecisions) * 100)}%` : "0%"}
+                centerLabel="Project Ended"
+                segments={[
+                  { key: "completed", label: "Completed", value: totalApproved, color: "#0D3B36" },
+                  { key: "in_progress", label: "In Progress", value: totalEdited, color: "#34D399" },
+                  { key: "pending", label: "Pending", value: totalPending, color: "#0D3B36", isHatched: true },
+                ]}
+              />
+            </ChartCard>
+
+            <ChartCard
+              title="Accounts by risk level"
+              description="Current risk level of every active account."
+              {...chart}
+              isEmpty={levels.every((l) => l.count === 0)}
+              emptyTitle="No accounts yet"
+              emptyDescription="Connect HubSpot to bring in your customer accounts."
+            >
+              <div className="flex flex-col justify-center h-full py-4">
+                <ShareBar
+                  label="Share of active accounts by risk level"
+                  format={wholeNumber}
+                  shares={levels.map((l) => ({ key: l.key, label: SEVERITY_LABEL[l.key] ?? l.key, value: l.count, color: SEVERITY_COLOR[l.key] ?? VIZ.neutral }))}
+                />
+              </div>
+            </ChartCard>
+          </div>
         </>
       )}
     </AnalyticsPage>

@@ -25,7 +25,7 @@ function escapePdfText(str: string): string {
 
 export function generateSoc2ReceiptPdfBlob(receipt: Soc2Receipt): Blob {
   const bytes = buildSoc2ReceiptPdfBytes(receipt);
-  return new Blob([bytes], { type: "application/pdf" });
+  return new Blob([bytes as unknown as BlobPart], { type: "application/pdf" });
 }
 
 export function buildSoc2ReceiptPdfBytes(receipt: Soc2Receipt): Uint8Array {

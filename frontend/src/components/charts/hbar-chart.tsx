@@ -95,19 +95,24 @@ export function HBarChart({ rows, series, format, label }: HBarChartProps) {
               ) : (
                 name
               )}
-              <div className="flex h-4 items-stretch gap-0.5" style={{ opacity: active && active !== row.key ? 0.55 : 1 }}>
-                {segments.map((s, i) => (
+              <div
+                className="flex h-5 w-full items-stretch gap-0.5 rounded-full p-0.5 border border-[#E2ECE5] dark:border-slate-800 bg-[#F0F7F3] dark:bg-slate-800/60 overflow-hidden"
+                style={{ opacity: active && active !== row.key ? 0.45 : 1 }}
+              >
+                {segments.map((s) => (
                   <div
                     key={s.key}
+                    className="h-full rounded-full transition-all duration-300"
                     style={{
                       width: `${((row.values[s.key] ?? 0) / max) * 100}%`,
                       backgroundColor: s.color,
-                      borderRadius: i === segments.length - 1 ? "0 4px 4px 0" : 0,
                     }}
                   />
                 ))}
               </div>
-              <span className="text-xs font-semibold tabular-nums text-slate-900 dark:text-slate-100">{format(total(row))}</span>
+              <span className="text-xs font-semibold tabular-nums text-slate-900 dark:text-slate-100 min-w-10 text-right">
+                {format(total(row))}
+              </span>
             </div>
           );
         })}
