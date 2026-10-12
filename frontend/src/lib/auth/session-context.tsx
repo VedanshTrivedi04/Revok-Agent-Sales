@@ -105,87 +105,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     retry: (count, err) => !(err instanceof ApiError && err.status < 500) && count < 1,
   });
 
-  const DEV_MOCK_ME: MeResponse = {
-    user: {
-      id: "ce9ca2a3-7518-5466-9a67-e9a9a740168d",
-      email: "olivia@demo-saas.example.com",
-      name: "Olivia Owner",
-      avatar_url: null,
-      timezone: "America/New_York",
-      notification_prefs: {
-        digest_channel: "slack",
-        digest_hour: 9,
-        digest_days: "weekdays",
-        alert_high: true,
-        alert_assigned: true,
-        alert_failed: true,
-      },
-      must_change_password: false,
-    },
-    memberships: [
-      {
-        org_id: "0ff871dd-5dba-5118-a723-4611c0bb2120",
-        org_name: "Demo SaaS",
-        role: "owner",
-      },
-    ],
-    org: {
-      id: "0ff871dd-5dba-5118-a723-4611c0bb2120",
-      name: "Demo SaaS",
-      status: "active",
-      plan: "growth",
-      timezone: "America/New_York",
-      currency: "USD",
-    },
-    role: "owner",
-    permissions: [
-      "view:work",
-      "view:control",
-      "view:inbox",
-      "view:accounts",
-      "view:rules",
-      "view:review",
-      "view:today",
-      "view:analytics",
-      "view:settings_general",
-      "view:settings_members",
-      "view:settings_integrations",
-      "view:settings_field_mapping",
-      "view:settings_autonomy",
-      "view:audit",
-      "approve:own",
-      "approve:any",
-      "data:export",
-      "members:manage",
-      "integrations:manage",
-      "connect:own",
-      "mapping:edit",
-      "rules:edit",
-      "apikeys:manage",
-    ],
-    flags: {
-      ai_remediation: true,
-      slack_integration: true,
-      hubspot_integration: true,
-      salesforce_integration: true,
-      analytics_v2: true,
-      autonomy_tier3: true,
-    },
-    portals: ["work", "control"],
-    home: "/today",
-    slack_user_id: "U05REVOP01",
-    onboarding: {
-      steps: [
-        { key: "hubspot", status: "done" },
-        { key: "google", status: "done" },
-        { key: "members", status: "done" },
-      ],
-      first_findings_ready: true,
-    },
-  };
-
-  const activeMe = me || DEV_MOCK_ME;
-
   // Clear any legacy dev persona override a previous build left in localStorage.
   useEffect(() => {
     try {
@@ -195,14 +114,14 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Temporary UI/UX dev bypass: disable unauthenticated redirect
-  // const unauthenticated = error instanceof ApiError && error.status === 401;
-  // useEffect(() => {
-  //   if (unauthenticated && !isPublicPath(pathname)) void endSession();
-  // }, [unauthenticated, pathname]);
+  // Session expired or the user no longer exists: clear the cookie and go back to sign-in.
+  const unauthenticated = error instanceof ApiError && error.status === 401;
+  useEffect(() => {
+    if (unauthenticated && !isPublicPath(pathname)) void endSession();
+  }, [unauthenticated, pathname]);
 
   // A temporary password must be replaced before using the app.
-  const mustChangePassword = activeMe?.user.must_change_password === true;
+  const mustChangePassword = me?.user.must_change_password === true;
   useEffect(() => {
     if (mustChangePassword && pathname !== "/change-password") {
       window.location.replace("/change-password");
@@ -211,22 +130,22 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const can = useMemo(() => {
     return (action: AppAction | string, context?: PermissionContext): boolean => {
-      // Temporary auth bypass: grant all permissions for UI/UX editing
-      return true;
+      if (!me) return false;
+      return checkPermission(me.permissions, me.flags, action, context);
     };
-  }, []);
+  }, [me]);
 
   const value = useMemo(
     () => ({
-      me: activeMe,
-      isLoading: false,
-      error: null,
+      me,
+      isLoading,
+      error: error as Error | null,
       refetch,
       can,
-      activeRole: activeMe?.role ?? "owner",
+      activeRole: me?.role ?? "",
       signOut: endSession,
     }),
-    [activeMe, refetch, can]
+    [me, isLoading, error, refetch, can]
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

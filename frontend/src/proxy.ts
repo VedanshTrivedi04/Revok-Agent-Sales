@@ -1,39 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
+import { decideRoute } from "./lib/auth/route-guard";
 import {
   ADMIN_SESSION_COOKIE,
-  createSessionToken,
+  readSessionToken,
   SESSION_COOKIE,
-  sessionCookieOptions,
 } from "./lib/auth/session-cookie";
 
-const DEMO_CUSTOMER = {
-  userId: "ce9ca2a3-7518-5466-9a67-e9a9a740168d",
-  orgId: "0ff871dd-5dba-5118-a723-4611c0bb2120",
-  email: "olivia@demo-saas.example.com",
-};
-
-const DEMO_ADMIN = {
-  userId: "00000000-0000-0000-0000-000000000001",
-  orgId: "0ff871dd-5dba-5118-a723-4611c0bb2120",
-  email: "sam@platform.revops.example.com",
-};
-
 /**
- * Temporary auth bypass for UI/UX development:
- * Automatically seeds valid signed demo session cookies and allows all routes.
+ * Page guard for both portals (rules live in lib/auth/route-guard.ts). It only checks that a valid
+ * signed session of the right scope exists; what a user may see is decided by the API
+ * (`permissions[]` / `flags{}` from `GET /me`, `GET /admin/me`), never by role strings here.
  */
 export async function proxy(req: NextRequest) {
-  const res = NextResponse.next();
+  const { pathname, search } = req.nextUrl;
+  const [customer, admin] = await Promise.all([
+    readSessionToken(req.cookies.get(SESSION_COOKIE)?.value, "customer"),
+    readSessionToken(req.cookies.get(ADMIN_SESSION_COOKIE)?.value, "admin"),
+  ]);
 
-  if (!req.cookies.has(SESSION_COOKIE)) {
-    const customerToken = await createSessionToken(DEMO_CUSTOMER, "customer");
-    res.cookies.set(SESSION_COOKIE, customerToken, sessionCookieOptions("customer"));
-  }
-  if (!req.cookies.has(ADMIN_SESSION_COOKIE)) {
-    const adminToken = await createSessionToken(DEMO_ADMIN, "admin");
-    res.cookies.set(ADMIN_SESSION_COOKIE, adminToken, sessionCookieOptions("admin"));
-  }
+  const decision = decideRoute({
+    pathname,
+    search,
+    hasCustomerSession: customer !== null,
+    hasAdminSession: admin !== null,
+    hasInviteParam: req.nextUrl.searchParams.has("invite"),
+  });
 
+  if (decision.action === "next") return NextResponse.next();
+
+  const res = NextResponse.redirect(new URL(decision.to, req.url));
+  // Drop expired / tampered cookies so they do not linger.
+  if (!customer && req.cookies.has(SESSION_COOKIE)) res.cookies.delete(SESSION_COOKIE);
+  if (!admin && req.cookies.has(ADMIN_SESSION_COOKIE)) res.cookies.delete(ADMIN_SESSION_COOKIE);
   return res;
 }
 

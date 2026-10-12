@@ -25,27 +25,11 @@ export async function mintServiceJwt(identity: SessionIdentity): Promise<string>
     .sign(new TextEncoder().encode(secret));
 }
 
-const DEMO_CUSTOMER_IDENTITY: SessionIdentity = {
-  userId: "ce9ca2a3-7518-5466-9a67-e9a9a740168d",
-  orgId: "0ff871dd-5dba-5118-a723-4611c0bb2120",
-  email: "olivia@demo-saas.example.com",
-};
-
-const DEMO_ADMIN_IDENTITY: SessionIdentity = {
-  userId: "00000000-0000-0000-0000-000000000001",
-  orgId: "0ff871dd-5dba-5118-a723-4611c0bb2120",
-  email: "sam@platform.revops.example.com",
-};
-
 export async function sessionFromRequest(
   req: NextRequest,
   scope: SessionScope = "customer"
 ): Promise<SessionIdentity | null> {
-  const token = req.cookies.get(cookieNameFor(scope))?.value;
-  const session = await readSessionToken(token, scope);
-  if (session) return session;
-  // Temporary auth bypass: fallback to demo identity so all requests succeed
-  return scope === "admin" ? DEMO_ADMIN_IDENTITY : DEMO_CUSTOMER_IDENTITY;
+  return readSessionToken(req.cookies.get(cookieNameFor(scope))?.value, scope);
 }
 
 export function unauthenticatedResponse() {
