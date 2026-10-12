@@ -89,13 +89,7 @@ def portals_for(role: Role | str) -> list[str]:
     r = Role(role)
     if r is Role.OWNER:
         return [PORTAL_CONTROL]
-    granted = PERMISSIONS[r]
-    portals = []
-    if A.VIEW_ANALYTICS in granted:
-        portals.append(PORTAL_CONTROL)
-    if A.VIEW_ACCOUNTS in granted:
-        portals.append(PORTAL_WORK)
-    return portals
+    return [PORTAL_WORK]
 
 
 def home_for(role: Role | str) -> str:

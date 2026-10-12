@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ControlSidebar } from "../../components/layout/sidebar";
 import { Topbar } from "../../components/layout/topbar";
 import { IntegrationBanner } from "../../components/layout/integration-banner";
@@ -11,14 +12,27 @@ import { AnalyticsFilterProvider } from "../../lib/analytics/use-analytics";
 import { useMe } from "../../lib/auth/session-context";
 
 /**
- * Control portal (Owner / Admin): analytics, people, clients and workspace setup. Entry is gated on
- * the `analytics:view` permission from `GET /me`; each page then applies its own permission.
+ * Control portal: Owner only. Admin and other roles are routed to the Work portal.
  */
 export default function ControlLayout({ children }: { children: React.ReactNode }) {
-  const { me, isLoading } = useMe();
+  const router = useRouter();
+  const { me, activeRole, isLoading } = useMe();
+
+  const isOwner = me?.role === "owner" || activeRole?.toLowerCase() === "owner";
+  const hasControlAccess = isOwner && (me?.portals ? me.portals.includes("control") : true);
+
+  useEffect(() => {
+    if (!isLoading && me && !hasControlAccess) {
+      router.replace(me.home || "/today");
+    }
+  }, [isLoading, me, hasControlAccess, router]);
 
   if (!isLoading && me?.org && (me.org.status === "suspended" || me.org.status === "deleted")) {
     return <OrgStatusNotice status={me.org.status} orgName={me.org.name} />;
+  }
+
+  if (!isLoading && me && !hasControlAccess) {
+    return null;
   }
 
   return (

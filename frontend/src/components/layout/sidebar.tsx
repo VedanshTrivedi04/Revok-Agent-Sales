@@ -69,10 +69,11 @@ function SidebarShell({ portal, sections }: { portal: Portal; sections: NavSecti
   const home = PORTALS[portal].href;
   // Which portals exist for this user comes from the API (`me.portals`).
   // Owner only has access to Control portal (no Work portal).
+  // Admin and all other roles only have access to Work portal (no Control portal).
   const isOwner = me?.role === "owner" || activeRole?.toLowerCase() === "owner";
   const portals = (me?.portals ?? [])
     .filter((p): p is Portal => p in PORTALS)
-    .filter((p) => !(isOwner && p === "work"));
+    .filter((p) => (isOwner ? p === "control" : p === "work"));
 
   // Filter items strictly using can(action) - hidden items are never rendered
   const visible = sections
