@@ -1394,7 +1394,7 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 
 **Git**
 - Branch: main
-- Commit: <commit-hash>
+- Commit: ffc7913
 - Push: successful
 - Remote: origin/main
 - Status: cleanly pushed to GitHub
