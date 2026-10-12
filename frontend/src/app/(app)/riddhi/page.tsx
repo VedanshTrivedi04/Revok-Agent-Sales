@@ -322,7 +322,7 @@ export default function AssistantPage() {
       startListening((recognizedText) => {
         const text = recognizedText.trim();
         if (text) {
-          setDraft(text);
+          setDraft("");
           ask(text, { question: text });
         }
       });
