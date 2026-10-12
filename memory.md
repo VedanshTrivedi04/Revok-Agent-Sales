@@ -1603,5 +1603,26 @@ RevOps Agent (Revok) is an enterprise revenue intelligence and autonomous operat
 **Notes**
 - All 8 demo emails delivered live.
 
+### 2026-10-12 11:27
+
+**User Request**
+> Re-send all sample demo emails to both `vednashtrivediindore@gmail.com` and `rajvardhansinghchawda@gmail.com`.
+
+**Work Done & Verification**
+- Executed `scripts/send_demo_samples.py`.
+- Re-dispatched all 4 transactional & notification emails to both recipients via live Gmail SMTP:
+  - 1. Team Member Invitation (`invite_email_sent_smtp`) -> Delivered to both.
+  - 2. Password Setup & Auth Recovery (`set_password_email_sent_smtp`) -> Delivered to both.
+  - 3. Daily Revenue Morning Digest Briefing (`digest_email_sent_smtp`) -> Delivered to both.
+  - 4. Instant High-Risk Churn Alert (`high_risk_alert_email_sent_smtp`) -> Delivered to both.
+- Process exited cleanly with code 0.
+
+**Git**
+- Branch: main
+- Commit: (pending)
+- Push: (pending)
+- Status: staged and verified
+
+
 
 
