@@ -408,12 +408,12 @@ async def test_model_plan_answers_what_keywords_cannot(
 
     sent = planner.calls[0]
     assert sent["question"] == question and sent["today"] == utcnow().date().isoformat()
-    assert [q["id"] for q in sent["questions"]] == [q.id for q in QUESTIONS]
-    assert sent["questions"][0] == {
-        "id": "high_risk_accounts",
-        "text": "Which accounts have a risk score of 80 or higher?",
-        "params": ["min_score", "limit"],
-    }
+    # the catalog, plus the route to the retrieval index that only the model can choose
+    assert [q["id"] for q in sent["questions"]] == [*(q.id for q in QUESTIONS), "search_records"]
+    first = sent["questions"][0]
+    assert (first["id"], first["params"]) == ("high_risk_accounts", ["min_score", "limit"])
+    assert first["text"] == "Which accounts have a risk score of 80 or higher?"
+    assert all(q["about"] for q in sent["questions"])  # every question is described for the model
 
 
 async def test_model_saying_none_is_final_even_when_a_keyword_matches(
@@ -456,6 +456,21 @@ async def test_whatever_the_model_returns_stays_inside_the_catalog(
         assert data["status"] == "unsupported"
     else:
         assert (data["question_id"], data["params"]) == (answer["question_id"], expected)
+
+
+async def test_numbers_written_in_the_question_win_over_the_models(
+    client_as: ClientAs, planner: _Planner
+) -> None:
+    # the model picked the right question but copied the default 80 and missed the period
+    planner.answer = {"question_id": "risk_history", "params": {"min_score": 80, "days": 7}}
+    data = await _ask(
+        client_as("manager"), question="pichhle 10 din me kaun se account 60 se zyada risk par the"
+    )
+    assert data["params"] == {"days": 10, "min_score": 60, "limit": 10}
+    # nothing written: the model's own reading of "two weeks" is used
+    planner.answer = {"question_id": "renewals_due", "params": {"days": 14}}
+    data = await _ask(client_as("manager"), question="what renews in the next two weeks")
+    assert data["params"] == {"days": 14, "limit": 10}
 
 
 async def test_catalog_questions_never_go_to_the_model(

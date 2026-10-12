@@ -111,6 +111,19 @@ class InternalClient:
     async def run_status(self, org: str, run_id: str, body: dict[str, Any]) -> dict[str, Any]:
         return await self._dict("POST", f"{self._o(org)}/runs/{run_id}/status", json=body)
 
+    # ---- Riddhi's retrieval index: the backend keeps the text and the vectors
+    async def rag_pending(self, org: str, model: str, limit: int = 25) -> dict[str, Any]:
+        params = {"model": model, "limit": limit}
+        return await self._dict("GET", f"{self._o(org)}/rag/pending", params=params)
+
+    async def rag_save_chunks(self, org: str, body: dict[str, Any]) -> dict[str, Any]:
+        return await self._dict("POST", f"{self._o(org)}/rag/chunks", json=body)
+
+    async def rag_search(self, org: str, body: dict[str, Any]) -> list[dict[str, Any]]:
+        out = await self._dict("POST", f"{self._o(org)}/rag/search", json=body)
+        passages: list[dict[str, Any]] = out["passages"]
+        return passages
+
 
 # ------------------------------------------------------------------ request body builders
 def signals_body(signals: list[Signal], model: str, prompt_version: str) -> dict[str, Any]:

@@ -41,6 +41,8 @@ def check_url(url: str) -> tuple[list[str], list[str]]:
 def main() -> int:
     s = get_settings()
     errors, warnings = check_url(s.llm_base_url)
+    embed_errors, embed_warnings = check_url(s.embed_base_url)  # record text is embedded there
+    errors, warnings = errors + embed_errors, warnings + embed_warnings
     for p in (ROOT / "revops_ai").rglob("*.py"):
         for m in re.finditer(r"https?://[^\s\"')]+", p.read_text(encoding="utf-8")):
             if any(v in m.group(0) for v in VENDORS):

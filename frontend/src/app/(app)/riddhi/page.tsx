@@ -178,6 +178,10 @@ function TurnView({
               <span className="text-[10px] font-semibold text-[#0D3B36] uppercase tracking-wider font-mono">
                 {ASSISTANT_NAME}
               </span>
+              {/* written by the model from the records listed under it, not computed by a query */}
+              {answer.generated && (
+                <span className="text-[10px] text-[#6A7B76]">· written from your records</span>
+              )}
             </div>
 
             {/* Audio Readout Controls */}
@@ -219,7 +223,7 @@ function TurnView({
           {answer.suggestions.length > 0 && (
             <QuestionChips questions={answer.suggestions} onPick={onPick} />
           )}
-          {answer.status === "answered" && (
+          {answer.status !== "unsupported" && answer.basis && (
             <p className="text-[11px] text-[#6A7B76]">
               {answer.basis} As of <DateText date={answer.as_of} formatStr="MMM d, yyyy HH:mm" />{" "}
               UTC.

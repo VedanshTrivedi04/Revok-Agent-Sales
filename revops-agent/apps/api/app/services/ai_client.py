@@ -20,10 +20,12 @@ from app.config import get_settings
 from app.utils.errors import TransientError
 
 log = structlog.get_logger()
-# Planning a question for Riddhi is interactive: wait briefly, and after a failure leave the model alone for a
-# while so every question in that time is answered at once by the keyword match.
-PLAN_TIMEOUT_S = 8.0
+# Planning a question for Riddhi is interactive: wait a bounded time (the AI service's own budget
+# is 10 s), and after a failure leave the model alone for a while so every question in that time
+# is answered at once by the keyword match.
+PLAN_TIMEOUT_S = 12.0
 PLAN_PAUSE_S = 60.0
+ANSWER_TIMEOUT_S = 50.0  # embedding + search + a few sentences from a small GPU
 _plan_paused_until = 0.0  # time.monotonic(); per process
 
 
@@ -121,8 +123,7 @@ async def plan_question(
         return None
     body = {"question": question, "questions": questions, "today": today}
     try:
-        timeout = min(PLAN_TIMEOUT_S, get_settings().ai_service_timeout_s)
-        async with httpx.AsyncClient(timeout=timeout) as http:
+        async with httpx.AsyncClient(timeout=PLAN_TIMEOUT_S) as http:
             r = await http.post(f"{_base()}/v1/assistant/plan", json=body, headers=_headers())
         if r.status_code < 400:
             out = r.json()
@@ -133,6 +134,54 @@ async def plan_question(
         log.warning("ai_plan_unreachable")
     _plan_paused_until = time.monotonic() + PLAN_PAUSE_S
     return None
+
+
+async def answer_question(
+    *, org_id: UUID, question: str, account_id: UUID | None, today: str
+) -> dict[str, Any] | None:
+    """An answer written from the org's indexed records: `{"status": "answered" | "no_evidence",
+    "text", "citations": [passage ids]}`. The AI service reads the passages itself through
+    /internal/v1; only the typed question and ids are sent. None when it could not answer at all.
+    Never raises, and never logs the question."""
+    body = {
+        "org_id": str(org_id),
+        "question": question,
+        "account_id": str(account_id) if account_id else None,
+        "today": today,
+    }
+    try:
+        async with httpx.AsyncClient(timeout=ANSWER_TIMEOUT_S) as http:
+            r = await http.post(f"{_base()}/v1/assistant/answer", json=body, headers=_headers())
+        if r.status_code < 400:
+            out = r.json()
+            if isinstance(out, dict):
+                return out
+        log.warning("ai_answer_unavailable", status=r.status_code)
+    except (httpx.HTTPError, ValueError):
+        log.warning("ai_answer_unreachable")
+    return None
+
+
+async def request_indexing(
+    *, org_id: UUID, limit: int = 50, wait: bool = False
+) -> dict[str, Any] | None:
+    """Ask the AI service to embed the org's records that are not searchable yet. Best effort:
+    never raises; what is missed now is picked up by the next pass."""
+    params: dict[str, str | int] = {"limit": limit, "wait": str(wait).lower()}
+    timeout = get_settings().ai_extract_wait_s if wait else get_settings().ai_service_timeout_s
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as http:
+            r = await http.post(
+                f"{_base()}/v1/rag/{org_id}/index", params=params, headers=_headers()
+            )
+        if r.status_code >= 400:
+            log.warning("ai_indexing_rejected", status=r.status_code)
+            return None
+        out: dict[str, Any] = r.json()
+        return out
+    except (httpx.HTTPError, ValueError):
+        log.warning("ai_indexing_unreachable")
+        return None
 
 
 async def health() -> dict[str, Any]:

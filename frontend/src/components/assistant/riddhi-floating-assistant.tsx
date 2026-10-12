@@ -178,6 +178,12 @@ function TurnView({
               <span className="text-[10px] font-bold text-[#0D3B36] dark:text-emerald-400 uppercase tracking-wider font-mono">
                 {ASSISTANT_NAME}
               </span>
+              {/* written by the model from the records listed under it, not computed by a query */}
+              {answer.generated && (
+                <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                  · written from your records
+                </span>
+              )}
             </div>
 
             {isSpeaking ? (
@@ -218,7 +224,7 @@ function TurnView({
             </div>
           )}
 
-          {answer.status === "answered" && (
+          {answer.status !== "unsupported" && answer.basis && (
             <p className="text-[10px] text-slate-400 dark:text-slate-500 pt-0.5 border-t border-slate-100 dark:border-slate-800">
               {answer.basis} As of <DateText date={answer.as_of} formatStr="MMM d, HH:mm" /> UTC.
             </p>

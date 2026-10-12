@@ -13,6 +13,9 @@ import os
 os.environ.setdefault(
     "RATE_LIMIT_ENABLED", "false"
 )  # tests opt in explicitly (see test_remediation_security)
+# A developer's .env may point at a live AI service; tests that need it set these themselves.
+os.environ["AI_MODE"] = "template"
+os.environ["AI_SERVICE_URL"] = ""
 
 from collections.abc import AsyncIterator, Callable, Iterator
 from pathlib import Path

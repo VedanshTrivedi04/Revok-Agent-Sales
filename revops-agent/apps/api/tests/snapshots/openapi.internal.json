@@ -653,6 +653,354 @@
     "title": "ProposalsSavedOut",
     "type": "object"
    },
+   "RagChunkIn": {
+    "properties": {
+     "embedding": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 4096,
+      "minItems": 1,
+      "title": "Embedding",
+      "type": "array"
+     },
+     "seq": {
+      "maximum": 999.0,
+      "minimum": 0.0,
+      "title": "Seq",
+      "type": "integer"
+     },
+     "text": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "seq",
+     "text",
+     "embedding"
+    ],
+    "title": "RagChunkIn",
+    "type": "object"
+   },
+   "RagChunksIn": {
+    "properties": {
+     "chunks": {
+      "items": {
+       "$ref": "#/components/schemas/RagChunkIn"
+      },
+      "maxItems": 40,
+      "title": "Chunks",
+      "type": "array"
+     },
+     "content_hash": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Content Hash",
+      "type": "string"
+     },
+     "model": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+     },
+     "source_id": {
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+     },
+     "source_type": {
+      "enum": [
+       "finding",
+       "card",
+       "event"
+      ],
+      "title": "Source Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "source_type",
+     "source_id",
+     "content_hash",
+     "model",
+     "chunks"
+    ],
+    "title": "RagChunksIn",
+    "type": "object"
+   },
+   "RagChunksSavedOut": {
+    "properties": {
+     "rejected": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rejected"
+     },
+     "saved": {
+      "title": "Saved",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "saved"
+    ],
+    "title": "RagChunksSavedOut",
+    "type": "object"
+   },
+   "RagDocument": {
+    "description": "One record rendered as text for embedding. `text` can hold UNTRUSTED customer words.",
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "account_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Name"
+     },
+     "content_hash": {
+      "title": "Content Hash",
+      "type": "string"
+     },
+     "occurred_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Occurred At"
+     },
+     "source_id": {
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+     },
+     "source_type": {
+      "enum": [
+       "finding",
+       "card",
+       "event"
+      ],
+      "title": "Source Type",
+      "type": "string"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     }
+    },
+    "required": [
+     "source_type",
+     "source_id",
+     "title",
+     "text",
+     "content_hash"
+    ],
+    "title": "RagDocument",
+    "type": "object"
+   },
+   "RagPassage": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "account_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Name"
+     },
+     "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+     },
+     "occurred_at": {
+      "anyOf": [
+       {
+        "format": "date-time",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Occurred At"
+     },
+     "score": {
+      "title": "Score",
+      "type": "number"
+     },
+     "source_id": {
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+     },
+     "source_type": {
+      "enum": [
+       "finding",
+       "card",
+       "event"
+      ],
+      "title": "Source Type",
+      "type": "string"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "source_type",
+     "source_id",
+     "title",
+     "text",
+     "score"
+    ],
+    "title": "RagPassage",
+    "type": "object"
+   },
+   "RagPendingOut": {
+    "properties": {
+     "documents": {
+      "items": {
+       "$ref": "#/components/schemas/RagDocument"
+      },
+      "title": "Documents",
+      "type": "array"
+     },
+     "remaining": {
+      "default": 0,
+      "title": "Remaining",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "documents"
+    ],
+    "title": "RagPendingOut",
+    "type": "object"
+   },
+   "RagSearchIn": {
+    "properties": {
+     "account_id": {
+      "anyOf": [
+       {
+        "format": "uuid",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Account Id"
+     },
+     "embedding": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 4096,
+      "minItems": 1,
+      "title": "Embedding",
+      "type": "array"
+     },
+     "limit": {
+      "default": 8,
+      "maximum": 20.0,
+      "minimum": 1.0,
+      "title": "Limit",
+      "type": "integer"
+     },
+     "model": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+     }
+    },
+    "required": [
+     "embedding",
+     "model"
+    ],
+    "title": "RagSearchIn",
+    "type": "object"
+   },
+   "RagSearchOut": {
+    "properties": {
+     "engine": {
+      "enum": [
+       "pgvector",
+       "scan"
+      ],
+      "title": "Engine",
+      "type": "string"
+     },
+     "passages": {
+      "items": {
+       "$ref": "#/components/schemas/RagPassage"
+      },
+      "title": "Passages",
+      "type": "array"
+     }
+    },
+    "required": [
+     "passages",
+     "engine"
+    ],
+    "title": "RagSearchOut",
+    "type": "object"
+   },
    "RunStatusIn": {
     "properties": {
      "error": {
@@ -1395,6 +1743,229 @@
      }
     },
     "summary": "Save Proposals",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/rag/chunks": {
+   "post": {
+    "description": "Save a record's passages and vectors (each passage must be cut from the record).",
+    "operationId": "ai_rag_save_chunks",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RagChunksIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RagChunksSavedOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Rag Save Chunks",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/rag/pending": {
+   "get": {
+    "description": "Records (findings, action cards, events) not yet embedded with this model.",
+    "operationId": "ai_rag_pending",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "model",
+      "required": true,
+      "schema": {
+       "maxLength": 120,
+       "minLength": 1,
+       "title": "Model",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 25,
+       "maximum": 100,
+       "minimum": 1,
+       "title": "Limit",
+       "type": "integer"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RagPendingOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Rag Pending",
+    "tags": [
+     "AI Internal"
+    ]
+   }
+  },
+  "/v1/orgs/{org}/rag/search": {
+   "post": {
+    "description": "The passages closest to a query vector, inside this org only.",
+    "operationId": "ai_rag_search",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "org",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Org",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-internal-key",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Internal-Key"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RagSearchIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RagSearchOut"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Rag Search",
     "tags": [
      "AI Internal"
     ]

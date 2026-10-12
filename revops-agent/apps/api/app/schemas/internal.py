@@ -140,3 +140,68 @@ class InternalContact(BaseModel):
     email: str
     name: str | None = None
     role_tags: list[str] = []
+
+
+# ---- Riddhi's retrieval index (rag_chunks): the AI service embeds, the backend stores and searches
+RagSource = Literal["finding", "card", "event"]
+
+
+class RagDocument(BaseModel):
+    """One record rendered as text for embedding. `text` can hold UNTRUSTED customer words."""
+
+    source_type: RagSource
+    source_id: UUID
+    account_id: UUID | None = None
+    account_name: str | None = None
+    title: str
+    text: str
+    occurred_at: datetime | None = None
+    content_hash: str
+
+
+class RagPendingOut(BaseModel):
+    documents: list[RagDocument]
+    remaining: int = 0  # more records wait beyond this page
+
+
+class RagChunkIn(BaseModel):
+    seq: int = Field(ge=0, le=999)
+    text: str = Field(min_length=1, max_length=4000)  # must be a substring of the record's text
+    embedding: list[float] = Field(min_length=1, max_length=4096)
+
+
+class RagChunksIn(BaseModel):
+    source_type: RagSource
+    source_id: UUID
+    content_hash: str = Field(min_length=1, max_length=64)  # of the text the chunks were cut from
+    model: str = Field(min_length=1, max_length=120)
+    chunks: list[RagChunkIn] = Field(max_length=40)
+
+
+class RagChunksSavedOut(BaseModel):
+    saved: int
+    rejected: str | None = None  # stale | text_not_in_record | bad_embedding
+
+
+class RagSearchIn(BaseModel):
+    embedding: list[float] = Field(min_length=1, max_length=4096)
+    model: str = Field(min_length=1, max_length=120)  # only vectors of the same model compare
+    account_id: UUID | None = None
+    limit: int = Field(default=8, ge=1, le=20)
+
+
+class RagPassage(BaseModel):
+    id: UUID
+    source_type: RagSource
+    source_id: UUID
+    account_id: UUID | None = None
+    account_name: str | None = None
+    title: str
+    occurred_at: datetime | None = None
+    text: str  # can hold UNTRUSTED customer words
+    score: float  # cosine similarity, 1 = same direction
+
+
+class RagSearchOut(BaseModel):
+    passages: list[RagPassage]
+    engine: Literal["pgvector", "scan"]

@@ -1308,11 +1308,69 @@ uv run python scripts/check_openapi.py --update                   # after any co
   This is the one call where the backend sends text, not ids: the manager's own typed question.
 - Answers carry `interpreted_as` (the catalog question with the values used); Riddhi's page shows
   it under a typed question as "Answered as: ...".
-- NOT verified against the real model: Qwen was down (GPU time expired) on 2026-10-12. When it is
-  up: `cd apps/ai && uv run pytest -m live tests/live -k plan -q` (15 questions, English and
-  Hinglish, 3 that must be refused). Offline tests use `FakeLLM`.
-- Not built: RAG over emails/notes (needs a self-hosted embedding model and pgvector; the local
-  image `postgres:16` has no pgvector), and an audit table of questions asked.
+- Verified against the real model on 2026-10-12 (Qwen3.5-9B GGUF on llama.cpp, Kaggle T4, via a
+  trycloudflare tunnel): prompt `plan@1.0.0` got 8 of 15 (dropped numbers, said "none" to
+  paraphrases, obeyed one injected instruction). `plan@1.1.0` gets 23 of 23 (15 in
+  `tests/live/test_live_qwen.py` + 8 held out), about 3.5 s per question. What changed:
+  each question has an `about` line (`Question.about`, sent to the service); the model writes a
+  short `reason` before the id; text that names `question_id` or a catalog id, or matches the
+  injection patterns, is refused in code without a model call; a `min_score` / `limit` the model
+  returns must appear as digits in the question; and the backend reads numbers written in the
+  question itself (`_stated_numbers`), the model's numbers only fill what is not written.
+  Time budget 10 s in the service, 12 s in the backend.
+- On 2026-10-12 the user put `LLM_*` values into `apps/api/.env`. The backend does not read
+  them: they belong in `apps/ai/.env`. Riddhi uses Qwen only when the AI service runs and the
+  backend has `AI_MODE=external` + `AI_SERVICE_URL`.
+- Live check: `cd apps/ai && uv run pytest -m live tests/live -k plan -q` (needs `LLM_*`).
+- Not built: an audit table of questions asked.
+
+### 19.4 RAG for Riddhi (2026-10-12): answers from the records, pgvector on Neon
+- What is searchable: findings (title, summary, claims, evidence labels, unknowns,
+  contradictions), action cards (title, rationale, drafted subject/text, CRM changes) and timeline
+  events that belong to an account. The backend renders each record to text
+  (`app/services/rag.py::documents`). The demo data has NO email bodies (events hold titles
+  only), so today the useful answers come from findings and cards.
+- Storage: migration `0009`, table `rag_chunks` (model `app/models/rag.py`, tenant RLS):
+  `source_type` finding|card|event, `source_id`, `seq`, `title`, `text`, `content_hash`,
+  `embedding real[]` (768), `model`. The column is `real[]`, not `vector`, so the table also exists
+  on a plain Postgres (tests, local docker). Where the server has pgvector the migration runs
+  `CREATE EXTENSION vector` and builds an HNSW index over `(embedding::vector(768))`; the search
+  SQL uses the same expression with `<=>` and `SET LOCAL hnsw.iterative_scan = 'relaxed_order'`
+  (so tenant/account filters still return k rows). Without pgvector `rag.search` ranks in Python
+  (`engine: "scan"`). Neon: pgvector 0.8.6, applied 0009 on 2026-10-12, 103 passages indexed.
+- Who does what: the AI service only embeds and writes the answer; the backend keeps text and
+  vectors. Internal endpoints (X-Internal-Key): `GET /internal/v1/orgs/{org}/rag/pending?model=`,
+  `POST .../rag/chunks` (rejects passages that are not substrings of the current record text,
+  stale hashes, wrong vector size), `POST .../rag/search`.
+- AI service (`apps/ai`): `llm/embeddings.py` (OpenAI-compatible `/embeddings`; settings
+  `EMBED_BASE_URL`, `EMBED_MODEL`, `EMBED_DIM`; local setup = Ollama `embeddinggemma`, 768),
+  `tasks/index.py` (cut into <=900-char passages, embed), `tasks/answer.py` + prompt
+  `answer.1.0.0.md` + schema `AnswerOutput`, endpoints `POST /v1/rag/{org_id}/index` and
+  `POST /v1/assistant/answer`. An answer leaves the service only if it cites passages it was
+  given and every number/date in it is in a cited passage (`validation/numbers.py`); otherwise
+  `no_evidence`. Instruction-like sentences in passages are redacted before the model sees them.
+- Riddhi: the model planner can choose `search_records` (`assistant.SEARCH`, not in the catalog
+  chips, only with `AI_MODE=external`). `assistant._from_records` resolves the account named in
+  the question (`rag.account_in_question`), calls `ai_client.answer_question`, then looks the
+  cited passage ids up under RLS: model text is shown only with this org's records behind it
+  (`generated: true`, rows link to the finding / card / account); otherwise `status: not_found`.
+- Indexing: Celery beat `run.ai_index_dispatch` every 15 min (needs the worker + beat running),
+  or by hand: `POST {AI service}/v1/rag/{org_id}/index?limit=100` with header `X-AI-Key`.
+  A record is embedded again when its rendered text or the embedding model changes.
+- Verified live (Neon pgvector + Ollama embeddinggemma + Qwen3.5-9B on a T4): 6 of 6 record
+  questions answered with the right citations, 2 unrelated questions refused; planner routing
+  26 of 26. About 14 s per record question on this setup: ~7 s in the two Qwen calls, ~6 s in
+  round trips to the remote database (each `org_session` is 4-7 round trips of ~300 ms).
+- Local setup made on 2026-10-12: `apps/ai/.env` (not committed), AI service on port 8110
+  (8100 is the API port of the Playwright E2E), backend `.env` `AI_MODE=external`,
+  `AI_SERVICE_URL=http://127.0.0.1:8110`. Use 127.0.0.1, not localhost: on Windows `localhost`
+  adds ~2 s per call. With `AI_MODE=external` agent runs also use Qwen (explanations, drafts,
+  signal extraction, ML scores).
+- Limits: answers come from the top 6 passages, so "the last", "all" or "how many" questions
+  belong to the catalog queries, not to search; stale passages of deleted findings/cards are
+  not cleaned up (purged mail events are); the deployed environment needs its own embedding
+  endpoint (Ollama runs only on the developer machine); tests pin `AI_MODE=template`
+  (`tests/conftest.py`, `playwright.config.ts`).
 - `NEXT_DIST_DIR` (set to `.next-e2e` by `playwright.config.ts`) keeps the E2E build out of `.next`.
 
 ### 19.3 Known failing test (not caused by 19.2)

@@ -132,3 +132,6 @@
 | POST | `/internal/v1/orgs/{org}/findings/{finding_id}/proposals` | Vedansh | P6 | mock (501 until V6-02) |
 | POST | `/internal/v1/orgs/{org}/runs/{run_id}/status` | Vedansh | P6 | mock (501 until V6-02) |
 | GET | `/internal/v1/orgs/{org}/accounts/{account_id}/contacts` | Vedansh | P6 | mock (501 until V6-02) |
+| GET | `/internal/v1/orgs/{org}/rag/pending` | Vedansh | P6 | mock (501 until V6-02) |
+| POST | `/internal/v1/orgs/{org}/rag/chunks` | Vedansh | P6 | mock (501 until V6-02) |
+| POST | `/internal/v1/orgs/{org}/rag/search` | Vedansh | P6 | mock (501 until V6-02) |

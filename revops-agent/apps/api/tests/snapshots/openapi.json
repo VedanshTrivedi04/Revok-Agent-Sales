@@ -1741,6 +1741,11 @@
       ],
       "title": "Basis"
      },
+     "generated": {
+      "default": false,
+      "title": "Generated",
+      "type": "boolean"
+     },
      "interpreted_as": {
       "anyOf": [
        {
@@ -1789,7 +1794,8 @@
      "status": {
       "enum": [
        "answered",
-       "unsupported"
+       "unsupported",
+       "not_found"
       ],
       "title": "Status",
       "type": "string"

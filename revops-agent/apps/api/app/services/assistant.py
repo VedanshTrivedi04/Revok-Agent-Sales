@@ -22,6 +22,7 @@ from sqlalchemy import distinct, func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db.session import org_session
 from app.models.actions import ActionCard
 from app.models.brain import Finding
 from app.models.timeline import Account, AccountScoreDay
@@ -34,7 +35,7 @@ from app.schemas.assistant import (
     AssistantQuestion,
     ParamKey,
 )
-from app.services import ai_client
+from app.services import ai_client, rag
 from app.services.analytics import (
     OPEN_FINDINGS,
     _approved,
@@ -57,6 +58,7 @@ class Question:
     id: str
     template: str  # str.format() with the parameter values
     params: tuple[AssistantParam, ...] = ()
+    about: str = ""  # what it covers in other words; only the model planner reads this
 
 
 def _min_score(default: int) -> AssistantParam:
@@ -74,30 +76,67 @@ QUESTIONS: tuple[Question, ...] = (
         "high_risk_accounts",
         "Which accounts have a risk score of {min_score} or higher?",
         (_min_score(80), _LIMIT),
+        "Accounts at risk of churning right now: who might leave, cancel or not renew, which "
+        "customers are unhappy or in trouble today.",
     ),
     Question(
         "risk_history",
         "Which accounts had a risk score of {min_score} or higher in the last {days} days?",
         (_days(7), _min_score(80), _LIMIT),
+        "The same risk, but over a period of time: which accounts were at risk at any point in "
+        "the last N days or weeks.",
     ),
     Question(
         "new_risk_findings",
         "Which risk findings are new in the last {days} days?",
         (_days(7), _min_score(0), _LIMIT),
+        "Only risk problems that are new: what newly appeared or was newly flagged in a period.",
     ),
     Question(
-        "renewals_due", "Which renewals are due in the next {days} days?", (_days(30), _LIMIT)
+        "renewals_due",
+        "Which renewals are due in the next {days} days?",
+        (_days(30), _LIMIT),
+        "Contracts coming up for renewal in a coming period, and how much revenue they are worth.",
     ),
-    Question("pending_approvals", "What is waiting for approval?", (_LIMIT,)),
-    Question("expansion_opportunities", "What expansion opportunities are open?", (_LIMIT,)),
-    Question("decisions_summary", "What did the team decide in the last {days} days?", (_days(7),)),
+    Question(
+        "pending_approvals",
+        "What is waiting for approval?",
+        (_LIMIT,),
+        "Actions the agent prepared that still wait for a person to approve, sign off or review.",
+    ),
+    Question(
+        "expansion_opportunities",
+        "What expansion opportunities are open?",
+        (_LIMIT,),
+        "Chances to grow revenue in existing accounts: upsell, cross-sell, more seats, plan "
+        "upgrades.",
+    ),
+    Question(
+        "decisions_summary",
+        "What did the team decide in the last {days} days?",
+        (_days(7),),
+        "What the team already approved or rejected in a past period.",
+    ),
     Question(
         "quiet_accounts",
         "Which accounts have had no activity for {days} days?",
         (_days(14), _LIMIT),
+        "Accounts with no recent contact or activity: nobody has talked to, emailed or met them "
+        "for a while.",
     ),
 )
 _BY_ID = {q.id: q for q in QUESTIONS}
+
+# Not a catalog question: it has no fixed query. A typed question the model routes here is answered
+# from the retrieval index (app/services/rag.py), so it exists only with the AI service on.
+SEARCH = Question(
+    "search_records",
+    "What do the records say about an account or a topic?",
+    (),
+    "Anything that needs reading the records instead of counting accounts: why one named account "
+    "is at risk, what a finding or its evidence says, which action or email was proposed or "
+    "drafted for an account, what happened in the emails or meetings with an account.",
+)
 
 
 def _public(q: Question) -> AssistantQuestion:
@@ -183,36 +222,48 @@ def _window_days(text: str) -> tuple[int | None, str]:
     return None, text
 
 
+def _stated_numbers(text: str) -> Params:
+    """The numbers written in a (lower-cased) question: a period, "top N", a score threshold."""
+    stated: Params = {}
+    days, rest = _window_days(text)
+    if days is not None:
+        stated["days"] = days
+    top = _TOP.search(rest)
+    if top:
+        stated["limit"] = int(top.group(1))
+        rest = rest[: top.start()] + " " + rest[top.end() :]
+    score = _SCORE.search(rest)
+    if score:
+        stated["min_score"] = int(next(g for g in score.groups() if g))
+    return stated
+
+
 def plan_question(question: str) -> Plan | None:
     """Keyword match of a typed question to a catalog question. None = not something we answer."""
     text = question.lower()
     intent = next((name for name, pattern in _INTENTS if pattern.search(text)), None)
     if intent is None:
         return None
-    given: Params = {}
-    days, rest = _window_days(text)
-    if days is not None:
-        given["days"] = days
-    top = _TOP.search(rest)
-    if top:
-        given["limit"] = int(top.group(1))
-        rest = rest[: top.start()] + " " + rest[top.end() :]
-    score = _SCORE.search(rest)
+    given = _stated_numbers(text)
     if intent == "risk":
         # "which accounts are at risk" names no threshold: count every open risk finding
-        given["min_score"] = int(next(g for g in score.groups() if g)) if score else 0
+        given.setdefault("min_score", 0)
         if _NEW.search(text):
             intent = "new_risk_findings"
         else:
-            intent = "risk_history" if days is not None else "high_risk_accounts"
+            intent = "risk_history" if "days" in given else "high_risk_accounts"
     q = _BY_ID[intent]
     return Plan(q.id, _resolve_params(q, given, clamp=True))
 
 
-def _plan_from_model(proposed: dict[str, Any]) -> Plan | None:
+def _plan_from_model(proposed: dict[str, Any], question: str) -> Plan | None:
     """A plan proposed by the AI service, checked like any other input. The model only chooses:
-    an id outside the catalog is no plan, and numbers are clamped to the question's ranges."""
-    q = _BY_ID.get(str(proposed.get("question_id") or ""))
+    an id outside the catalog is no plan, and numbers are clamped to the question's ranges.
+    A number that is written in the question is read from the question, not taken from the model."""
+    chosen = str(proposed.get("question_id") or "")
+    if chosen == SEARCH.id:
+        return Plan(SEARCH.id, {})
+    q = _BY_ID.get(chosen)
     if q is None:
         return None
     raw = proposed.get("params")
@@ -221,8 +272,8 @@ def _plan_from_model(proposed: dict[str, Any]) -> Plan | None:
         value = raw.get(p.key) if isinstance(raw, dict) else None
         if isinstance(value, int) and not isinstance(value, bool):
             given[p.key] = value
-        elif p.key == "min_score":  # no threshold named: count every open risk finding
-            given[p.key] = 0
+    given.update(_stated_numbers(question.lower()))
+    given.setdefault("min_score", 0)  # no threshold named: count every open risk finding
     return Plan(q.id, _resolve_params(q, given, clamp=True))
 
 
@@ -235,13 +286,18 @@ async def plan(body: AssistantAskIn, today: date) -> Plan | None:
         proposed = await ai_client.plan_question(
             question=body.question,
             questions=[
-                {"id": q.id, "text": _public(q).text, "params": [p.key for p in q.params]}
-                for q in QUESTIONS
+                {
+                    "id": q.id,
+                    "text": _public(q).text,
+                    "params": [p.key for p in q.params],
+                    "about": q.about,
+                }
+                for q in (*QUESTIONS, SEARCH)
             ],
             today=today.isoformat(),
         )
         if proposed is not None:
-            return _plan_from_model(proposed)
+            return _plan_from_model(proposed, body.question)
     return plan_question(body.question)
 
 
@@ -854,10 +910,86 @@ def unsupported(now: datetime) -> AssistantAnswer:
     )
 
 
-async def ask(s: AsyncSession, org_id: UUID, body: AssistantAskIn) -> AssistantAnswer:
+def _snippet(text: str, limit: int = 180) -> str:
+    flat = " ".join(text.split())
+    return flat if len(flat) <= limit else flat[: limit - 1].rstrip() + "…"
+
+
+async def _from_records(org_id: UUID, question: str, now: datetime) -> AssistantAnswer:
+    """An answer the model wrote from the org's own indexed records. The model's text is shown
+    only together with records of this org that it cited; without them Riddhi says it found
+    nothing. No database transaction is held while the AI service works."""
+    async with org_session(org_id) as s:
+        named = await rag.account_in_question(s, org_id, question)
+    out = await ai_client.answer_question(
+        org_id=org_id,
+        question=question,
+        account_id=named[0] if named else None,
+        today=now.date().isoformat(),
+    )
+    if out is None:
+        return AssistantAnswer(
+            status="unsupported",
+            text=(
+                f"{ASSISTANT_NAME} could not read the records just now. Try again in a moment, "
+                "or ask one of these."
+            ),
+            suggestions=catalog().questions,
+            as_of=now,
+        )
+
+    cited: list[UUID] = []
+    for raw in out.get("citations") or []:
+        try:
+            cited.append(UUID(str(raw)))
+        except ValueError:
+            continue
+    async with org_session(org_id) as s:  # RLS: a passage of another org is simply not found
+        found = {c.id: (c, name) for c, name in await rag.passages_by_id(s, org_id, cited)}
+    sources = [found[i] for i in dict.fromkeys(cited) if i in found][:6]
+    text = " ".join(str(out.get("text") or "").split())[:1200]
+    searched = "Searched findings, proposed actions and timeline events" + (
+        f" of {named[1]}." if named else "."
+    )
+    if out.get("status") != "answered" or not text or not sources:
+        return AssistantAnswer(
+            status="not_found",
+            question_id=SEARCH.id,
+            text=f"{ASSISTANT_NAME} found nothing in the records that answers this.",
+            basis=searched,
+            as_of=now,
+        )
+    return AssistantAnswer(
+        status="answered",
+        question_id=SEARCH.id,
+        text=text,
+        generated=True,
+        basis=(
+            f"Written by the model from the {_n(len(sources), 'record')} below; the numbers and "
+            f"dates in it were checked against them. Open a record to verify. {searched}"
+        ),
+        rows=[
+            AnswerRow(
+                title=chunk.title,
+                detail=_parts(name, _snippet(chunk.text)),
+                account_id=chunk.account_id,
+                finding_id=chunk.source_id if chunk.source_type == "finding" else None,
+                card_id=chunk.source_id if chunk.source_type == "card" else None,
+            )
+            for chunk, name in sources
+        ],
+        total=len(sources),
+        as_of=now,
+    )
+
+
+async def ask(org_id: UUID, body: AssistantAskIn) -> AssistantAnswer:
     now = utcnow()
-    chosen = await plan(body, now.date())
+    chosen = await plan(body, now.date())  # no database connection is held while a model thinks
     if chosen is None:
         return unsupported(now)
-    facts = await _GATHER[chosen.question_id](s, org_id, chosen.params, now)
-    return compose(chosen, facts, await _currency(s, org_id), now)
+    if chosen.question_id == SEARCH.id:
+        return await _from_records(org_id, body.question or "", now)
+    async with org_session(org_id) as s:
+        facts = await _GATHER[chosen.question_id](s, org_id, chosen.params, now)
+        return compose(chosen, facts, await _currency(s, org_id), now)

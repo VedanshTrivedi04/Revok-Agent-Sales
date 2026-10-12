@@ -21,6 +21,18 @@ class Settings(BaseSettings):
     llm_send_thinking_flag: bool = True
     llm_timeout_s: float = 120.0
 
+    # Embeddings for Riddhi's retrieval index: any OpenAI-compatible /embeddings endpoint that is
+    # self-hosted (Ollama, llama.cpp, TEI, vLLM). The backend's index stores 768 numbers per
+    # passage, so the model must produce exactly that many.
+    # 127.0.0.1, not localhost: on Windows a name lookup that tries IPv6 first costs ~2 s per call
+    embed_base_url: str = "http://127.0.0.1:11434/v1"
+    embed_api_key: str = "local"
+    embed_model: str = "embeddinggemma"
+    embed_dim: int = 768
+    # EmbeddingGemma is trained with these task prefixes; leave both empty for a model without.
+    embed_query_prefix: str = "task: search result | query: "
+    embed_doc_prefix: str = "title: none | text: "
+
     internal_api_url: str = "http://localhost:8000/internal"
     internal_api_key: str = "dev-internal-key"
 

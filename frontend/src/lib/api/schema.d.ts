@@ -2649,6 +2649,11 @@ export interface components {
             as_of: string;
             /** Basis */
             basis?: string | null;
+            /**
+             * Generated
+             * @default false
+             */
+            generated: boolean;
             /** Interpreted As */
             interpreted_as?: string | null;
             /**
@@ -2669,7 +2674,7 @@ export interface components {
              * Status
              * @enum {string}
              */
-            status: "answered" | "unsupported";
+            status: "answered" | "unsupported" | "not_found";
             /**
              * Suggestions
              * @default []

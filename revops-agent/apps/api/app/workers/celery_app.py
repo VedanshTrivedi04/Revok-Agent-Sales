@@ -71,6 +71,10 @@ celery_app.conf.update(
             "task": "run.ai_extract_dispatch",
             "schedule": 600.0,
         },
+        "ai-record-indexing": {
+            "task": "run.ai_index_dispatch",
+            "schedule": 900.0,
+        },
         "expire-cards-hourly": {
             "task": "maintenance.expire_cards_fanout",
             "schedule": 3600.0,

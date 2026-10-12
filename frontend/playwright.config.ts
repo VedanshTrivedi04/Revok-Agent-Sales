@@ -22,6 +22,7 @@ const SECRET = "e2e-local-secret-e2e-local-secret-0123456789";
 export const apiEnv = {
   APP_ENV: "local",
   MOCK_API: "false",
+  AI_MODE: "template", // deterministic: a developer's .env may point Riddhi at a live model
   API_JWT_SECRET: SECRET,
   DATABASE_URL: `postgresql+asyncpg://app:app@localhost:${DB_PORT}/revops`,
   DATABASE_ADMIN_URL: `postgresql+asyncpg://admin:admin@localhost:${DB_PORT}/revops`,

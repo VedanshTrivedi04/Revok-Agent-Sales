@@ -22,11 +22,16 @@ from app.schemas.internal import (
     PendingExtractionOut,
     ProposalsIn,
     ProposalsSavedOut,
+    RagChunksIn,
+    RagChunksSavedOut,
+    RagPendingOut,
+    RagSearchIn,
+    RagSearchOut,
     RunStatusIn,
     SignalsIn,
     SignalsSavedOut,
 )
-from app.services import internal_ai
+from app.services import internal_ai, rag
 from app.utils.errors import AppError
 
 
@@ -114,5 +119,27 @@ def create_internal_app() -> FastAPI:
         """Contact ids for recipient selection."""
         async with org_session(org) as s:
             return await internal_ai.get_account_contacts(s, org, account_id)
+
+    @app.get(f"{o}/rag/pending", operation_id="ai_rag_pending", tags=["AI Internal"])
+    async def rag_pending(
+        org: UUID,
+        model: Annotated[str, Query(min_length=1, max_length=120)],
+        limit: Annotated[int, Query(ge=1, le=100)] = 25,
+    ) -> RagPendingOut:
+        """Records (findings, action cards, events) not yet embedded with this model."""
+        async with org_session(org) as s:
+            return await rag.pending(s, org, limit, model)
+
+    @app.post(f"{o}/rag/chunks", operation_id="ai_rag_save_chunks", tags=["AI Internal"])
+    async def rag_save_chunks(org: UUID, body: RagChunksIn) -> RagChunksSavedOut:
+        """Save a record's passages and vectors (each passage must be cut from the record)."""
+        async with org_session(org) as s:
+            return await rag.save_chunks(s, org, body)
+
+    @app.post(f"{o}/rag/search", operation_id="ai_rag_search", tags=["AI Internal"])
+    async def rag_search(org: UUID, body: RagSearchIn) -> RagSearchOut:
+        """The passages closest to a query vector, inside this org only."""
+        async with org_session(org) as s:
+            return await rag.search(s, org, body)
 
     return app

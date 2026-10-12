@@ -1,1 +1,9 @@
-from app.models import actions, audit, brain, integrations, tenancy, timeline  # noqa: F401
+from app.models import (  # noqa: F401
+    actions,
+    audit,
+    brain,
+    integrations,
+    rag,
+    tenancy,
+    timeline,
+)

@@ -1,6 +1,5 @@
 from app.auth.deps import CurrentMembership
 from app.contract import endpoint, real
-from app.db.session import org_session
 from app.permissions import Action
 from app.schemas.assistant import AssistantAnswer, AssistantAskIn, AssistantCatalog
 from app.services import assistant as svc
@@ -45,5 +44,4 @@ async def assistant_ask(body: AssistantAskIn) -> AssistantAnswer:
 async def assistant_ask_real(
     membership: CurrentMembership, body: AssistantAskIn
 ) -> AssistantAnswer:
-    async with org_session(membership.org_id) as s:
-        return await svc.ask(s, membership.org_id, body)
+    return await svc.ask(membership.org_id, body)

@@ -89,7 +89,16 @@ class DraftOutput(BaseModel):
 
 # ---- Riddhi (the workspace assistant): typed question -> one catalog question and its numbers
 class PlanOutput(BaseModel):
+    # First on purpose: the model states what is being asked before it commits to an id.
+    reason: str = Field(default="", max_length=120)
     question_id: str = Field(max_length=64)  # an id from the list in the prompt, or "none"
     min_score: int | None = None
     days: int | None = None
     limit: int | None = None
+
+
+# ---- Riddhi: an answer written only from retrieved passages (P1, P2, ...)
+class AnswerOutput(BaseModel):
+    answerable: bool  # false = the passages do not contain the answer
+    answer: str = Field(default="", max_length=700)
+    citations: list[str] = Field(default_factory=list, max_length=6)  # passage ids, e.g. "P2"

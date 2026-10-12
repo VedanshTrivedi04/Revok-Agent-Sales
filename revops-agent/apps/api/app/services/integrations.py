@@ -364,10 +364,16 @@ async def disconnect_integration_service(
             Event.source.in_(("gmail", "gcal")),
         )
         evs = (await session.execute(stmt_evs)).scalars().all()
+        purged = []
         for ev in evs:
             ev_user_id = str((ev.raw or {}).get("user_id") or "")
             if ev_user_id == target_uid_str or (not ev_user_id and ev.source == integ.provider):
+                purged.append(ev.id)
                 await session.delete(ev)
+        # the purged mail must not stay searchable either
+        from app.services.rag import delete_for_sources
+
+        await delete_for_sources(session, org_id, "event", purged)
 
     revoked = await revoke_provider_tokens(org_id, integ.id, integ.provider)
     for tok in (

@@ -758,7 +758,8 @@ async def test_disconnect_purge_removes_user_google_events(
 
     tok_exec = MagicMock()
     tok_exec.scalars.return_value = []  # no stored tokens
-    session.execute.side_effect = [integ_exec, evs_exec, tok_exec]
+    # integration, events, DELETE of the purged events' search passages, tokens
+    session.execute.side_effect = [integ_exec, evs_exec, MagicMock(), tok_exec]
     monkeypatch.setattr(
         "app.services.integrations.revoke_provider_tokens", AsyncMock(return_value=False)
     )

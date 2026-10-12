@@ -170,7 +170,7 @@ def test_internal_openapi_is_separate() -> None:
     from app.internal_app import create_internal_app
 
     paths = create_internal_app().openapi()["paths"]
-    assert len(paths) == 7 and all(p.startswith("/v1/orgs/{org}") for p in paths)
+    assert len(paths) == 10 and all(p.startswith("/v1/orgs/{org}") for p in paths)
 
 
 async def test_internal_api_requires_the_internal_key() -> None:

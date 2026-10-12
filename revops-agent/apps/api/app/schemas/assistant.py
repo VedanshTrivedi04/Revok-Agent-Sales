@@ -56,11 +56,15 @@ class AnswerRow(BaseModel):
 
 
 class AssistantAnswer(BaseModel):
-    status: Literal["answered", "unsupported"]
+    # not_found = the records were searched and nothing in them answers the question
+    status: Literal["answered", "unsupported", "not_found"]
     question_id: str | None = None
     params: dict[ParamKey, int] = {}  # the values the answer was computed with
     interpreted_as: str | None = None  # the catalog question, with those values, that was answered
     text: str
+    # True = `text` was written by the model from the records in `rows` (and checked against
+    # them); False = it was built by code from query results.
+    generated: bool = False
     basis: str | None = None  # how the numbers were worked out
     rows: list[AnswerRow] = []
     total: int = 0  # matching records; `rows` holds at most `limit` of them

@@ -157,7 +157,17 @@ tenant session, and the answer text is built from the query's numbers. A questio
 nothing is answered with the list of questions that can be asked. With `AI_MODE=external` the AI
 service chooses the catalog question for typed text instead (`POST /v1/assistant/plan`); it only
 ever returns an id and numbers, which the backend checks, and the keyword match remains the
-fallback when the model does not answer. No model writes any part of an answer.
+fallback when the model does not answer. For those catalog questions no model writes any part
+of the answer.
+
+Questions that need reading the records ("why is Acme at risk", "what did we draft for Globex")
+go to the retrieval index, `rag_chunks`: passages of findings, action cards and timeline events
+with a 768-number embedding, searched with pgvector (HNSW, cosine) inside the tenant. The AI
+service embeds the question, asks the backend for the closest passages
+(`POST /internal/v1/orgs/{org}/rag/search`) and has the model write a short answer from them. The
+answer is shown only if it cites passages of this organization and its numbers and dates appear
+in them; it is marked `generated` and listed with the records it relies on. Otherwise Riddhi
+says it found nothing.
 "In the last N days" risk questions read `account_score_history`: one row per account per UTC day
 with its highest open risk and expansion score, written at the end of each account run.
 

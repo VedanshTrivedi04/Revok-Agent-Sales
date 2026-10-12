@@ -4,6 +4,8 @@
     its pending cards. Retries with backoff while the service is unreachable; when it stays down the
     template explanation and cards of the run remain in place.
   - ai_extract_dispatch: beat task that lets the AI service read new emails/notes for signals.
+  - ai_index_dispatch: beat task that lets the AI service embed new or changed records for
+    Riddhi's retrieval index.
 
 Only ids travel to the AI service. It reads and writes customer data through /internal/v1.
 """
@@ -26,6 +28,7 @@ from app.utils.time import utcnow
 from app.workers.celery_app import celery_app, tenant_task
 
 EXTRACT_BATCH = 50
+INDEX_BATCH = 50
 
 
 @tenant_task("run.ai_enhance", queue="run")
@@ -116,6 +119,29 @@ def ai_extract_dispatch() -> dict[str, int]:
         dispatched = 0
         for oid in org_ids:
             out = await ai_client.request_extraction(org_id=oid, limit=EXTRACT_BATCH, wait=False)
+            dispatched += 1 if out is not None else 0
+        return {"dispatched": dispatched}
+
+    return asyncio.run(_inner())
+
+
+@celery_app.task(name="run.ai_index_dispatch")
+def ai_index_dispatch() -> dict[str, int]:
+    """Ask the AI service to embed new or changed records of every active org, so Riddhi can
+    search them. The service asks the backend what is pending: an org with nothing new is a no-op."""
+
+    async def _inner() -> dict[str, int]:
+        if not ai_client.enabled():
+            return {"dispatched": 0}
+        async with admin_session() as s:
+            org_ids = list(
+                (await s.execute(select(Organization.id).where(Organization.status == "active")))
+                .scalars()
+                .all()
+            )
+        dispatched = 0
+        for oid in org_ids:
+            out = await ai_client.request_indexing(org_id=oid, limit=INDEX_BATCH, wait=False)
             dispatched += 1 if out is not None else 0
         return {"dispatched": dispatched}
 
